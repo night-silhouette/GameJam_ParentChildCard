@@ -1,36 +1,39 @@
-[gd_scene load_steps=9 format=3 uid="uid://c5jghvjdypfe7"]
+[gd_scene load_steps=6 format=3 uid="uid://c5jghvjdypfe7"]
 
-[ext_resource type="Texture2D" uid="uid://cgfj0phqir8lw" path="res://asset（素材-美术和音乐）/菜单/稻草人.png" id="1_vf881"]
-[ext_resource type="Texture2D" uid="uid://dukhkri7764q6" path="res://asset（素材-美术和音乐）/菜单/main.jpg" id="2_u0u8m"]
-[ext_resource type="Texture2D" uid="uid://d0t7716wi7xy4" path="res://asset（素材-美术和音乐）/菜单/箭头.png" id="3_kyajc"]
-[ext_resource type="Texture2D" uid="uid://bg6mbcbi5r2fe" path="res://asset（素材-美术和音乐）/菜单/小标志.png" id="3_o50ue"]
-[ext_resource type="Script" uid="uid://bn4mlauipnmnl" path="res://game_scene/main/小标志cneter.gd" id="4_fy1o5"]
-[ext_resource type="Texture2D" uid="uid://b6hhdeh7x1eua" path="res://asset（素材-美术和音乐）/环境素材/俯视/大齿轮.png" id="6_aci1m"]
-[ext_resource type="Texture2D" uid="uid://bt4ynbgm5aqmt" path="res://asset（素材-美术和音乐）/环境素材/俯视/小齿轮.png" id="7_4mmu1"]
+[ext_resource type="Texture2D" uid="uid://kd787lop3kko" path="res://asset（素材-美术和音乐）/GUI/UI2.png" id="1_4y8v4"]
+[ext_resource type="Script" uid="uid://bxeidr7pjh1j6" path="res://game_scene/main/右.gd" id="2_30v7v"]
+[ext_resource type="Script" uid="uid://j4lcgp0sggpo" path="res://game_scene/main/下.gd" id="3_vf881"]
 
-[sub_resource type="GDScript" id="GDScript_d8qxc"]
-script/source = "extends Sprite2D
+[sub_resource type="Animation" id="Animation_vf881"]
+resource_name = "entiy_x"
 
-
-# Called when the node enters the scene tree for the first time.
-@export var angular_speed :float = 1.5 ;
-@export var radius : float = 100;
-func _ready() -> void:
-	pass # Replace with function body.
-
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
-	pass
-"
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_u0u8m"]
+_data = {
+&"entiy_x": SubResource("Animation_vf881")
+}
 
 [node name="main" type="Node2D"]
 
-[node name="背景层" type="CanvasLayer" parent="."]
-layer = 0
+[node name="总UI" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 1152.0
+offset_bottom = 648.0
+size_flags_horizontal = 0
+metadata/_edit_lock_ = true
 
-[node name="ColorRect" type="ColorRect" parent="背景层"]
-z_index = -6
+[node name="边框" type="Control" parent="总UI"]
+layout_mode = 1
+anchor_left = 0.007
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -8.064
+grow_horizontal = 2
+grow_vertical = 2
+metadata/_edit_lock_ = true
+
+[node name="左右" type="Control" parent="总UI/边框"]
+layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -38,63 +41,108 @@ grow_horizontal = 2
 grow_vertical = 2
 metadata/_edit_lock_ = true
 
-[node name="动画层" type="CanvasLayer" parent="."]
+[node name="左" type="TextureRect" parent="总UI/边框/左右"]
+z_index = 2
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 0.11100001
+anchor_bottom = 0.98800004
+offset_left = -104.0
+offset_top = -56.0
+offset_right = 68.12799
+offset_bottom = 3.776001
+grow_vertical = 2
+texture = ExtResource("1_4y8v4")
+expand_mode = 1
 
-[node name="UI层" type="CanvasGroup" parent="动画层"]
-z_index = 5
-position = Vector2(576, 324)
-scale = Vector2(0.2, 0.2)
+[node name="右" type="TextureRect" parent="总UI/边框/左右" node_paths=PackedStringArray("Duichen")]
+z_index = 2
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.81200004
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 24.575928
+offset_top = -24.0
+offset_right = 136.0
+offset_bottom = 16.0
+grow_vertical = 2
+texture = ExtResource("1_4y8v4")
+expand_mode = 1
+flip_h = true
+flip_v = true
+script = ExtResource("2_30v7v")
+Duichen = NodePath("../左")
+
+[node name="上下" type="Control" parent="总UI/边框"]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="上" type="TextureRect" parent="总UI/边框/上下"]
+z_index = 2
+layout_mode = 1
+anchors_preset = -1
+anchor_left = -6.0
+anchor_top = 4.6
+anchor_right = 22.022501
+anchor_bottom = 7.8
+offset_left = 1496.0
+offset_top = -296.0
+offset_right = 684.9999
+offset_bottom = 877.1
+rotation = 1.5707964
+texture = ExtResource("1_4y8v4")
+expand_mode = 1
+metadata/_edit_use_anchors_ = true
+
+[node name="下" type="TextureRect" parent="总UI/边框/上下" node_paths=PackedStringArray("Duichen")]
+z_index = 2
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = -32.0
+offset_top = 716.0
+offset_right = 210.79993
+offset_bottom = 1954.3995
+grow_vertical = 2
+rotation = -1.5707964
+texture = ExtResource("1_4y8v4")
+expand_mode = 1
+script = ExtResource("3_vf881")
+Duichen = NodePath("../上")
+
+[node name="边框切入动画" type="AnimationPlayer" parent="总UI/边框"]
+libraries = {
+&"": SubResource("AnimationLibrary_u0u8m")
+}
+
+[node name="装饰" type="Control" parent="总UI"]
+visible = false
+anchors_preset = 0
+offset_right = 1152.0
+offset_bottom = 648.0
 metadata/_edit_lock_ = true
 
-[node name="稻草人" type="Sprite2D" parent="动画层/UI层"]
-position = Vector2(1875.0002, 934.99976)
-scale = Vector2(1.429, 1.477)
-texture = ExtResource("1_vf881")
+[node name="功能" type="Control" parent="总UI"]
+visible = false
+layout_mode = 1
+anchors_preset = 0
+offset_right = 1152.0
+offset_bottom = 648.0
+metadata/_edit_lock_ = true
 
-[node name="main" type="TextureRect" parent="动画层/UI层"]
+[node name="ColorRect" type="ColorRect" parent="总UI"]
 z_index = -1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -1664.9998
-offset_top = -1109.9999
-offset_right = 1664.9998
-offset_bottom = 1109.9999
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("2_u0u8m")
 metadata/_edit_lock_ = true
 
-[node name="箭头center" type="Node2D" parent="动画层/UI层"]
-position = Vector2(-879.99994, 139.99998)
-metadata/_edit_lock_ = true
-
-[node name="箭头" type="Sprite2D" parent="动画层/UI层/箭头center"]
-position = Vector2(465.00006, 30)
-scale = Vector2(0.71, 0.71)
-texture = ExtResource("3_kyajc")
-metadata/_edit_lock_ = true
-
-[node name="小标志cneter" type="Node2D" parent="动画层/UI层"]
-position = Vector2(839.99994, -539.99994)
-script = ExtResource("4_fy1o5")
-metadata/_edit_lock_ = true
-
-[node name="小标志" type="Sprite2D" parent="动画层/UI层/小标志cneter"]
-position = Vector2(474.99988, -474.99988)
-rotation = 0.26350194
-scale = Vector2(0.71653044, 0.6923073)
-texture = ExtResource("3_o50ue")
-script = SubResource("GDScript_d8qxc")
-
-[node name="大齿轮" type="Sprite2D" parent="动画层/UI层"]
-position = Vector2(-2180, -1075.0001)
-scale = Vector2(0.672, 0.654)
-texture = ExtResource("6_aci1m")
-
-[node name="小齿轮" type="Sprite2D" parent="动画层/UI层"]
-position = Vector2(-2485, -585)
-scale = Vector2(0.305, 0.305)
-texture = ExtResource("7_4mmu1")
+[node name="背景层" type="CanvasLayer" parent="."]
+layer = 0
+visible = false

@@ -25,7 +25,6 @@ Servers="*res://单例/servers/servers.gd"
 
 [display]
 
-window/size/mode=3
 window/stretch/mode="canvas_items"
 
 [global_group]
