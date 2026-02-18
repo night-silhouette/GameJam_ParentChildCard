@@ -4,58 +4,36 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="60bea49d-2cc9-4f29-8500-16aa30dab3de" name="更改" comment="">
-      <change beforePath="$PROJECT_DIR$/../Backend/src/go.mod" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Backend/src/go.sum" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Backend/src/test.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Backend/开发日志/2.3" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/go_test/base64Captcha/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/go_test/base64Captcha/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/go_test/newyear/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/go_test/newyear/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/go_test/newyear/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/go_test/newyear/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/go_test/newyear/newyear" beforeDir="false" afterPath="$PROJECT_DIR$/go_test/newyear/newyear" afterDir="false" />
+    <list default="true" id="760cea56-5efb-4b56-8acc-717cb714ebef" name="更改" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/go.imports.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/go.imports.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/servers.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/servers.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="FileTemplateManagerImpl">
-    <option name="RECENT_TEMPLATES">
-      <list>
-        <option value="Go File" />
-      </list>
-    </option>
-  </component>
-  <component name="GOROOT" url="file://$USER_HOME$/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.25.6.darwin-arm64" />
+  <component name="GOROOT" url="file://$PROJECT_DIR$/../../../../../Program Files/Go" />
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
-  <component name="HighlightingSettingsPerFile">
-    <setting file="file://$USER_HOME$/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.25.6.darwin-arm64/src/os/executable.go" root0="SKIP_INSPECTION" />
-    <setting file="file://$USER_HOME$/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.25.6.darwin-arm64/src/path/filepath/path.go" root0="SKIP_INSPECTION" />
-  </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 1
-}]]></component>
-  <component name="ProjectId" id="39jad5xyH1jeiM4VRi5kJLTxbxl" />
-  <component name="ProjectLevelVcsManager">
-    <ConfirmationsSetting value="1" id="Add" />
-  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 8
+}</component>
+  <component name="ProjectId" id="39ifHjKbO1l3ZDy9POexS1wCGP2" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
-    "DefaultGoTemplateProperty": "Go File",
-    "Go 构建.go build main.go.executor": "Run",
-    "Go 构建.go build pcc_card/go_test.executor": "Run",
-    "Go 构建.go build pcc_card/go_test/newyear.executor": "Run",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.GoLinterPluginOnboardingV2": "true",
     "RunOnceActivity.GoLinterPluginStorageMigration": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
     "RunOnceActivity.go.analysis.ui.options.defaults": "true",
     "RunOnceActivity.go.formatter.settings.were.checked": "true",
@@ -63,74 +41,17 @@
     "RunOnceActivity.typescript.service.memoryLimit.init": "true",
     "git-widget-placeholder": "backend/struct__init",
     "go.sdk.automatically.set": "true",
-    "last_opened_file_path": "/Users/night/Desktop/GameJam_ParentChildCard/servers",
+    "ignore.virus.scanning.warn.message": "true",
+    "last_opened_file_path": "C:/Users/jixiegm/Desktop/GameJam_ParentChildCard/servers/开发文档/开发日志",
     "node.js.detected.package.eslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "run.configurations.included.in.services": "true"
+    "nodejs_package_manager_path": "npm"
   }
 }]]></component>
   <component name="RecentsManager">
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$" />
-      <recent name="$PROJECT_DIR$/src/go_test/newyear" />
-      <recent name="$PROJECT_DIR$/src/go_test/newyear/static" />
-      <recent name="$PROJECT_DIR$/src/go_test/base64Captcha" />
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\jixiegm\Desktop\GameJam_ParentChildCard\servers\开发文档\开发日志" />
     </key>
-  </component>
-  <component name="RunDashboard">
-    <option name="configurationTypes">
-      <set>
-        <option value="GoApplicationRunConfiguration" />
-      </set>
-    </option>
-    <option name="configurationStatuses">
-      <map>
-        <entry key="GoApplicationRunConfiguration">
-          <value>
-            <map>
-              <entry key="go build main.go" value="STOPPED" />
-              <entry key="go build pcc_card/go_test/newyear" value="STOPPED" />
-            </map>
-          </value>
-        </entry>
-      </map>
-    </option>
-  </component>
-  <component name="RunManager" selected="Go 构建.go build main.go">
-    <configuration name="go build main.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
-      <module name="servers" />
-      <working_directory value="$PROJECT_DIR$/src" />
-      <kind value="FILE" />
-      <directory value="$PROJECT_DIR$" />
-      <filePath value="$PROJECT_DIR$/src/go_test/newyear/main.go" />
-      <method v="2" />
-    </configuration>
-    <configuration name="go build pcc_card/go_test" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
-      <module name="servers" />
-      <working_directory value="$PROJECT_DIR$/src" />
-      <kind value="PACKAGE" />
-      <package value="pcc_card/go_test" />
-      <directory value="$PROJECT_DIR$" />
-      <filePath value="$PROJECT_DIR$/src/go_test/main.go" />
-      <method v="2" />
-    </configuration>
-    <configuration name="go build pcc_card/go_test/newyear" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
-      <module name="servers" />
-      <working_directory value="$PROJECT_DIR$/src" />
-      <kind value="PACKAGE" />
-      <package value="pcc_card/go_test/newyear" />
-      <directory value="$PROJECT_DIR$" />
-      <filePath value="$PROJECT_DIR$/src/go_test/newyear/main.go" />
-      <method v="2" />
-    </configuration>
-    <recent_temporary>
-      <list>
-        <item itemvalue="Go 构建.go build main.go" />
-        <item itemvalue="Go 构建.go build pcc_card/go_test/newyear" />
-        <item itemvalue="Go 构建.go build pcc_card/go_test" />
-      </list>
-    </recent_temporary>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
@@ -142,11 +63,11 @@
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="默认任务">
-      <changelist id="60bea49d-2cc9-4f29-8500-16aa30dab3de" name="更改" comment="" />
-      <created>1771212017683</created>
+      <changelist id="760cea56-5efb-4b56-8acc-717cb714ebef" name="更改" comment="" />
+      <created>1771183725528</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1771212017683</updated>
+      <updated>1771183725528</updated>
     </task>
     <servers />
   </component>

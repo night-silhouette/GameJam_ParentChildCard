@@ -1,0 +1,18 @@
+psql 远程控制 psql -h 120.26.145.68 -U night -d pccard
+
+psql 快捷指令
+\dt
+\du 查询用户
+\c 查看连接情况 \c - 用户  \c database 用户
+
+添加select权限：
+-- 允许用户连接数据库
+grant connect on database my_game_db to jixiegm;
+-- 允许用户使用 public 模式
+grant usage on schema public to jixiegm;
+-- 授予对当前所有表的查询权限
+grant select on all tables in schema public to jixiegm;
+-- 如果你有序列（比如自增 ID），通常只读不需要，但如果需要读取序列值：
+grant select on all sequences in schema public to jixiegm;
+-- 自动化
+alter default privileges in schema public grant select on tables to jixiegm;
