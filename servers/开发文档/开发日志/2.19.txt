@@ -1,0 +1,11 @@
+#依赖倒转原则，本质是面向接口编程，应用层，接口层，实现层。我们先从局部的这三层倒转开始，大层面的先不急
+
+#dsn参数 postgres://用户名:密码@地址:端口/数据库名?参数
+
+#embed 两种用法
+单文件
+//go:embed info/DB_info.json
+var dbConfigFile []byte
+镶嵌整个目录
+//go:embed configs/*
+var res embed.FS
