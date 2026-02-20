@@ -5,13 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="760cea56-5efb-4b56-8acc-717cb714ebef" name="更改" comment="">
-      <change afterPath="$PROJECT_DIR$/开发文档/参考图/ddd.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/开发文档/参考图/设计原则.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/开发文档/开发日志/2.19.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/src/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/src/go.sum" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/开发文档/开发日志/2.18.txt" beforeDir="false" afterPath="$PROJECT_DIR$/开发文档/开发日志/2.18.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/cmd/main/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/cmd/main/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/infra/db/db.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/infra/db/db_connect.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
