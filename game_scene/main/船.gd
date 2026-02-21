@@ -9,6 +9,10 @@ var mapHeight : int = 640;
 var gap_y :int = 80;#这个就是最合适的距离和边框的距离。
 var gap_x :int = 136;
 
+var time_passed := 0.0;
+var float_amplitude := 8.0;
+var float_frequency := 2.0;
+
 func _ready() -> void:
 	var random_x = [gap_x,mapWidth-gap_x];
 	var random_y = [gap_y,mapHeight-gap_y];
