@@ -23,7 +23,7 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	if peer and peer.get_connection_status() !=MultiplayerPeer.CONNECTION_DISCONNECTED:
 		peer.poll()
-		
+
 		
 		
 func _on_peer_connected(id):
