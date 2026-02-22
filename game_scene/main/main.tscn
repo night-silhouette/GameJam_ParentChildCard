@@ -55,7 +55,7 @@ tracks/1/path = NodePath("上下/下:position")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
-"times": PackedFloat32Array(0, 0.2667),
+"times": PackedFloat32Array(0, 0.26666668),
 "transitions": PackedFloat32Array(1, 2.1412618),
 "update": 0,
 "values": [Vector2(-40, 823), Vector2(-40, 730)]
@@ -112,14 +112,13 @@ layout_mode = 1
 anchors_preset = -1
 anchor_right = 0.11100001
 anchor_bottom = 0.98800004
-offset_left = -128.95703
-offset_top = -24.0
-offset_right = 71.12799
-offset_bottom = 23.776001
+offset_left = -127.95703
+offset_top = -16.0
+offset_right = 72.12799
+offset_bottom = 31.776001
 grow_vertical = 2
 texture = ExtResource("1_4y8v4")
 expand_mode = 1
-metadata/_edit_lock_ = true
 
 [node name="右" type="TextureRect" parent="总UI/边框/左右" node_paths=PackedStringArray("Duichen", "animationpalyer")]
 layout_mode = 1
@@ -139,7 +138,6 @@ flip_v = true
 script = ExtResource("2_30v7v")
 Duichen = NodePath("../左")
 animationpalyer = NodePath("../../边框的插入动画实现")
-metadata/_edit_lock_ = true
 
 [node name="剑" type="TextureRect" parent="总UI/边框"]
 visible = false
@@ -168,9 +166,8 @@ offset_bottom = 40.0
 [node name="上" type="TextureRect" parent="总UI/边框/上下"]
 layout_mode = 1
 anchors_preset = -1
-anchor_left = -1.0
 anchor_top = -0.35
-anchor_right = 28.8
+anchor_right = 29.8
 anchor_bottom = 3.5199997
 offset_left = 1192.0
 offset_top = -82.0
@@ -190,7 +187,7 @@ anchor_bottom = 15.365001
 offset_left = -40.0
 offset_top = 242.79996
 offset_right = -995.6001
-offset_bottom = 1359.802
+offset_bottom = 1359.8037
 grow_vertical = 2
 rotation = -1.5707964
 texture = ExtResource("1_4y8v4")
@@ -215,23 +212,21 @@ metadata/_edit_lock_ = true
 z_index = -1
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.71500003
+anchor_left = 0.726
 anchor_top = 0.65400004
-anchor_right = 0.71500003
+anchor_right = 0.726
 anchor_bottom = 0.65400004
-offset_left = -455.68
-offset_top = 40.207977
-offset_right = -334.68005
-offset_bottom = 156.20773
+offset_left = 3.6480103
+offset_top = 88.20798
+offset_right = 124.64801
+offset_bottom = 204.20773
 scale = Vector2(1.03, 1.03)
 pivot_offset = Vector2(60, 58)
 texture = ExtResource("5_w2oy5")
 expand_mode = 1
 script = ExtResource("6_w2oy5")
-range_y = null
-range_x = null
-speed = null
-amplitude = null
+speed = 0.5
+amplitude = 15.0
 
 [node name="功能" type="Control" parent="总UI"]
 visible = false

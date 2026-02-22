@@ -1,3 +1,4 @@
+@tool
 
 extends TextureRect
 var x = 576;
@@ -5,7 +6,8 @@ var x = 576;
 @export var animationpalyer : AnimationPlayer ;
 
 func _ready() -> void:
-	handle_animation();
+	#handle_animation();
+	pass;
 
 func _process(delta: float) -> void:
 	

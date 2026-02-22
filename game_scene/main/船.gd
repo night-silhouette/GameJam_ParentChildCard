@@ -5,7 +5,8 @@ extends TextureRect
 @export var amplitude : float = 30;
 
 var noise := FastNoiseLite.new();
-var time := 0
+@export var time := 0.0
+var base_pos : Vector2
 
 var mapWidth : int =1152;
 var mapHeight : int = 640;
@@ -17,78 +18,111 @@ const down = 3;
 const up = 4;
 
 # Called when the node enters the scene tree for the first time.
-var gap_y :int = 144; #这个就是最合适的距离和边框的距离。
+var gap_y :int = 144; #这个就是最合适的距离和边框的距离，注。
 var gap_x :int = 152;
 
 var locate_status : int = 0;
 
+var x_min = gap_x-size.x;
+var x_max = mapWidth-gap_x;
+var y_min = gap_y-size.x;
+var y_max = mapHeight-gap_y;
+
+
 
 func _ready() -> void:		
-	
+	random_position();
 	process_noise();
 	
 
 func _process(delta: float) -> void:
 #速度需要发生变化。上下的浮动同时也要发生变化。那自然而然的角度应该也有变化，这就说明了直接用角度去判断撞墙掉头是非常麻烦的。会出很多bug。
 #已经确定了隐形的直线，和一开始说的那样，那就用一个数组去处理状态，直接用int吗？1234四个状态，你用数组本身也要去读取吧？可是数组的上限更高吧，那还不如直接就用一个整数吧，我说实在不行可以当作指针。
+	
 	process_move(delta);
+	decide_change_rad();
+	
 		
-func change_rad_position():##转角处的变化
+func change_rad_position():#转角处的变化
 	match locate_status :
 		down:
 			locate_status = left;
 			rotation_degrees = 90;
-			position = Vector2(0+gap_x,mapHeight+size.x/2)
+			position = Vector2(0+(gap_x - size.x),mapHeight+size.x/2)
 		left:
 			locate_status = up;
 			rotation_degrees = 180;
-			position = Vector2(0-size.x/2,0+gap_y)
+			position = Vector2(0-size.x/2,0+(gap_y-size.x));
 		up:
 			locate_status = right ; 
 			rotation_degrees = 270;
-			position = Vector2(mapWidth-gap_x,0-size.y/2)
+			position = Vector2(mapWidth-gap_x,0-size.y/2);
 		right:
 			locate_status = down;
 			rotation_degrees = 0;
-			position = Vector2(mapWidth+size.x/2,mapHeight - gap_y)
+			position = Vector2(mapWidth+size.x/2,mapHeight - gap_y);
 
 		
 func decide_change_rad():#判断改变方向
-	if position.x <= 0 - size.x/2 and locate_status == down :
+	if position.x <= 0 - size.x and locate_status == down :
 		change_rad_position();
-	elif position.y <= 0 - size.x/2 and locate_status == left :
+	elif position.y <= 0 - size.x and locate_status == left :
 		change_rad_position();
-	elif position.x >= mapWidth + size.x/2 and locate_status == up :
+	elif position.x >= mapWidth + size.x and locate_status == up :
 		change_rad_position();
-	elif position.y >= mapHeight + size.x/2   and locate_status == right :
+	elif position.y >= mapHeight + size.x   and locate_status == right :
 		change_rad_position();
 		
 func process_noise(): #噪音的处理
 	noise.seed = randi();
-	noise.frequency = 0.;
+	noise.frequency = 0.05;
+	base_pos = position;
 	
-func process_move(delta):#运动处理、
-	
+func process_move(delta):#运动处理
 	
 	time += delta;
-	var n = noise.get_noise_1d(time)
+	var n = noise.get_noise_1d(time);
 	match locate_status :
 		down:
 			position.x -= speed;
-			position.y += n * amplitude;
+			position.y =lerp(position.y,y_max + n * amplitude,0.5);
 		left:
-
 			position.y -= speed;
-			position.x += n*amplitude;
+			position.x =lerp(position.x,x_min + n * amplitude,0.5);
 		up:
-
 			position.x += speed;
-			position.y += n*amplitude;
+			position.y +=lerp(position.y,y_min + n * amplitude,0.5);
 		right:
-
 			position.y += speed;
-			position.x -= n*amplitude;
+			position.x -=lerp(position.x,x_max + n * amplitude,0.5);
 	
-func 	
+func random_position():#随机出现
+
 	
+	var random_x = [x_min,x_max];
+	var random_y = [y_min,y_max];
 	
+	if randf() < 0.5 : #是在两侧；结果 = 值1 if 条件 else 值2
+	
+		position.x = random_x.pick_random();
+		
+		if position.x == x_min :
+			rotation = deg_to_rad(90); 
+			locate_status = left;
+		else :
+			rotation = deg_to_rad(270);
+			locate_status = right;
+		position.y = randf_range(0,mapHeight-size.x);
+	
+	else : #在顶部和底部
+		position.y = random_y.pick_random();
+		
+		if position.y == y_max :
+			rotation = deg_to_rad(0)
+			locate_status = down;
+		else:
+			rotation = deg_to_rad(180);
+			locate_status = up;
+			
+		position.x = randf_range(0,mapWidth-size.x);
+		
