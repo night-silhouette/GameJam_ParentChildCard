@@ -6,8 +6,8 @@ type User_service struct {
 	repo repo.User_repo
 }
 
-var UserService User_service
+var User_service_impl User_service
 
 func NewUserService(repo repo.User_repo) {
-	UserService = User_service{repo}
+	User_service_impl = User_service{repo}
 }

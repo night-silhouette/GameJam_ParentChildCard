@@ -3,6 +3,7 @@ package config
 import (
 	_ "embed"
 	"encoding/json"
+	"fmt"
 )
 
 //go:embed info/DB_info.json
@@ -18,6 +19,10 @@ type DB_info struct {
 
 func Read_db_info() DB_info {
 	config := DB_info{}
-	json.Unmarshal(db_info_file, &config)
+	err := json.Unmarshal(db_info_file, &config)
+	if err != nil {
+		fmt.Println("DB info file err")
+		panic(err)
+	}
 	return config
 }

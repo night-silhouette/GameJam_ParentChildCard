@@ -6,11 +6,12 @@
   <component name="ChangeListManager">
     <list default="true" id="760cea56-5efb-4b56-8acc-717cb714ebef" name="更改" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/application/entity/user.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/entity/user.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/application/repo/user_repo.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/repo/user_repo.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/service/user_service.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/service/user_service.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/cmd/main/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/cmd/main/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/infra/db/db_connect.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/infra/db/db_connect.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/infra/db/users.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/infra/db/users.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/src/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/src/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/infra/config/DBconfig.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/infra/config/DBconfig.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/infra/config/info/DB_jnfo.json.example" beforeDir="false" afterPath="$PROJECT_DIR$/src/infra/config/info/DB_jnfo.json.example" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -42,6 +43,7 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "DefaultGoTemplateProperty": "Go File",
+    "Go 构建.go build main.go.executor": "Run",
     "Go 构建.go build pcc_card/cmd/main.executor": "Run",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.GoLinterPluginOnboardingV2": "true",
@@ -67,10 +69,19 @@
       <recent name="C:\Users\jixiegm\Desktop\GameJam_ParentChildCard\servers\开发文档\开发日志" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/infra/config" />
       <recent name="$PROJECT_DIR$/src" />
     </key>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Go 构建.go build main.go">
+    <configuration name="go build main.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+      <module name="servers" />
+      <working_directory value="$PROJECT_DIR$" />
+      <kind value="FILE" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$/go_test/base64Captcha/main.go" />
+      <method v="2" />
+    </configuration>
     <configuration name="go build pcc_card/cmd/main" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
       <module name="servers" />
       <working_directory value="$PROJECT_DIR$/src" />
@@ -82,6 +93,7 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Go 构建.go build main.go" />
         <item itemvalue="Go 构建.go build pcc_card/cmd/main" />
       </list>
     </recent_temporary>
