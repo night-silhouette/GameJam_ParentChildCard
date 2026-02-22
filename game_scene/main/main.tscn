@@ -142,6 +142,7 @@ animationpalyer = NodePath("../../边框的插入动画实现")
 metadata/_edit_lock_ = true
 
 [node name="剑" type="TextureRect" parent="总UI/边框"]
+visible = false
 z_index = 1
 layout_mode = 1
 anchors_preset = 11
@@ -189,7 +190,7 @@ anchor_bottom = 15.365001
 offset_left = -40.0
 offset_top = 242.79996
 offset_right = -995.6001
-offset_bottom = 1359.7998
+offset_bottom = 1359.802
 grow_vertical = 2
 rotation = -1.5707964
 texture = ExtResource("1_4y8v4")
@@ -218,15 +219,19 @@ anchor_left = 0.71500003
 anchor_top = 0.65400004
 anchor_right = 0.71500003
 anchor_bottom = 0.65400004
-offset_left = -695.68005
-offset_top = -543.792
-offset_right = -574.68005
-offset_bottom = -427.79218
-rotation = 1.5707964
+offset_left = -455.68
+offset_top = 40.207977
+offset_right = -334.68005
+offset_bottom = 156.20773
 scale = Vector2(1.03, 1.03)
+pivot_offset = Vector2(60, 58)
 texture = ExtResource("5_w2oy5")
 expand_mode = 1
 script = ExtResource("6_w2oy5")
+range_y = null
+range_x = null
+speed = null
+amplitude = null
 
 [node name="功能" type="Control" parent="总UI"]
 visible = false
