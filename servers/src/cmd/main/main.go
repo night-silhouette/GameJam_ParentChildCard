@@ -1,6 +1,8 @@
 package main
 
-import "pcc_card/infra/db"
+import (
+	"pcc_card/infra/db"
+)
 
 func main() {
 	db.Init()

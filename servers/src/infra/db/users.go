@@ -1,10 +1,64 @@
 package db
 
 import (
-	"pcc_card/application/repo"
+	"database/sql"
+	_ "fmt"
+	"pcc_card/application/entity"
+	_ "pcc_card/application/repo"
 	"pcc_card/application/service"
 )
 
-func init_repo(repo repo.User_repo) {
-	service.NewUserService(repo)
+//数据库表user字段名：
+//id
+//user_name
+//hash_password
+//create_at
+
+func Init_user_repo() { //初始化接口
+	temp := New_user_repo_impl(DB)
+	service.NewUserService(temp) //注入
+}
+
+type User_repo_impl struct { //repo的实现
+	db *sql.DB
+}
+
+func New_user_repo_impl(db *sql.DB) *User_repo_impl { //repo传入sql连接
+	return &User_repo_impl{db}
+}
+
+func (r User_repo_impl) Create(e *entity.User) error {
+	query := "INSERT INTO user(user_name, hash_password) VALUES ($1,$2)"
+	_, err := r.db.Exec(query, e.Name, e.Password)
+	return err
+}
+
+func (r User_repo_impl) Get_by_name(name string) (*entity.User, error) {
+	query := "SELECT id, user_name, hash_password, FROM user WHERE user_name = $1"
+	row := r.db.QueryRow(query, name)
+	e := entity.User{}
+	err := row.Scan(&e.Id, &e.Name, &e.Password)
+	return &e, err
+
+}
+
+func (r User_repo_impl) Get_by_id(id int) (*entity.User, error) {
+	query := "SELECT id, user_name, hash_password, FROM user WHERE user_name = $1"
+	row := r.db.QueryRow(query, id)
+	e := entity.User{}
+	err := row.Scan(&e.Id, &e.Name, &e.Password)
+	return &e, err
+
+}
+
+func (r User_repo_impl) Update(e *entity.User) error {
+	query := "update user set user_name = $1, hash_password = $2 where id = $3"
+	_, err := r.db.Exec(query, e.Name, e.Password, e.Id)
+	return err
+}
+
+func (r User_repo_impl) Delete(e *entity.User) error {
+	query := "delete from user where id = $1"
+	_, err := r.db.Exec(query, e.Id)
+	return err
 }

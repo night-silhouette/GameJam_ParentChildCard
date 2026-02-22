@@ -12,6 +12,7 @@ var DB *sql.DB
 
 func Init() {
 	ConnectDB()
+	Init_user_repo()
 }
 
 func ConnectDB() {
