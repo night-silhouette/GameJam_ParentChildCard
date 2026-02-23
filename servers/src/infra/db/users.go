@@ -5,7 +5,6 @@ import (
 	_ "fmt"
 	"pcc_card/application/entity"
 	_ "pcc_card/application/repo"
-	"pcc_card/application/service"
 )
 
 //数据库表user字段名：
@@ -14,16 +13,11 @@ import (
 //hash_password
 //create_at
 
-func Init_user_repo() { //初始化接口
-	temp := New_user_repo_impl(DB)
-	service.NewUserService(temp) //注入
-}
-
 type User_repo_impl struct { //repo的实现
 	db *sql.DB
 }
 
-func New_user_repo_impl(db *sql.DB) *User_repo_impl { //repo传入sql连接
+func New_user_repo_impl(db *sql.DB) *User_repo_impl { //将DB注入repo
 	return &User_repo_impl{db}
 }
 

@@ -2,7 +2,9 @@ package route
 
 import (
 	"fmt"
+	"pcc_card/application/service"
 	"pcc_card/infra/config"
+	"pcc_card/presentation/response"
 
 	"github.com/gin-gonic/gin"
 )
@@ -10,9 +12,10 @@ import (
 func Init() {
 	r := gin.Default()
 
-	r.GET("/ping", func(c *gin.Context) {})
+	r.GET("/ping", func(c *gin.Context) {
+		response.Success(c, "pong")
+	})
 	user_v1 := r.Group("v1/user")
-	group_user(user_v1)
 
 	route_config := config.Read_route_info()
 	err := r.Run(fmt.Sprintf("%s:%d", route_config.Ip, route_config.Port))
@@ -20,8 +23,4 @@ func Init() {
 		fmt.Println("路由启动失败")
 		panic(err)
 	}
-}
-
-func group_user(r *gin.RouterGroup) {
-	r.GET("", func(c *gin.Context) {})
 }
