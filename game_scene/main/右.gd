@@ -1,4 +1,4 @@
-@tool
+
 
 extends TextureRect
 var x = 576;

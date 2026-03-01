@@ -70,12 +70,12 @@ func decide_change_rad():#判断改变方向
 		change_rad_position();
 	elif position.y >= mapHeight  and locate_status == right :
 		change_rad_position();
-		
+
 func process_noise(): #噪音的处理
 	noise.seed = randi();
 	noise.frequency = noise_frequent ;
 	base_pos = position;
-	
+
 func process_move(delta):#运动处理
 
 	time += delta;

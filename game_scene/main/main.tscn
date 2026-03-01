@@ -1,9 +1,10 @@
-[gd_scene load_steps=10 format=3 uid="uid://c5jghvjdypfe7"]
+[gd_scene load_steps=12 format=3 uid="uid://c5jghvjdypfe7"]
 
 [ext_resource type="Texture2D" uid="uid://kd787lop3kko" path="res://asset（素材-美术和音乐）/GUI/UI2.png" id="1_4y8v4"]
 [ext_resource type="Texture2D" uid="uid://3wdprvmx20rw" path="res://asset（素材-美术和音乐）/GUI/剑UI .png" id="1_o50ue"]
 [ext_resource type="Script" uid="uid://bxeidr7pjh1j6" path="res://game_scene/main/右.gd" id="2_30v7v"]
 [ext_resource type="Script" uid="uid://j4lcgp0sggpo" path="res://game_scene/main/下.gd" id="3_vf881"]
+[ext_resource type="Texture2D" uid="uid://c6vfyyncgw66b" path="res://asset（素材-美术和音乐）/GUI/UI7.png" id="5_kyajc"]
 [ext_resource type="Texture2D" uid="uid://bs4uq6gwmakq5" path="res://asset（素材-美术和音乐）/GUI/UI10 .png" id="5_w2oy5"]
 [ext_resource type="Script" uid="uid://c4gn4igdad3md" path="res://game_scene/main/船.gd" id="6_w2oy5"]
 
@@ -32,6 +33,34 @@ tracks/1/keys = {
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
 "values": [Vector2(-40, 736), Vector2(-40, 736)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("剑:rotation")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+
+[sub_resource type="Animation" id="Animation_w2oy5"]
+resource_name = "大剑挥砍"
+loop_mode = 2
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("剑:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.05, 0.46, 0.5),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [0.0, -0.06981317007977318, -1.3962634, -1.5707963267948966]
 }
 
 [sub_resource type="Animation" id="Animation_vf881"]
@@ -64,6 +93,7 @@ tracks/1/keys = {
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_o50ue"]
 _data = {
 &"RESET": SubResource("Animation_u0u8m"),
+&"大剑挥砍": SubResource("Animation_w2oy5"),
 &"边框进入": SubResource("Animation_vf881")
 }
 
@@ -85,6 +115,14 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+metadata/_edit_lock_ = true
+
+[node name="Page Manager" type="Control" parent="总UI"]
+z_index = 10
+layout_mode = 1
+anchors_preset = 0
+offset_right = 1152.0
+offset_bottom = 648.0
 metadata/_edit_lock_ = true
 
 [node name="边框" type="Control" parent="总UI"]
@@ -112,13 +150,14 @@ layout_mode = 1
 anchors_preset = -1
 anchor_right = 0.11100001
 anchor_bottom = 0.98800004
-offset_left = -235.95703
+offset_left = -128.9574
 offset_top = -24.0
-offset_right = -35.87201
+offset_right = 71.12799
 offset_bottom = 23.776001
 grow_vertical = 2
 texture = ExtResource("1_4y8v4")
 expand_mode = 1
+metadata/_edit_lock_ = true
 
 [node name="右" type="TextureRect" parent="总UI/边框/左右" node_paths=PackedStringArray("Duichen", "animationpalyer")]
 layout_mode = 1
@@ -128,7 +167,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 124.57593
 offset_top = -24.0
-offset_right = 235.95703
+offset_right = 235.9574
 offset_bottom = 16.0
 grow_vertical = 2
 texture = ExtResource("1_4y8v4")
@@ -137,7 +176,8 @@ flip_h = true
 flip_v = true
 script = ExtResource("2_30v7v")
 Duichen = NodePath("../左")
-animationpalyer = NodePath("../../边框的插入动画实现")
+animationpalyer = NodePath("../../边框动画")
+metadata/_edit_lock_ = true
 
 [node name="剑" type="TextureRect" parent="总UI/边框"]
 visible = false
@@ -147,12 +187,13 @@ anchors_preset = 11
 anchor_left = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -302.0
-offset_top = -8.0
-offset_right = 139.0
-offset_bottom = -42.734375
+offset_left = -240.0
+offset_top = 32.0
+offset_right = 201.0
+offset_bottom = -2.734375
 grow_horizontal = 0
 grow_vertical = 2
+pivot_offset = Vector2(210.22, 608)
 texture = ExtResource("1_o50ue")
 expand_mode = 1
 metadata/_edit_lock_ = true
@@ -177,6 +218,7 @@ rotation = 1.5707964
 texture = ExtResource("1_4y8v4")
 expand_mode = 1
 metadata/_edit_use_anchors_ = true
+metadata/_edit_lock_ = true
 
 [node name="下" type="TextureRect" parent="总UI/边框/上下" node_paths=PackedStringArray("Duichen", "animationpalyer")]
 layout_mode = 1
@@ -187,19 +229,31 @@ anchor_bottom = 15.365001
 offset_left = -40.0
 offset_top = 242.79996
 offset_right = -995.6001
-offset_bottom = 1359.8037
+offset_bottom = 1359.8062
 grow_vertical = 2
 rotation = -1.5707964
 texture = ExtResource("1_4y8v4")
 expand_mode = 1
 script = ExtResource("3_vf881")
 Duichen = NodePath("../上")
-animationpalyer = NodePath("../../边框的插入动画实现")
+animationpalyer = NodePath("../../边框动画")
+metadata/_edit_lock_ = true
 
-[node name="边框的插入动画实现" type="AnimationPlayer" parent="总UI/边框"]
+[node name="边框动画" type="AnimationPlayer" parent="总UI/边框"]
 libraries = {
 &"": SubResource("AnimationLibrary_o50ue")
 }
+
+[node name="TextureRect" type="TextureRect" parent="总UI/边框"]
+z_index = 3
+layout_mode = 0
+offset_left = 992.00006
+offset_top = 200.00005
+offset_right = 1618.1957
+offset_bottom = 672.4217
+rotation = 0.8978362
+texture = ExtResource("5_kyajc")
+expand_mode = 1
 
 [node name="装饰" type="Control" parent="总UI"]
 z_index = 10
@@ -228,12 +282,3 @@ script = ExtResource("6_w2oy5")
 speed = 0.5
 amplitude = 26.0
 ro_speed = 0.05
-
-[node name="功能" type="Control" parent="总UI"]
-visible = false
-z_index = 10
-layout_mode = 1
-anchors_preset = 0
-offset_right = 1152.0
-offset_bottom = 648.0
-metadata/_edit_lock_ = true

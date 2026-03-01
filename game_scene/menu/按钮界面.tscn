@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://kg260t0l1qv4"]
+
+[ext_resource type="Texture2D" uid="uid://cltdy4mpwmnjd" path="res://asset（素材-美术和音乐）/GUI/UI19.png" id="1_h75oo"]
+
+[node name="按钮界面" type="TextureRect"]
+offset_right = 40.0
+offset_bottom = 40.0
+texture = ExtResource("1_h75oo")
