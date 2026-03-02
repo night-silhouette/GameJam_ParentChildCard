@@ -1,8 +1,11 @@
-[gd_scene load_steps=12 format=3 uid="uid://c5jghvjdypfe7"]
+[gd_scene load_steps=15 format=3 uid="uid://c5jghvjdypfe7"]
 
 [ext_resource type="Texture2D" uid="uid://kd787lop3kko" path="res://asset（素材-美术和音乐）/GUI/UI2.png" id="1_4y8v4"]
+[ext_resource type="Script" uid="uid://c03fvfgcyxqfd" path="res://game_scene/main/总ui.gd" id="1_aci1m"]
+[ext_resource type="PackedScene" uid="uid://kg260t0l1qv4" path="res://game_scene/menu/按钮界面.tscn" id="1_fy1o5"]
 [ext_resource type="Texture2D" uid="uid://3wdprvmx20rw" path="res://asset（素材-美术和音乐）/GUI/剑UI .png" id="1_o50ue"]
 [ext_resource type="Script" uid="uid://bxeidr7pjh1j6" path="res://game_scene/main/右.gd" id="2_30v7v"]
+[ext_resource type="Script" uid="uid://dyd0eh3h6go" path="res://game_scene/main/边框.gd" id="3_4mmu1"]
 [ext_resource type="Script" uid="uid://j4lcgp0sggpo" path="res://game_scene/main/下.gd" id="3_vf881"]
 [ext_resource type="Texture2D" uid="uid://c6vfyyncgw66b" path="res://asset（素材-美术和音乐）/GUI/UI7.png" id="5_kyajc"]
 [ext_resource type="Texture2D" uid="uid://bs4uq6gwmakq5" path="res://asset（素材-美术和音乐）/GUI/UI10 .png" id="5_w2oy5"]
@@ -105,6 +108,7 @@ anchors_preset = 0
 offset_right = 1152.0
 offset_bottom = 648.0
 size_flags_horizontal = 0
+script = ExtResource("1_aci1m")
 metadata/_edit_lock_ = true
 
 [node name="背景" type="ColorRect" parent="总UI"]
@@ -125,6 +129,14 @@ offset_right = 1152.0
 offset_bottom = 648.0
 metadata/_edit_lock_ = true
 
+[node name="按钮界面" parent="总UI" instance=ExtResource("1_fy1o5")]
+layout_mode = 0
+offset_left = -64.0
+offset_top = 32.0
+offset_right = 1215.0
+offset_bottom = 1935.0
+scale = Vector2(0.2846036, 0.27719468)
+
 [node name="边框" type="Control" parent="总UI"]
 z_index = 10
 layout_mode = 1
@@ -134,6 +146,7 @@ anchor_bottom = 1.0
 offset_left = -8.064
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("3_4mmu1")
 metadata/_edit_lock_ = true
 
 [node name="左右" type="Control" parent="总UI/边框"]
@@ -244,7 +257,7 @@ libraries = {
 &"": SubResource("AnimationLibrary_o50ue")
 }
 
-[node name="TextureRect" type="TextureRect" parent="总UI/边框"]
+[node name="枪（之后需要换人物动画）" type="TextureRect" parent="总UI/边框"]
 z_index = 3
 layout_mode = 0
 offset_left = 992.00006
@@ -254,6 +267,7 @@ offset_bottom = 672.4217
 rotation = 0.8978362
 texture = ExtResource("5_kyajc")
 expand_mode = 1
+metadata/_edit_lock_ = true
 
 [node name="装饰" type="Control" parent="总UI"]
 z_index = 10
@@ -282,3 +296,8 @@ script = ExtResource("6_w2oy5")
 speed = 0.5
 amplitude = 26.0
 ro_speed = 0.05
+
+[node name="内容" type="Control" parent="总UI"]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
