@@ -1,13 +1,12 @@
 package main
 
 import (
-	"pcc_card/application/service"
 	"pcc_card/infra/db"
-	"pcc_card/presentation/route"
+	"pcc_card/infra/repo"
 )
 
 func main() {
-	db.Init()
-	service.Init()
-	route.Init()
+	DB := db.ConnectDB()
+	user_repo := repo.New_repo[*repo.User_repo_impl](DB)
+	
 }

@@ -1,13 +1,17 @@
 package service
 
 import (
-	"pcc_card/application/repo"
+	"pcc_card/infra/repo"
 )
 
-type User_service struct {
+type user_service interface {
+	Service
+}
+
+type User_service_impl struct {
 	repo repo.User_repo
 }
 
-func NewUserService(repo repo.User_repo) *User_service {
-	return &User_service{repo}
+func (u *User_service_impl) Set_repo(repo *repo.Repo) {
+	return
 }

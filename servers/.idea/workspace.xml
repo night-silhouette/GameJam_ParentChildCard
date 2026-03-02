@@ -5,15 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="760cea56-5efb-4b56-8acc-717cb714ebef" name="更改" comment="">
-      <change afterPath="$PROJECT_DIR$/src/presentation/response/response.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/repo/user_repo.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/infra/repo/user_repo.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/application/service/user_service.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/service/user_service.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/cmd/main/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/cmd/main/main.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/infra/db/db_connect.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/infra/db/db_connect.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/infra/db/users.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/infra/db/users.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/presentation/route/response.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/presentation/route/route.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/presentation/route/route.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/开发文档/开发日志/2.22.txt" beforeDir="false" afterPath="$PROJECT_DIR$/开发文档/开发日志/2.22.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/infra/db/users.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/presentation/handler/user_handler.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/presentation/handler/user_handler.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -71,12 +69,13 @@
       <recent name="C:\Users\jixiegm\Desktop\GameJam_ParentChildCard\servers\开发文档\开发日志" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/infra" />
       <recent name="$PROJECT_DIR$/src/presentation/response" />
       <recent name="$PROJECT_DIR$/src/infra/config" />
       <recent name="$PROJECT_DIR$/src" />
     </key>
   </component>
-  <component name="RunManager" selected="Go 构建.go build main.go">
+  <component name="RunManager" selected="Go 构建.go build pcc_card/cmd/main">
     <configuration default="true" type="GoApplicationRunConfiguration" factoryName="Go Application">
       <module name="servers" />
       <working_directory value="$PROJECT_DIR$" />
@@ -113,8 +112,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Go 构建.go build main.go" />
         <item itemvalue="Go 构建.go build pcc_card/cmd/main" />
+        <item itemvalue="Go 构建.go build main.go" />
       </list>
     </recent_temporary>
   </component>
@@ -138,5 +137,16 @@
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
 </project>
