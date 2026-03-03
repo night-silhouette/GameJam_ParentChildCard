@@ -11,6 +11,7 @@ import (
 
 func main() {
 	DB := db.ConnectDB()
+	defer DB.Close()
 	route.Init()
 	user(DB)
 }

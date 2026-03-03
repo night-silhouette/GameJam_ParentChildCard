@@ -10,11 +10,11 @@ type User_handler interface {
 	Handler
 }
 type User_handler_impl struct {
-	s service.Service
+	s service.User_service
 }
 
-func (u *User_handler_impl) Set_service(service service.Service) {
-	u.s = service
+func (u *User_handler_impl) Set_service(svc service.Service) {
+	u.s = svc.(service.User_service)
 }
 
 func (u *User_handler_impl) Get() gin.HandlerFunc {
