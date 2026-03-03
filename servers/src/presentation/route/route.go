@@ -2,25 +2,34 @@ package route
 
 import (
 	"fmt"
-	"pcc_card/application/service"
 	"pcc_card/infra/config"
+	"pcc_card/presentation/handler"
 	"pcc_card/presentation/response"
 
 	"github.com/gin-gonic/gin"
 )
 
-func Init() {
-	r := gin.Default()
+var R *gin.Engine
 
-	r.GET("/ping", func(c *gin.Context) {
+func Init() {
+	R = gin.Default()
+
+	R.GET("/ping", func(c *gin.Context) {
 		response.Success(c, "pong")
 	})
-	user_v1 := r.Group("v1/user")
-
 	route_config := config.Read_route_info()
-	err := r.Run(fmt.Sprintf("%s:%d", route_config.Ip, route_config.Port))
+	err := R.Run(fmt.Sprintf("%s:%d", route_config.Ip, route_config.Port))
 	if err != nil {
 		fmt.Println("路由启动失败")
 		panic(err)
 	}
+}
+
+func Register_user_routes(h handler.User_handler) {
+	v1_user := R.Group("v1/user")
+	v1_user.GET("/", h.Get())
+	v1_user.POST("/", h.Post())
+	v1_user.PATCH("/", h.Patch())
+	v1_user.DELETE("/", h.Delete())
+	v1_user.PUT("/", h.Put())
 }

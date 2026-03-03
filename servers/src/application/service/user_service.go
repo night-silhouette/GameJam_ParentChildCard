@@ -9,9 +9,9 @@ type user_service interface {
 }
 
 type User_service_impl struct {
-	repo repo.User_repo
+	repo repo.Repo
 }
 
-func (u *User_service_impl) Set_repo(repo *repo.Repo) {
-	return
+func (u *User_service_impl) Set_repo(repo repo.Repo) {
+	u.repo = repo
 }
