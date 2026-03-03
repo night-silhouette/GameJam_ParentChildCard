@@ -1,0 +1,12 @@
+[gd_scene load_steps=2 format=3 uid="uid://br1x5mk6aygd1"]
+
+[ext_resource type="Texture2D" uid="uid://c8u0hmpbj3di" path="res://asset（素材-美术和音乐）/GUI/封面.png" id="1_xi3hy"]
+
+[node name="启动页面" type="Node2D"]
+
+[node name="TextureRect" type="TextureRect" parent="."]
+offset_right = 1152.0
+offset_bottom = 648.0
+texture = ExtResource("1_xi3hy")
+expand_mode = 1
+metadata/_edit_lock_ = true
