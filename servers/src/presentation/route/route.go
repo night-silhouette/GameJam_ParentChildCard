@@ -13,10 +13,12 @@ var R *gin.Engine
 
 func Init() {
 	R = gin.Default()
-
 	R.GET("/ping", func(c *gin.Context) {
 		response.Success(c, "pong")
 	})
+}
+
+func Run() {
 	route_config := config.Read_route_info()
 	err := R.Run(fmt.Sprintf("%s:%d", route_config.Ip, route_config.Port))
 	if err != nil {
@@ -26,7 +28,7 @@ func Init() {
 }
 
 func Register_user_routes(h handler.User_handler) {
-	v1_user := R.Group("v1/user")
+	v1_user := R.Group("/v1/user")
 	v1_user.GET("/", h.Get())
 	v1_user.POST("/", h.Post())
 	v1_user.PATCH("/", h.Patch())

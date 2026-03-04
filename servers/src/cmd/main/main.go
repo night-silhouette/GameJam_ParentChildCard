@@ -14,6 +14,8 @@ func main() {
 	defer DB.Close()
 	route.Init()
 	user(DB)
+	
+	route.Run()
 }
 
 func user(DB *sql.DB) {

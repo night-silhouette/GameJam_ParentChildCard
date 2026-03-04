@@ -35,16 +35,15 @@ func (r *User_repo_impl) Create(e *entity.User) error {
 }
 
 func (r *User_repo_impl) Get_by_name(name string) (*entity.User, error) {
-	query := "SELECT id, user_name, hash_password, FROM user WHERE user_name = $1"
+	query := "SELECT id, user_name, hash_password FROM user WHERE user_name = $1"
 	row := r.db.QueryRow(query, name)
 	e := entity.User{}
 	err := row.Scan(&e.Id, &e.Name, &e.Password)
 	return &e, err
-
 }
 
 func (r *User_repo_impl) Get_by_id(id int) (*entity.User, error) {
-	query := "SELECT id, user_name, hash_password, FROM user WHERE user_name = $1"
+	query := "SELECT id, user_name, hash_password FROM user WHERE user_name = $1"
 	row := r.db.QueryRow(query, id)
 	e := entity.User{}
 	err := row.Scan(&e.Id, &e.Name, &e.Password)

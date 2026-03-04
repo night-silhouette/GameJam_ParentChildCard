@@ -1,28 +1,30 @@
 package response
 
 import (
-	"github.com/gin-gonic/gin"
 	"net/http"
+	"pcc_card/global"
+
+	"github.com/gin-gonic/gin"
 )
 
 type response struct {
-	Code int    `json:"code"`
-	Msg  string `json:"msg"`
-	Data any    `json:"data"`
+	Code global.StatusCode `json:"code"`
+	Msg  string            `json:"msg"`
+	Data any               `json:"data"`
 }
 
 func Success(c *gin.Context, data any) {
 	c.JSON(http.StatusOK, response{
-		Code: 0,
-		Msg:  "success",
+		Code: global.StatusSuccess,
+		Msg:  global.StatusMsg[global.StatusSuccess],
 		Data: data,
 	})
 }
 
-func Fail(c *gin.Context, msg string) {
+func Fail(c *gin.Context, code global.StatusCode) {
 	c.JSON(http.StatusOK, response{
-		Code: 1,
-		Msg:  msg,
+		Code: code,
+		Msg:  global.StatusMsg[code],
 		Data: nil,
 	})
 }
