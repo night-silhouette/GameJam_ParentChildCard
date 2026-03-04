@@ -1,8 +1,8 @@
 [gd_scene load_steps=2 format=3 uid="uid://4m72jvqp8v3b"]
 
-[sub_resource type="GDScript" id="GDScript_6qpsp"]
+[ext_resource type="Script" uid="uid://cjq8ju7enqm73" path="res://game_scene/main/main.gd" id="1_4y8v4"]
 
 [node name="mian" type="Node2D"]
-script = SubResource("GDScript_6qpsp")
+script = ExtResource("1_4y8v4")
 
 [node name="Scence_Root" type="Node" parent="."]
