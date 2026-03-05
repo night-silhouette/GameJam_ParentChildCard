@@ -17,7 +17,6 @@ type Route_info struct {
 func Read_route_info() Route_info {
 	config := Route_info{}
 	err := json.Unmarshal(route_info_file, &config)
-	fmt.Println(config)
 	if err != nil {
 		fmt.Println("route info file err")
 		panic(err)
