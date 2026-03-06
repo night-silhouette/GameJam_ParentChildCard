@@ -14,6 +14,7 @@ const (
 	ResponseRequiredParamsMissing
 	ResponseDependentRecordsExist
 	ResponseNotImplemented
+	ResponseIncorrectPassword
 )
 
 var StatusMsg = map[ResponseStatusCode]string{
@@ -28,4 +29,5 @@ var StatusMsg = map[ResponseStatusCode]string{
 	ResponseRequiredParamsMissing: "参数值缺失",
 	ResponseDependentRecordsExist: "存在关联数据",
 	ResponseNotImplemented:        "接口未完善",
+	ResponseIncorrectPassword:     "密码错误",
 }

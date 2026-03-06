@@ -4,8 +4,6 @@ import (
 	_ "embed"
 	"encoding/json"
 	"fmt"
-
-	"golang.org/x/crypto/bcrypt"
 )
 
 //go:embed info/secret_key.json
@@ -22,6 +20,5 @@ func Read_secret_key() string {
 		fmt.Println("secret_key file err")
 		panic(err)
 	}
-	bytes, _ := bcrypt.GenerateFromPassword([]byte(config.Key), bcrypt.DefaultCost)
-	return string(bytes)
+	return config.Key
 }

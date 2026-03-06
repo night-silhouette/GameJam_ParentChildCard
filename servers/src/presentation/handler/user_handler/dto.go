@@ -1,8 +1,8 @@
 package user_handler
 
 type UserSearchReqDto struct {
-	ID   int    `form:"id" binding:"min=1"`
-	Name string `form:"name"`
+	ID   int    `form:"id"`
+	Name string `form:"name" binding:"max=32"`
 }
 type UserPostDto struct {
 	Name     string `form:"name" binding:"required,max=16"`

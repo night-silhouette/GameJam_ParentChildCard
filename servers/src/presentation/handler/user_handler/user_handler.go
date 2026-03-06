@@ -29,6 +29,7 @@ func (u *User_handler_impl) Get() gin.HandlerFunc {
 			response.Fail(c, global.ResponseInvalidReqParams)
 			return
 		}
+
 		if req.ID != 0 {
 			e, status := u.s.Find_user_by_id(req.ID)
 			if status == global.ResponseSuccess {

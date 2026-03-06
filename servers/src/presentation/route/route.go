@@ -3,6 +3,7 @@ package route
 import (
 	"fmt"
 	"pcc_card/infra/config"
+	"pcc_card/presentation/handler/token_handler"
 	"pcc_card/presentation/handler/user_handler"
 	"pcc_card/presentation/response"
 
@@ -29,6 +30,15 @@ func Run() {
 
 func Register_user_routes(h user_handler.User_handler) {
 	v1_user := R.Group("/v1/user")
+	v1_user.GET("/", h.Get())
+	v1_user.POST("/", h.Post())
+	v1_user.PATCH("/", h.Patch())
+	v1_user.DELETE("/", h.Delete())
+	v1_user.PUT("/", h.Put())
+}
+
+func Register_token_routes(h token_handler.Token_handler) {
+	v1_user := R.Group("/v1/token")
 	v1_user.GET("/", h.Get())
 	v1_user.POST("/", h.Post())
 	v1_user.PATCH("/", h.Patch())
