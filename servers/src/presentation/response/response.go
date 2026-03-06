@@ -8,23 +8,23 @@ import (
 )
 
 type response struct {
-	Code global.StatusCode `json:"code"`
-	Msg  string            `json:"msg"`
-	Data any               `json:"data"`
+	Code global.ResponseStatusCode `json:"code"`
+	Msg  string                    `json:"msg"`
+	Data any                       `json:"data"`
 }
 
 func Success(c *gin.Context, data any) {
 	c.JSON(http.StatusOK, response{
-		Code: global.StatusSuccess,
-		Msg:  global.StatusMsg[global.StatusSuccess],
+		Code: global.ResponseSuccess,
+		Msg:  global.StatusMsg[global.ResponseSuccess],
 		Data: data,
 	})
 }
 
-func Fail(c *gin.Context, code global.StatusCode) {
+func Fail(c *gin.Context, code global.ResponseStatusCode) {
 	c.JSON(http.StatusOK, response{
 		Code: code,
 		Msg:  global.StatusMsg[code],
-		Data: nil,
+		Data: gin.H{},
 	})
 }

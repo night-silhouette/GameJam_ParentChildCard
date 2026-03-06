@@ -2,10 +2,11 @@ package UserService
 
 import (
 	"errors"
-	"github.com/golang-jwt/jwt/v5"
 	"pcc_card/global"
 	"pcc_card/infra/config"
 	"time"
+
+	"github.com/golang-jwt/jwt/v5"
 )
 
 var Key string
@@ -36,7 +37,7 @@ type Claims struct {
 	jwt.RegisteredClaims
 }
 
-func (u *User_service_impl) Is_valid_token(tokenString string) (int, global.StatusCode) {
+func (u *User_service_impl) Is_valid_token(tokenString string) (int, global.ResponseStatusCode) {
 	claims := &Claims{}
 	_, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
 		keyBytes := []byte(Key)
@@ -44,16 +45,16 @@ func (u *User_service_impl) Is_valid_token(tokenString string) (int, global.Stat
 	})
 	if err != nil {
 		if errors.Is(err, jwt.ErrTokenExpired) {
-			return 0, global.StatusTokenExpired
+			return 0, global.ResponseTokenExpired
 		}
 		if errors.Is(err, jwt.ErrSignatureInvalid) {
-			return 0, global.StatusInvalidToken
+			return 0, global.ResponseInvalidToken
 		}
 		if errors.Is(err, jwt.ErrTokenMalformed) {
-			return 0, global.StatusIncorrectTokenFormat
+			return 0, global.ResponseIncorrectTokenFormat
 		}
 	}
 	id := claims.UserId
-	return id, global.StatusSuccess
+	return id, global.ResponseSuccess
 
 }

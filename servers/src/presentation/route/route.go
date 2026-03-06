@@ -3,7 +3,7 @@ package route
 import (
 	"fmt"
 	"pcc_card/infra/config"
-	"pcc_card/presentation/handler"
+	"pcc_card/presentation/handler/user_handler"
 	"pcc_card/presentation/response"
 
 	"github.com/gin-gonic/gin"
@@ -27,7 +27,7 @@ func Run() {
 	}
 }
 
-func Register_user_routes(h handler.User_handler) {
+func Register_user_routes(h user_handler.User_handler) {
 	v1_user := R.Group("/v1/user")
 	v1_user.GET("/", h.Get())
 	v1_user.POST("/", h.Post())
