@@ -6,8 +6,6 @@ const (
 	ResponseSuccess ResponseStatusCode = iota
 	ResponseDataNotFound
 	ResponseInternalServersError
-	ResponseInvalidReqParamsName
-	ResponseInvalidReqParamsClass
 	ResponseInvalidReqParams
 	ResponseInvalidToken
 	ResponseTokenExpired
@@ -15,14 +13,13 @@ const (
 	ResponseDuplicateDataEntry
 	ResponseRequiredParamsMissing
 	ResponseDependentRecordsExist
+	ResponseNotImplemented
 )
 
 var StatusMsg = map[ResponseStatusCode]string{
 	ResponseSuccess:               "成功",
 	ResponseDataNotFound:          "数据没找到",
 	ResponseInternalServersError:  "服务器未知内部错误",
-	ResponseInvalidReqParamsName:  "非法请求参数名",
-	ResponseInvalidReqParamsClass: "非法请求参数类型",
 	ResponseInvalidReqParams:      "非法请求参数",
 	ResponseInvalidToken:          "非法token",
 	ResponseTokenExpired:          "token失效",
@@ -30,4 +27,5 @@ var StatusMsg = map[ResponseStatusCode]string{
 	ResponseDuplicateDataEntry:    "重复数据录入",
 	ResponseRequiredParamsMissing: "参数值缺失",
 	ResponseDependentRecordsExist: "存在关联数据",
+	ResponseNotImplemented:        "接口未完善",
 }

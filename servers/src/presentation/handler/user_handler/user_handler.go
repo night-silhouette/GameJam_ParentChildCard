@@ -26,7 +26,7 @@ func (u *User_handler_impl) Get() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var req UserSearchReqDto
 		if err := c.ShouldBindQuery(&req); err != nil {
-			response.Fail(c, global.ResponseInvalidReqParamsClass)
+			response.Fail(c, global.ResponseInvalidReqParams)
 			return
 		}
 		if req.ID != 0 {
@@ -48,7 +48,7 @@ func (u *User_handler_impl) Get() gin.HandlerFunc {
 				return
 			}
 		} else {
-			response.Fail(c, global.ResponseInvalidReqParamsName)
+			response.Fail(c, global.ResponseInvalidReqParams)
 			return
 		}
 
@@ -59,7 +59,7 @@ func (u *User_handler_impl) Post() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var data UserPostDto
 		if err := c.ShouldBind(&data); err != nil {
-			response.Fail(c, global.ResponseInvalidReqParamsClass)
+			response.Fail(c, global.ResponseInvalidReqParams)
 			return
 		}
 		if data.Name == "" || data.Password == "" {
@@ -72,7 +72,7 @@ func (u *User_handler_impl) Post() gin.HandlerFunc {
 			response.Fail(c, err)
 			return
 		}
-		response.Success(c, "创建成功")
+		response.Success(c, "ok")
 		return
 
 	}
@@ -80,7 +80,20 @@ func (u *User_handler_impl) Post() gin.HandlerFunc {
 
 func (u *User_handler_impl) Put() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		response.Success(c, "pong")
+		var req UserPutReqDto
+		if err := c.ShouldBind(&req); err != nil {
+			response.Fail(c, global.ResponseInvalidReqParams)
+			return
+		}
+		e := &entity.User{Id: req.Id, Name: req.Name, Password: req.Password}
+		err := u.s.Update_user(e)
+		if err != global.ResponseSuccess {
+			response.Fail(c, err)
+			return
+		}
+		response.Success(c, "ok")
+		return
+
 	}
 }
 
@@ -88,14 +101,22 @@ func (u *User_handler_impl) Delete() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var req UserDeleteReqDto
 		if err := c.ShouldBindQuery(&req); err != nil {
-			response.Fail(c, global.ResponseInvalidReqParamsClass)
+			response.Fail(c, global.ResponseInvalidReqParams)
+			return
 		}
-
+		e, _ := u.s.Find_user_by_id(req.ID)
+		err := u.s.Delete_user(e)
+		if err != global.ResponseSuccess {
+			response.Fail(c, err)
+			return
+		}
+		response.Success(c, "ok")
+		return
 	}
 }
 
 func (u *User_handler_impl) Patch() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		response.Success(c, "pong")
+		response.Fail(c, global.ResponseNotImplemented)
 	}
 }

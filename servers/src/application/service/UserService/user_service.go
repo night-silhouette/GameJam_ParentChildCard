@@ -18,6 +18,7 @@ type User_service interface {
 	Is_valid_token(tokenString string) (int, global.ResponseStatusCode)
 	Create_user(user *entity.User) global.ResponseStatusCode
 	Delete_user(e *entity.User) global.ResponseStatusCode
+	Update_user(e *entity.User) global.ResponseStatusCode
 }
 
 type User_service_impl struct {
@@ -67,4 +68,9 @@ func (u *User_service_impl) Delete_user(e *entity.User) global.ResponseStatusCod
 		return err
 	}
 	return global.ResponseSuccess
+}
+func (u *User_service_impl) Update_user(e *entity.User) global.ResponseStatusCode {
+	e.Password = u.hash_password(e.Password)
+	err := u.repo.Update(e)
+	return err
 }

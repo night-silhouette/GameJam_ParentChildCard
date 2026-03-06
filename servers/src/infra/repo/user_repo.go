@@ -21,7 +21,7 @@ type User_repo interface {
 	Create(e *entity.User) global.ResponseStatusCode
 	Get_by_name(name string) (*entity.User, global.ResponseStatusCode)
 	Get_by_id(id int) (*entity.User, global.ResponseStatusCode)
-	Update(e *entity.User) error
+	Update(e *entity.User) global.ResponseStatusCode
 	Delete(e *entity.User) global.ResponseStatusCode
 }
 
@@ -83,10 +83,17 @@ func (r *User_repo_impl) Get_by_id(id int) (*entity.User, global.ResponseStatusC
 
 }
 
-func (r *User_repo_impl) Update(e *entity.User) error {
+func (r *User_repo_impl) Update(e *entity.User) global.ResponseStatusCode {
 	query := "update users set user_name = $1, hash_password = $2 where id = $3"
-	_, err := r.db.Exec(query, e.Name, e.Password, e.Id)
-	return err
+	res, err := r.db.Exec(query, e.Name, e.Password, e.Id)
+	if err != nil {
+		return global.ResponseInternalServersError
+	}
+	count, _ := res.RowsAffected()
+	if count == 0 {
+		return global.ResponseDataNotFound
+	}
+	return global.ResponseSuccess
 }
 
 func (r *User_repo_impl) Delete(e *entity.User) global.ResponseStatusCode {

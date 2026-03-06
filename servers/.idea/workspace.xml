@@ -6,14 +6,11 @@
   <component name="ChangeListManager">
     <list default="true" id="760cea56-5efb-4b56-8acc-717cb714ebef" name="更改" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/application/service/UserService/token.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/service/UserService/token.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/application/service/UserService/user_service.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/service/UserService/user_service.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/cmd/main/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/cmd/main/main.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/global/StatusCode.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/global/StatusCode.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/infra/repo/user_repo.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/infra/repo/user_repo.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/presentation/handler/user_handler.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/presentation/handler/user_handler/user_handler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/presentation/response/response.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/presentation/response/response.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/presentation/route/route.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/presentation/route/route.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/presentation/handler/user_handler/dto.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/presentation/handler/user_handler/dto.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/presentation/handler/user_handler/user_handler.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/presentation/handler/user_handler/user_handler.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
