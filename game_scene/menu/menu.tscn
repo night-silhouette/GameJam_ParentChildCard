@@ -12,5 +12,3 @@ offset_right = 194.0
 offset_bottom = 138.0
 text = "client connect test
 "
-
-[node name="CanvasLayer" type="CanvasLayer" parent="."]

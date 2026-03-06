@@ -3,3 +3,5 @@
 /android/
 Bin/
 **/.DS_Store
+servers/src/infra/config/info/DB_info.json
+servers/src/infra/config/info/secret_key.json

@@ -1,0 +1,19 @@
+我把repo抽象成了单独的repo抽象，然后，给他添加了connectdb的函数约束，这样方便在main里注入
+
+golang 的思考模式和别的语言确实不同。他是interface管方法设计，然后配合一个实现的impl储存成员变量，这恒奇怪。
+是不是我多套了一层，有必要把方法抽离出来，变成接口吗
+或许是对的吧，反正他有一键实现的填充，再写一遍方法名也不算麻烦，把方法抽离出来确实也可以看到清楚一点
+我觉的repo他应该算是infra层的，我应该把他移过去，然后也要依赖倒转一下
+他在什么层不重要，重要的是，你不能把他的实现和定义放在不同层啊xdd
+
+好了，go语言是狗屎
+给顶层的repo设置一个模版构造函数，他只有*类型是实现的repo，所以只能传*，然后传进去通过*impl创建实例竟然tm有这么麻烦的
+要先创建空壳*impl实例然后通过反射解包他的类型，然后再通过反射创建实例，然后强转成repo。力竭了实在是
+我不想再理解一遍这个东西了，结果记录在这里吧
+func New_repo[T Repo](db *sql.DB) T {
+	tType := reflect.TypeOf((*T)(nil)).Elem() // 拿到 *User_repo_impl 的类型信息
+	newVal := reflect.New(tType.Elem())
+	repo := newVal.Interface().(T)
+	repo.Set_db(db)
+	return repo
+}
