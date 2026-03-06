@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3 uid="uid://bj0t6icebsk7q"]
+
+[ext_resource type="Texture2D" uid="uid://dhrwdntgf25sr" path="res://asset（素材-美术和音乐）/GUI/按钮UI（初始）.png" id="1_bb73u"]
+[ext_resource type="Texture2D" uid="uid://bnby8mhll428j" path="res://asset（素材-美术和音乐）/GUI/按钮UI（按下）.png" id="2_djrj0"]
+
+[node name="笑脸按钮" type="TextureButton"]
+z_index = 5
+offset_left = 168.0
+offset_top = -24.0
+offset_right = 1753.0
+offset_bottom = 1255.0
+toggle_mode = true
+keep_pressed_outside = true
+texture_normal = ExtResource("1_bb73u")
+texture_pressed = ExtResource("2_djrj0")
+stretch_mode = 0

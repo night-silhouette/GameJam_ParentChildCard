@@ -2,7 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://cmbyxqji45n0d" path="res://asset（素材-美术和音乐）/GUI/按钮UI一 .png" id="1_nw13a"]
 [ext_resource type="Texture2D" uid="uid://drf65lwar5d7l" path="res://asset（素材-美术和音乐）/GUI/按钮UI二.png" id="2_atn6e"]
-[ext_resource type="Script" uid="uid://cpliov7skn41j" path="res://game_scene/menu/头按钮.gd" id="3_atn6e"]
+[ext_resource type="Script" uid="uid://cpliov7skn41j" path="res://game_ui/menu/头按钮.gd" id="3_atn6e"]
 
 [node name="头按钮" type="TextureButton"]
 z_index = 5

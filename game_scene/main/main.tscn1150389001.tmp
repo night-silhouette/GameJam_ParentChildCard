@@ -6,6 +6,3 @@
 script = ExtResource("1_4y8v4")
 
 [node name="Scence_Root" type="Node" parent="."]
-
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
-layer = 6
