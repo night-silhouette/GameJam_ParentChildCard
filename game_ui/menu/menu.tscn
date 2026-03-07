@@ -158,10 +158,10 @@ ro_speed = 0.05
 
 [node name="按钮界面" parent="总UI" instance=ExtResource("4_54oca")]
 layout_mode = 0
-offset_left = -56.0
-offset_top = 16.000002
-offset_right = 1223.0
-offset_bottom = 1919.0
+offset_left = -43.0
+offset_top = 1.0000019
+offset_right = 1236.0
+offset_bottom = 1904.0
 scale = Vector2(0.2846036, 0.27719468)
 
 [node name="边框" type="Control" parent="总UI"]
