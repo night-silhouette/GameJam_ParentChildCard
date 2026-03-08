@@ -6,3 +6,5 @@ Bin/
 servers/src/infra/config/info/DB_info.json
 servers/src/infra/config/info/secret_key.json
 servers/src/infra/config/info/route_info.json
+servers/src/bin/*
+!servers/src/bin/.gitkeep

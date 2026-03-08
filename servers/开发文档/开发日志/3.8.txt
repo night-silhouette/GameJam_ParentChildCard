@@ -1,0 +1,5 @@
+忽略文件夹内容但保留文件夹本身
+servers/src/bin/*
+!servers/src/bin/.gitkeep
+
+pm2 重命名 pm2 restart servers --name "物理碰撞小球web小游戏"
