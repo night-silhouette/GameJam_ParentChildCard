@@ -4,7 +4,7 @@
 [ext_resource type="Script" uid="uid://dbifiqse10jtu" path="res://game_scene/login/login_scence.gd" id="1_qrb2d"]
 [ext_resource type="Texture2D" uid="uid://bx435k0sql00d" path="res://asset（素材-美术和音乐）/游戏封面-海报-插画/游戏海报2.jpg" id="2_alorh"]
 
-[node name="登录页面" type="Node2D"]
+[node name="menu_backgrounf" type="Node2D"]
 script = ExtResource("1_qrb2d")
 
 [node name="background1" type="TextureRect" parent="."]

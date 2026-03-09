@@ -1,0 +1,68 @@
+[gd_scene load_steps=6 format=3 uid="uid://d2g5id28y0yre"]
+
+[ext_resource type="Texture2D" uid="uid://ceytgatyqr5vm" path="res://asset（素材-美术和音乐）/GUI/奶酪的制作工艺 （大块的奶酪）.png" id="1_0ixd5"]
+[ext_resource type="Script" uid="uid://dx3qm1nmglgig" path="res://game_ui/menu/cheese.gd" id="2_m73gy"]
+
+[sub_resource type="Animation" id="Animation_oo6xv"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+
+[sub_resource type="Animation" id="Animation_psaq6"]
+resource_name = "抖动"
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [0.0, 0.13962634, -0.13962634, 0.10471976, -0.10471976, -0.10471976, -0.10471976, -0.10471976]
+}
+tracks/1/type = "method"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.1),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"spawn_piece"
+}]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_l21x2"]
+_data = {
+&"RESET": SubResource("Animation_oo6xv"),
+&"抖动": SubResource("Animation_psaq6")
+}
+
+[node name="cheese" type="TextureRect"]
+offset_right = 40.0
+offset_bottom = 40.0
+pivot_offset = Vector2(882, 513)
+texture = ExtResource("1_0ixd5")
+script = ExtResource("2_m73gy")
+
+[node name="cheese_animationpalyer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_l21x2")
+}
+autoplay = "抖动"
