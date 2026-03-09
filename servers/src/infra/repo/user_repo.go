@@ -34,8 +34,8 @@ func (r *User_repo_impl) Set_db(db *sql.DB) {
 }
 
 func (r *User_repo_impl) Create(e *entity.User) global.ResponseStatusCode {
-	query := "INSERT INTO users (user_name, hash_password) VALUES ($1,$2)"
-	_, err := r.db.Exec(query, e.Name, e.Password)
+	query := "INSERT INTO users (user_name, hash_password,is_admin) VALUES ($1,$2,$3)"
+	_, err := r.db.Exec(query, e.Name, e.Password, e.Is_admin)
 	if err != nil {
 		var pgErr *pgconn.PgError
 		if errors.As(err, &pgErr) {
@@ -51,10 +51,10 @@ func (r *User_repo_impl) Create(e *entity.User) global.ResponseStatusCode {
 }
 
 func (r *User_repo_impl) Get_by_name(name string) (*entity.User, global.ResponseStatusCode) {
-	query := "SELECT id, user_name, hash_password FROM users WHERE user_name = $1"
+	query := "SELECT id, user_name, hash_password, is_admin FROM users WHERE user_name = $1"
 	row := r.db.QueryRow(query, name)
 	e := entity.User{}
-	err := row.Scan(&e.Id, &e.Name, &e.Password)
+	err := row.Scan(&e.Id, &e.Name, &e.Password, &e.Is_admin)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return &entity.User{}, global.ResponseDataNotFound
@@ -67,10 +67,10 @@ func (r *User_repo_impl) Get_by_name(name string) (*entity.User, global.Response
 }
 
 func (r *User_repo_impl) Get_by_id(id int) (*entity.User, global.ResponseStatusCode) {
-	query := "SELECT id, user_name, hash_password FROM users WHERE id = $1"
+	query := "SELECT id, user_name, hash_password,is_admin FROM users WHERE id = $1"
 	row := r.db.QueryRow(query, id)
 	e := entity.User{}
-	err := row.Scan(&e.Id, &e.Name, &e.Password)
+	err := row.Scan(&e.Id, &e.Name, &e.Password, &e.Is_admin)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return &entity.User{}, global.ResponseDataNotFound

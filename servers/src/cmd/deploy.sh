@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# 检查是否输入了版本参数 (如 v1, v2)
 if [ -z "$1" ]; then
     echo "使用错误: 请提供版本号 (例如: ./deploy.sh v2)"
     exit 1
@@ -11,9 +10,7 @@ OUTPUT_BIN="../bin/${VERSION}/pcc_card_${VERSION}"
 PM2="/www/server/nodejs/v22.12.0/lib/node_modules/pm2/bin/pm2"
 
 CURRENT_NUM=${VERSION#v}
-# 2. 进行减法运算 (使用 $(( )) 语法)
 PREV_NUM=$((CURRENT_NUM - 1))
-# 3. 拼接回字符串格式 "v0"
 PREV_VERSION="v${PREV_NUM}"
 
 echo "开始构建项目版本: ${VERSION}..."

@@ -22,7 +22,17 @@ func (u *Token_handler_impl) Set_service(svc service.Service) {
 }
 func (u *Token_handler_impl) Get() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		response.Fail(c, global.ResponseNotImplemented)
+		var req TokenGetDto
+		if err := c.ShouldBindQuery(&req); err != nil {
+			response.Fail(c, global.ResponseInvalidReqParams)
+			return
+		}
+		_, err := u.s.Is_valid_token(req.Token)
+		if err != global.ResponseSuccess {
+			response.Fail(c, err)
+			return
+		}
+		response.Success(c, global.ResponseSuccess)
 		return
 	}
 }

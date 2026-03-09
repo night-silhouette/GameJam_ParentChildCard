@@ -67,7 +67,7 @@ func (u *User_handler_impl) Post() gin.HandlerFunc {
 			response.Fail(c, global.ResponseRequiredParamsMissing)
 			return
 		}
-		e := &entity.User{Id: -1, Name: data.Name, Password: data.Password}
+		e := &entity.User{Id: -1, Name: data.Name, Password: data.Password, Is_admin: false}
 		err := u.s.Create_user(e)
 		if err != global.ResponseSuccess {
 			response.Fail(c, err)
