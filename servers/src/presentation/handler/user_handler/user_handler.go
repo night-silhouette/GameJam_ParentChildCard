@@ -24,6 +24,18 @@ func (u *User_handler_impl) Set_service(svc service.Service) {
 
 func (u *User_handler_impl) Get() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		is_admin := c.GetBool("is_admin")
+		user_id := c.GetInt("id")
+
+		if !is_admin {
+			e, err := u.s.Find_user_by_id(user_id)
+			if err != global.ResponseSuccess {
+				response.Fail(c, err)
+				return
+			}
+			response.Success(c, e)
+			return
+		}
 		var req UserSearchReqDto
 		if err := c.ShouldBindQuery(&req); err != nil {
 			response.Fail(c, global.ResponseInvalidReqParams)
@@ -81,9 +93,15 @@ func (u *User_handler_impl) Post() gin.HandlerFunc {
 
 func (u *User_handler_impl) Put() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		is_admin := c.GetBool("is_admin")
+		user_id := c.GetInt("id")
 		var req UserPutReqDto
 		if err := c.ShouldBind(&req); err != nil {
 			response.Fail(c, global.ResponseInvalidReqParams)
+			return
+		}
+		if !is_admin && user_id != req.Id {
+			response.Fail(c, global.ResponseForbidden)
 			return
 		}
 		e := &entity.User{Id: req.Id, Name: req.Name, Password: req.Password}
@@ -100,12 +118,20 @@ func (u *User_handler_impl) Put() gin.HandlerFunc {
 
 func (u *User_handler_impl) Delete() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		is_admin := c.GetBool("is_admin")
+		user_id := c.GetInt("id")
+		var id int
 		var req UserDeleteReqDto
 		if err := c.ShouldBindQuery(&req); err != nil {
 			response.Fail(c, global.ResponseInvalidReqParams)
 			return
 		}
-		e, _ := u.s.Find_user_by_id(req.ID)
+		id = req.ID
+		if !is_admin && user_id != id {
+			response.Fail(c, global.ResponseForbidden)
+			return
+		}
+		e, _ := u.s.Find_user_by_id(id)
 		err := u.s.Delete_user(e)
 		if err != global.ResponseSuccess {
 			response.Fail(c, err)

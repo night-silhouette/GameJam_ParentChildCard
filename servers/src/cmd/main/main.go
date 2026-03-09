@@ -26,6 +26,6 @@ func user(DB *sql.DB) {
 	user_service := service.New_service[*UserService.User_service_impl](user_repo)
 	user_handler := handler.New_handler[*user_handler.User_handler_impl](user_service)
 	token_handler := handler.New_handler[*token_handler.Token_handler_impl](user_service)
-	route.Register_user_routes(user_handler)
 	route.Register_token_routes(token_handler)
+	route.Register_user_routes(user_handler)
 }
