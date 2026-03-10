@@ -1,0 +1,20 @@
+*部署流程
+
+build编译项目
+GOOS=linux GOARCH=amd64 go build -o ../bin/pcc_card_v1 ./main/main.go
+
+上传服务器，并持久化
+scp -r 文件夹路径 root@120.26.145.68:/root/project 他是会创建一个新的工程文件夹在这个project目录下面
+ssh root@120.26.145.68
+pm2 start ./file
+
+开放防火墙
+sudo ufw allow 8080/tcp
+sudo ufw reload
+
+
+流程***
+GOOS=linux GOARCH=amd64 go build -o ../bin/v1/pcc_card_v1 ./main/main.go
+scp -r ../bin/v1 root@120.26.145.68:/root/pcc_servers
+ssh root@120.26.145.68
+pm2 start ./pcc_servers/v1/pcc_card_v1

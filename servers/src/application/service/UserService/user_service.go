@@ -5,6 +5,7 @@ import (
 	"pcc_card/application/service"
 	"pcc_card/global"
 	"pcc_card/infra/repo"
+	"pcc_card/infra/repo/user_repo"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -14,19 +15,19 @@ type User_service interface {
 	Find_user_by_name(name string) (*entity.User, global.ResponseStatusCode)
 	Find_user_by_id(id int) (*entity.User, global.ResponseStatusCode)
 	Check_password(id int, password string) global.ResponseStatusCode
-	Release_token(userID int) string
-	Is_valid_token(tokenString string) (int, global.ResponseStatusCode)
+	Release_token(userID int) (string, global.ResponseStatusCode)
+	Is_valid_token(tokenString string) (int, bool, global.ResponseStatusCode)
 	Create_user(user *entity.User) global.ResponseStatusCode
 	Delete_user(e *entity.User) global.ResponseStatusCode
 	Update_user(e *entity.User) global.ResponseStatusCode
 }
 
 type User_service_impl struct {
-	repo repo.User_repo
+	repo user_repo.User_repo
 }
 
 func (u *User_service_impl) Set_repo(r repo.Repo) {
-	u.repo = r.(repo.User_repo)
+	u.repo = r.(user_repo.User_repo)
 	u.Init_key()
 }
 func (u *User_service_impl) Find_user_by_name(name string) (*entity.User, global.ResponseStatusCode) {
