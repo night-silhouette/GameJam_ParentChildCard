@@ -1,4 +1,4 @@
-package repo
+package user_repo
 
 import (
 	"database/sql"
@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"pcc_card/application/entity"
 	"pcc_card/global"
+	"pcc_card/infra/repo"
 
 	"github.com/jackc/pgx/v5/pgconn"
 )
@@ -17,7 +18,7 @@ import (
 //create_at
 
 type User_repo interface {
-	Repo
+	repo.Repo
 	Create(e *entity.User) global.ResponseStatusCode
 	Get_by_name(name string) (*entity.User, global.ResponseStatusCode)
 	Get_by_id(id int) (*entity.User, global.ResponseStatusCode)
