@@ -38,6 +38,7 @@ func Register_user_routes(h user_handler.User_handler) {
 }
 
 func Register_token_routes(h token_handler.Token_handler) {
+	R.Use(h.Middleware_token_check())
 	v1_user := R.Group("/v1/token")
 	v1_user.GET("/", h.Get())
 	v1_user.POST("/", h.Post())

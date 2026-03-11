@@ -2,8 +2,8 @@
 
 [ext_resource type="PackedScene" uid="uid://pmiymeegg054" path="res://game_ui/menu/边框.tscn" id="1_qfxjv"]
 [ext_resource type="PackedScene" uid="uid://d2g5id28y0yre" path="res://game_ui/menu/cheese.tscn" id="2_nr1r5"]
-[ext_resource type="Texture2D" uid="uid://dpyg584r0tv21" path="res://asset（素材-美术和音乐）/GUI/我不是水管 .png" id="3_nr1r5"]
 [ext_resource type="PackedScene" uid="uid://wvj1qln41qo6" path="res://game_ui/menu/手柄.tscn" id="4_7e4nj"]
+[ext_resource type="Texture2D" uid="uid://cgxvptm58j2v4" path="res://asset（素材-美术和音乐）/使用素材/战斗外/游戏初始界面/水管.png" id="4_ja110"]
 
 [node name="menu_ui" type="Control"]
 layout_mode = 3
@@ -13,31 +13,40 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
+[node name="ColorRect" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+metadata/_edit_lock_ = true
+
 [node name="边框" parent="." instance=ExtResource("1_qfxjv")]
 layout_mode = 1
 
-[node name="TextureRect" type="TextureRect" parent="."]
+[node name="手柄" parent="." instance=ExtResource("4_7e4nj")]
 layout_mode = 0
-offset_left = -512.0
-offset_top = 72.0
-offset_right = 1250.0
-offset_bottom = 1352.0
-scale = Vector2(0.7585881, 0.39506093)
-texture = ExtResource("3_nr1r5")
+offset_left = -167.99997
+offset_top = 191.99998
+offset_right = 1739.0
+offset_bottom = 1472.0
+rotation = 1.5707964
+scale = Vector2(0.1854808, 0.1854808)
+
+[node name="电线" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = -40.0
+offset_top = 176.0
+offset_right = 965.25183
+offset_bottom = 1211.0
+scale = Vector2(0.5650326, 0.38797444)
+texture = ExtResource("4_ja110")
 
 [node name="cheese" parent="." instance=ExtResource("2_nr1r5")]
 layout_mode = 0
-offset_left = -328.0
-offset_top = -264.0
-offset_right = 1436.0
-offset_bottom = 762.0
-scale = Vector2(0.26268855, 0.2533893)
-
-[node name="手柄" parent="." instance=ExtResource("4_7e4nj")]
-layout_mode = 0
-offset_left = 328.00006
-offset_top = 104.000244
-offset_right = 2235.0
-offset_bottom = 1384.0002
-rotation = 1.5707964
-scale = Vector2(0.2516126, 0.2516126)
+offset_left = -232.00003
+offset_top = -296.00003
+offset_right = 1532.0
+offset_bottom = 730.0
+scale = Vector2(0.13127445, 0.1266273)

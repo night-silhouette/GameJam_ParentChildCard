@@ -1,0 +1,21 @@
+[gd_scene load_steps=4 format=3 uid="uid://lwlayl41iys2"]
+
+[ext_resource type="Script" uid="uid://dbifiqse10jtu" path="res://game_scene/login/login_scence.gd" id="1_t7hfh"]
+[ext_resource type="Texture2D" uid="uid://uyykdgeh11mt" path="res://asset（素材-美术和音乐）/使用素材/战斗外/游戏初始界面/游戏海报1.jpg" id="2_u08su"]
+[ext_resource type="Texture2D" uid="uid://1keltb7tuq0f" path="res://asset（素材-美术和音乐）/使用素材/战斗外/游戏初始界面/游戏海报2.jpg" id="3_iqdk0"]
+
+[node name="menu_backgrounf" type="Node2D"]
+script = ExtResource("1_t7hfh")
+
+[node name="background1" type="TextureRect" parent="."]
+offset_right = 1152.0
+offset_bottom = 648.0
+texture = ExtResource("2_u08su")
+expand_mode = 1
+
+[node name="background2" type="TextureRect" parent="."]
+visible = false
+offset_right = 1152.0
+offset_bottom = 648.0
+texture = ExtResource("3_iqdk0")
+expand_mode = 1

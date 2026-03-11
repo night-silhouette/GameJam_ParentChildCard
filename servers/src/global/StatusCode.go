@@ -15,6 +15,8 @@ const (
 	ResponseDependentRecordsExist
 	ResponseNotImplemented
 	ResponseIncorrectPassword
+	ResponseTokenMissing
+	ResponseForbidden
 )
 
 var StatusMsg = map[ResponseStatusCode]string{
@@ -25,9 +27,11 @@ var StatusMsg = map[ResponseStatusCode]string{
 	ResponseInvalidToken:          "非法token",
 	ResponseTokenExpired:          "token失效",
 	ResponseIncorrectTokenFormat:  "token格式错误",
+	ResponseTokenMissing:          "token缺失",
 	ResponseDuplicateDataEntry:    "重复数据录入",
 	ResponseRequiredParamsMissing: "参数值缺失",
 	ResponseDependentRecordsExist: "存在关联数据",
 	ResponseNotImplemented:        "接口未完善",
 	ResponseIncorrectPassword:     "密码错误",
+	ResponseForbidden:             "权限不足",
 }

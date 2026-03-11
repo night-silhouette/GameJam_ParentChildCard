@@ -15,12 +15,12 @@ func _process(delta: float) -> void:
 	
 
 func handle_movement() -> void:#大小一致和对游戏界面最中心的中心对称。
-				Duichen.position.x=2*x -  position.x - size.x;
-				Duichen.size.x = size.x;
-				
-				Duichen.position.y = position.y;
-				Duichen.size.y = size.y;
+	Duichen.position.x=2*x -  position.x -size.x * scale.x;
+	Duichen.size.x = size.x*scale.x;
 	
+	Duichen.position.y = position.y;
+	Duichen.size.y = size.y;
+
 func handle_animation() -> void:#单纯播放动画。
 	
 	animationpalyer.play("边框进入");
