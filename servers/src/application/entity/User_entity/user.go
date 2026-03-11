@@ -1,4 +1,4 @@
-package entity
+package User_entity
 
 type User struct {
 	Id       int    `json:"id"`

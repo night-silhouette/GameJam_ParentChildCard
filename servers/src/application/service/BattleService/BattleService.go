@@ -14,6 +14,7 @@ type battleServiceimpl struct {
 	repo battle_repo.BattleRepo
 }
 
-func (u *battleServiceimpl) Set_repo(r repo.Repo) {
+func (u *battleServiceimpl) Set_repo(r repo.Repo) { //注入对外接口
 	u.repo = r.(battle_repo.BattleRepo)
+
 }

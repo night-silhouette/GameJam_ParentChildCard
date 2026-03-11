@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"pcc_card/application/entity"
+	"pcc_card/application/entity/User_entity"
 	"pcc_card/global"
 	"pcc_card/infra/repo"
 
@@ -19,11 +19,11 @@ import (
 
 type User_repo interface {
 	repo.Repo
-	Create(e *entity.User) global.ResponseStatusCode
-	Get_by_name(name string) (*entity.User, global.ResponseStatusCode)
-	Get_by_id(id int) (*entity.User, global.ResponseStatusCode)
-	Update(e *entity.User) global.ResponseStatusCode
-	Delete(e *entity.User) global.ResponseStatusCode
+	Create(e *User_entity.User) global.ResponseStatusCode
+	Get_by_name(name string) (*User_entity.User, global.ResponseStatusCode)
+	Get_by_id(id int) (*User_entity.User, global.ResponseStatusCode)
+	Update(e *User_entity.User) global.ResponseStatusCode
+	Delete(e *User_entity.User) global.ResponseStatusCode
 }
 
 type User_repo_impl struct { //repo的实现
@@ -34,7 +34,7 @@ func (r *User_repo_impl) Set_db(db *sql.DB) {
 	r.db = db
 }
 
-func (r *User_repo_impl) Create(e *entity.User) global.ResponseStatusCode {
+func (r *User_repo_impl) Create(e *User_entity.User) global.ResponseStatusCode {
 	query := "INSERT INTO users (user_name, hash_password,is_admin) VALUES ($1,$2,$3)"
 	_, err := r.db.Exec(query, e.Name, e.Password, e.Is_admin)
 	if err != nil {
@@ -51,40 +51,40 @@ func (r *User_repo_impl) Create(e *entity.User) global.ResponseStatusCode {
 	return global.ResponseSuccess
 }
 
-func (r *User_repo_impl) Get_by_name(name string) (*entity.User, global.ResponseStatusCode) {
+func (r *User_repo_impl) Get_by_name(name string) (*User_entity.User, global.ResponseStatusCode) {
 	query := "SELECT id, user_name, hash_password, is_admin FROM users WHERE user_name = $1"
 	row := r.db.QueryRow(query, name)
-	e := entity.User{}
+	e := User_entity.User{}
 	err := row.Scan(&e.Id, &e.Name, &e.Password, &e.Is_admin)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return &entity.User{}, global.ResponseDataNotFound
+			return &User_entity.User{}, global.ResponseDataNotFound
 		} else {
 			fmt.Println("sql err", err)
-			return &entity.User{}, global.ResponseInternalServersError
+			return &User_entity.User{}, global.ResponseInternalServersError
 		}
 	}
 	return &e, global.ResponseSuccess
 }
 
-func (r *User_repo_impl) Get_by_id(id int) (*entity.User, global.ResponseStatusCode) {
+func (r *User_repo_impl) Get_by_id(id int) (*User_entity.User, global.ResponseStatusCode) {
 	query := "SELECT id, user_name, hash_password,is_admin FROM users WHERE id = $1"
 	row := r.db.QueryRow(query, id)
-	e := entity.User{}
+	e := User_entity.User{}
 	err := row.Scan(&e.Id, &e.Name, &e.Password, &e.Is_admin)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return &entity.User{}, global.ResponseDataNotFound
+			return &User_entity.User{}, global.ResponseDataNotFound
 		} else {
 			fmt.Println("sql err", err)
-			return &entity.User{}, global.ResponseInternalServersError
+			return &User_entity.User{}, global.ResponseInternalServersError
 		}
 	}
 	return &e, global.ResponseSuccess
 
 }
 
-func (r *User_repo_impl) Update(e *entity.User) global.ResponseStatusCode {
+func (r *User_repo_impl) Update(e *User_entity.User) global.ResponseStatusCode {
 	query := "update users set user_name = $1, hash_password = $2 where id = $3"
 	res, err := r.db.Exec(query, e.Name, e.Password, e.Id)
 	if err != nil {
@@ -97,7 +97,7 @@ func (r *User_repo_impl) Update(e *entity.User) global.ResponseStatusCode {
 	return global.ResponseSuccess
 }
 
-func (r *User_repo_impl) Delete(e *entity.User) global.ResponseStatusCode {
+func (r *User_repo_impl) Delete(e *User_entity.User) global.ResponseStatusCode {
 	query := "delete from users where id = $1"
 	res, err := r.db.Exec(query, e.Id)
 	if err != nil {

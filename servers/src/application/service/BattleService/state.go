@@ -1,10 +1,8 @@
 package BattleService
 
-import "pcc_card/application/entity"
-
 type State interface {
-	enter(ctx entity.BattleCtx)
-	exit(ctx entity.BattleCtx)
+	enter(ctx Ctx)
+	exit(ctx Ctx)
 }
 
 type StateMachine struct {
@@ -13,7 +11,7 @@ type StateMachine struct {
 	InitState    State
 }
 
-func (s *StateMachine) finish(ctx entity.BattleCtx, NextState State) {
+func (s *StateMachine) finish(ctx Ctx, NextState State) {
 	if s.CurrentState != nil {
 		s.CurrentState.exit(ctx)
 	}

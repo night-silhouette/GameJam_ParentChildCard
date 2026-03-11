@@ -1,7 +1,7 @@
 package user_handler
 
 import (
-	"pcc_card/application/entity"
+	"pcc_card/application/entity/User_entity"
 	"pcc_card/application/service"
 	"pcc_card/application/service/UserService"
 	"pcc_card/global"
@@ -79,7 +79,7 @@ func (u *User_handler_impl) Post() gin.HandlerFunc {
 			response.Fail(c, global.ResponseRequiredParamsMissing)
 			return
 		}
-		e := &entity.User{Id: -1, Name: data.Name, Password: data.Password, Is_admin: false}
+		e := &User_entity.User{Id: -1, Name: data.Name, Password: data.Password, Is_admin: false}
 		err := u.s.Create_user(e)
 		if err != global.ResponseSuccess {
 			response.Fail(c, err)
@@ -104,7 +104,7 @@ func (u *User_handler_impl) Put() gin.HandlerFunc {
 			response.Fail(c, global.ResponseForbidden)
 			return
 		}
-		e := &entity.User{Id: req.Id, Name: req.Name, Password: req.Password}
+		e := &User_entity.User{Id: req.Id, Name: req.Name, Password: req.Password}
 		err := u.s.Update_user(e)
 		if err != global.ResponseSuccess {
 			response.Fail(c, err)
