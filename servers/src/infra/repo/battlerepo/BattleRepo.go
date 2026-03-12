@@ -1,4 +1,4 @@
-package battle_repo
+package battlerepo
 
 import (
 	"database/sql"

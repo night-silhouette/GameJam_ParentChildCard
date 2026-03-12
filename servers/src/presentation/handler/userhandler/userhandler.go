@@ -1,4 +1,4 @@
-package user_handler
+package userhandler
 
 import (
 	"pcc_card/application/entity/User_entity"
@@ -13,6 +13,11 @@ import (
 
 type User_handler interface {
 	handler.Handler
+	Get() gin.HandlerFunc
+	Post() gin.HandlerFunc
+	Put() gin.HandlerFunc
+	Delete() gin.HandlerFunc
+	Patch() gin.HandlerFunc
 }
 type User_handler_impl struct {
 	s UserService.User_service

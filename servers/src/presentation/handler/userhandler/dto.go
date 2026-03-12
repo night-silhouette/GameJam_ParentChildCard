@@ -1,4 +1,4 @@
-package user_handler
+package userhandler
 
 type UserSearchReqDto struct {
 	ID   int    `form:"id"`

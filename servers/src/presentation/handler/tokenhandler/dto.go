@@ -1,4 +1,4 @@
-package token_handler
+package tokenhandler
 
 type TokenPostDto struct {
 	Name     string `form:"name" binding:"max=32,required"`

@@ -1,4 +1,4 @@
-package token_handler
+package tokenhandler
 
 import (
 	"net/http"
@@ -14,6 +14,11 @@ import (
 type Token_handler interface {
 	handler.Handler
 	Middleware_token_check() gin.HandlerFunc
+	Post() gin.HandlerFunc
+	Get() gin.HandlerFunc
+	Put() gin.HandlerFunc
+	Delete() gin.HandlerFunc
+	Patch() gin.HandlerFunc
 }
 type Token_handler_impl struct {
 	s UserService.User_service

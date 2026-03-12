@@ -187,3 +187,14 @@ func (m *MatchManager) MatchCatch() (bool, int, int) {
 
 	return true, id1, id2
 }
+
+func (m *MatchManager) IsHasID(id int) bool {
+	MatchPool.rwLock.RLock()
+	defer MatchPool.rwLock.RUnlock()
+	for _, data := range MatchPool.data {
+		if data.ID == id {
+			return true
+		}
+	}
+	return false
+}
