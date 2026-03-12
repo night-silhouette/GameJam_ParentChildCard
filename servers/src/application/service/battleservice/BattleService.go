@@ -1,4 +1,4 @@
-package BattleService
+package battleservice
 
 import (
 	"pcc_card/application/service"
@@ -10,10 +10,10 @@ type BattleService interface {
 	service.Service
 }
 
-type battleServiceimpl struct {
+type BattleServiceImpl struct {
 	repo battle_repo.BattleRepo
 }
 
-func (u *battleServiceimpl) Set_repo(r repo.Repo) { //注入对外接口
+func (u *BattleServiceImpl) Set_repo(r repo.Repo) { //注入对外接口
 	u.repo = r.(battle_repo.BattleRepo)
 }

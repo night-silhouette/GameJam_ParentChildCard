@@ -4,8 +4,10 @@ import (
 	"database/sql"
 	"pcc_card/application/service"
 	"pcc_card/application/service/UserService"
+	"pcc_card/application/service/battleservice"
 	"pcc_card/infra/db"
 	"pcc_card/infra/repo"
+	"pcc_card/infra/repo/battle_repo"
 	"pcc_card/infra/repo/user_repo"
 	"pcc_card/presentation/handler"
 	"pcc_card/presentation/handler/token_handler"
@@ -29,4 +31,11 @@ func user(DB *sql.DB) {
 	token_handler := handler.New_handler[*token_handler.Token_handler_impl](user_service)
 	route.Register_token_routes(token_handler)
 	route.Register_user_routes(user_handler)
+}
+
+func Battle(DB *sql.DB) {
+	BattleRepo := repo.New_repo[*battle_repo.BattleRepoImpl](DB)
+	service.New_service[*battleservice.BattleServiceImpl](BattleRepo)
+	battleservice.NewMatchManager()
+	battleservice.InitBattleContainer()
 }

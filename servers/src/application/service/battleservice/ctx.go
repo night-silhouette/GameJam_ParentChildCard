@@ -1,4 +1,4 @@
-package BattleService
+package battleservice
 
 type Ctx struct {
 	IDA    int

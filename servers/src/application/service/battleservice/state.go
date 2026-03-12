@@ -1,4 +1,4 @@
-package BattleService
+package battleservice
 
 type State interface {
 	enter(ctx Ctx)

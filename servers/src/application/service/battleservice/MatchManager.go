@@ -1,4 +1,4 @@
-package BattleService
+package battleservice
 
 import (
 	"math"
@@ -74,11 +74,13 @@ func ImplMatchPool() {
 
 //---------------------Match_pool----------------------------
 
-func NewMatchManager() MatchManager { //对外接口
+var MM MatchManager
+
+func NewMatchManager() { //对外接口
 	ImplMatchPool()
 	m := MatchManager{}
 	go m.StartMatchLoop()
-	return m
+	MM = m
 }
 
 func (m *MatchManager) StartMatchLoop() {
@@ -86,7 +88,13 @@ func (m *MatchManager) StartMatchLoop() {
 	for {
 		select {
 		case <-MatchCheck.C:
-			m.TryMatch()
+			Ok, id1, id2 := m.TryMatch()
+			if !Ok {
+				continue
+			} else {
+				BC.AddBattle(id1, id2)
+			}
+
 		}
 	}
 }
@@ -95,14 +103,14 @@ func (m *MatchManager) AddPool(id int) {
 	MatchPool.Add(id)
 }
 
-func (m *MatchManager) TryMatch() bool {
+func (m *MatchManager) TryMatch() (bool, int, int) {
 	NeedNum := m.GetRequiredNum()
 	NowNum := MatchPool.GetSize()
 	if NowNum >= NeedNum {
-		m.MatchCatch()
-		return true
+		_, id1, id2 := m.MatchCatch()
+		return true, id1, id2
 	}
-	return false
+	return false, -1, -1
 }
 
 func (m *MatchManager) GetRequiredNum() int {
@@ -124,13 +132,13 @@ func (m *MatchManager) UpdateMatchTimeRadio(MaxHadWaitTime float64) {
 	MatchPool.UpdateMatchTimeRadio(r)
 }
 
-func (m *MatchManager) MatchCatch() (int, int) {
+func (m *MatchManager) MatchCatch() (bool, int, int) {
 	MatchPool.rwLock.Lock()
 	defer MatchPool.rwLock.Unlock()
 
 	poolSize := len(MatchPool.data)
 	if poolSize < 2 {
-		return -1, -1
+		return false, -1, -1
 	}
 
 	weightList := make([]int, poolSize)
@@ -177,5 +185,5 @@ func (m *MatchManager) MatchCatch() (int, int) {
 		MatchPool.data = append(MatchPool.data[:idx2], MatchPool.data[idx2+1:]...)
 	}
 
-	return id1, id2
+	return true, id1, id2
 }
