@@ -2,6 +2,7 @@ package BattleService
 
 import (
 	"math"
+	"math/rand/v2"
 	"pcc_card/global"
 	"sync"
 	"time"
@@ -73,7 +74,7 @@ func ImplMatchPool() {
 
 //---------------------Match_pool----------------------------
 
-func NewMatchManager() MatchManager {
+func NewMatchManager() MatchManager { //对外接口
 	ImplMatchPool()
 	m := MatchManager{}
 	go m.StartMatchLoop()
@@ -123,6 +124,58 @@ func (m *MatchManager) UpdateMatchTimeRadio(MaxHadWaitTime float64) {
 	MatchPool.UpdateMatchTimeRadio(r)
 }
 
-func (m *MatchManager) MatchCatch() {
+func (m *MatchManager) MatchCatch() (int, int) {
+	MatchPool.rwLock.Lock()
+	defer MatchPool.rwLock.Unlock()
 
+	poolSize := len(MatchPool.data)
+	if poolSize < 2 {
+		return -1, -1
+	}
+
+	weightList := make([]int, poolSize)
+	totalWeight := 0
+	for i, data := range MatchPool.data {
+		w := int(math.Pow(time.Since(data.JoinTime).Seconds(), 2)) + 1
+		weightList[i] = w
+		totalWeight += w
+	}
+
+	n1 := rand.IntN(totalWeight)
+	idx1 := -1
+	tempSum1 := 0
+	for i, w := range weightList {
+		tempSum1 += w
+		if tempSum1 > n1 {
+			idx1 = i
+			break
+		}
+	}
+	newTotalWeight := totalWeight - weightList[idx1]
+	n2 := rand.IntN(newTotalWeight)
+
+	idx2 := -1
+	tempSum2 := 0
+	for i, w := range weightList {
+		if i == idx1 {
+			continue
+		}
+		tempSum2 += w
+		if tempSum2 > n2 {
+			idx2 = i
+			break
+		}
+	}
+
+	id1 := MatchPool.data[idx1].ID
+	id2 := MatchPool.data[idx2].ID
+	if idx1 < idx2 {
+		MatchPool.data = append(MatchPool.data[:idx2], MatchPool.data[idx2+1:]...)
+		MatchPool.data = append(MatchPool.data[:idx1], MatchPool.data[idx1+1:]...)
+	} else {
+		MatchPool.data = append(MatchPool.data[:idx1], MatchPool.data[idx1+1:]...)
+		MatchPool.data = append(MatchPool.data[:idx2], MatchPool.data[idx2+1:]...)
+	}
+
+	return id1, id2
 }

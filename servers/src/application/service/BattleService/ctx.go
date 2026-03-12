@@ -1,6 +1,8 @@
 package BattleService
 
 type Ctx struct {
+	IDA    int
+	IDB    int
 	params map[string]any
 }
 

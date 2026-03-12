@@ -21,8 +21,9 @@ func (s *StateMachine) finish(ctx Ctx, NextState State) {
 	}
 }
 
-func NewStateMachine(StateList map[string]State) *StateMachine {
+func NewStateMachine() *StateMachine {
 	StateMachineImpl := &StateMachine{}
-	StateMachineImpl.StateList = StateList
+	StateMachineImpl.StateList = make(map[string]State)
+
 	return StateMachineImpl
 }
