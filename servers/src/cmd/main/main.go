@@ -2,9 +2,11 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
 	"pcc_card/application/service"
 	"pcc_card/application/service/UserService"
 	"pcc_card/application/service/battleservice"
+	"pcc_card/global"
 	"pcc_card/infra/db"
 	"pcc_card/infra/repo"
 	"pcc_card/infra/repo/battlerepo"
@@ -17,6 +19,11 @@ import (
 )
 
 func main() {
+	if global.Isdebug == "debug" {
+		fmt.Println("Start Debug")
+	} else {
+		fmt.Println("Production")
+	}
 	DB := db.ConnectDB()
 	defer DB.Close()
 	route.Init()

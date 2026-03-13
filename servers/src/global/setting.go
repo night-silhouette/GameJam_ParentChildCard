@@ -6,3 +6,5 @@ const (
 	MatchTimeRadio   = 2
 	MatchMaxWaitTime = 18.0
 )
+
+var Isdebug string = "debug"

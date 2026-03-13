@@ -8,6 +8,7 @@ import (
 var battleIDCounter int64
 
 type Battle struct {
+	mu       sync.RWMutex
 	BattleID int
 	SM       StateMachine
 	Ctx      Ctx
@@ -23,8 +24,9 @@ func NewBattle(UserA int, UserB int) *Battle {
 //------------------------------------------------------------
 
 type BattleContainer struct {
-	mu   sync.RWMutex
-	Data map[int]*Battle
+	mu         sync.RWMutex
+	Data       map[int]*Battle
+	UserToBTID map[int]int
 }
 
 var BC BattleContainer
@@ -32,10 +34,22 @@ var BC BattleContainer
 func InitBattleContainer() {
 	BC = BattleContainer{}
 	BC.Data = make(map[int]*Battle)
+	BC.UserToBTID = make(map[int]int)
 }
 
 func (bc *BattleContainer) AddBattle(id1 int, id2 int) {
 	bc.mu.Lock()
 	defer bc.mu.Unlock()
-	NewBattle(id1, id2)
+	Bt := NewBattle(id1, id2)
+	bc.Data[Bt.BattleID] = Bt
+	bc.UserToBTID[id1] = Bt.BattleID
+	bc.UserToBTID[id2] = Bt.BattleID
+}
+
+func (bc *BattleContainer) GetBattle(id int) *Battle {
+	bc.mu.RLock()
+	defer bc.mu.RUnlock()
+	BTID := bc.UserToBTID[id]
+	BT := bc.Data[BTID]
+	return BT
 }

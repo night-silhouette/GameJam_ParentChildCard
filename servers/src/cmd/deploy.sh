@@ -17,7 +17,7 @@ echo "开始构建项目版本: ${VERSION}..."
 
 
 echo "正在编译 Golang 代码..."
-GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o "$OUTPUT_BIN" ./main/main.go
+GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -ldflags "-X 'pcc_card/global.Isdebug=production'" -o "$OUTPUT_BIN" ./main/main.go
 if [ $? -ne 0 ]; then
     echo "编译失败，请检查代码！"
     exit 1
