@@ -24,12 +24,15 @@ func main() {
 	} else {
 		fmt.Println("Production")
 	}
+
 	DB := db.ConnectDB()
 	defer DB.Close()
 	route.Init()
 	user(DB)
 	Battle(DB)
+
 	route.Run()
+
 }
 
 func user(DB *sql.DB) {

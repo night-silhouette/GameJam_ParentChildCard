@@ -2,22 +2,42 @@ package route
 
 import (
 	"fmt"
+	"io"
+	"os"
 	"pcc_card/infra/config"
 	"pcc_card/presentation/handler/battlehandler"
 	"pcc_card/presentation/handler/tokenhandler"
 	"pcc_card/presentation/handler/userhandler"
 	"pcc_card/presentation/response"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
 
 var R *gin.Engine
 
+// FilterWriter 包装一个普通的 Writer，但会跳过特定内容的写入
+type FilterWriter struct {
+	Output io.Writer
+}
+
+func (f *FilterWriter) Write(p []byte) (n int, err error) {
+	s := string(p)
+	if strings.Contains(s, "/ping") && strings.Contains(s, " 200 ") {
+		return len(p), nil
+	}
+	return f.Output.Write(p)
+}
+
 func Init() {
+	filter := &FilterWriter{Output: os.Stdout}
+	gin.DefaultWriter = filter
 	R = gin.Default()
+
 	R.GET("/ping", func(c *gin.Context) {
 		response.Success(c, "pong")
 	})
+
 }
 
 func Run() {

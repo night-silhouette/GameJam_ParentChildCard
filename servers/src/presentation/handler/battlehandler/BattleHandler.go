@@ -28,10 +28,16 @@ func (u *BattleHandlerImpl) AddMatch() gin.HandlerFunc {
 		if !u.s.IsHasID(id) {
 			u.s.AddMatch(id)
 			response.Success(c, "进入匹配队列")
+			return
 		} else {
 			response.Fail(c, global.ResponseRepeatRequest)
+			return
 		}
 
 	}
 
 }
+
+//func (u *BattleHandlerImpl) LongPollingMatchState() {
+//
+//}
