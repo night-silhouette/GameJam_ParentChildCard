@@ -28,7 +28,19 @@ func (u *BattleHandlerImpl) AddMatch() gin.HandlerFunc {
 		if !u.s.IsHasID(id) {
 			u.s.AddMatch(id)
 			response.Success(c, "进入匹配队列")
-			return
+			matchSignals := u.s.GetMatchSignals()
+			myChan := make(chan battleservice.MatchResult, 1)
+			matchSignals.Store(id, myChan)
+			defer battleservice.MatchSignals.Delete(id)
+			select {
+			case result := <-myChan:
+				response.Success(c, result)
+				return
+			case <-c.Request.Context().Done():
+				battleservice.MatchPool.Delete(id)
+				return
+			}
+
 		} else {
 			response.Fail(c, global.ResponseRepeatRequest)
 			return
@@ -38,6 +50,6 @@ func (u *BattleHandlerImpl) AddMatch() gin.HandlerFunc {
 
 }
 
-//func (u *BattleHandlerImpl) LongPollingMatchState() {
-//
-//}
+func (u *BattleHandlerImpl) LongPollingMatchState() {
+
+}

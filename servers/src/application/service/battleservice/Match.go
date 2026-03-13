@@ -92,7 +92,13 @@ func (m *MatchManager) StartMatchLoop() {
 			if !Ok {
 				continue
 			} else {
-				BC.AddBattle(id1, id2)
+				BTID := BC.AddBattle(id1, id2)
+				if v, ok := MatchSignals.Load(id1); ok {
+					v.(chan MatchResult) <- MatchResult{BattleID: BTID, Opponent: id2}
+				}
+				if v, ok := MatchSignals.Load(id2); ok {
+					v.(chan MatchResult) <- MatchResult{BattleID: BTID, Opponent: id1}
+				}
 			}
 
 		}
@@ -197,4 +203,13 @@ func (m *MatchManager) IsHasID(id int) bool {
 		}
 	}
 	return false
+}
+
+//----------------------------------异步通知handler-----------------------------------
+
+var MatchSignals sync.Map
+
+type MatchResult struct {
+	BattleID int `json:"battle_id"`
+	Opponent int `json:"opponent_id"`
 }

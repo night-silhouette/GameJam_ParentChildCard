@@ -4,12 +4,14 @@ import (
 	"pcc_card/application/service"
 	"pcc_card/infra/repo"
 	"pcc_card/infra/repo/battlerepo"
+	"sync"
 )
 
 type BattleService interface {
 	service.Service
 	AddMatch(id int)
 	IsHasID(id int) bool
+	GetMatchSignals() *sync.Map
 }
 
 type BattleServiceImpl struct {
@@ -25,4 +27,7 @@ func (u *BattleServiceImpl) AddMatch(id int) {
 }
 func (u *BattleServiceImpl) IsHasID(id int) bool {
 	return MM.IsHasID(id)
+}
+func (u *BattleServiceImpl) GetMatchSignals() *sync.Map {
+	return &MatchSignals
 }

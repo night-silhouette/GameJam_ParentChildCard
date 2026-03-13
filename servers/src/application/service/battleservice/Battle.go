@@ -37,13 +37,14 @@ func InitBattleContainer() {
 	BC.UserToBTID = make(map[int]int)
 }
 
-func (bc *BattleContainer) AddBattle(id1 int, id2 int) {
+func (bc *BattleContainer) AddBattle(id1 int, id2 int) int {
 	bc.mu.Lock()
 	defer bc.mu.Unlock()
 	Bt := NewBattle(id1, id2)
 	bc.Data[Bt.BattleID] = Bt
 	bc.UserToBTID[id1] = Bt.BattleID
 	bc.UserToBTID[id2] = Bt.BattleID
+	return Bt.BattleID
 }
 
 func (bc *BattleContainer) GetBattle(id int) *Battle {
