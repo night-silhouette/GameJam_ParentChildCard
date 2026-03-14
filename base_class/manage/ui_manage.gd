@@ -13,7 +13,6 @@ func register_root(node: Node):
 
 func fui_change(state):
 
-	print("jin")
 
 	var next_path : String
 

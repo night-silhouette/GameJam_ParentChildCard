@@ -4,5 +4,5 @@ extends Node2D
 func _ready() -> void:
 	ScenceManage.register_root($Scence_Root);
 	SignalBus.change_scence.emit("start");
-	UiManage.register_root($CanvasLayer);
+	UiManage.register_root($UI_Root);
 	

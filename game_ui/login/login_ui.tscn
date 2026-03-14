@@ -1,11 +1,13 @@
-[gd_scene load_steps=7 format=3 uid="uid://fgsyyjjbkfvm"]
+[gd_scene load_steps=9 format=3 uid="uid://fgsyyjjbkfvm"]
 
-[ext_resource type="Texture2D" uid="uid://c1sefielg5ww1" path="res://asset（素材-美术和音乐）/账号系列UI/框UI .png" id="1_6h53l"]
-[ext_resource type="Texture2D" uid="uid://bxlgnkrxyxqes" path="res://asset（素材-美术和音乐）/账号系列UI/账号UI .png" id="2_gdgys"]
+[ext_resource type="Texture2D" uid="uid://8tl4lolrrkqd" path="res://asset（素材-美术和音乐）/使用素材/战斗外/登录界面/框UI .png" id="1_ykqqb"]
 [ext_resource type="Script" uid="uid://cb62jus2rhe04" path="res://game_ui/login/边框.gd" id="2_vbx44"]
-[ext_resource type="Texture2D" uid="uid://g865brsxwhij" path="res://asset（素材-美术和音乐）/账号系列UI/密码UI .png" id="3_8crwy"]
+[ext_resource type="Texture2D" uid="uid://dosona3iwp418" path="res://asset（素材-美术和音乐）/使用素材/战斗外/登录界面/账号UI .png" id="3_i6r6h"]
+[ext_resource type="Texture2D" uid="uid://cdmmmn8wc03lv" path="res://asset（素材-美术和音乐）/使用素材/战斗外/登录界面/密码UI .png" id="4_emvpi"]
 [ext_resource type="PackedScene" uid="uid://0c577rnp585t" path="res://game_ui/login/登录.tscn" id="4_kyjnp"]
 [ext_resource type="PackedScene" uid="uid://ctblgd8opayyp" path="res://game_ui/login/注册.tscn" id="5_vbx44"]
+[ext_resource type="Texture2D" uid="uid://dpvu2sw38ci4d" path="res://asset（素材-美术和音乐）/使用素材/战斗外/登录界面/登录注册UI 一.png" id="6_ar7td"]
+[ext_resource type="Texture2D" uid="uid://bfnnppppwccv2" path="res://asset（素材-美术和音乐）/使用素材/战斗外/登录界面/登录注册UI 二.png" id="8_4w85s"]
 
 [node name="login_ui" type="Control"]
 layout_mode = 3
@@ -16,7 +18,7 @@ grow_horizontal = 2
 grow_vertical = 2
 metadata/_edit_lock_ = true
 
-[node name="边框" type="TextureRect" parent="."]
+[node name="装饰" type="TextureRect" parent="."]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -30,70 +32,95 @@ offset_bottom = 1051.0
 grow_horizontal = 2
 grow_vertical = 2
 scale = Vector2(0.31794798, 0.31794798)
-texture = ExtResource("1_6h53l")
+texture = ExtResource("1_ykqqb")
 script = ExtResource("2_vbx44")
 metadata/_edit_lock_ = true
 
-[node name="账号" type="TextureRect" parent="边框"]
+[node name="账号" type="TextureRect" parent="装饰"]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.112
 anchor_top = 0.23600002
 anchor_right = 0.89000005
 anchor_bottom = 0.961
-offset_left = -198.8322
-offset_top = -132.41351
-offset_right = 391.58252
-offset_bottom = 328.708
+offset_left = -202.08669
+offset_top = -50.23059
+offset_right = 388.32813
+offset_bottom = 410.89087
 grow_horizontal = 2
 grow_vertical = 2
 rotation = 0.0021090426
-scale = Vector2(0.3086527, 0.3086527)
-texture = ExtResource("2_gdgys")
-expand_mode = 1
+scale = Vector2(0.16877411, 0.16877411)
+texture = ExtResource("3_i6r6h")
 metadata/_edit_lock_ = true
 
-[node name="密码" type="TextureRect" parent="边框"]
+[node name="密码" type="TextureRect" parent="装饰"]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.113000005
 anchor_top = 0.22500001
 anchor_right = 0.88000005
 anchor_bottom = 0.93600005
-offset_left = -178.95428
-offset_top = 165.12918
+offset_left = -178.95432
+offset_top = 215.45203
 offset_right = 150.7633
-offset_bottom = 303.41882
+offset_bottom = 353.7417
 rotation = -0.0073320116
-scale = Vector2(0.3146129, 0.3146129)
-texture = ExtResource("3_8crwy")
-expand_mode = 1
+scale = Vector2(0.16671503, 0.16671503)
+texture = ExtResource("4_emvpi")
 metadata/_edit_lock_ = true
 
-[node name="登录" parent="边框" instance=ExtResource("4_kyjnp")]
+[node name="功能" type="Control" parent="."]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="登录" parent="功能" instance=ExtResource("4_kyjnp")]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.119
 anchor_top = 0.23
 anchor_right = 0.89300007
 anchor_bottom = 0.93900007
-offset_left = -266.6123
-offset_top = 435.5092
-offset_right = 441.94153
-offset_bottom = 808.6981
-scale = Vector2(0.5273253, 0.5273253)
+offset_left = 347.24
+offset_top = 406.79996
+offset_right = 1055.7938
+offset_bottom = 821.44
+scale = Vector2(0.16240437, 0.16240437)
+texture_normal = ExtResource("6_ar7td")
+stretch_mode = 0
 metadata/_edit_lock_ = true
 
-[node name="注册" parent="边框" instance=ExtResource("5_vbx44")]
+[node name="注册" parent="功能" instance=ExtResource("5_vbx44")]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.11100001
 anchor_top = 0.23500001
 anchor_right = 0.878
 anchor_bottom = 0.94100004
-offset_left = 554.78284
-offset_top = 403.9526
-offset_right = 1277.5399
-offset_bottom = 780.9785
-scale = Vector2(0.55804336, 0.55804336)
+offset_left = 667.56006
+offset_top = 398.6
+offset_right = 1390.317
+offset_bottom = 858.36
+scale = Vector2(0.16853562, 0.16853562)
+texture_normal = ExtResource("8_4w85s")
+stretch_mode = 0
+metadata/_edit_lock_ = true
+
+[node name="账号" type="LineEdit" parent="功能"]
+layout_mode = 0
+offset_left = 400.0
+offset_top = 184.0
+offset_right = 468.5625
+offset_bottom = 215.0
+scale = Vector2(6.8030105, 1.8101287)
+metadata/_edit_lock_ = true
+
+[node name="密码" type="LineEdit" parent="功能"]
+layout_mode = 0
+offset_left = 400.00003
+offset_top = 256.0
+offset_right = 468.56253
+offset_bottom = 287.0
+scale = Vector2(6.728864, 1.7904)
 metadata/_edit_lock_ = true

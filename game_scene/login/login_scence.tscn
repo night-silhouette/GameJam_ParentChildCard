@@ -1,8 +1,8 @@
 [gd_scene load_steps=4 format=3 uid="uid://cjmmho2ilk3du"]
 
-[ext_resource type="Texture2D" uid="uid://b7ep21sg5cimm" path="res://asset（素材-美术和音乐）/游戏封面-海报-插画/游戏海报1.jpg" id="1_bfcda"]
 [ext_resource type="Script" uid="uid://dbifiqse10jtu" path="res://game_scene/login/login_scence.gd" id="1_qrb2d"]
-[ext_resource type="Texture2D" uid="uid://bx435k0sql00d" path="res://asset（素材-美术和音乐）/游戏封面-海报-插画/游戏海报2.jpg" id="2_alorh"]
+[ext_resource type="Texture2D" uid="uid://uyykdgeh11mt" path="res://asset（素材-美术和音乐）/使用素材/战斗外/游戏初始界面/游戏海报1.jpg" id="2_qrb2d"]
+[ext_resource type="Texture2D" uid="uid://1keltb7tuq0f" path="res://asset（素材-美术和音乐）/使用素材/战斗外/游戏初始界面/游戏海报2.jpg" id="3_2cceh"]
 
 [node name="menu_backgrounf" type="Node2D"]
 script = ExtResource("1_qrb2d")
@@ -10,12 +10,12 @@ script = ExtResource("1_qrb2d")
 [node name="background1" type="TextureRect" parent="."]
 offset_right = 1152.0
 offset_bottom = 648.0
-texture = ExtResource("1_bfcda")
+texture = ExtResource("2_qrb2d")
 expand_mode = 1
 
 [node name="background2" type="TextureRect" parent="."]
 visible = false
 offset_right = 1152.0
 offset_bottom = 648.0
-texture = ExtResource("2_alorh")
+texture = ExtResource("3_2cceh")
 expand_mode = 1
