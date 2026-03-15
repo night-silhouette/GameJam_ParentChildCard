@@ -12,7 +12,6 @@ pm2 start ./file
 sudo ufw allow 8080/tcp
 sudo ufw reload
 
-
 流程***
 GOOS=linux GOARCH=amd64 go build -o ../bin/v1/pcc_card_v1 ./main/main.go
 scp -r ../bin/v1 root@120.26.145.68:/root/pcc_servers

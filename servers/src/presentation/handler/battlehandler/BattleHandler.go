@@ -27,7 +27,6 @@ func (u *BattleHandlerImpl) AddMatch() gin.HandlerFunc {
 		id := c.GetInt("id")
 		if !u.s.IsHasID(id) {
 			u.s.AddMatch(id)
-			response.Success(c, "进入匹配队列")
 			matchSignals := u.s.GetMatchSignals()
 			myChan := make(chan battleservice.MatchResult, 1)
 			matchSignals.Store(id, myChan)
