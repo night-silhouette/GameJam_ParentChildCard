@@ -1,47 +1,47 @@
 package UserService
 
 import (
-	"pcc_card/application/entity"
+	"pcc_card/application/entity/User_entity"
 	"pcc_card/application/service"
 	"pcc_card/global"
 	"pcc_card/infra/repo"
-	"pcc_card/infra/repo/user_repo"
+	"pcc_card/infra/repo/userrepo"
 
 	"golang.org/x/crypto/bcrypt"
 )
 
 type User_service interface {
 	service.Service
-	Find_user_by_name(name string) (*entity.User, global.ResponseStatusCode)
-	Find_user_by_id(id int) (*entity.User, global.ResponseStatusCode)
+	Find_user_by_name(name string) (*User_entity.User, global.ResponseStatusCode)
+	Find_user_by_id(id int) (*User_entity.User, global.ResponseStatusCode)
 	Check_password(id int, password string) global.ResponseStatusCode
 	Release_token(userID int) (string, global.ResponseStatusCode)
 	Is_valid_token(tokenString string) (int, bool, global.ResponseStatusCode)
-	Create_user(user *entity.User) global.ResponseStatusCode
-	Delete_user(e *entity.User) global.ResponseStatusCode
-	Update_user(e *entity.User) global.ResponseStatusCode
+	Create_user(user *User_entity.User) global.ResponseStatusCode
+	Delete_user(e *User_entity.User) global.ResponseStatusCode
+	Update_user(e *User_entity.User) global.ResponseStatusCode
 }
 
 type User_service_impl struct {
-	repo user_repo.User_repo
+	repo userrepo.User_repo
 }
 
 func (u *User_service_impl) Set_repo(r repo.Repo) {
-	u.repo = r.(user_repo.User_repo)
+	u.repo = r.(userrepo.User_repo)
 	u.Init_key()
 }
-func (u *User_service_impl) Find_user_by_name(name string) (*entity.User, global.ResponseStatusCode) {
+func (u *User_service_impl) Find_user_by_name(name string) (*User_entity.User, global.ResponseStatusCode) {
 	e, err := u.repo.Get_by_name(name)
 	if err != global.ResponseSuccess {
-		return &entity.User{}, err
+		return &User_entity.User{}, err
 	} else {
 		return e, global.ResponseSuccess
 	}
 }
-func (u *User_service_impl) Find_user_by_id(id int) (*entity.User, global.ResponseStatusCode) {
+func (u *User_service_impl) Find_user_by_id(id int) (*User_entity.User, global.ResponseStatusCode) {
 	e, err := u.repo.Get_by_id(id)
 	if err != global.ResponseSuccess {
-		return &entity.User{}, err
+		return &User_entity.User{}, err
 	} else {
 		return e, global.ResponseSuccess
 	}
@@ -63,19 +63,19 @@ func (u *User_service_impl) Check_password(id int, password string) global.Respo
 	return global.ResponseSuccess
 }
 
-func (u *User_service_impl) Create_user(user *entity.User) global.ResponseStatusCode {
+func (u *User_service_impl) Create_user(user *User_entity.User) global.ResponseStatusCode {
 	user.Password = u.hash_password(user.Password)
 	return u.repo.Create(user)
 }
 
-func (u *User_service_impl) Delete_user(e *entity.User) global.ResponseStatusCode {
+func (u *User_service_impl) Delete_user(e *User_entity.User) global.ResponseStatusCode {
 	err := u.repo.Delete(e)
 	if err != global.ResponseSuccess {
 		return err
 	}
 	return global.ResponseSuccess
 }
-func (u *User_service_impl) Update_user(e *entity.User) global.ResponseStatusCode {
+func (u *User_service_impl) Update_user(e *User_entity.User) global.ResponseStatusCode {
 	e.Password = u.hash_password(e.Password)
 	err := u.repo.Update(e)
 	return err

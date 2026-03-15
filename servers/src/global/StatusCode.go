@@ -17,6 +17,7 @@ const (
 	ResponseIncorrectPassword
 	ResponseTokenMissing
 	ResponseForbidden
+	ResponseRepeatRequest
 )
 
 var StatusMsg = map[ResponseStatusCode]string{
@@ -34,4 +35,5 @@ var StatusMsg = map[ResponseStatusCode]string{
 	ResponseNotImplemented:        "接口未完善",
 	ResponseIncorrectPassword:     "密码错误",
 	ResponseForbidden:             "权限不足",
+	ResponseRepeatRequest:         "重复请求",
 }
