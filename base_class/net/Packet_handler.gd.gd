@@ -1,45 +1,72 @@
-# PacketHandler.gd (建议作为单例 Autoload)
+extends Node
 
-enum ResponseCode {
-	SUCCESS = 0,
-	DATA_NOT_FOUND = 1,
-	INTERNAL_ERROR = 2,
-	INVALID_PARAMS = 3,
-	INVALID_TOKEN = 4,
-	TOKEN_EXPIRED = 5,
-	# ... 对应你的文档
-}
+# 游戏里的状态和凭证都存在这里
+var current_token: String = ""
+var my_player_id: int = 0
+var is_admin: bool = false
 
-func _on_response(_result, response_code, _headers, body, http_node):
-	http_node.queue_free() # 释放搬运工
-	
-	var raw_data = body.get_string_from_utf8()
-	var res = JSON.parse_string(raw_data)
-	
-	# 1. 检查 HTTP 层错误
-	if response_code >= 400:
-		SignalBus.network_error.emit("网络异常: " + str(response_code))
+func _ready():
+	# 大管家搬个椅子坐在传达室，专听底层原始信号
+	SignalBus.raw_api_responded.connect(_handle_raw_api_data)
+
+# 这是大管家的核心大脑，完美对应你的后端文档
+func _handle_raw_api_data(api_name: String, method: int, code: int, data: Variant, msg: String):
+
+# 全局错误拦截 (比如不管什么接口，只要返回 5 Token过期，统一处理)
+	if code == 5: # ResponseTokenExpired
+		current_token = ""
+		SignalBus.network_disconnected.emit()
 		return
 
-	# 2. 解析你的标准 Res 结构
-	var code = res.get("Code", -1)
-	var data = res.get("Data", {})
-	var msg = res.get("Msg", "")
+# 根据接口和动词(谓词)进行精准拆包
+	match api_name:
 
-	if code == ResponseCode.SUCCESS:
-		_distribute_data(data)
-	elif code == ResponseCode.INVALID_TOKEN or code == ResponseCode.TOKEN_EXPIRED:
-		SignalBus.auth_failed.emit() # 弹出登录框
-	else:
-		SignalBus.logic_error.emit(msg) # 提示错误信息
+	# -------------------------------------
+	# 1. 登录与 Token 相关 (/v1/token)
+	# -------------------------------------
+		"/v1/token":
+			if method == HTTPClient.METHOD_POST: 
+			# POST 是登录
+				if code == 0:
+					current_token = str(data) # 存下Token
+					SignalBus.login_success.emit()
+				else:
+					SignalBus.login_failed.emit(msg)
 
-func _distribute_data(data):
-	# 这里是延展性的核心：根据 Data 里的内容决定发射什么信号
-	if data is Dictionary:
-		if data.has("token"):
-			NetClient.token = data.token
-			SignalBus.login_success.emit()
-		if data.has("is_admin"):
-			SignalBus.user_info_received.emit(data)
-	elif data == "pong":
-		print("服务器还活着")
+			elif method == HTTPClient.METHOD_GET: 
+			# GET 是验证 Token 是否还活着
+				if code == 0:
+					SignalBus.token_validated_success.emit()
+				else:
+					current_token = ""
+					SignalBus.network_disconnected.emit()
+
+	# -------------------------------------
+	# 2. 用户信息相关 (/v1/user)
+	# -------------------------------------
+		"/v1/user":
+			if method == HTTPClient.METHOD_GET: 
+			# GET 是查资料
+				if code == 0:
+					my_player_id = int(data["id"])
+					is_admin = bool(data["is_admin"])
+					# 通知 UI 刷新名字
+					SignalBus.user_info_fetched.emit(my_player_id, str(data["name"]), is_admin)
+
+			elif method == HTTPClient.METHOD_POST:
+				# POST 是注册
+				if code == 0:
+					SignalBus.user_registered_success.emit()
+
+				elif method == HTTPClient.METHOD_PUT:
+				# PUT 是修改资料
+					if code == 0:
+						SignalBus.user_updated_success.emit()
+
+	# -------------------------------------
+	# 3. 心跳包 (/ping)
+	# -------------------------------------
+		"/ping":
+			if code != 0 or data != "pong":
+			# 心跳断了
+				SignalBus.network_disconnected.emit()
