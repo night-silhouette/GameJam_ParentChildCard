@@ -9,6 +9,7 @@ type StateMachine struct {
 	StateList    map[string]State
 	CurrentState State
 	c            *Ctx
+	CardListCopy *CardList
 }
 
 func (s *StateMachine) finish(NextState State) {
@@ -24,6 +25,8 @@ func (s *StateMachine) finish(NextState State) {
 func NewStateMachine(c *Ctx) *StateMachine {
 	StateMachineImpl := &StateMachine{}
 	StateMachineImpl.c = c
+	StateMachineImpl.CardListCopy = CardListImpl.Copy()
+
 	StateMachineImpl.StateList = map[string]State{
 		"shuffleDeal": &ShuffleDeal{c, StateMachineImpl},
 	}

@@ -2,8 +2,7 @@ package battleservice
 
 import (
 	"pcc_card/application/entity/Card/CardAbstract"
-	"pcc_card/application/entity/Card/character_card"
-	"pcc_card/application/entity/Card/skill_card"
+	"pcc_card/application/entity/Card/CardImpl"
 )
 
 type CardList struct {
@@ -24,57 +23,59 @@ func (c *CardList) Copy() *CardList {
 		return newList
 	}
 	newList.data = make([]CardAbstract.Card, len(c.data))
-	copy(newList.data, c.data)
+	for i := 0; i < len(c.data); i++ {
+		= c.data[i]
+	}
 	return newList
 }
 
 func (c *CardList) init(s BattleService) {
 	c.data = []CardAbstract.Card{
-		skill_card.NewCard00(),
-		skill_card.NewCard01(),
-		skill_card.NewCard02(),
-		skill_card.NewCard03(),
-		skill_card.NewCard04(),
-		skill_card.NewCard05(),
-		character_card.NewCard06(),
-		character_card.NewCard07(),
-		character_card.NewCard08(),
-		character_card.NewCard09(),
-		character_card.NewCard10(),
-		character_card.NewCard11(),
-		character_card.NewCard12(),
-		character_card.NewCard13(),
-		character_card.NewCard14(),
-		character_card.NewCard15(),
-		character_card.NewCard16(),
-		character_card.NewCard17(),
-		character_card.NewCard18(),
-		character_card.NewCard19(),
-		character_card.NewCard20(),
-		character_card.NewCard21(),
-		character_card.NewCard22(),
-		skill_card.NewCard23(),
-		skill_card.NewCard24(),
-		skill_card.NewCard25(),
-		character_card.NewCard26(),
-		character_card.NewCard27(),
-		character_card.NewCard28(),
-		character_card.NewCard29(),
-		character_card.NewCard30(),
-		character_card.NewCard31(),
-		skill_card.NewCard32(),
-		skill_card.NewCard33(),
-		skill_card.NewCard34(),
-		skill_card.NewCard35(),
-		character_card.NewCard36(),
-		character_card.NewCard37(),
-		character_card.NewCard38(),
-		character_card.NewCard39(),
-		character_card.NewCard40(),
-		character_card.NewCard41(),
-		character_card.NewCard42(),
-		character_card.NewCard43(),
-		skill_card.NewCard44(),
+		CardImpl.NewCard00(),
+		CardImpl.NewCard01(),
+		CardImpl.NewCard02(),
+		CardImpl.NewCard03(),
+		CardImpl.NewCard04(),
+		CardImpl.NewCard05(),
+		CardImpl.NewCard06(),
+		CardImpl.NewCard07(),
+		CardImpl.NewCard08(),
+		CardImpl.NewCard09(),
+		CardImpl.NewCard10(),
+		CardImpl.NewCard11(),
+		CardImpl.NewCard12(),
+		CardImpl.NewCard13(),
+		CardImpl.NewCard14(),
+		CardImpl.NewCard15(),
+		CardImpl.NewCard16(),
+		CardImpl.NewCard17(),
+		CardImpl.NewCard18(),
+		CardImpl.NewCard19(),
+		CardImpl.NewCard20(),
+		CardImpl.NewCard21(),
+		CardImpl.NewCard22(),
+		CardImpl.NewCard23(),
+		CardImpl.NewCard24(),
+		CardImpl.NewCard25(),
+		CardImpl.NewCard26(),
+		CardImpl.NewCard27(),
+		CardImpl.NewCard28(),
+		CardImpl.NewCard29(),
+		CardImpl.NewCard30(),
+		CardImpl.NewCard31(),
+		CardImpl.NewCard32(),
+		CardImpl.NewCard33(),
+		CardImpl.NewCard34(),
+		CardImpl.NewCard35(),
+		CardImpl.NewCard36(),
+		CardImpl.NewCard37(),
+		CardImpl.NewCard38(),
+		CardImpl.NewCard39(),
+		CardImpl.NewCard40(),
+		CardImpl.NewCard41(),
+		CardImpl.NewCard42(),
+		CardImpl.NewCard43(),
+		CardImpl.NewCard44(),
 	}
 	for _, e := range c.data {
 		info := s.GetCardInfoByID(e.GetID())

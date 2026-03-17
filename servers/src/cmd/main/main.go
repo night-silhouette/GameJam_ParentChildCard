@@ -51,7 +51,6 @@ func Battle(DB *sql.DB) {
 	battleservice.NewMatchManager()
 	battleservice.InitBattleContainer()
 	route.RegisterBattleRoutes(BattleHandler)
-
 	battleservice.InitCardList(BattleService)
 
 }

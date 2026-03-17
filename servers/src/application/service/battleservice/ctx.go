@@ -15,8 +15,7 @@ type Ctx struct {
 
 type PlayerData struct {
 	ID           int
-	CardInHand   *[]CardAbstract.ParentCard
-	SkillCardUse *CardAbstract.SkillCard
-	ParentCardBT *CardAbstract.ParentCard
-	ChildCardBT  *CardAbstract.ChildCard
+	CardInHand   *[]CardAbstract.Card
+	ParentCardBT *CardAbstract.Card
+	ChildCardBT  *CardAbstract.Card
 }
