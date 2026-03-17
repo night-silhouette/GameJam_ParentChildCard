@@ -1,15 +1,15 @@
 package character_card
 
-type Card struct {
+type Card14 struct {
 	CharacterCardTemplate
 }
 
-func NewCard() *Card {
-	return &Card{}
+func NewCard14() *Card14 {
+	return &Card14{}
 }
 
-func (c *Card) Attack() {
+func (c *Card14) Attack() {
 
 }
-func (c *Card) Hurt() {
+func (c *Card14) Hurt() {
 }

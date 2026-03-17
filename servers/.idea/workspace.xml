@@ -6,8 +6,11 @@
   <component name="ChangeListManager">
     <list default="true" id="760cea56-5efb-4b56-8acc-717cb714ebef" name="更改" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/application/entity/Card/character_card/06桥.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/entity/Card/character_card/06.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/application/service/battleservice/BattleService.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/service/battleservice/BattleService.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/entity/Card/CardAbstract/card.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/entity/Card/CardAbstract/card.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/entity/Card/character_card/14.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/entity/Card/character_card/14.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/entity/Card/character_card/27.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/entity/Card/character_card/27.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/entity/Card/character_card/CharacterCardTemplete.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/entity/Card/character_card/CharacterCardTemplate.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/service/battleservice/cardlist.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/service/battleservice/cardlist.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/cmd/main/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/cmd/main/main.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -18,8 +21,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Go File" />
         <option value="CharacterCard" />
+        <option value="Go File" />
       </list>
     </option>
   </component>
@@ -66,7 +69,7 @@
     "go.sdk.automatically.set": "true",
     "ignore.virus.scanning.warn.message": "true",
     "junie.onboarding.icon.badge.shown": "true",
-    "last_opened_file_path": "/Users/night/Desktop/GameJam_ParentChildCard/servers",
+    "last_opened_file_path": "/Users/night/Desktop/GameJam_ParentChildCard/servers/src/application/entity/Card/skill_card",
     "node.js.detected.package.eslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
@@ -81,6 +84,7 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/application/entity/Card/skill_card" />
       <recent name="C:\Users\jixiegm\Desktop\GameJam_ParentChildCard\servers\开发文档\开发日志" />
     </key>
     <key name="MoveFile.RECENT_KEYS">

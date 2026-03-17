@@ -57,8 +57,9 @@ func Battle(DB *sql.DB) {
 }
 
 func UpdateCard(s battleservice.BattleService) {
-	s.InsertCard(7, map[string]any{
-		"hp":     4,
-		"damage": 1,
+	s.InsertCard(41, map[string]any{
+		"hp":        3,
+		"damage":    2,
+		"is_parent": true,
 	})
 }

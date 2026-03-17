@@ -1,0 +1,9 @@
+package skill_card
+
+type Card24 struct {
+	SkillCardTemplate
+}
+
+func NewCard24() *Card24 {
+	return &Card24{}
+}
