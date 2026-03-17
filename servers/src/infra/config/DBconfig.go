@@ -4,6 +4,7 @@ import (
 	_ "embed"
 	"encoding/json"
 	"fmt"
+	"pcc_card/global"
 )
 
 //go:embed info/DB_info.json
@@ -24,5 +25,9 @@ func Read_db_info() DB_info {
 		fmt.Println("DB info file err")
 		panic(err)
 	}
+	if global.Isdebug != "debug" {
+		config.Ip = "127.0.0.1"
+	}
+
 	return config
 }

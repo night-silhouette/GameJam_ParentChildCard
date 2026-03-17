@@ -2,25 +2,25 @@ package character_card
 
 import (
 	_ "embed"
-	"encoding/json"
+	"pcc_card/application/service/battleservice"
 )
 
 type Card06 struct {
 	CharacterCardTemplate
 }
 
-//go:embed 06桥.json
-var Data06 []byte
-
 func NewCard06() *Card06 {
-	Card := Card06{}
-	json.Unmarshal(Data06, &Card)
-	return &Card
+	return &Card06{}
 }
 
 func (c *Card06) Attack() {
 
 }
 func (c *Card06) Hurt() {
+}
 
+func (c *Card06) CreateCardData{
+	c.ID=6
+	c.Info["hp"]=2
+	c.Info["damage"]=0
 }

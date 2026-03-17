@@ -1,29 +1,53 @@
 package battleservice
 
 type State interface {
-	enter(ctx Ctx)
-	exit(ctx Ctx)
+	enter()
+	exit()
 }
 
 type StateMachine struct {
 	StateList    map[string]State
 	CurrentState State
-	InitState    State
+	c            *Ctx
 }
 
-func (s *StateMachine) finish(ctx Ctx, NextState State) {
+func (s *StateMachine) finish(NextState State) {
 	if s.CurrentState != nil {
-		s.CurrentState.exit(ctx)
+		s.CurrentState.exit()
 	}
 	if NextState == nil && s.CurrentState != NextState {
 		s.CurrentState = NextState
-		s.CurrentState.enter(ctx)
+		s.CurrentState.enter()
 	}
 }
 
-func NewStateMachine() *StateMachine {
+func NewStateMachine(c *Ctx) *StateMachine {
 	StateMachineImpl := &StateMachine{}
-	StateMachineImpl.StateList = make(map[string]State)
+	StateMachineImpl.c = c
+	StateMachineImpl.StateList = map[string]State{
+		"shuffleDeal": &ShuffleDeal{c, StateMachineImpl},
+	}
+	StateMachineImpl.CurrentState = StateMachineImpl.StateList["shuffleDeal"]
+	StateMachineImpl.CurrentState.enter()
 
 	return StateMachineImpl
 }
+
+//----------------------------------------------------------------------------------------------------------------------
+
+type ShuffleDeal struct {
+	c  *Ctx
+	SM *StateMachine
+}
+
+func (s *ShuffleDeal) enter() {
+
+}
+
+func (s *ShuffleDeal) RandomCard() {
+
+}
+
+func (s *ShuffleDeal) exit() {}
+
+//----------------------------------------------------------------------------------------------------------------------

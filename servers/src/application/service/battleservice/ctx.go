@@ -1,19 +1,22 @@
 package battleservice
 
+import (
+	"pcc_card/application/entity/Card/CardAbstract"
+	"sync"
+)
+
 type Ctx struct {
-	IDA    int
-	IDB    int
-	params map[string]any
+	mu    sync.RWMutex
+	IDA   int
+	IDB   int
+	DataA *PlayerData
+	DataB *PlayerData
 }
 
-func (c *Ctx) Set(key string, val any) {
-	if c.params == nil {
-		c.params = make(map[string]any)
-	}
-	c.params[key] = val
-}
-
-func (c *Ctx) Get(key string) (any, bool) {
-	val, ok := c.params[key]
-	return val, ok
+type PlayerData struct {
+	ID           int
+	CardInHand   *[]CardAbstract.ParentCard
+	SkillCardUse *CardAbstract.SkillCard
+	ParentCardBT *CardAbstract.ParentCard
+	ChildCardBT  *CardAbstract.ChildCard
 }

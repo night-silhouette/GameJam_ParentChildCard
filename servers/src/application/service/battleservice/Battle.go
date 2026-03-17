@@ -10,15 +10,15 @@ var battleIDCounter int64
 type Battle struct {
 	mu       sync.RWMutex
 	BattleID int
-	SM       StateMachine
-	Ctx      Ctx
+	SM       *StateMachine
+	Ctx      *Ctx
 }
 
 func NewBattle(UserA int, UserB int) *Battle {
 	id := int(atomic.AddInt64(&battleIDCounter, 1))
-	Ctx := Ctx{UserA, UserB, make(map[string]any)}
-	SM := NewStateMachine()
-	return &Battle{BattleID: id, SM: *SM, Ctx: Ctx}
+	ctx := Ctx{IDA: UserA, IDB: UserB}
+	SM := NewStateMachine(&ctx)
+	return &Battle{BattleID: id, SM: SM, Ctx: &ctx}
 }
 
 //------------------------------------------------------------

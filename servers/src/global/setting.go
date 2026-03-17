@@ -8,3 +8,8 @@ const (
 )
 
 var Isdebug string = "debug"
+
+// 游戏参数
+const (
+	InitCardNum = 11
+)

@@ -5,13 +5,23 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="760cea56-5efb-4b56-8acc-717cb714ebef" name="更改" comment="">
-      <change beforePath="$PROJECT_DIR$/src/application/entity/BattleCtx.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/application/entity/user.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/entity/User_entity/user.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/application/service/BattleService/Battle.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/service/BattleService/Battle.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/application/service/BattleService/state.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/service/BattleService/state.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/application/service/UserService/user_service.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/service/UserService/user_service.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/infra/repo/user_repo/user_repo.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/infra/repo/user_repo/user_repo.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/presentation/handler/user_handler/user_handler.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/presentation/handler/user_handler/user_handler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/626966bd-e130-4f5a-83d5-704f5f250146.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/626966bd-e130-4f5a-83d5-704f5f250146.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/626966bd-e130-4f5a-83d5-704f5f250146/storage_v2/_src_/database/pccard.g1fAxA/schema/public.abK9xQ.meta" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/626966bd-e130-4f5a-83d5-704f5f250146/storage_v2/_src_/database/pccard.g1fAxA/schema/public.abK9xQ.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/626966bd-e130-4f5a-83d5-704f5f250146/storage_v2/_src_/database/postgres.edMnLQ/schema/public.abK9xQ.meta" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/626966bd-e130-4f5a-83d5-704f5f250146/storage_v2/_src_/database/postgres.edMnLQ/schema/public.abK9xQ.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/data_source_mapping.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/data_source_mapping.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/sqldialects.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/sqldialects.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/entity/Card/character_card/06桥.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/entity/Card/character_card/06桥.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/entity/Card/character_card/06桥.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/entity/Card/character_card/CharacterCardTemplete.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/entity/Card/character_card/CharacterCardTemplete.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/service/battleservice/Battle.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/service/battleservice/Battle.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/service/battleservice/BattleService.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/service/battleservice/BattleService.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/service/battleservice/ctx.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/service/battleservice/ctx.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/service/battleservice/state.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/service/battleservice/state.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/global/setting.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/global/setting.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/infra/config/DBconfig.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/infra/config/DBconfig.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/infra/repo/battlerepo/BattleRepo.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/infra/repo/battlerepo/BattleRepo.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -46,51 +56,51 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "DefaultGoTemplateProperty": "Go File",
-    "Go 构建.go build main.go.executor": "Run",
-    "Go 构建.go build pcc_card/cmd/main.executor": "Run",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.GoLinterPluginOnboardingV2": "true",
-    "RunOnceActivity.GoLinterPluginStorageMigration": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.go.analysis.ui.options.defaults": "true",
-    "RunOnceActivity.go.formatter.settings.were.checked": "true",
-    "RunOnceActivity.go.modules.go.list.on.any.changes.was.set": "true",
-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "SHELLCHECK.PATH": "/Users/night/Library/Application Support/JetBrains/GoLand2025.3/plugins/Shell Script/shellcheck",
-    "Shell Script.deploy.sh.executor": "Run",
-    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
-    "git-widget-placeholder": "faet/backend/3__6",
-    "go.sdk.automatically.set": "true",
-    "ignore.virus.scanning.warn.message": "true",
-    "junie.onboarding.icon.badge.shown": "true",
-    "last_opened_file_path": "/Users/night/Desktop/GameJam_ParentChildCard/servers",
-    "node.js.detected.package.eslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "preferences.pluginManager",
-    "to.speed.mode.migration.done": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;DefaultGoTemplateProperty&quot;: &quot;Go File&quot;,
+    &quot;Go 构建.go build main.go.executor&quot;: &quot;Run&quot;,
+    &quot;Go 构建.go build pcc_card/cmd/main.executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.GoLinterPluginOnboardingV2&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.GoLinterPluginStorageMigration&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.analysis.ui.options.defaults&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.formatter.settings.were.checked&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.modules.go.list.on.any.changes.was.set&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;SHELLCHECK.PATH&quot;: &quot;/Users/night/Library/Application Support/JetBrains/GoLand2025.3/plugins/Shell Script/shellcheck&quot;,
+    &quot;Shell Script.deploy.sh.executor&quot;: &quot;Run&quot;,
+    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;feat/backend/3__15&quot;,
+    &quot;go.sdk.automatically.set&quot;: &quot;true&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/night/Desktop/GameJam_ParentChildCard/servers&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;
   },
-  "keyToStringList": {
-    "DatabaseDriversLRU": [
-      "postgresql"
+  &quot;keyToStringList&quot;: {
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;postgresql&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\jixiegm\Desktop\GameJam_ParentChildCard\servers\开发文档\开发日志" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/application/service/battleservice" />
+      <recent name="$PROJECT_DIR$/src/application/service/battleservice/StateMachine" />
+      <recent name="$PROJECT_DIR$/src/application/entity/Card/CardAbstract" />
       <recent name="$PROJECT_DIR$/src/application/entity/User_entity" />
       <recent name="$PROJECT_DIR$/src/application/entity/user" />
-      <recent name="$PROJECT_DIR$/src/infra/repo" />
-      <recent name="$PROJECT_DIR$/src/infra/repo/user_repo" />
-      <recent name="$PROJECT_DIR$/src/cmd" />
     </key>
   </component>
   <component name="RunManager" selected="Go 构建.go build pcc_card/cmd/main">
@@ -154,8 +164,8 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-gosdk-72a9cf600ed8-dfa3e7267ae0-org.jetbrains.plugins.go.sharedIndexes.bundled-GO-253.30387.193" />
-        <option value="bundled-js-predefined-d6986cc7102b-9b0f141eb926-JavaScript-GO-253.30387.193" />
+        <option value="bundled-gosdk-72a9cf600ed8-dfa3e7267ae0-org.jetbrains.plugins.go.sharedIndexes.bundled-GO-253.31033.129" />
+        <option value="bundled-js-predefined-d6986cc7102b-9b0f141eb926-JavaScript-GO-253.31033.129" />
       </set>
     </attachedChunks>
   </component>
@@ -182,5 +192,12 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <default-breakpoints>
+        <breakpoint type="DlvErrorBreakpoint" />
+      </default-breakpoints>
+    </breakpoint-manager>
   </component>
 </project>
