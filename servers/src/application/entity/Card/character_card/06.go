@@ -13,3 +13,7 @@ func (c *Card06) Attack() {
 }
 func (c *Card06) Hurt() {
 }
+
+func (c *Card06) GetID() int {
+	return 6
+}
