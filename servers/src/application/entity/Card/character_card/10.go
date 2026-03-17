@@ -1,0 +1,15 @@
+package character_card
+
+type Card10 struct {
+	CharacterCardTemplate
+}
+
+func NewCard10() *Card10 {
+	return &Card10{}
+}
+
+func (c *Card10) Attack() {
+
+}
+func (c *Card10) Hurt() {
+}

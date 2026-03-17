@@ -1,9 +1,5 @@
 package character_card
 
-import (
-	_ "embed"
-)
-
 type Card06 struct {
 	CharacterCardTemplate
 }

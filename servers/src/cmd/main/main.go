@@ -30,7 +30,6 @@ func main() {
 	route.Init()
 	user(DB)
 	Battle(DB)
-
 	route.Run()
 
 }
@@ -52,4 +51,14 @@ func Battle(DB *sql.DB) {
 	battleservice.NewMatchManager()
 	battleservice.InitBattleContainer()
 	route.RegisterBattleRoutes(BattleHandler)
+
+	UpdateCard(BattleService)
+
+}
+
+func UpdateCard(s battleservice.BattleService) {
+	s.InsertCard(7, map[string]any{
+		"hp":     4,
+		"damage": 1,
+	})
 }

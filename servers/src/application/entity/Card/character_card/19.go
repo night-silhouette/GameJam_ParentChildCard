@@ -1,0 +1,15 @@
+package character_card
+
+type Card19 struct {
+	CharacterCardTemplate
+}
+
+func NewCard19() *Card19 {
+	return &Card19{}
+}
+
+func (c *Card19) Attack() {
+
+}
+func (c *Card19) Hurt() {
+}
