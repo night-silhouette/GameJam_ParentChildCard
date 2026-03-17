@@ -77,6 +77,7 @@ func (c *CardList) init(s BattleService) {
 		skill_card.NewCard44(),
 	}
 	for _, e := range c.data {
-
+		info := s.GetCardInfoByID(e.GetID())
+		e.SetInfo(info)
 	}
 }

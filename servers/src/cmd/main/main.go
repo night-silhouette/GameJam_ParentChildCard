@@ -52,14 +52,6 @@ func Battle(DB *sql.DB) {
 	battleservice.InitBattleContainer()
 	route.RegisterBattleRoutes(BattleHandler)
 
-	UpdateCard(BattleService)
+	battleservice.InitCardList(BattleService)
 
-}
-
-func UpdateCard(s battleservice.BattleService) {
-	s.InsertCard(41, map[string]any{
-		"hp":        3,
-		"damage":    2,
-		"is_parent": true,
-	})
 }
