@@ -2,6 +2,7 @@ package battleservice
 
 import (
 	"pcc_card/application/entity/Card/CardAbstract"
+	"pcc_card/application/entity/Card/character_card"
 	"pcc_card/application/service"
 	"pcc_card/infra/repo"
 	"pcc_card/infra/repo/battlerepo"
@@ -34,6 +35,10 @@ func (u *BattleServiceImpl) GetMatchSignals() *sync.Map {
 	return &MatchSignals
 }
 
-func (u *BattleServiceImpl) InsertCard(data CardAbstract.Card) {
-	u.repo.InsertCard(data)
+func (u *BattleServiceImpl) InsertCard(id int) {
+	c := character_card.CharacterCardTemplate{}
+	c.ID = id
+	c.Info["hp"] = 2
+	c.Info["damage"] = 0
+	u.repo.InsertCard(&c)
 }
