@@ -50,7 +50,7 @@ post:
 delete:
     if ！is_admin(只能删自己):
         req:/
-        res:/
+        res:/ 
     else:
         req:id=x
         res:/

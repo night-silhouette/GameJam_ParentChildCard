@@ -11,14 +11,7 @@ func _ready():
 
 # 这是大管家的核心大脑，完美对应你的后端文档
 func _handle_raw_api_data(api_name: String, method: int, code: int, data: Variant, msg: String):
-
-# 全局错误拦截 (比如不管什么接口，只要返回 5 Token过期，统一处理)
-	if code == 5: # ResponseTokenExpired
-		current_token = ""
-		SignalBus.network_disconnected.emit()
-		return
-
-# 根据接口和动词(谓词)进行精准拆包
+# 登录和token
 	match api_name:
 
 	# -------------------------------------
@@ -62,11 +55,3 @@ func _handle_raw_api_data(api_name: String, method: int, code: int, data: Varian
 				# PUT 是修改资料
 					if code == 0:
 						SignalBus.user_updated_success.emit()
-
-	# -------------------------------------
-	# 3. 心跳包 (/ping)
-	# -------------------------------------
-		"/ping":
-			if code != 0 or data != "pong":
-			# 心跳断了
-				SignalBus.network_disconnected.emit()
