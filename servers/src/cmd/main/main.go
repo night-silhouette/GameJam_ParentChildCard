@@ -37,7 +37,12 @@ func main() {
 	fmt.Println(bt.BattleID)
 	fmt.Println(bt.Ctx.DataA.ID)
 	fmt.Println(bt.Ctx.DataA.CardInHand)
-	fmt.Println(bt.Ctx.DataB.CardInHand)
+	for index, data := range *bt.Ctx.DataA.CardInHand {
+		fmt.Println(fmt.Sprintf("第%d张", index))
+		fmt.Println(data.GetID())
+		fmt.Println(data.GetInfo()["hp"])
+	}
+
 	route.Run()
 
 }

@@ -1,5 +1,8 @@
 package CardImpl
 
+import "pcc_card/application/entity/Card/CardAbstract"
+
+
 type Card42 struct {
 	BaseCard
 }
@@ -16,4 +19,9 @@ func (c *Card42) Hurt() {
 
 func (c *Card42) GetID() int {
 	return 42
+}
+
+func (c *Card42) Clone() CardAbstract.Card {
+	newCard := *c
+	return &newCard
 }

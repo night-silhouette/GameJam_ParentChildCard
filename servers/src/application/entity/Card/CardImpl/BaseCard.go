@@ -2,7 +2,6 @@ package CardImpl
 
 import (
 	_ "embed"
-	"pcc_card/application/entity/Card/CardAbstract"
 )
 
 type BaseCard struct {
@@ -12,11 +11,6 @@ type BaseCard struct {
 
 func (c *BaseCard) GetID() int {
 	return -1
-}
-
-func (c *BaseCard) Clone() CardAbstract.Card {
-	newCard := *c
-	return &newCard
 }
 
 func (c *BaseCard) SetInfo(info map[string]any) {
