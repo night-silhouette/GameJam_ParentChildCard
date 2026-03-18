@@ -1,9 +1,7 @@
 package CardImpl
 
-import "pcc_card/application/entity/Card/skill_card"
-
 type Card01 struct {
-	skill_card.SkillCardTemplate
+	BaseCard
 }
 
 func NewCard01() *Card01 {

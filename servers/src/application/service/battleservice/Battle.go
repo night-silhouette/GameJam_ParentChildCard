@@ -16,9 +16,9 @@ type Battle struct {
 
 func NewBattle(UserA int, UserB int) *Battle {
 	id := int(atomic.AddInt64(&battleIDCounter, 1))
-	ctx := Ctx{IDA: UserA, IDB: UserB}
-	SM := NewStateMachine(&ctx)
-	return &Battle{BattleID: id, SM: SM, Ctx: &ctx}
+	ctx := NewCtx(UserA, UserB)
+	SM := NewStateMachine(ctx)
+	return &Battle{BattleID: id, SM: SM, Ctx: ctx}
 }
 
 //------------------------------------------------------------
@@ -37,7 +37,7 @@ func InitBattleContainer() {
 	BC.UserToBTID = make(map[int]int)
 }
 
-func (bc *BattleContainer) AddBattle(id1 int, id2 int) int {
+func (bc *BattleContainer) AddBattle(id1 int, id2 int) int { //启动接口
 	bc.mu.Lock()
 	defer bc.mu.Unlock()
 	Bt := NewBattle(id1, id2)

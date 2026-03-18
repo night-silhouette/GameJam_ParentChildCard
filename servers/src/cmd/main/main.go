@@ -30,6 +30,14 @@ func main() {
 	route.Init()
 	user(DB)
 	Battle(DB)
+
+	battleservice.BC.AddBattle(2, 3)
+	bt := battleservice.BC.GetBattle(3)
+	fmt.Println("---------------------------------------------------")
+	fmt.Println(bt.BattleID)
+	fmt.Println(bt.Ctx.DataA.ID)
+	fmt.Println(bt.Ctx.DataA.CardInHand)
+	fmt.Println(bt.Ctx.DataB.CardInHand)
 	route.Run()
 
 }

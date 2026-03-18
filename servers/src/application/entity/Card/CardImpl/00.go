@@ -1,7 +1,7 @@
 package CardImpl
 
 type Card00 struct {
-	skill_card.SkillCardTemplate
+	BaseCard
 }
 
 func NewCard00() *Card00 {

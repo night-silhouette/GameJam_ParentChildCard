@@ -17,16 +17,13 @@ func InitCardList(s BattleService) {
 	CardListImpl.init(s)
 }
 
-func (c *CardList) Copy() *CardList {
-	newList := &CardList{}
-	if c.data == nil {
-		return newList
-	}
-	newList.data = make([]CardAbstract.Card, len(c.data))
+func (c *CardList) Copy() *[]CardAbstract.Card {
+	var newList []CardAbstract.Card
+	newList = make([]CardAbstract.Card, len(c.data))
 	for i := 0; i < len(c.data); i++ {
-		= c.data[i]
+		newList[i] = c.data[i].Clone()
 	}
-	return newList
+	return &newList
 }
 
 func (c *CardList) init(s BattleService) {
