@@ -67,4 +67,4 @@ get:
     res:/（主动验证token是否合法）
 post:
     req:name=x&password=y(验证码的接口还在做，到时候登陆还要加一个req参数是验证码)
-    res:"token"
+    res:"token" 

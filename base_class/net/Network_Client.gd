@@ -1,12 +1,13 @@
 extends Node
-const BASE_URL = "http://你的服务器IP或域名" 
+const BASE_URL = "http://120.26.145.68:10086" 
 
 
 func call_api(api_name: String, method: int, body_data: Dictionary = {}, use_token: bool = true):
 	# 1. 招募一个临时的快递员
+	print("api调用成功")
 	var http = HTTPRequest.new()
 	add_child(http) # 让他归 Net 管
-
+	
 	http.request_completed.connect(on_request_completed.bind(http, api_name, method))
 	
 	# 3. 准备（Headers）
@@ -14,14 +15,14 @@ func call_api(api_name: String, method: int, body_data: Dictionary = {}, use_tok
 	
 	# 这里就是决定要不要使用token
 	if use_token:
+		
 		# 如果当前没有 Token（可能还没登录），在控制台提个醒，防呆设计
 		if Packethandler.current_token == "":
-			push_warning("警告：请求 " + api_name + " 需要 Token，但当前没找到 Token！")
-			
+			print("警告：请求 " + api_name + " 需要 Token，但当前没找到 Token！")
 		# 把 Token 拼接到规定的 Authorization 格式里，塞进信封
 		var auth_string = "Authorization: " + Packethandler.current_token
 		headers.append(auth_string)
-
+		print(headers);
 	
 	# 4. （Body）
 	var body_string = ""
@@ -41,15 +42,19 @@ func call_api(api_name: String, method: int, body_data: Dictionary = {}, use_tok
 
 func on_request_completed(result, response_code, headers, body, http_node, api_name, method):
 	http_node.queue_free()
-
+	
 	if result != HTTPRequest.RESULT_SUCCESS or response_code != 200:
+		print(response_code);
 		SignalBus.raw_api_responded.emit(api_name, method, -1, null, "网络异常")
+		
 		return
-
+	
+	print("网络成功返回")
 	var res = JSON.parse_string(body.get_string_from_utf8())
-	var code = res["Code"]
-	var data = res["Data"] if res.has("Data") else null
-	var msg = res["Msg"]
+	
+	var code = res["code"]
+	var data = res["data"] if res.has("Data") else null
+	var msg = res["msg"]
 
 	#快递员干完活了，直接扔给传达室，下班！
 	SignalBus.raw_api_responded.emit(api_name, method, code, data, msg)

@@ -8,20 +8,26 @@ var is_admin: bool = false
 func _ready():
 	# 大管家搬个椅子坐在传达室，专听底层原始信号
 	SignalBus.raw_api_responded.connect(_handle_raw_api_data)
+	current_token =  TokenManager.get_token();	
 
 # 这是大管家的核心大脑，完美对应你的后端文档
 func _handle_raw_api_data(api_name: String, method: int, code: int, data: Variant, msg: String):
 # 登录和token
+	if code != 0 :
+		print(NetError.error_message[code]);
+		return
+		
 	match api_name:
 
 	# -------------------------------------
 	# 1. 登录与 Token 相关 (/v1/token)
 	# -------------------------------------
-		"/v1/token":
+		"/v1/token/":
 			if method == HTTPClient.METHOD_POST: 
 			# POST 是登录
 				if code == 0:
-					current_token = str(data) # 存下Token
+					TokenManager.save_token(str(data)) # 存下Token
+					current_token =  TokenManager.get_token();	
 					SignalBus.login_success.emit()
 				else:
 					SignalBus.login_failed.emit(msg)
@@ -33,11 +39,12 @@ func _handle_raw_api_data(api_name: String, method: int, code: int, data: Varian
 				else:
 					current_token = ""
 					SignalBus.network_disconnected.emit()
+					print("toke过期 " + NetError.error_message[code]);
 
 	# -------------------------------------
 	# 2. 用户信息相关 (/v1/user)
 	# -------------------------------------
-		"/v1/user":
+		"/v1/user/":
 			if method == HTTPClient.METHOD_GET: 
 			# GET 是查资料
 				if code == 0:
@@ -45,13 +52,16 @@ func _handle_raw_api_data(api_name: String, method: int, code: int, data: Varian
 					is_admin = bool(data["is_admin"])
 					# 通知 UI 刷新名字
 					SignalBus.user_info_fetched.emit(my_player_id, str(data["name"]), is_admin)
+					print(my_player_id, str(data["name"]), is_admin)
 
 			elif method == HTTPClient.METHOD_POST:
 				# POST 是注册
 				if code == 0:
 					SignalBus.user_registered_success.emit()
+					print("注册成功")
 
 				elif method == HTTPClient.METHOD_PUT:
 				# PUT 是修改资料
 					if code == 0:
 						SignalBus.user_updated_success.emit()
+						

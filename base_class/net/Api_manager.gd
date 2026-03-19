@@ -15,8 +15,6 @@ func _ready():
 	SignalBus.request_delete_user_self.connect(_on_delete_user_self)
 	SignalBus.request_delete_user_by_id.connect(_on_delete_user_by_id)
 
-	# ping
-	SignalBus.request_ping.connect(_on_ping)
 
 # =========================
 # Token
@@ -27,11 +25,11 @@ func _on_request_login(username: String, password: String):
 		"name": username,
 		"password": password
 	}
-	NetworkClient._call_api("/v1/token", HTTPClient.METHOD_POST, body, false)
+	NetworkClient.call_api("/v1/token/", HTTPClient.METHOD_POST, body, false)
 
 
 func _on_request_validate_token():
-	NetworkClient._call_api("/v1/token", HTTPClient.METHOD_GET)
+	NetworkClient.call_api("/v1/token/", HTTPClient.METHOD_GET)
 
 
 # =========================
@@ -39,17 +37,17 @@ func _on_request_validate_token():
 # =========================
 
 func _on_get_user_self():
-	NetworkClient._call_api("/v1/user", HTTPClient.METHOD_GET)
+	NetworkClient.call_api("/v1/user/", HTTPClient.METHOD_GET)
 
 
 func _on_get_user_by_id(user_id: int):
 	var url = "/v1/user?id=" + str(user_id)
-	NetworkClient._call_api(url, HTTPClient.METHOD_GET)
+	NetworkClient.call_api(url, HTTPClient.METHOD_GET)
 
 
 func _on_get_user_by_name(name: String):
 	var url = "/v1/user?name=" + name
-	NetworkClient._call_api(url, HTTPClient.METHOD_GET)
+	NetworkClient.call_api(url, HTTPClient.METHOD_GET)
 
 
 # =========================
@@ -61,7 +59,8 @@ func _on_register_user(name: String, password: String):
 		"name": name,
 		"password": password
 	}
-	NetworkClient._call_api("/v1/user", HTTPClient.METHOD_POST, body, false)
+	print("zhuc")
+	NetworkClient.call_api("/v1/user/", HTTPClient.METHOD_POST, body, false)
 
 
 # =========================
@@ -74,7 +73,7 @@ func _on_update_user(id: int, name: String, password: String):
 		"name": name,
 		"password": password
 	}
-	NetworkClient._call_api("/v1/user", HTTPClient.METHOD_PUT, body)
+	NetworkClient.call_api("/v1/user/", HTTPClient.METHOD_PUT, body)
 
 
 # =========================
@@ -82,17 +81,9 @@ func _on_update_user(id: int, name: String, password: String):
 # =========================
 
 func _on_delete_user_self():
-	NetworkClient._call_api("/v1/user", HTTPClient.METHOD_DELETE)
+	NetworkClient.call_api("/v1/user/", HTTPClient.METHOD_DELETE)
 
 
 func _on_delete_user_by_id(id: int):
 	var url = "/v1/user?id=" + str(id)
-	NetworkClient._call_api(url, HTTPClient.METHOD_DELETE)
-
-
-# =========================
-# ping
-# =========================
-
-func _on_ping():
-	NetworkClient._call_api("/ping", HTTPClient.METHOD_GET, {}, false)
+	NetworkClient.call_api(url, HTTPClient.METHOD_DELETE)
