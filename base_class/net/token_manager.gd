@@ -4,16 +4,14 @@ var token: String = ""
 
 const SAVE_PATH = "user://token.save"
 
-func _ready() -> void:
-	load_token();
-	print(token)
+
 
 # =========================
 # 保存 Token
 # =========================
 func save_token(new_token: String):
 	token = new_token
-
+	print(token);
 	var data = {
 		"token": new_token
 	}

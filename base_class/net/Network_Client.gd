@@ -22,7 +22,6 @@ func call_api(api_name: String, method: int, body_data: Dictionary = {}, use_tok
 		# 把 Token 拼接到规定的 Authorization 格式里，塞进信封
 		var auth_string = "Authorization: " + Packethandler.current_token
 		headers.append(auth_string)
-		print(headers);
 	
 	# 4. （Body）
 	var body_string = ""
@@ -44,7 +43,7 @@ func on_request_completed(result, response_code, headers, body, http_node, api_n
 	http_node.queue_free()
 	
 	if result != HTTPRequest.RESULT_SUCCESS or response_code != 200:
-		print(response_code);
+		
 		SignalBus.raw_api_responded.emit(api_name, method, -1, null, "网络异常")
 		
 		return
@@ -53,9 +52,8 @@ func on_request_completed(result, response_code, headers, body, http_node, api_n
 	var res = JSON.parse_string(body.get_string_from_utf8())
 	
 	var code = res["code"]
-	var data = res["data"] if res.has("Data") else null
+	var data = res["data"] if res.has("data") else null
 	var msg = res["msg"]
-
 	#快递员干完活了，直接扔给传达室，下班！
 	SignalBus.raw_api_responded.emit(api_name, method, code, data, msg)
 	

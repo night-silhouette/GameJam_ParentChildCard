@@ -8,11 +8,13 @@ var is_admin: bool = false
 func _ready():
 	# 大管家搬个椅子坐在传达室，专听底层原始信号
 	SignalBus.raw_api_responded.connect(_handle_raw_api_data)
+	TokenManager.load_token();
 	current_token =  TokenManager.get_token();	
 
 # 这是大管家的核心大脑，完美对应你的后端文档
 func _handle_raw_api_data(api_name: String, method: int, code: int, data: Variant, msg: String):
 # 登录和token
+	print("进入解包层")
 	if code != 0 :
 		print(NetError.error_message[code]);
 		return
@@ -25,8 +27,9 @@ func _handle_raw_api_data(api_name: String, method: int, code: int, data: Varian
 		"/v1/token/":
 			if method == HTTPClient.METHOD_POST: 
 			# POST 是登录
+# 如果输出 String，说明你还没解析它，它只是个长得像字典的字符串
 				if code == 0:
-					TokenManager.save_token(str(data)) # 存下Token
+					TokenManager.save_token(str(data["token"])) # 存下Token
 					current_token =  TokenManager.get_token();	
 					SignalBus.login_success.emit()
 				else:
@@ -52,7 +55,6 @@ func _handle_raw_api_data(api_name: String, method: int, code: int, data: Varian
 					is_admin = bool(data["is_admin"])
 					# 通知 UI 刷新名字
 					SignalBus.user_info_fetched.emit(my_player_id, str(data["name"]), is_admin)
-					print(my_player_id, str(data["name"]), is_admin)
 
 			elif method == HTTPClient.METHOD_POST:
 				# POST 是注册

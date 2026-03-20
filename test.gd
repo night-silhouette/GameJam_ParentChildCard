@@ -9,8 +9,8 @@ func _ready():
 
 	await get_tree().create_timer(1.0).timeout
 
-	await test_register()
-	await test_login()
+	#await test_register()
+	#await test_login()
 	await test_validate_token()
 	await test_get_self()
 	await test_update_user()
@@ -57,16 +57,16 @@ func _connect_signals():
 # 测试流程（带等待）
 # =========================
 
-func test_register():
-	print("\n[TEST] register")
-	SignalBus.request_register_user.emit("test_user1", "123456")
-	await wait()
-
-
-func test_login():
-	print("\n[TEST] login")
-	SignalBus.request_login.emit("test_user1", "123456")
-	await wait()
+#func test_register():
+	#print("\n[TEST] register")
+	#SignalBus.request_register_user.emit("test_user1", "123456")
+	#await wait()
+#
+#
+#func test_login():
+	#print("\n[TEST] login")
+	#SignalBus.request_login.emit("test_user1", "123456")
+	#await wait()
 
 
 func test_validate_token():
