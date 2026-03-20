@@ -55,10 +55,14 @@ _data = {
 }
 
 [node name="cheese" type="TextureRect"]
-offset_right = 40.0
-offset_bottom = 40.0
+offset_left = -96.0
+offset_top = -120.0
+offset_right = 929.0
+offset_bottom = 544.0
+scale = Vector2(0.50675523, 0.50675523)
 pivot_offset = Vector2(882, 513)
 texture = ExtResource("1_m73gy")
+expand_mode = 1
 script = ExtResource("2_m73gy")
 
 [node name="cheese_animationpalyer" type="AnimationPlayer" parent="."]

@@ -10,17 +10,10 @@ layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = -8.0
+offset_right = -8.0
 grow_horizontal = 2
 grow_vertical = 2
-
-[node name="ColorRect" type="ColorRect" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-metadata/_edit_lock_ = true
 
 [node name="边框" parent="." instance=ExtResource("1_qfxjv")]
 layout_mode = 1
@@ -36,17 +29,17 @@ scale = Vector2(0.1854808, 0.1854808)
 
 [node name="电线" type="TextureRect" parent="."]
 layout_mode = 0
-offset_left = -40.0
-offset_top = 176.0
-offset_right = 965.25183
-offset_bottom = 1211.0
+offset_left = 216.0
+offset_top = 144.0
+offset_right = 1249.5687
+offset_bottom = 1179.0
 scale = Vector2(0.5650326, 0.38797444)
 texture = ExtResource("4_ja110")
 
 [node name="cheese" parent="." instance=ExtResource("2_nr1r5")]
 layout_mode = 0
-offset_left = -232.00003
-offset_top = -296.00003
-offset_right = 1532.0
-offset_bottom = 730.0
+offset_left = -296.0
+offset_top = -304.00003
+offset_right = 1468.0
+offset_bottom = 722.0
 scale = Vector2(0.13127445, 0.1266273)
