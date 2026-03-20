@@ -45,7 +45,7 @@ get:
             "is_admin": ...
 
 post:
-    req:name=x&id=y
+    req:name=x&password=y
     res:/
 delete:
     if ！is_admin(只能删自己):
@@ -59,7 +59,13 @@ put:
         	Name     string `form:"name" binding:"required,max=16"`
         	Password string `form:"password" binding:"required,max=256"`(都小写)
     res:/
-    如果不是管理员，就只能put自己的，是的话，随便put
+    如果不是管理员，不可以put，是的话，随便put
+patch:
+    req:    name  string
+    或者
+    req:    password  string
+
+    res:/
 
 3./v1/token
 get:
@@ -69,8 +75,3 @@ post:
     req:name=x&password=y(验证码的接口还在做，到时候登陆还要加一个req参数是验证码)
     res:"token"
 
-
-4./v1/match/
-post:(尝试匹配)
-    req:/
-    res:/

@@ -76,7 +76,10 @@ func (u *User_service_impl) Delete_user(e *User_entity.User) global.ResponseStat
 	return global.ResponseSuccess
 }
 func (u *User_service_impl) Update_user(e *User_entity.User) global.ResponseStatusCode {
-	e.Password = u.hash_password(e.Password)
+	if !(e.Password == "") {
+		e.Password = u.hash_password(e.Password)
+	}
+
 	err := u.repo.Update(e)
 	return err
 }

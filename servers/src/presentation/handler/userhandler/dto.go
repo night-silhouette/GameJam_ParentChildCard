@@ -17,3 +17,8 @@ type UserPutReqDto struct {
 	Name     string `form:"name" binding:"required,max=16"`
 	Password string `form:"password" binding:"required,max=256"`
 }
+
+type UserPatchDto struct {
+	Name     string `form:"name" binding:"max=16"`
+	Password string `form:"password" binding:"max=256"`
+}

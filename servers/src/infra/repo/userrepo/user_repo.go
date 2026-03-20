@@ -85,8 +85,16 @@ func (r *User_repo_impl) Get_by_id(id int) (*User_entity.User, global.ResponseSt
 }
 
 func (r *User_repo_impl) Update(e *User_entity.User) global.ResponseStatusCode {
-	query := "update users set user_name = $1, hash_password = $2 where id = $3"
-	res, err := r.db.Exec(query, e.Name, e.Password, e.Id)
+	var res sql.Result
+	var err error
+	if e.Password != "" {
+		query := "update users set user_name = $1, hash_password = $2 where id = $3"
+		res, err = r.db.Exec(query, e.Name, e.Password, e.Id)
+	} else {
+		query := "update users set user_name = $1 where id = $2"
+		res, err = r.db.Exec(query, e.Name, e.Id)
+	}
+
 	if err != nil {
 		return global.ResponseInternalServersError
 	}

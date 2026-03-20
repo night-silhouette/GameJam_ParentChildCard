@@ -101,14 +101,15 @@ func (u *User_handler_impl) Put() gin.HandlerFunc {
 		is_admin := c.GetBool("is_admin")
 		user_id := c.GetInt("id")
 		var req UserPutReqDto
-		if err := c.ShouldBind(&req); err != nil {
-			response.Fail(c, global.ResponseInvalidReqParams)
-			return
-		}
 		if !is_admin && user_id != req.Id {
 			response.Fail(c, global.ResponseForbidden)
 			return
 		}
+		if err := c.ShouldBind(&req); err != nil {
+			response.Fail(c, global.ResponseInvalidReqParams)
+			return
+		}
+
 		e := &User_entity.User{Id: req.Id, Name: req.Name, Password: req.Password}
 		err := u.s.Update_user(e)
 		if err != global.ResponseSuccess {
@@ -149,6 +150,45 @@ func (u *User_handler_impl) Delete() gin.HandlerFunc {
 
 func (u *User_handler_impl) Patch() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		response.Fail(c, global.ResponseNotImplemented)
+		user_id := c.GetInt("id")
+		var req UserPatchDto
+		if err := c.ShouldBind(&req); err != nil {
+			response.Fail(c, global.ResponseInvalidReqParams)
+			return
+		}
+		if req.Name == "" && req.Password == "" {
+			response.Fail(c, global.ResponseInvalidReqParams)
+			return
+		}
+		e, err := u.s.Find_user_by_id(user_id)
+		if err != global.ResponseSuccess {
+			response.Fail(c, err)
+			return
+		}
+		if req.Name != "" {
+			if req.Name == e.Name {
+				response.Fail(c, global.ResponseInvalidReqParams)
+				return
+			}
+			e.Name = req.Name
+		}
+		if req.Password != "" {
+			OK := u.s.Check_password(user_id, req.Password)
+			if OK == global.ResponseSuccess {
+				response.Fail(c, global.ResponseInvalidReqParams)
+				return
+			} else {
+				e.Password = req.Password
+			}
+
+		} else {
+			e.Password = ""
+		}
+		err = u.s.Update_user(e)
+		if err != global.ResponseSuccess {
+			response.Fail(c, err)
+			return
+		}
+		response.Success(c, "ok")
 	}
 }
