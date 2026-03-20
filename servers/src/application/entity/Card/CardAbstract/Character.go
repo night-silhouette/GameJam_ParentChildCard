@@ -1,6 +1,6 @@
 package CardAbstract
 
-type CharacterCard interface {
+type Character interface {
 	Attack()
 	Hurt()
 }

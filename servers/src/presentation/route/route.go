@@ -37,6 +37,7 @@ func Init() {
 	R.GET("/ping", func(c *gin.Context) {
 		response.Success(c, "pong")
 	})
+	//-------------------------------------------------------------
 
 }
 
@@ -68,6 +69,6 @@ func Register_token_routes(h tokenhandler.Token_handler) {
 	v1_user.PUT("/", h.Put())
 }
 
-func RegisterBattleRoutes(h battlehandler.BattleHandler) {
-	R.POST("/v1/match/", h.AddMatch())
+func RegisterBattleWS(h battlehandler.BattleHandler) {
+	R.GET("v1/ws", h.BattleWs())
 }

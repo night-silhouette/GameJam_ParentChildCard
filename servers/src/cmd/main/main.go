@@ -31,17 +31,18 @@ func main() {
 	user(DB)
 	Battle(DB)
 
-	battleservice.BC.AddBattle(2, 3)
-	bt := battleservice.BC.GetBattle(3)
-	fmt.Println("---------------------------------------------------")
-	fmt.Println(bt.BattleID)
-	fmt.Println(bt.Ctx.DataA.ID)
-	fmt.Println(bt.Ctx.DataA.CardInHand)
-	for index, data := range *bt.Ctx.DataA.CardInHand {
-		fmt.Println(fmt.Sprintf("第%d张", index))
-		fmt.Println(data.GetID())
-		fmt.Println(data.GetInfo()["hp"])
-	}
+	//
+	//battleservice.BC.AddBattle(2, 3)
+	//bt := battleservice.BC.GetBattle(3)
+	//fmt.Println("---------------------------------------------------")
+	//fmt.Println(bt.BattleID)
+	//fmt.Println(bt.Ctx.PlayerDataMap[2])
+	//fmt.Println(bt.Ctx.PlayerDataMap[2].CardInHand)
+	//for index, data := range *bt.Ctx.PlayerDataMap[2].CardInHand {
+	//	fmt.Println(fmt.Sprintf("第%d张", index))
+	//	fmt.Println(data.GetID())
+	//	fmt.Println(data.GetInfo()["hp"])
+	//}
 
 	route.Run()
 
@@ -63,7 +64,7 @@ func Battle(DB *sql.DB) {
 	BattleHandler := handler.New_handler[*battlehandler.BattleHandlerImpl](BattleService)
 	battleservice.NewMatchManager()
 	battleservice.InitBattleContainer()
-	route.RegisterBattleRoutes(BattleHandler)
 	battleservice.InitCardList(BattleService)
+	route.RegisterBattleWS(BattleHandler)
 
 }

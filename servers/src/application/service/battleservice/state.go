@@ -12,6 +12,8 @@ type State interface {
 }
 
 type StateMachine struct {
+	Id1          int
+	Id2          int
 	StateList    map[string]State
 	CurrentState State
 	c            *Ctx
@@ -28,9 +30,11 @@ func (s *StateMachine) finish(NextState State) {
 	}
 }
 
-func NewStateMachine(c *Ctx) *StateMachine {
+func NewStateMachine(c *Ctx, id1 int, id2 int) *StateMachine {
 	StateMachineImpl := &StateMachine{}
-	StateMachineImpl.c = c
+	StateMachineImpl.c = c //ctx的注入
+	StateMachineImpl.Id1 = id1
+	StateMachineImpl.Id2 = id2
 	StateMachineImpl.CardListCopy = CardListImpl.Copy()
 
 	StateMachineImpl.StateList = map[string]State{
@@ -50,10 +54,16 @@ type ShuffleDeal struct {
 }
 
 func (s *ShuffleDeal) enter() {
-	s.RandomCard()
+	for {
+		OK := s.RandomCard()
+		if OK {
+			break
+		}
+	}
+
 }
 
-func (s *ShuffleDeal) RandomCard() {
+func (s *ShuffleDeal) RandomCard() bool {
 	cList := s.SM.CardListCopy
 	rand.Shuffle(len(*cList), func(i, j int) {
 		(*cList)[i], (*cList)[j] = (*cList)[j], (*cList)[i]
@@ -63,12 +73,18 @@ func (s *ShuffleDeal) RandomCard() {
 	numB := global.InitCardNum
 	i := 0
 	CardInHandA := make([]CardAbstract.Card, 0, numA)
-	s.c.DataA.CardInHand = &CardInHandA
+	s.c.PlayerDataMap[s.SM.Id1].CardInHand = &CardInHandA
 	CardInHandB := make([]CardAbstract.Card, 0, numB)
-	s.c.DataB.CardInHand = &CardInHandB
+	s.c.PlayerDataMap[s.SM.Id1].CardInHand = &CardInHandB
+	CharacterNumA := 0
+	CharacterNumB := 0
+
 	for ; i < len(*cList); i++ {
 		if (*cList)[i].GetInfo()["is_parent"] == true {
 			CardInHandA = append(CardInHandA, (*cList)[i])
+			if _, ok := (*cList)[i].(CardAbstract.Character); ok {
+				CharacterNumA++
+			}
 			numA -= 1
 			if numA == 0 {
 				break
@@ -78,12 +94,19 @@ func (s *ShuffleDeal) RandomCard() {
 	for ; i < len(*cList); i++ {
 		if (*cList)[i].GetInfo()["is_parent"] == true {
 			CardInHandB = append(CardInHandB, (*cList)[i])
+			if _, ok := (*cList)[i].(CardAbstract.Character); ok {
+				CharacterNumB++
+			}
 			numB -= 1
 			if numB == 0 {
 				break
 			}
 		}
 	}
+	if CharacterNumA <= 3 || CharacterNumB <= 3 {
+		return false
+	}
+	return true
 }
 
 func (s *ShuffleDeal) exit() {}

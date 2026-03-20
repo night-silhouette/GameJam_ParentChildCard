@@ -5,8 +5,7 @@ import (
 )
 
 type Ctx struct {
-	DataA *PlayerData
-	DataB *PlayerData
+	PlayerDataMap map[int]*PlayerData
 }
 
 type PlayerData struct {
@@ -25,7 +24,8 @@ func NewPlayerData(ID int) *PlayerData {
 
 func NewCtx(idA int, idB int) *Ctx {
 	c := &Ctx{}
-	c.DataA = NewPlayerData(idA)
-	c.DataB = NewPlayerData(idB)
+	c.PlayerDataMap = make(map[int]*PlayerData, 2)
+	c.PlayerDataMap[idA] = NewPlayerData(idA)
+	c.PlayerDataMap[idB] = NewPlayerData(idB)
 	return c
 }

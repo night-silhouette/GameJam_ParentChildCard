@@ -18,6 +18,7 @@ const (
 	ResponseTokenMissing
 	ResponseForbidden
 	ResponseRepeatRequest
+	ResponseUnknownError
 )
 
 var StatusMsg = map[ResponseStatusCode]string{
@@ -36,4 +37,5 @@ var StatusMsg = map[ResponseStatusCode]string{
 	ResponseIncorrectPassword:     "密码错误",
 	ResponseForbidden:             "权限不足",
 	ResponseRepeatRequest:         "重复请求",
+	ResponseUnknownError:          "发生了一个未知错误，抱歉",
 }

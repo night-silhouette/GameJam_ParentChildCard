@@ -97,6 +97,10 @@ func (u *Token_handler_impl) Middleware_token_check() gin.HandlerFunc {
 
 		token := c.GetHeader("Authorization")
 		if token == "" {
+			token = c.Query("token")
+		}
+
+		if token == "" {
 			response.Fail(c, global.ResponseTokenMissing)
 			c.Abort()
 			return

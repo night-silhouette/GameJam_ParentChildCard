@@ -17,7 +17,7 @@ type Battle struct {
 func NewBattle(UserA int, UserB int) *Battle {
 	id := int(atomic.AddInt64(&battleIDCounter, 1))
 	ctx := NewCtx(UserA, UserB)
-	SM := NewStateMachine(ctx)
+	SM := NewStateMachine(ctx, UserA, UserB)
 	return &Battle{BattleID: id, SM: SM, Ctx: ctx}
 }
 
