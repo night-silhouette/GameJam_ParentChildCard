@@ -3,15 +3,24 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bixq72rdtu5c0"
+<<<<<<< HEAD
 path="res://.godot/imported/动画3.png-a670227e32cce599b01dd8389b4ea0a8.ctex"
+=======
+path="res://.godot/imported/动画3.png-5ee6708f14a2d3d7bd8446320fb423f0.ctex"
+>>>>>>> 52278edba8f25f4b4e029545f4e03665323b9c67
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
+<<<<<<< HEAD
 source_file="res://asset（素材-美术和音乐）/使用素材/战斗外/转场动画（加载版面与登录界面之间）/动画转场/动画3.png"
 dest_files=["res://.godot/imported/动画3.png-a670227e32cce599b01dd8389b4ea0a8.ctex"]
+=======
+source_file="res://asset（素材-美术和音乐）/转场/动画转场/动画3.png"
+dest_files=["res://.godot/imported/动画3.png-5ee6708f14a2d3d7bd8446320fb423f0.ctex"]
+>>>>>>> 52278edba8f25f4b4e029545f4e03665323b9c67
 
 [params]
 

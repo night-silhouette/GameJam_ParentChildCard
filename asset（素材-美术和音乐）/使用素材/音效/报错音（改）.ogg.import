@@ -3,12 +3,12 @@
 importer="oggvorbisstr"
 type="AudioStreamOggVorbis"
 uid="uid://bq6wuw02vtnqt"
-path="res://.godot/imported/报错音（改）.ogg-9aace55ee91371ba33ca6c6b87bc68b2.oggvorbisstr"
+path="res://.godot/imported/报错音（改）.ogg-06aabfca0f559bb463a8cc67749f4d2e.oggvorbisstr"
 
 [deps]
 
-source_file="res://asset（素材-美术和音乐）/使用素材/音效/报错音（改）.ogg"
-dest_files=["res://.godot/imported/报错音（改）.ogg-9aace55ee91371ba33ca6c6b87bc68b2.oggvorbisstr"]
+source_file="res://asset（素材-美术和音乐）/新音效/报错音（改）.ogg"
+dest_files=["res://.godot/imported/报错音（改）.ogg-06aabfca0f559bb463a8cc67749f4d2e.oggvorbisstr"]
 
 [params]
 

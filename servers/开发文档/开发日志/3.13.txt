@@ -1,0 +1,5 @@
+这太区了，配置系统路径，一定要看看是不是exe文件夹，有时候他会跳转快捷方式的文件夹
+
+关于frp
+frps是servers
+frpc是client

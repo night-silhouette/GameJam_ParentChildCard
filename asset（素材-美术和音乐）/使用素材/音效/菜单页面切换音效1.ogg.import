@@ -3,12 +3,12 @@
 importer="oggvorbisstr"
 type="AudioStreamOggVorbis"
 uid="uid://l3fwp4v52hix"
-path="res://.godot/imported/菜单页面切换音效1.ogg-f4f859408d1fb4a5eecdb479023b38ea.oggvorbisstr"
+path="res://.godot/imported/菜单页面切换音效1.ogg-b98c6824b024f20e8b75e3ff088c95b6.oggvorbisstr"
 
 [deps]
 
-source_file="res://asset（素材-美术和音乐）/使用素材/音效/菜单页面切换音效1.ogg"
-dest_files=["res://.godot/imported/菜单页面切换音效1.ogg-f4f859408d1fb4a5eecdb479023b38ea.oggvorbisstr"]
+source_file="res://asset（素材-美术和音乐）/新音效/菜单页面切换音效1.ogg"
+dest_files=["res://.godot/imported/菜单页面切换音效1.ogg-b98c6824b024f20e8b75e3ff088c95b6.oggvorbisstr"]
 
 [params]
 

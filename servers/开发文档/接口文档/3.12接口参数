@@ -1,0 +1,76 @@
+注：1.req是请求参数（request）
+2.res是响应参数(response)
+3./就是指没有
+4.res都是这个结构：
+response{
+		Code: global.ResponseSuccess,
+		Msg:  global.StatusMsg[global.ResponseSuccess],
+		Data: data,
+	}
+我下面文档里写的默认是data字段的东西
+5.ResponseStatusCode://从0开始的枚举
+    ResponseSuccess
+    ResponseDataNotFound
+    ResponseInternalServersError
+    ResponseInvalidReqParams
+    ResponseInvalidToken
+    ResponseTokenExpired
+    ResponseIncorrectTokenFormat
+    ResponseDuplicateDataEntry
+    ResponseRequiredParamsMissing
+    ResponseDependentRecordsExist
+    ResponseNotImplemented
+    ResponseIncorrectPassword
+    ResponseTokenMissing
+    ResponseForbidden
+
+
+1./ping
+req:/
+res:"pong"
+
+2./v1/user
+get:
+    if ！is_admin(只能查自己):
+        req:/
+        res:"id": 15,
+            "name": "test1",
+            "password": "$2a$10$yDqrivLBRrDizIWiR3xhpOzbG.rE5MmqvjdbPK5/M0T7pt0Z2S2NO",
+            "is_admin": false
+    else:
+        req:name=x || id=y
+        res:"id": y,
+            "name": "x",
+            "password": "...",
+            "is_admin": ...
+
+post:
+    req:name=x&id=y
+    res:/
+delete:
+    if ！is_admin(只能删自己):
+        req:/
+        res:/
+    else:
+        req:id=x
+        res:/
+put:
+    req:	Id       int    `form:"id" binding:"required,min=1"`
+        	Name     string `form:"name" binding:"required,max=16"`
+        	Password string `form:"password" binding:"required,max=256"`(都小写)
+    res:/
+    如果不是管理员，就只能put自己的，是的话，随便put
+
+3./v1/token
+get:
+    req:/
+    res:/（主动验证token是否合法）
+post:
+    req:name=x&password=y(验证码的接口还在做，到时候登陆还要加一个req参数是验证码)
+    res:"token"
+
+
+4./v1/match/
+post:(尝试匹配)
+    req:/
+    res:/

@@ -3,15 +3,24 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://byup0dbtlchr"
+<<<<<<< HEAD
 path="res://.godot/imported/子卡英雄卡2.png-9382a5d6549e5f51b89af55fc4ae2e91.ctex"
+=======
+path="res://.godot/imported/子卡英雄卡2.png-73a48a28fc5e3c75b818102b56ce3da1.ctex"
+>>>>>>> 52278edba8f25f4b4e029545f4e03665323b9c67
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
+<<<<<<< HEAD
 source_file="res://asset（素材-美术和音乐）/使用素材/卡牌/战斗卡/子卡英雄卡2.png"
 dest_files=["res://.godot/imported/子卡英雄卡2.png-9382a5d6549e5f51b89af55fc4ae2e91.ctex"]
+=======
+source_file="res://asset（素材-美术和音乐）/游戏本体卡牌（全）/子卡英雄卡2.png"
+dest_files=["res://.godot/imported/子卡英雄卡2.png-73a48a28fc5e3c75b818102b56ce3da1.ctex"]
+>>>>>>> 52278edba8f25f4b4e029545f4e03665323b9c67
 
 [params]
 

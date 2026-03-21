@@ -1,0 +1,21 @@
+注：1.req是请求参数（request）
+2.res是响应参数(response)
+3./就是指没有
+4.res都是这个结构：
+response{
+		Code: global.ResponseSuccess,
+		Msg:  global.StatusMsg[global.ResponseSuccess],
+		Data: data,
+	}
+我下面文档里写的默认是data字段的东西
+
+那个，上次说的，我虽然接口里写了重复调用的保护逻辑，但是你那边按钮按过之后，也是最好是让他不能按，防止他手贱一直按增加服务器压力（而且我有ddos
+防御的，高频请求会把他的ip封了的）
+
+v1/match/
+他是一个长轮寻，如不做长轮训的话，就只能比如说，你每一秒向服务器发起一个请求，查看是否匹配进去了，
+现在的逻辑是，发出这个请求，然后会卡住，你那边收不到请求结果，知道匹配成功，返回你res，但如果时间久了，就会报类似连接超时的err，
+所以，这个请求你要在godot那里设置请求持续时间为无限，不要让他主动断掉
+
+重复请求（就是这个人的id已经在matchpool里面了），那么res：报错code:ResponseRepeatRequest
+匹配成功时请求成功，res:code:ResponseSuccess
