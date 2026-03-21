@@ -1,2 +1,0 @@
-on delete cascade 级联删除
-on delete set null 保留断开链接
