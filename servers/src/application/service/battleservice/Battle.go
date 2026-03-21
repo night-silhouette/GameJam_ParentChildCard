@@ -8,17 +8,25 @@ import (
 var battleIDCounter int64
 
 type Battle struct {
-	mu       sync.RWMutex
+	mu       sync.RWMutex //房间锁
 	BattleID int
 	SM       *StateMachine
 	Ctx      *Ctx
+	Nt       *NotifyManager
 }
 
 func NewBattle(UserA int, UserB int) *Battle {
 	id := int(atomic.AddInt64(&battleIDCounter, 1))
 	ctx := NewCtx(UserA, UserB)
 	SM := NewStateMachine(ctx, UserA, UserB)
-	return &Battle{BattleID: id, SM: SM, Ctx: ctx}
+	Nt := NewNotifyManager(UserA, UserB, 32) //初始化bufferSize
+	return &Battle{BattleID: id, SM: SM, Ctx: ctx, Nt: Nt}
+}
+
+func (b *Battle) GetPlayerChanByUserID(id int) PlayerChannel {
+	b.mu.Lock()
+	defer b.mu.Unlock()
+	return b.Nt.ChanMap[id]
 }
 
 //------------------------------------------------------------
@@ -47,7 +55,7 @@ func (bc *BattleContainer) AddBattle(id1 int, id2 int) int { //启动接口
 	return Bt.BattleID
 }
 
-func (bc *BattleContainer) GetBattle(id int) *Battle {
+func (bc *BattleContainer) GetBattleByUserID(id int) *Battle {
 	bc.mu.RLock()
 	defer bc.mu.RUnlock()
 	BTID := bc.UserToBTID[id]

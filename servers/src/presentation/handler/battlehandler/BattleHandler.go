@@ -29,7 +29,7 @@ func (u *BattleHandlerImpl) Set_service(svc service.Service) {
 	u.s = svc.(battleservice.BattleService)
 }
 
-func (u *BattleHandlerImpl) AddMatch(c *gin.Context, conn *websocket.Conn, goctx context.Context) {
+func (u *BattleHandlerImpl) AddMatch(c *gin.Context, conn *websocket.Conn, goctx context.Context, res chan battleservice.PlayerChannel) {
 	id := c.GetInt("id")
 	if !u.s.IsHasID(id) {
 		u.s.AddMatch(id)
@@ -39,6 +39,9 @@ func (u *BattleHandlerImpl) AddMatch(c *gin.Context, conn *websocket.Conn, goctx
 		defer battleservice.MatchSignals.Delete(id)
 		select {
 		case result := <-myChan:
+			Bt := battleservice.BC.GetBattleByUserID(id)
+			playerChan := Bt.GetPlayerChanByUserID(id)
+			res <- playerChan
 			response.WsSuccess(conn, result)
 			return
 		case <-goctx.Done():
@@ -69,38 +72,41 @@ func (u *BattleHandlerImpl) BattleWs() gin.HandlerFunc {
 		defer conn.Close()
 		//升级逻辑完成
 
-		//battleCont := &battleservice.BC
 		id := c.GetInt("id")
-		go u.AddMatch(c, conn, goctx)
-
-		//接受前端数据：
-		for {
-			_, p, err := conn.ReadMessage()
-			if err != nil {
-				response.WsFail(conn, global.ResponseUnknownError)
-				return
-			}
-			decoder := json.NewDecoder(bytes.NewReader(p))
-			decoder.DisallowUnknownFields() // 开启严苛模式
-
-			var action Action
-			err = decoder.Decode(&action)
-			if err != nil {
-				response.WsFail(conn, global.ResponseInvalidReqParams)
-			}
-			//action解析完成
-
-			//取消匹配
-			if action.CancelMatch {
-				battleservice.MatchSignals.Delete(id)
-				battleservice.MatchPool.Delete(id)
-				response.WsSuccess(conn, "取消成功")
-				time.Sleep(time.Millisecond * 200)
-				conn.Close()
-				return
-			}
-		}
-
+		transformAddMatchWithThis := make(chan battleservice.PlayerChannel)
+		go u.AddMatch(c, conn, goctx, transformAddMatchWithThis)
+		go u.ListenCancelMatch(conn, id)
+		playerChan := <-transformAddMatchWithThis
+		fmt.Println(playerChan)
 	}
 
+}
+
+func (u *BattleHandlerImpl) ListenCancelMatch(conn *websocket.Conn, id int) {
+	for {
+		_, p, err := conn.ReadMessage()
+		if err != nil {
+			response.WsFail(conn, global.ResponseUnknownError)
+			return
+		}
+		decoder := json.NewDecoder(bytes.NewReader(p))
+		decoder.DisallowUnknownFields() // 开启严苛模式
+
+		var action Action
+		err = decoder.Decode(&action)
+		if err != nil {
+			response.WsFail(conn, global.ResponseInvalidReqParams)
+		}
+		//action解析完成
+
+		//取消匹配
+		if action.CancelMatch {
+			battleservice.MatchSignals.Delete(id)
+			battleservice.MatchPool.Delete(id)
+			response.WsSuccess(conn, "取消成功")
+			time.Sleep(time.Millisecond * 200)
+			conn.Close()
+			return
+		}
+	}
 }
