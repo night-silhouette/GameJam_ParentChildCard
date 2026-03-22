@@ -2,7 +2,6 @@ package UserService
 
 import (
 	"errors"
-	"fmt"
 	"pcc_card/global"
 	"pcc_card/infra/config"
 	"time"
@@ -34,7 +33,6 @@ func (u *User_service_impl) Release_token(userID int) (string, global.ResponseSt
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	tokenString, _ := token.SignedString([]byte(Key))
-	fmt.Println(tokenString)
 	return tokenString, global.ResponseSuccess
 }
 

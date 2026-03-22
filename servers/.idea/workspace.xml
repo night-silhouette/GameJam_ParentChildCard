@@ -5,9 +5,23 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="760cea56-5efb-4b56-8acc-717cb714ebef" name="更改" comment="">
+      <change afterPath="$PROJECT_DIR$/开发文档/接口文档/接口参数(总合，都在这了).txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/626966bd-e130-4f5a-83d5-704f5f250146.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/626966bd-e130-4f5a-83d5-704f5f250146.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/servers.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/servers.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/application/service/battleservice/Battle.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/service/battleservice/Battle.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/presentation/handler/battlehandler/BattleHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/presentation/handler/battlehandler/BattleHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go_test/base64Captcha/main.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/go_test/go.mod" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/go_test/go.sum" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/go_test/newyear/index.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/go_test/newyear/main.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/go_test/newyear/newyear" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/service/UserService/token.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/service/UserService/token.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/presentation/handler/tokenhandler/dto.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/presentation/handler/tokenhandler/dto.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/presentation/handler/userhandler/dto.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/presentation/handler/userhandler/dto.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/presentation/handler/userhandler/userhandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/presentation/handler/userhandler/userhandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/开发文档/参考图/ddd.png.import" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/开发文档/参考图/设计原则.png.import" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/开发文档/接口文档/接口参数(总合，都在这了)" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

@@ -77,6 +77,7 @@ func (u *User_handler_impl) Post() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var data UserPostDto
 		if err := c.ShouldBind(&data); err != nil {
+
 			response.Fail(c, global.ResponseInvalidReqParams)
 			return
 		}
