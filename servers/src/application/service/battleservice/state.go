@@ -1,6 +1,7 @@
 package battleservice
 
 import (
+	"context"
 	"math/rand"
 	"pcc_card/application/entity/Card/CardAbstract"
 	"pcc_card/global"
@@ -9,6 +10,8 @@ import (
 type State interface {
 	enter()
 	exit()
+	Init(id1 int, id2 int, c *Ctx, Nt *NotifyManager, SM *StateMachine)
+	process(GoCtx context.Context)
 }
 
 type StateMachine struct {
@@ -17,40 +20,80 @@ type StateMachine struct {
 	StateList    map[string]State
 	CurrentState State
 	c            *Ctx
+	Nt           *NotifyManager
 	CardListCopy *[]CardAbstract.Card
+	cancelFunc   context.CancelFunc
+}
+
+func (s *StateMachine) process(GoCtx context.Context) {
+	for {
+		select {
+		case <-GoCtx.Done():
+			return
+		case <-s.Nt.ChanMap[s.Id1]:
+
+		case <-s.Nt.ChanMap[s.Id1]:
+
+		}
+	}
 }
 
 func (s *StateMachine) finish(NextState State) {
+	if s.cancelFunc != nil {
+		s.cancelFunc()
+	}
 	if s.CurrentState != nil {
 		s.CurrentState.exit()
 	}
-	if NextState == nil && s.CurrentState != NextState {
+	if NextState != nil && s.CurrentState != NextState {
 		s.CurrentState = NextState
 		s.CurrentState.enter()
+		var GoCtx context.Context
+		GoCtx, s.cancelFunc = context.WithCancel(context.Background())
+		go s.CurrentState.process(GoCtx)
+
 	}
 }
 
-func NewStateMachine(c *Ctx, id1 int, id2 int) *StateMachine {
+func NewStateMachine(c *Ctx, id1 int, id2 int, Nt *NotifyManager) *StateMachine {
 	StateMachineImpl := &StateMachine{}
 	StateMachineImpl.c = c //ctx的注入
 	StateMachineImpl.Id1 = id1
 	StateMachineImpl.Id2 = id2
+	StateMachineImpl.Nt = Nt //Nt的注入
 	StateMachineImpl.CardListCopy = CardListImpl.Copy()
 
 	StateMachineImpl.StateList = map[string]State{
-		"shuffleDeal": &ShuffleDeal{c, StateMachineImpl},
+		"shuffleDeal": &ShuffleDeal{},
 	}
-	StateMachineImpl.CurrentState = StateMachineImpl.StateList["shuffleDeal"]
-	StateMachineImpl.CurrentState.enter()
+	for _, element := range StateMachineImpl.StateList {
+		element.Init(id1, id2, c, Nt, StateMachineImpl)
+	}
+	StateMachineImpl.finish(StateMachineImpl.StateList["shuffleDeal"])
 
 	return StateMachineImpl
 }
 
 //----------------------------------------------------------------------------------------------------------------------
 
+type StateTemplate struct {
+	Id1 int
+	Id2 int
+	c   *Ctx
+	Nt  *NotifyManager
+	SM  *StateMachine
+}
+
+func (s *StateTemplate) Init(id1 int, id2 int, c *Ctx, Nt *NotifyManager, SM *StateMachine) {
+	s.Id1 = id1
+	s.Id2 = id2
+	s.c = c
+	s.Nt = Nt
+	s.SM = SM
+}
+
 type ShuffleDeal struct {
-	c  *Ctx
-	SM *StateMachine
+	StateTemplate
 }
 
 func (s *ShuffleDeal) enter() {
@@ -60,6 +103,9 @@ func (s *ShuffleDeal) enter() {
 			break
 		}
 	}
+}
+
+func (s *ShuffleDeal) process(GoCtx context.Context) {
 
 }
 
@@ -75,7 +121,7 @@ func (s *ShuffleDeal) RandomCard() bool {
 	CardInHandA := make([]CardAbstract.Card, 0, numA)
 	s.c.PlayerDataMap[s.SM.Id1].CardInHand = &CardInHandA
 	CardInHandB := make([]CardAbstract.Card, 0, numB)
-	s.c.PlayerDataMap[s.SM.Id1].CardInHand = &CardInHandB
+	s.c.PlayerDataMap[s.SM.Id2].CardInHand = &CardInHandB
 	CharacterNumA := 0
 	CharacterNumB := 0
 

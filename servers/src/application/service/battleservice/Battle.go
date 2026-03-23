@@ -18,8 +18,8 @@ type Battle struct {
 func NewBattle(UserA int, UserB int) *Battle {
 	id := int(atomic.AddInt64(&battleIDCounter, 1))
 	ctx := NewCtx(UserA, UserB)
-	SM := NewStateMachine(ctx, UserA, UserB)
 	Nt := NewNotifyManager(UserA, UserB, 32) //初始化bufferSize
+	SM := NewStateMachine(ctx, UserA, UserB, Nt)
 	return &Battle{BattleID: id, SM: SM, Ctx: ctx, Nt: Nt}
 }
 

@@ -78,6 +78,7 @@ func (u *BattleHandlerImpl) BattleWs() gin.HandlerFunc {
 		go u.ListenCancelMatch(conn, id)
 		playerChan := <-transformAddMatchWithThis
 		fmt.Println(playerChan)
+
 	}
 
 }
