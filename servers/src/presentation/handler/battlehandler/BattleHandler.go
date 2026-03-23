@@ -5,11 +5,13 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"net"
 	"net/http"
 	"pcc_card/application/service"
 	"pcc_card/application/service/battleservice"
 	"pcc_card/global"
 	"pcc_card/presentation/handler"
+	"pcc_card/presentation/handler/battlehandler/BattleDto"
 	"pcc_card/presentation/response"
 	"time"
 
@@ -75,33 +77,87 @@ func (u *BattleHandlerImpl) BattleWs() gin.HandlerFunc {
 		id := c.GetInt("id")
 		transformAddMatchWithThis := make(chan battleservice.PlayerChannel)
 		go u.AddMatch(c, conn, goctx, transformAddMatchWithThis)
-		go u.ListenCancelMatch(conn, id)
+		CancelMatchContext, CancelMatchCancel := context.WithCancel(context.Background())
+		go u.ListenCancelMatch(conn, id, CancelMatchContext)
+
 		playerChan := <-transformAddMatchWithThis
-		fmt.Println(playerChan)
+		CancelMatchCancel()
+
+		go func() { //listen客户端
+			for {
+				_, p, err := conn.ReadMessage()
+				if err != nil {
+					return
+				}
+				decoder := json.NewDecoder(bytes.NewReader(p))
+				decoder.DisallowUnknownFields() // 开启严苛模式
+
+				var action BattleDto.Action
+				err = decoder.Decode(&action)
+				if err != nil {
+					response.WsFail(conn, global.ResponseInvalidReqParams)
+					continue
+				}
+				//action解析完成
+				select {
+				case playerChan.AcceptChan <- action:
+				case <-goctx.Done():
+					return
+				}
+			}
+		}()
+		go func() {
+			for {
+				select {
+				case Res, ok := <-playerChan.ResponseChan:
+					if !ok {
+						return
+					}
+					response.WsSuccess(conn, Res)
+				case <-goctx.Done():
+					return
+				}
+
+			}
+		}()
 
 	}
 
 }
 
-func (u *BattleHandlerImpl) ListenCancelMatch(conn *websocket.Conn, id int) {
+func (u *BattleHandlerImpl) ListenCancelMatch(conn *websocket.Conn, id int, Goctx context.Context) {
+	defer fmt.Println("【系统】匹配取消监听协程已安全退出，归还连接控制权")
 	for {
+		conn.SetReadDeadline(time.Now().Add(time.Millisecond * 500))
 		_, p, err := conn.ReadMessage()
-		if err != nil {
-			response.WsFail(conn, global.ResponseUnknownError)
+		if Goctx.Err() != nil {
+			// 临走前把闹钟关掉（恢复成永不超时）
+			conn.SetReadDeadline(time.Time{})
 			return
 		}
+		if err != nil {
+			// 如果只是因为闹钟响了（超时），那就 continue 回到循环顶端检查 Context
+			if nerr, ok := err.(net.Error); ok && nerr.Timeout() {
+				continue
+			}
+			// 如果是真正的连接断开，那就彻底退出
+			return
+		}
+
 		decoder := json.NewDecoder(bytes.NewReader(p))
 		decoder.DisallowUnknownFields() // 开启严苛模式
 
-		var action Action
+		var action BattleDto.Action
 		err = decoder.Decode(&action)
 		if err != nil {
 			response.WsFail(conn, global.ResponseInvalidReqParams)
+			continue
 		}
+
 		//action解析完成
 
 		//取消匹配
-		if action.CancelMatch {
+		if action.ActionCode == BattleDto.CancelMatch {
 			battleservice.MatchSignals.Delete(id)
 			battleservice.MatchPool.Delete(id)
 			response.WsSuccess(conn, "取消成功")

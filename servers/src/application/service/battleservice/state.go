@@ -5,6 +5,7 @@ import (
 	"math/rand"
 	"pcc_card/application/entity/Card/CardAbstract"
 	"pcc_card/global"
+	"pcc_card/presentation/handler/battlehandler/BattleDto"
 )
 
 type State interface {
@@ -26,14 +27,23 @@ type StateMachine struct {
 }
 
 func (s *StateMachine) process(GoCtx context.Context) {
+
+	handleAction := func(id int, action BattleDto.Action) {
+		if action.ActionCode == BattleDto.GetOpponentCardInHard {
+			res := s.c.GetCardInHard(id)
+			s.Nt.ChanMap[id].ResponseChan <- BattleDto.NewActionCode(BattleDto.GetOpponentCardInHard, res.Self)
+		}
+	}
+
 	for {
 		select {
 		case <-GoCtx.Done():
+
 			return
-		case <-s.Nt.ChanMap[s.Id1]:
-
-		case <-s.Nt.ChanMap[s.Id1]:
-
+		case action := <-s.Nt.ChanMap[s.Id1].AcceptChan:
+			handleAction(s.Id1, action)
+		case action := <-s.Nt.ChanMap[s.Id2].AcceptChan:
+			handleAction(s.Id2, action)
 		}
 	}
 }
@@ -55,7 +65,7 @@ func (s *StateMachine) finish(NextState State) {
 	}
 }
 
-func NewStateMachine(c *Ctx, id1 int, id2 int, Nt *NotifyManager) *StateMachine {
+func NewStateMachine(c *Ctx, id1 int, id2 int, Nt *NotifyManager) (*StateMachine, context.CancelFunc) {
 	StateMachineImpl := &StateMachine{}
 	StateMachineImpl.c = c //ctx的注入
 	StateMachineImpl.Id1 = id1
@@ -70,8 +80,9 @@ func NewStateMachine(c *Ctx, id1 int, id2 int, Nt *NotifyManager) *StateMachine 
 		element.Init(id1, id2, c, Nt, StateMachineImpl)
 	}
 	StateMachineImpl.finish(StateMachineImpl.StateList["shuffleDeal"])
-
-	return StateMachineImpl
+	GoCtx, cancelFunc := context.WithCancel(context.Background())
+	StateMachineImpl.process(GoCtx)
+	return StateMachineImpl, cancelFunc
 }
 
 //----------------------------------------------------------------------------------------------------------------------

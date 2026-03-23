@@ -5,11 +5,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="760cea56-5efb-4b56-8acc-717cb714ebef" name="更改" comment="">
+      <change afterPath="$PROJECT_DIR$/src/presentation/handler/battlehandler/BattleDto/dto.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/data_source_mapping.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/application/entity/Card/CardAbstract/card.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/entity/Card/CardAbstract/card.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/entity/BattleData/CardInHand.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/entity/Card/CardImpl/BaseCard.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/entity/Card/CardImpl/BaseCard.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/application/service/battleservice/Battle.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/service/battleservice/Battle.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/service/battleservice/NotifyManager.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/service/battleservice/NotifyManager.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/service/battleservice/ctx.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/service/battleservice/ctx.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/application/service/battleservice/state.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/service/battleservice/state.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/presentation/handler/battlehandler/BattleHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/presentation/handler/battlehandler/BattleHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/presentation/handler/battlehandler/dto.go" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -67,12 +73,12 @@
     &quot;go.sdk.automatically.set&quot;: &quot;true&quot;,
     &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
     &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/night/Desktop/GameJam_ParentChildCard/servers/src/application/entity/Card/skill_card&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/night&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
     &quot;run.configurations.included.in.services&quot;: &quot;true&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.keymap&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;go&quot;,
     &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;
   },
   &quot;keyToStringList&quot;: {
@@ -99,17 +105,6 @@
       <set>
         <option value="GoApplicationRunConfiguration" />
       </set>
-    </option>
-    <option name="configurationStatuses">
-      <map>
-        <entry key="GoApplicationRunConfiguration">
-          <value>
-            <map>
-              <entry key="go build pcc_card/cmd/main" value="STOPPED" />
-            </map>
-          </value>
-        </entry>
-      </map>
     </option>
   </component>
   <component name="RunManager" selected="Go 构建.go build pcc_card/cmd/main">

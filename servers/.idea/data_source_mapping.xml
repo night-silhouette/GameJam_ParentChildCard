@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project version="4">
-  <component name="DataSourcePerFileMappings">
-    <file url="file://$PROJECT_DIR$/src/infra/repo/battlerepo/BattleRepo.go" value="626966bd-e130-4f5a-83d5-704f5f250146" />
-    <file url="file://$PROJECT_DIR$/src/infra/repo/userrepo/user_repo.go" value="626966bd-e130-4f5a-83d5-704f5f250146" />
-  </component>
-</project>

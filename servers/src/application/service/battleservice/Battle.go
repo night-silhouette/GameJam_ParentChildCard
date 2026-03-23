@@ -1,6 +1,7 @@
 package battleservice
 
 import (
+	"context"
 	"sync"
 	"sync/atomic"
 )
@@ -8,19 +9,21 @@ import (
 var battleIDCounter int64
 
 type Battle struct {
-	mu       sync.RWMutex //房间锁
-	BattleID int
-	SM       *StateMachine
-	Ctx      *Ctx
-	Nt       *NotifyManager
+	mu                     sync.RWMutex //房间锁
+	BattleID               int
+	SM                     *StateMachine
+	Ctx                    *Ctx
+	Nt                     *NotifyManager
+	StateMachineCancelFunc context.CancelFunc
 }
 
 func NewBattle(UserA int, UserB int) *Battle {
 	id := int(atomic.AddInt64(&battleIDCounter, 1))
 	ctx := NewCtx(UserA, UserB)
 	Nt := NewNotifyManager(UserA, UserB, 32) //初始化bufferSize
-	SM := NewStateMachine(ctx, UserA, UserB, Nt)
-	return &Battle{BattleID: id, SM: SM, Ctx: ctx, Nt: Nt}
+	SM, StateMachineCancelFunc := NewStateMachine(ctx, UserA, UserB, Nt)
+
+	return &Battle{BattleID: id, SM: SM, Ctx: ctx, Nt: Nt, StateMachineCancelFunc: StateMachineCancelFunc}
 }
 
 func (b *Battle) GetPlayerChanByUserID(id int) PlayerChannel {

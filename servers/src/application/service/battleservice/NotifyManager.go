@@ -1,12 +1,14 @@
 package battleservice
 
+import "pcc_card/presentation/handler/battlehandler/BattleDto"
+
 type NotifyManager struct {
 	ChanMap map[int]PlayerChannel // userid为键
 }
 
 type PlayerChannel struct {
-	AcceptChan   chan any
-	ResponseChan chan any
+	AcceptChan   chan BattleDto.Action
+	ResponseChan chan BattleDto.Action
 }
 
 func NewNotifyManager(id1 int, id2 int, bufferSize int) *NotifyManager {
@@ -19,8 +21,8 @@ func NewNotifyManager(id1 int, id2 int, bufferSize int) *NotifyManager {
 
 func (nm *NotifyManager) AddPlayer(userID int, bufferSize int) {
 	pc := PlayerChannel{
-		AcceptChan:   make(chan any, bufferSize),
-		ResponseChan: make(chan any, bufferSize),
+		AcceptChan:   make(chan BattleDto.Action, bufferSize),
+		ResponseChan: make(chan BattleDto.Action, bufferSize),
 	}
 	nm.ChanMap[userID] = pc
 }
