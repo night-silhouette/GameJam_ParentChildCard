@@ -2,6 +2,7 @@ package battleservice
 
 import (
 	"context"
+	"fmt"
 	"sync"
 	"sync/atomic"
 )
@@ -42,6 +43,12 @@ type BattleContainer struct {
 
 var BC BattleContainer
 
+func (b *BattleContainer) GetBattleData() map[int]*Battle {
+	b.mu.RLock()
+	defer b.mu.RUnlock()
+	return b.Data
+}
+
 func InitBattleContainer() {
 	BC = BattleContainer{}
 	BC.Data = make(map[int]*Battle)
@@ -51,10 +58,12 @@ func InitBattleContainer() {
 func (bc *BattleContainer) AddBattle(id1 int, id2 int) int { //启动接口
 	bc.mu.Lock()
 	defer bc.mu.Unlock()
+	fmt.Printf("before bt")
 	Bt := NewBattle(id1, id2)
 	bc.Data[Bt.BattleID] = Bt
 	bc.UserToBTID[id1] = Bt.BattleID
 	bc.UserToBTID[id2] = Bt.BattleID
+	fmt.Println(BC.Data) //debug
 	return Bt.BattleID
 }
 

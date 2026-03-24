@@ -11,8 +11,8 @@ import (
 type MatchManager struct{}
 
 type MatchPlayerData struct {
-	ID       int
-	JoinTime time.Time
+	ID       int       `json:"id"`
+	JoinTime time.Time `json:"join_time"`
 }
 type Match_pool struct {
 	rwLock         sync.RWMutex
@@ -70,6 +70,12 @@ func ImplMatchPool() {
 	MatchPool = Match_pool{}
 	MatchPool.MatchTimeRadio = global.MatchTimeRadio
 	MatchPool.data = make([]MatchPlayerData, 0, 30)
+}
+
+func (q *Match_pool) DebugGetMachData() []MatchPlayerData {
+	q.rwLock.RLock()
+	defer q.rwLock.RUnlock()
+	return q.data
 }
 
 //---------------------Match_pool----------------------------

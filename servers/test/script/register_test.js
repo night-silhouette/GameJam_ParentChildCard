@@ -11,7 +11,7 @@ export let options = {
 
 // 2. 核心逻辑：每个“虚拟人”都会重复执行这个函数
 export default function () {
-    const BASE_URL = 'http://120.26.145.68:10086'; // 你的 Go 后端地址
+    const BASE_URL = 'http://127.0.0.1:10086'; // 你的 Go 后端地址
 
     // 生成随机账号，防止 psql 因为唯一约束报错
     const uniqueId = `${__VU}-${__ITER}`;

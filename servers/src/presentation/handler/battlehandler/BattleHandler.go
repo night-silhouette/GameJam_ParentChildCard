@@ -5,7 +5,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"net"
 	"net/http"
 	"pcc_card/application/service"
 	"pcc_card/application/service/battleservice"
@@ -22,6 +21,8 @@ import (
 type BattleHandler interface {
 	handler.Handler
 	BattleWs() gin.HandlerFunc
+	DebugGetMachData() gin.HandlerFunc
+	DebugBattleContainer() gin.HandlerFunc
 }
 type BattleHandlerImpl struct {
 	s battleservice.BattleService
@@ -29,6 +30,20 @@ type BattleHandlerImpl struct {
 
 func (u *BattleHandlerImpl) Set_service(svc service.Service) {
 	u.s = svc.(battleservice.BattleService)
+}
+
+func (u *BattleHandlerImpl) DebugGetMachData() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		res := battleservice.MatchPool.DebugGetMachData()
+		response.Success(c, res)
+	}
+}
+
+func (u *BattleHandlerImpl) DebugBattleContainer() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		res := battleservice.BC.GetBattleData()
+		response.Success(c, res)
+	}
 }
 
 func (u *BattleHandlerImpl) AddMatch(c *gin.Context, conn *websocket.Conn, goctx context.Context, res chan battleservice.PlayerChannel) {
@@ -73,75 +88,33 @@ func (u *BattleHandlerImpl) BattleWs() gin.HandlerFunc {
 		defer cancel()
 		defer conn.Close()
 		//升级逻辑完成
-
+		response.WsSuccess(conn, "ws连接成功")
 		id := c.GetInt("id")
 		transformAddMatchWithThis := make(chan battleservice.PlayerChannel)
 		go u.AddMatch(c, conn, goctx, transformAddMatchWithThis)
-		CancelMatchContext, CancelMatchCancel := context.WithCancel(context.Background())
-		go u.ListenCancelMatch(conn, id, CancelMatchContext)
+		go u.ListenResquest(conn, id, goctx, transformAddMatchWithThis)
 
 		playerChan := <-transformAddMatchWithThis
-		CancelMatchCancel()
-
-		go func() { //listen客户端
-			for {
-				_, p, err := conn.ReadMessage()
-				if err != nil {
-					return
-				}
-				decoder := json.NewDecoder(bytes.NewReader(p))
-				decoder.DisallowUnknownFields() // 开启严苛模式
-
-				var action BattleDto.Action
-				err = decoder.Decode(&action)
-				if err != nil {
-					response.WsFail(conn, global.ResponseInvalidReqParams)
-					continue
-				}
-				//action解析完成
-				select {
-				case playerChan.AcceptChan <- action:
-				case <-goctx.Done():
-					return
-				}
-			}
-		}()
-		go func() {
-			for {
-				select {
-				case Res, ok := <-playerChan.ResponseChan:
-					if !ok {
-						return
-					}
-					response.WsSuccess(conn, Res)
-				case <-goctx.Done():
-					return
-				}
-
-			}
-		}()
+		go u.ListenResponse(conn, id, playerChan.ResponseChan, goctx)
 
 	}
 
 }
 
-func (u *BattleHandlerImpl) ListenCancelMatch(conn *websocket.Conn, id int, Goctx context.Context) {
-	defer fmt.Println("【系统】匹配取消监听协程已安全退出，归还连接控制权")
+func (u *BattleHandlerImpl) ListenResquest(conn *websocket.Conn, id int, goctx context.Context, trans chan battleservice.PlayerChannel) {
 	for {
-		conn.SetReadDeadline(time.Now().Add(time.Millisecond * 500))
+
 		_, p, err := conn.ReadMessage()
-		if Goctx.Err() != nil {
-			// 临走前把闹钟关掉（恢复成永不超时）
-			conn.SetReadDeadline(time.Time{})
+
+		if err != nil {
+
 			return
 		}
-		if err != nil {
-			// 如果只是因为闹钟响了（超时），那就 continue 回到循环顶端检查 Context
-			if nerr, ok := err.(net.Error); ok && nerr.Timeout() {
-				continue
-			}
-			// 如果是真正的连接断开，那就彻底退出
-			return
+		var playerC chan BattleDto.Action
+		select {
+		case playerChan := <-trans:
+			playerC = playerChan.AcceptChan
+		default:
 		}
 
 		decoder := json.NewDecoder(bytes.NewReader(p))
@@ -153,10 +126,7 @@ func (u *BattleHandlerImpl) ListenCancelMatch(conn *websocket.Conn, id int, Goct
 			response.WsFail(conn, global.ResponseInvalidReqParams)
 			continue
 		}
-
 		//action解析完成
-
-		//取消匹配
 		if action.ActionCode == BattleDto.CancelMatch {
 			battleservice.MatchSignals.Delete(id)
 			battleservice.MatchPool.Delete(id)
@@ -165,5 +135,28 @@ func (u *BattleHandlerImpl) ListenCancelMatch(conn *websocket.Conn, id int, Goct
 			conn.Close()
 			return
 		}
+		select {
+		case playerC <- action:
+		case <-goctx.Done():
+			return
+		default:
+			continue
+		}
+
+	}
+}
+
+func (u *BattleHandlerImpl) ListenResponse(conn *websocket.Conn, id int, playerC chan BattleDto.Action, goctx context.Context) {
+	for {
+		select {
+		case Res, ok := <-playerC:
+			if !ok {
+				return
+			}
+			response.WsSuccess(conn, Res)
+		case <-goctx.Done():
+			return
+		}
+
 	}
 }
