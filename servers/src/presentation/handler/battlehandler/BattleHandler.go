@@ -42,6 +42,7 @@ func (u *BattleHandlerImpl) DebugGetMachData() gin.HandlerFunc {
 func (u *BattleHandlerImpl) DebugBattleContainer() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		res := battleservice.BC.GetBattleData()
+		fmt.Println(res)
 		response.Success(c, res)
 	}
 }

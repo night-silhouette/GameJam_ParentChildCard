@@ -81,7 +81,7 @@ func NewStateMachine(c *Ctx, id1 int, id2 int, Nt *NotifyManager) (*StateMachine
 	}
 	StateMachineImpl.finish(StateMachineImpl.StateList["shuffleDeal"])
 	GoCtx, cancelFunc := context.WithCancel(context.Background())
-	StateMachineImpl.process(GoCtx)
+	go StateMachineImpl.process(GoCtx)
 	return StateMachineImpl, cancelFunc
 }
 

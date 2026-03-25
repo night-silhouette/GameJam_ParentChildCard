@@ -3,7 +3,7 @@ import { check, sleep } from 'k6';
 import ws from 'k6/ws';
 
 export let options = {
-    vus: 10,          // Virtual Users
+    vus: 9,          // Virtual Users
     duration: '500s',  // 持续压测时间
 };
 
@@ -48,10 +48,9 @@ export default function () {
             console.log(`Received message: ${message}`);
         });
 
-
-        socket.setTimeout(function () {
-            socket.close();
-        }, 5000);
+        if (!message.battle_id) {
+            handleBattleAction(socket);
+        }
     });
 
 
@@ -63,3 +62,11 @@ export default function () {
 
     sleep(500);
 }
+
+function handleBattleAction(socket) {
+        socket.send(JSON.stringify({
+            action_code: 1,
+            action_name:"",
+            action_data:{},
+        }));
+    }
