@@ -60,7 +60,10 @@ func (u *BattleHandlerImpl) AddMatch(c *gin.Context, conn *websocket.Conn, goctx
 			Bt := battleservice.BC.GetBattleByUserID(id)
 			playerChan := Bt.GetPlayerChanByUserID(id)
 			res <- playerChan
-			response.WsSuccess(conn, result)
+			res <- playerChan //因为最初这里的子线程信息传递设计比较乱，造成了有极强的耦合。由于分发playerChan的管道，外面有两个接受者，所以
+			//这里要塞入两份指针，一份给req，还有一份给response
+
+			response.WsSuccess(conn, BattleDto.NewAction(BattleDto.StartBattle, result))
 			return
 		case <-goctx.Done():
 			battleservice.MatchPool.Delete(id)
@@ -91,31 +94,35 @@ func (u *BattleHandlerImpl) BattleWs() gin.HandlerFunc {
 		//升级逻辑完成
 		response.WsSuccess(conn, "ws连接成功")
 		id := c.GetInt("id")
-		transformAddMatchWithThis := make(chan battleservice.PlayerChannel)
+		transformAddMatchWithThis := make(chan battleservice.PlayerChannel, 2)
 		go u.AddMatch(c, conn, goctx, transformAddMatchWithThis)
 		go u.ListenResquest(conn, id, goctx, transformAddMatchWithThis)
 
 		playerChan := <-transformAddMatchWithThis
-		go u.ListenResponse(conn, id, playerChan.ResponseChan, goctx)
-
+		var OverGameChan chan bool = make(chan bool, 1)
+		go u.ListenResponse(conn, id, playerChan.ResponseChan, goctx, OverGameChan)
+		ret, _ := <-OverGameChan
+		if ret {
+			return
+		}
 	}
 
 }
 
 func (u *BattleHandlerImpl) ListenResquest(conn *websocket.Conn, id int, goctx context.Context, trans chan battleservice.PlayerChannel) {
-	for {
-
-		_, p, err := conn.ReadMessage()
-
-		if err != nil {
-
-			return
-		}
-		var playerC chan BattleDto.Action
+	var playerC chan BattleDto.Action
+	go func() {
 		select {
+		case <-goctx.Done():
+			return
 		case playerChan := <-trans:
 			playerC = playerChan.AcceptChan
-		default:
+		}
+	}()
+	for {
+		_, p, err := conn.ReadMessage()
+		if err != nil {
+			return
 		}
 
 		decoder := json.NewDecoder(bytes.NewReader(p))
@@ -124,7 +131,7 @@ func (u *BattleHandlerImpl) ListenResquest(conn *websocket.Conn, id int, goctx c
 		var action BattleDto.Action
 		err = decoder.Decode(&action)
 		if err != nil {
-			response.WsFail(conn, global.ResponseInvalidReqParams)
+			response.WsFailWithErr(conn, global.ResponseInvalidReqParams, err)
 			continue
 		}
 		//action解析完成
@@ -136,23 +143,27 @@ func (u *BattleHandlerImpl) ListenResquest(conn *websocket.Conn, id int, goctx c
 			conn.Close()
 			return
 		}
+
 		select {
 		case playerC <- action:
 		case <-goctx.Done():
 			return
 		default:
-			continue
+			if playerC == nil {
+				response.WsFailWithMsg(conn, global.ResponseInvalidReqParams, "正在匹配中")
+			}
 		}
 
 	}
 }
 
-func (u *BattleHandlerImpl) ListenResponse(conn *websocket.Conn, id int, playerC chan BattleDto.Action, goctx context.Context) {
+func (u *BattleHandlerImpl) ListenResponse(conn *websocket.Conn, id int, playerC chan BattleDto.Action, goctx context.Context, OverGamechan chan bool) {
 	for {
 		select {
-		case Res, ok := <-playerC:
-			if !ok {
-				return
+		case Res, _ := <-playerC:
+			fmt.Println("ListenResponse res:", Res)
+			if Res.ActionCode == BattleDto.OverBattle {
+				OverGamechan <- true
 			}
 			response.WsSuccess(conn, Res)
 		case <-goctx.Done():

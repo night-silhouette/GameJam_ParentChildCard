@@ -45,3 +45,18 @@ func WsFail(conn *websocket.Conn, code global.ResponseStatusCode) {
 		Data: gin.H{},
 	})
 }
+func WsFailWithErr(conn *websocket.Conn, code global.ResponseStatusCode, err error) {
+	conn.WriteJSON(response{
+		Code: code,
+		Msg:  global.StatusMsg[code],
+		Data: err.Error(),
+	})
+}
+
+func WsFailWithMsg(conn *websocket.Conn, code global.ResponseStatusCode, msg string) {
+	conn.WriteJSON(response{
+		Code: code,
+		Msg:  global.StatusMsg[code],
+		Data: msg,
+	})
+}

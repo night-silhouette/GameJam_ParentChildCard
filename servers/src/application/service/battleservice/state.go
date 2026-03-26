@@ -28,10 +28,13 @@ type StateMachine struct {
 
 func (s *StateMachine) process(GoCtx context.Context) {
 
-	handleAction := func(id int, action BattleDto.Action) {
-		if action.ActionCode == BattleDto.GetOpponentCardInHard {
+	handleAction := func(id int, action BattleDto.Action, AcceptChan <-chan BattleDto.Action, ResponseChan chan<- BattleDto.Action) {
+		if action.ActionCode == BattleDto.GetSelfCardInHard {
 			res := s.c.GetCardInHard(id)
-			s.Nt.ChanMap[id].ResponseChan <- BattleDto.NewActionCode(BattleDto.GetOpponentCardInHard, res.Self)
+			ResponseChan <- BattleDto.NewAction(BattleDto.GetSelfCardInHard, res.Self)
+		}
+		if action.ActionCode == BattleDto.OverBattle {
+			ResponseChan <- BattleDto.NewAction(BattleDto.OverBattle, "ok")
 		}
 	}
 
@@ -41,9 +44,9 @@ func (s *StateMachine) process(GoCtx context.Context) {
 
 			return
 		case action := <-s.Nt.ChanMap[s.Id1].AcceptChan:
-			handleAction(s.Id1, action)
+			handleAction(s.Id1, action, s.Nt.ChanMap[s.Id1].AcceptChan, s.Nt.ChanMap[s.Id1].ResponseChan)
 		case action := <-s.Nt.ChanMap[s.Id2].AcceptChan:
-			handleAction(s.Id2, action)
+			handleAction(s.Id2, action, s.Nt.ChanMap[s.Id2].AcceptChan, s.Nt.ChanMap[s.Id2].ResponseChan)
 		}
 	}
 }

@@ -15,7 +15,7 @@ func (c *BaseCard) GetCardDto() BattleData.CardDto {
 	res.Id = c.ID
 	if c.Info != nil {
 		if c.Info["hp"] != nil {
-			res.Hp = c.Info["hp"].(int)
+			res.Hp = c.Info["hp"].(float64)
 		}
 		if c.Info["damage"] != nil {
 			res.Damage = c.Info["damage"].(int)
