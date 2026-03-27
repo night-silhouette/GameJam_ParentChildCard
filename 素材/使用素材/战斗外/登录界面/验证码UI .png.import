@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dwgcpgai4b2us"
-path="res://.godot/imported/验证码UI .png-3204ffca0c98f9a85deb7aa8886efd93.ctex"
+path="res://.godot/imported/验证码UI .png-e2be75adef13ac5a8a3fc714e202a6a5.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://asset（素材-美术和音乐）/使用素材/战斗外/登录界面/验证码UI .png"
-dest_files=["res://.godot/imported/验证码UI .png-3204ffca0c98f9a85deb7aa8886efd93.ctex"]
+source_file="res://素材/使用素材/战斗外/登录界面/验证码UI .png"
+dest_files=["res://.godot/imported/验证码UI .png-e2be75adef13ac5a8a3fc714e202a6a5.ctex"]
 
 [params]
 

@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dosona3iwp418"
-path="res://.godot/imported/账号UI .png-4a5f9bd5ba73cbf8e51609051a5e1434.ctex"
+path="res://.godot/imported/账号UI .png-3d57de3bbe40f357e15f99b14adb3aec.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://asset（素材-美术和音乐）/使用素材/战斗外/登录界面/账号UI .png"
-dest_files=["res://.godot/imported/账号UI .png-4a5f9bd5ba73cbf8e51609051a5e1434.ctex"]
+source_file="res://素材/使用素材/战斗外/登录界面/账号UI .png"
+dest_files=["res://.godot/imported/账号UI .png-3d57de3bbe40f357e15f99b14adb3aec.ctex"]
 
 [params]
 

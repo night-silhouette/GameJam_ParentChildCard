@@ -3,12 +3,12 @@
 importer="oggvorbisstr"
 type="AudioStreamOggVorbis"
 uid="uid://cibg5qgilkgaj"
-path="res://.godot/imported/回合提示音（改）.ogg-5b984dc65fc1e99b66317a3de2482d51.oggvorbisstr"
+path="res://.godot/imported/回合提示音（改）.ogg-d3eeb7eba24b7ac39a169d450c52d0e7.oggvorbisstr"
 
 [deps]
 
-source_file="res://asset（素材-美术和音乐）/新音效/回合提示音（改）.ogg"
-dest_files=["res://.godot/imported/回合提示音（改）.ogg-5b984dc65fc1e99b66317a3de2482d51.oggvorbisstr"]
+source_file="res://素材/使用素材/音效/回合提示音（改）.ogg"
+dest_files=["res://.godot/imported/回合提示音（改）.ogg-d3eeb7eba24b7ac39a169d450c52d0e7.oggvorbisstr"]
 
 [params]
 

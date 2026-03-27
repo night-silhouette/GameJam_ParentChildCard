@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://41nmljrpurfc"
-path="res://.godot/imported/子卡卡背.png-2110ef41a19ba9a641205230b4ef4ca5.ctex"
+path="res://.godot/imported/子卡卡背.png-ad658e26bcb88a32cd9366274709b2a2.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://asset（素材-美术和音乐）/使用素材/重置卡牌/基础卡牌重置素材/子卡卡背.png"
-dest_files=["res://.godot/imported/子卡卡背.png-2110ef41a19ba9a641205230b4ef4ca5.ctex"]
+source_file="res://素材/使用素材/卡牌/基础卡牌重置素材/子卡卡背.png"
+dest_files=["res://.godot/imported/子卡卡背.png-ad658e26bcb88a32cd9366274709b2a2.ctex"]
 
 [params]
 

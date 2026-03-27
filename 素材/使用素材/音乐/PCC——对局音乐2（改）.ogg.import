@@ -3,12 +3,12 @@
 importer="oggvorbisstr"
 type="AudioStreamOggVorbis"
 uid="uid://vjqvugxjj2bu"
-path="res://.godot/imported/PCC——对局音乐2（改）.ogg-55487e6a845049960e0ac22d3a110067.oggvorbisstr"
+path="res://.godot/imported/PCC——对局音乐2（改）.ogg-214fd495fcf49c6ce513d0e4012a2d94.oggvorbisstr"
 
 [deps]
 
-source_file="res://asset（素材-美术和音乐）/使用素材/音乐/PCC——对局音乐2（改）.ogg"
-dest_files=["res://.godot/imported/PCC——对局音乐2（改）.ogg-55487e6a845049960e0ac22d3a110067.oggvorbisstr"]
+source_file="res://素材/使用素材/音乐/PCC——对局音乐2（改）.ogg"
+dest_files=["res://.godot/imported/PCC——对局音乐2（改）.ogg-214fd495fcf49c6ce513d0e4012a2d94.oggvorbisstr"]
 
 [params]
 

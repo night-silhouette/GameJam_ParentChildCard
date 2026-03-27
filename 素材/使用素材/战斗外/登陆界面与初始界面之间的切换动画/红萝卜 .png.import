@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c8lc1r2clkwg8"
-path="res://.godot/imported/红萝卜 .png-b49134fd25e15205bb6c5119e688786c.ctex"
+path="res://.godot/imported/红萝卜 .png-1a6d8529b72192f18e3e60adc75711a7.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://asset（素材-美术和音乐）/使用素材/战斗外/登陆界面与初始界面之间的切换动画/红萝卜 .png"
-dest_files=["res://.godot/imported/红萝卜 .png-b49134fd25e15205bb6c5119e688786c.ctex"]
+source_file="res://素材/使用素材/战斗外/登陆界面与初始界面之间的切换动画/红萝卜 .png"
+dest_files=["res://.godot/imported/红萝卜 .png-1a6d8529b72192f18e3e60adc75711a7.ctex"]
 
 [params]
 

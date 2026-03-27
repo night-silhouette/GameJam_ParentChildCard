@@ -3,12 +3,12 @@
 importer="oggvorbisstr"
 type="AudioStreamOggVorbis"
 uid="uid://bf1s046be5l20"
-path="res://.godot/imported/对局视角切换音效（改）.ogg-08d31d389f1cb338a653a19b0fd93782.oggvorbisstr"
+path="res://.godot/imported/对局视角切换音效（改）.ogg-bca5cd6647cdf1c198b091bb6f037563.oggvorbisstr"
 
 [deps]
 
-source_file="res://asset（素材-美术和音乐）/使用素材/音效/对局视角切换音效（改）.ogg"
-dest_files=["res://.godot/imported/对局视角切换音效（改）.ogg-08d31d389f1cb338a653a19b0fd93782.oggvorbisstr"]
+source_file="res://素材/使用素材/音效/对局视角切换音效（改）.ogg"
+dest_files=["res://.godot/imported/对局视角切换音效（改）.ogg-bca5cd6647cdf1c198b091bb6f037563.oggvorbisstr"]
 
 [params]
 

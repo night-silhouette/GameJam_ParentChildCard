@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://covndxd72d7p2"
-path="res://.godot/imported/设置字符 .png-209a3961581791de13ba69c2b8aa60e7.ctex"
+path="res://.godot/imported/设置字符 .png-d1e35f9dbbef4e7fd093eceeb5d6d9c5.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://asset（素材-美术和音乐）/使用素材/战斗外/设置/设置字符 .png"
-dest_files=["res://.godot/imported/设置字符 .png-209a3961581791de13ba69c2b8aa60e7.ctex"]
+source_file="res://素材/使用素材/战斗外/设置/设置字符 .png"
+dest_files=["res://.godot/imported/设置字符 .png-d1e35f9dbbef4e7fd093eceeb5d6d9c5.ctex"]
 
 [params]
 

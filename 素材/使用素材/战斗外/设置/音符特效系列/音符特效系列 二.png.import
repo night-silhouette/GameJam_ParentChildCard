@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://drmh75tasxdcr"
-path="res://.godot/imported/音符特效系列 二.png-bde64a76bd55ce895fe1dfb2e6750ee3.ctex"
+path="res://.godot/imported/音符特效系列 二.png-b6f743f030217fb2a5221119d59a78b8.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://asset（素材-美术和音乐）/使用素材/战斗外/设置/音符特效系列/音符特效系列 二.png"
-dest_files=["res://.godot/imported/音符特效系列 二.png-bde64a76bd55ce895fe1dfb2e6750ee3.ctex"]
+source_file="res://素材/使用素材/战斗外/设置/音符特效系列/音符特效系列 二.png"
+dest_files=["res://.godot/imported/音符特效系列 二.png-b6f743f030217fb2a5221119d59a78b8.ctex"]
 
 [params]
 

@@ -3,12 +3,12 @@
 importer="oggvorbisstr"
 type="AudioStreamOggVorbis"
 uid="uid://cg126r72fntss"
-path="res://.godot/imported/点击声音（改）.ogg-22f15c9a18ed02a16385d58f0eca54e7.oggvorbisstr"
+path="res://.godot/imported/点击声音（改）.ogg-5394bf04ccd9361bcc145c1262ba1cab.oggvorbisstr"
 
 [deps]
 
-source_file="res://asset（素材-美术和音乐）/新音效/点击声音（改）.ogg"
-dest_files=["res://.godot/imported/点击声音（改）.ogg-22f15c9a18ed02a16385d58f0eca54e7.oggvorbisstr"]
+source_file="res://素材/使用素材/音效/点击声音（改）.ogg"
+dest_files=["res://.godot/imported/点击声音（改）.ogg-5394bf04ccd9361bcc145c1262ba1cab.oggvorbisstr"]
 
 [params]
 

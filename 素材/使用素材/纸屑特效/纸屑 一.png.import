@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://baoaaaa1tnxrs"
-path="res://.godot/imported/纸屑 一.png-b1922f1a0b5cb12d17a89c36ef2624cf.ctex"
+path="res://.godot/imported/纸屑 一.png-67bff6a6076209d2fdc2a8c5b2ead0bb.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://asset（素材-美术和音乐）/使用素材/纸屑特效/纸屑 一.png"
-dest_files=["res://.godot/imported/纸屑 一.png-b1922f1a0b5cb12d17a89c36ef2624cf.ctex"]
+source_file="res://素材/使用素材/纸屑特效/纸屑 一.png"
+dest_files=["res://.godot/imported/纸屑 一.png-67bff6a6076209d2fdc2a8c5b2ead0bb.ctex"]
 
 [params]
 
