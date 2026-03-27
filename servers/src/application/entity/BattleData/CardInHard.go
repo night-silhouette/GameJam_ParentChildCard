@@ -6,8 +6,8 @@ type CardInHand struct {
 }
 
 type CardDto struct {
-	Id     int `json:"id"`
-	Hp     int `json:"hp"`
-	Damage int `json:"damage"`
-	BuffId int `json:"buff_id"`
+	Id     int     `json:"id"`
+	Hp     float64 `json:"hp"`
+	Damage float64 `json:"damage"`
+	BuffId int     `json:"buff_id"`
 }
