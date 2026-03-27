@@ -2,7 +2,11 @@
 
 importer="texture"
 type="CompressedTexture2D"
+<<<<<<< HEAD
 uid="uid://caov3msbovq52"
+=======
+uid="uid://0yy0i7aqjic2"
+>>>>>>> ac02ce19a5f89f4fc274d43658ae21879c1e12bf
 path="res://.godot/imported/战斗卡十一.png-0ee734c001bf53b80eb4816252b5b585.ctex"
 metadata={
 "vram_texture": false

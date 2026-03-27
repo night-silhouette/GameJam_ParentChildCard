@@ -2,7 +2,11 @@
 
 importer="texture"
 type="CompressedTexture2D"
+<<<<<<< HEAD
 uid="uid://bmpjnku47n2n7"
+=======
+uid="uid://ddoypsjd65nfy"
+>>>>>>> ac02ce19a5f89f4fc274d43658ae21879c1e12bf
 path="res://.godot/imported/法术卡六.png-8d82e6d094d9bb07a4bd6a70aa4cab3e.ctex"
 metadata={
 "vram_texture": false

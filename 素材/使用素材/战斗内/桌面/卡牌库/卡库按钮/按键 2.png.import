@@ -2,7 +2,11 @@
 
 importer="texture"
 type="CompressedTexture2D"
+<<<<<<< HEAD
 uid="uid://choq55g3s3sln"
+=======
+uid="uid://dbwsokmf2o3vg"
+>>>>>>> ac02ce19a5f89f4fc274d43658ae21879c1e12bf
 path="res://.godot/imported/按键 2.png-e078a34cba86b94f0b8a956efcfa3161.ctex"
 metadata={
 "vram_texture": false
