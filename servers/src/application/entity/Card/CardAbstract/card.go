@@ -7,5 +7,19 @@ type Card interface {
 	SetInfo(info map[string]any)
 	GetInfo() map[string]any
 	Clone() Card
-	GetCardDto() BattleData.CardDto
+}
+
+func GetCardDto(c Card) BattleData.CardDto {
+	res := BattleData.CardDto{}
+	res.Id = c.GetID()
+	info := c.GetInfo()
+	if info != nil {
+		if info["hp"] != nil {
+			res.Hp = info["hp"].(float64)
+		}
+		if info["damage"] != nil {
+			res.Damage = info["damage"].(float64)
+		}
+	}
+	return res
 }

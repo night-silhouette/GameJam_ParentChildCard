@@ -51,15 +51,16 @@ func (s *StateMachine) process(GoCtx context.Context) {
 	}
 }
 
-func (s *StateMachine) finish(NextState State) {
+func (s *StateMachine) finish(NextState string) {
+	NextStateObj, _ := s.StateList[NextState]
 	if s.cancelFunc != nil {
 		s.cancelFunc()
 	}
 	if s.CurrentState != nil {
 		s.CurrentState.exit()
 	}
-	if NextState != nil && s.CurrentState != NextState {
-		s.CurrentState = NextState
+	if NextState != "" && s.CurrentState != NextStateObj {
+		s.CurrentState = NextStateObj
 		s.CurrentState.enter()
 		var GoCtx context.Context
 		GoCtx, s.cancelFunc = context.WithCancel(context.Background())
@@ -76,16 +77,20 @@ func NewStateMachine(c *Ctx, id1 int, id2 int, Nt *NotifyManager) (*StateMachine
 	StateMachineImpl.Nt = Nt //Nt的注入
 	StateMachineImpl.CardListCopy = CardListImpl.Copy()
 
-	StateMachineImpl.StateList = map[string]State{
-		"shuffleDeal": &ShuffleDeal{},
-	}
+	StateMachineImpl.RegisterState()
 	for _, element := range StateMachineImpl.StateList {
 		element.Init(id1, id2, c, Nt, StateMachineImpl)
 	}
-	StateMachineImpl.finish(StateMachineImpl.StateList["shuffleDeal"])
+	StateMachineImpl.finish("shuffleDeal")
 	GoCtx, cancelFunc := context.WithCancel(context.Background())
 	go StateMachineImpl.process(GoCtx)
 	return StateMachineImpl, cancelFunc
+}
+
+func (s *StateMachine) RegisterState() {
+	s.StateList = map[string]State{
+		"shuffleDeal": &ShuffleDeal{},
+	}
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -105,6 +110,8 @@ func (s *StateTemplate) Init(id1 int, id2 int, c *Ctx, Nt *NotifyManager, SM *St
 	s.Nt = Nt
 	s.SM = SM
 }
+
+// ----------------------------------------------------------------------------------------------------------------------------
 
 type ShuffleDeal struct {
 	StateTemplate

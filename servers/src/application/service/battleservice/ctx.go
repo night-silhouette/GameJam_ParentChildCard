@@ -45,11 +45,11 @@ func (c *Ctx) GetCardInHard(id_self int) *BattleData.CardInHand {
 	list_opponent := c.PlayerDataMap[id_opponent].CardInHand
 	for i := 0; i < len(*list_self); i++ {
 		card := (*list_self)[i]
-		res.Self = append(res.Self, card.GetCardDto())
+		res.Self = append(res.Self, CardAbstract.GetCardDto(card))
 	}
 	for i := 0; i < len(*list_opponent); i++ {
 		card := (*list_opponent)[i]
-		res.Opponent = append(res.Opponent, card.GetCardDto())
+		res.Opponent = append(res.Opponent, CardAbstract.GetCardDto(card))
 	}
 	return &res
 }
