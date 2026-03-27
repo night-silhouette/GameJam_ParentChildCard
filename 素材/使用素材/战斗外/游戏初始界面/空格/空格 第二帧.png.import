@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://vjjfuxdlx3ie"
-path="res://.godot/imported/空格 第二帧.png-05157b55750541adf0adc7a943897e0d.ctex"
+path="res://.godot/imported/空格 第二帧.png-b39e90deaba5680be3a6279889f058c2.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://asset（素材-美术和音乐）/使用素材/战斗外/游戏初始界面/空格/空格 第二帧.png"
-dest_files=["res://.godot/imported/空格 第二帧.png-05157b55750541adf0adc7a943897e0d.ctex"]
+source_file="res://素材/使用素材/战斗外/游戏初始界面/空格/空格 第二帧.png"
+dest_files=["res://.godot/imported/空格 第二帧.png-b39e90deaba5680be3a6279889f058c2.ctex"]
 
 [params]
 

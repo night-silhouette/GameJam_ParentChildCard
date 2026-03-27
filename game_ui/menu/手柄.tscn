@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://wvj1qln41qo6"]
 
-[ext_resource type="Texture2D" uid="uid://2ura82rr5p8g" path="res://asset（素材-美术和音乐）/使用素材/战斗外/游戏初始界面/手柄（放在主界面） .png" id="1_r5vdw"]
+[ext_resource type="Texture2D" uid="uid://2ura82rr5p8g" path="res://素材/使用素材/战斗外/游戏初始界面/手柄（放在主界面） .png" id="1_r5vdw"]
 [ext_resource type="PackedScene" uid="uid://bvywilaq1ou8w" path="res://game_ui/menu/笑脸按钮.tscn" id="2_wbpcn"]
 
 [node name="手柄" type="TextureRect"]
@@ -13,18 +13,14 @@ metadata/_edit_lock_ = true
 
 [node name="笑脸按钮" parent="." instance=ExtResource("2_wbpcn")]
 layout_mode = 0
-offset_left = 295.99988
-offset_top = 264.00003
-offset_right = 1880.9999
-offset_bottom = 1543.0
-rotation = -0.006001731
-scale = Vector2(0.27011234, 0.27011234)
+offset_left = 200.0
+offset_top = 144.0
+offset_right = 933.6356
+offset_bottom = 736.0
 
 [node name="笑脸按钮2" parent="." instance=ExtResource("2_wbpcn")]
 layout_mode = 0
-offset_left = 1216.0
-offset_top = 256.0
-offset_right = 2801.0
-offset_bottom = 1535.0
-rotation = -0.006001731
-scale = Vector2(0.27011234, 0.27011234)
+offset_left = 1096.0
+offset_top = 152.0
+offset_right = 1829.6356
+offset_bottom = 744.0

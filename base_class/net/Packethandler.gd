@@ -38,7 +38,9 @@ func _handle_raw_api_data(api_name: String, method: int, code: int, data: Varian
 			elif method == HTTPClient.METHOD_GET: 
 			# GET 是验证 Token 是否还活着
 				if code == 0:
+					
 					SignalBus.token_validated_success.emit()
+					print("token成功")
 				else:
 					current_token = ""
 					SignalBus.network_disconnected.emit()

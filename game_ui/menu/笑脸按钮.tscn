@@ -1,14 +1,15 @@
 [gd_scene load_steps=3 format=3 uid="uid://bvywilaq1ou8w"]
 
-[ext_resource type="Texture2D" uid="uid://tddde7i0smeu" path="res://asset（素材-美术和音乐）/使用素材/战斗外/游戏初始界面/按钮UI（初始）.png" id="1_y7nt5"]
-[ext_resource type="Texture2D" uid="uid://vheo0mh0gpfc" path="res://asset（素材-美术和音乐）/使用素材/战斗外/游戏初始界面/按钮UI（初始） 二版.png" id="2_ahwjs"]
+[ext_resource type="Texture2D" uid="uid://tddde7i0smeu" path="res://素材/使用素材/战斗外/游戏初始界面/按钮UI（初始）.png" id="1_y7nt5"]
+[ext_resource type="Texture2D" uid="uid://vheo0mh0gpfc" path="res://素材/使用素材/战斗外/游戏初始界面/按钮UI（初始） 二版.png" id="2_ahwjs"]
 
 [node name="笑脸按钮" type="TextureButton"]
 z_index = 5
-offset_left = -96.0
-offset_top = 240.0
-offset_right = 1489.0
-offset_bottom = 1519.0
+offset_left = 8.0
+offset_top = 16.0
+offset_right = 1593.0
+offset_bottom = 1295.0
+scale = Vector2(0.8284917, 1)
 toggle_mode = true
 keep_pressed_outside = true
 texture_normal = ExtResource("1_y7nt5")

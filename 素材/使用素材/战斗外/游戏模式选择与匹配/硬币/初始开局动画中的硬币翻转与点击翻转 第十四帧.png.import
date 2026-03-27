@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://6dsqj7vurd2h"
-path="res://.godot/imported/初始开局动画中的硬币翻转与点击翻转 第十四帧.png-e5485132cecd3842a330bb6f6da1934c.ctex"
+path="res://.godot/imported/初始开局动画中的硬币翻转与点击翻转 第十四帧.png-d4ec160ed08a165b77e8df2e7e1bd37b.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://asset（素材-美术和音乐）/使用素材/战斗外/游戏模式选择与匹配/硬币/初始开局动画中的硬币翻转与点击翻转 第十四帧.png"
-dest_files=["res://.godot/imported/初始开局动画中的硬币翻转与点击翻转 第十四帧.png-e5485132cecd3842a330bb6f6da1934c.ctex"]
+source_file="res://素材/使用素材/战斗外/游戏模式选择与匹配/硬币/初始开局动画中的硬币翻转与点击翻转 第十四帧.png"
+dest_files=["res://.godot/imported/初始开局动画中的硬币翻转与点击翻转 第十四帧.png-d4ec160ed08a165b77e8df2e7e1bd37b.ctex"]
 
 [params]
 

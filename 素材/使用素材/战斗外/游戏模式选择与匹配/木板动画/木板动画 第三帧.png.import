@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bxxrcp5f82eec"
-path="res://.godot/imported/木板动画 第三帧.png-0546b1822b087957b9ecb3d203ce3d2f.ctex"
+path="res://.godot/imported/木板动画 第三帧.png-4cd4e497607e772c03ce7ebf1f639749.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://asset（素材-美术和音乐）/使用素材/战斗外/游戏模式选择与匹配/木板动画/木板动画 第三帧.png"
-dest_files=["res://.godot/imported/木板动画 第三帧.png-0546b1822b087957b9ecb3d203ce3d2f.ctex"]
+source_file="res://素材/使用素材/战斗外/游戏模式选择与匹配/木板动画/木板动画 第三帧.png"
+dest_files=["res://.godot/imported/木板动画 第三帧.png-4cd4e497607e772c03ce7ebf1f639749.ctex"]
 
 [params]
 

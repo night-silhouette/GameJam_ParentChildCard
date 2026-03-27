@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bk66ubcdt3sdl"
-path="res://.godot/imported/拉扯动画 第四帧.png-4398b50f937231bee58584b65ba89759.ctex"
+path="res://.godot/imported/拉扯动画 第四帧.png-92270903849bc8e59261314d601cbf39.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://asset（素材-美术和音乐）/使用素材/战斗外/游戏初始界面/拉扯动画/拉扯动画 第四帧.png"
-dest_files=["res://.godot/imported/拉扯动画 第四帧.png-4398b50f937231bee58584b65ba89759.ctex"]
+source_file="res://素材/使用素材/战斗外/游戏初始界面/拉扯动画/拉扯动画 第四帧.png"
+dest_files=["res://.godot/imported/拉扯动画 第四帧.png-92270903849bc8e59261314d601cbf39.ctex"]
 
 [params]
 

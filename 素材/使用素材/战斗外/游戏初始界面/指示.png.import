@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://br7kuanamk6km"
-path="res://.godot/imported/指示.png-a52d18a90bfb724e80f4a94196954bb9.ctex"
+path="res://.godot/imported/指示.png-f42b904019bd021e533ec4252c3f727b.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://asset（素材-美术和音乐）/使用素材/战斗外/游戏初始界面/指示.png"
-dest_files=["res://.godot/imported/指示.png-a52d18a90bfb724e80f4a94196954bb9.ctex"]
+source_file="res://素材/使用素材/战斗外/游戏初始界面/指示.png"
+dest_files=["res://.godot/imported/指示.png-f42b904019bd021e533ec4252c3f727b.ctex"]
 
 [params]
 

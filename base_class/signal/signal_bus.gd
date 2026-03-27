@@ -1,5 +1,7 @@
 extends Node
+##变化场景信号
 signal change_scence(message : String);
+##变化UI信号
 signal change_ui(message : String);
 
 
@@ -8,17 +10,19 @@ signal raw_api_responded(api_name: String, method: int, code: int, data: Variant
 
 
 ##token和login的接受后处理信号
+
+##登录成功
 signal login_success()
+
 signal login_failed(msg: String)
-signal token_validated_success() # 验证旧Token有效
+## 验证旧Token有效
+signal token_validated_success()
+
 signal user_info_fetched(id: int, user_name: String, is_admin: bool)
 signal user_registered_success()
 signal user_updated_success()
 signal network_disconnected()
 
-# =========================
-# Token / 登录
-# =========================
 
 ## 登录，获取 token
 signal request_login(username: String, password: String)

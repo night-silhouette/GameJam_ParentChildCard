@@ -7,6 +7,7 @@ load_path = "res://.godot/imported/封面.png-ef712d216671d17ae5c56da27676fe55.c
 
 [node name="启动页面" type="Node2D"]
 script = ExtResource("1_7wheh")
+set_time = 3
 
 [node name="TextureRect" type="TextureRect" parent="."]
 offset_right = 1152.0
@@ -14,3 +15,9 @@ offset_bottom = 648.0
 texture = SubResource("CompressedTexture2D_xsusc")
 expand_mode = 1
 metadata/_edit_lock_ = true
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 3.0
+autostart = true
+
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]

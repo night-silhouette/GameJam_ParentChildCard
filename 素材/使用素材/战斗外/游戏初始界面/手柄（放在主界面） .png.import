@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://2ura82rr5p8g"
-path="res://.godot/imported/手柄（放在主界面） .png-c921e999aee0e42a4c74d790e3793535.ctex"
+path="res://.godot/imported/手柄（放在主界面） .png-6a8d53aa889436424dd1ae1d1205ea1e.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://asset（素材-美术和音乐）/使用素材/战斗外/游戏初始界面/手柄（放在主界面） .png"
-dest_files=["res://.godot/imported/手柄（放在主界面） .png-c921e999aee0e42a4c74d790e3793535.ctex"]
+source_file="res://素材/使用素材/战斗外/游戏初始界面/手柄（放在主界面） .png"
+dest_files=["res://.godot/imported/手柄（放在主界面） .png-6a8d53aa889436424dd1ae1d1205ea1e.ctex"]
 
 [params]
 

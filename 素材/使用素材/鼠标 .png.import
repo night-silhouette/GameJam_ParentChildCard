@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://gecwkapu6ss8"
-path="res://.godot/imported/鼠标 .png-580000a843c42d8395b0ff5d72cb42dc.ctex"
+path="res://.godot/imported/鼠标 .png-cedb6862709de5bda17e207d8528f1cd.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://asset（素材-美术和音乐）/使用素材/鼠标 .png"
-dest_files=["res://.godot/imported/鼠标 .png-580000a843c42d8395b0ff5d72cb42dc.ctex"]
+source_file="res://素材/使用素材/鼠标 .png"
+dest_files=["res://.godot/imported/鼠标 .png-cedb6862709de5bda17e207d8528f1cd.ctex"]
 
 [params]
 

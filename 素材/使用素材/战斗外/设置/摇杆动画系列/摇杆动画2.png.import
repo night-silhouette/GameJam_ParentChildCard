@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bmnj1vf8i4ycb"
-path="res://.godot/imported/摇杆动画2.png-a78c868539054773a4eb659966f55f21.ctex"
+path="res://.godot/imported/摇杆动画2.png-ffa599e4c5c4a2488d75261bd0fa728d.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://asset（素材-美术和音乐）/使用素材/战斗外/设置/摇杆动画系列/摇杆动画2.png"
-dest_files=["res://.godot/imported/摇杆动画2.png-a78c868539054773a4eb659966f55f21.ctex"]
+source_file="res://素材/使用素材/战斗外/设置/摇杆动画系列/摇杆动画2.png"
+dest_files=["res://.godot/imported/摇杆动画2.png-ffa599e4c5c4a2488d75261bd0fa728d.ctex"]
 
 [params]
 

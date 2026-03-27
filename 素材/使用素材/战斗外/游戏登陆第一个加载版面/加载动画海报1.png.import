@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://og5ksxk6vidt"
-path="res://.godot/imported/加载动画海报1.png-a5bb05af866319ccddc3650ee0720637.ctex"
+path="res://.godot/imported/加载动画海报1.png-f8263751999281d8cc5178f6e16b9848.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://asset（素材-美术和音乐）/使用素材/战斗外/游戏登陆第一个加载版面/加载动画海报1.png"
-dest_files=["res://.godot/imported/加载动画海报1.png-a5bb05af866319ccddc3650ee0720637.ctex"]
+source_file="res://素材/使用素材/战斗外/游戏登陆第一个加载版面/加载动画海报1.png"
+dest_files=["res://.godot/imported/加载动画海报1.png-f8263751999281d8cc5178f6e16b9848.ctex"]
 
 [params]
 

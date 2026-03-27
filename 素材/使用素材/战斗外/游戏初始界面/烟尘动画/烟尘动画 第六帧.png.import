@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://hmyucoelgtoj"
-path="res://.godot/imported/烟尘动画 第六帧.png-2dce5ff95078b2c34205beed6a732931.ctex"
+path="res://.godot/imported/烟尘动画 第六帧.png-f1b253a5b9a6244ce3898b5c8b2fe865.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://asset（素材-美术和音乐）/使用素材/战斗外/游戏初始界面/烟尘动画/烟尘动画 第六帧.png"
-dest_files=["res://.godot/imported/烟尘动画 第六帧.png-2dce5ff95078b2c34205beed6a732931.ctex"]
+source_file="res://素材/使用素材/战斗外/游戏初始界面/烟尘动画/烟尘动画 第六帧.png"
+dest_files=["res://.godot/imported/烟尘动画 第六帧.png-f1b253a5b9a6244ce3898b5c8b2fe865.ctex"]
 
 [params]
 

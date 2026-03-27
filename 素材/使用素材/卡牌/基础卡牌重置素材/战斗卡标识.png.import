@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bkg0jrw7s1pfw"
-path="res://.godot/imported/战斗卡标识.png-3eb6124339dd18d3fc9bd167f480a241.ctex"
+path="res://.godot/imported/战斗卡标识.png-ae0cf2ff997902fd8dfa5f7663f2dc67.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://asset（素材-美术和音乐）/使用素材/重置卡牌/基础卡牌重置素材/战斗卡标识.png"
-dest_files=["res://.godot/imported/战斗卡标识.png-3eb6124339dd18d3fc9bd167f480a241.ctex"]
+source_file="res://素材/使用素材/卡牌/基础卡牌重置素材/战斗卡标识.png"
+dest_files=["res://.godot/imported/战斗卡标识.png-ae0cf2ff997902fd8dfa5f7663f2dc67.ctex"]
 
 [params]
 

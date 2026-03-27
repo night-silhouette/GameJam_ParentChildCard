@@ -1,45 +1,114 @@
-[gd_scene load_steps=5 format=3 uid="uid://6drvwctgyu2f"]
+[gd_scene load_steps=11 format=3 uid="uid://6drvwctgyu2f"]
 
 [ext_resource type="PackedScene" uid="uid://pmiymeegg054" path="res://game_ui/menu/边框.tscn" id="1_qfxjv"]
 [ext_resource type="PackedScene" uid="uid://d2g5id28y0yre" path="res://game_ui/menu/cheese.tscn" id="2_nr1r5"]
 [ext_resource type="PackedScene" uid="uid://wvj1qln41qo6" path="res://game_ui/menu/手柄.tscn" id="4_7e4nj"]
-[ext_resource type="Texture2D" uid="uid://cgxvptm58j2v4" path="res://asset（素材-美术和音乐）/使用素材/战斗外/游戏初始界面/水管.png" id="4_ja110"]
+[ext_resource type="Texture2D" uid="uid://cgxvptm58j2v4" path="res://素材/使用素材/战斗外/游戏初始界面/水管.png" id="4_ja110"]
+[ext_resource type="Texture2D" uid="uid://b1emd6a6b35lg" path="res://素材/使用素材/战斗外/游戏初始界面/空格/空格 第一帧.png" id="5_sojaf"]
+[ext_resource type="Texture2D" uid="uid://b5d68ur7fvk3g" path="res://素材/使用素材/战斗外/游戏初始界面/空格/空格 第三帧.png" id="6_ikupr"]
+[ext_resource type="Texture2D" uid="uid://vjjfuxdlx3ie" path="res://素材/使用素材/战斗外/游戏初始界面/空格/空格 第二帧.png" id="7_p44tl"]
+
+[sub_resource type="Animation" id="Animation_sojaf"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("手柄:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(-112, 192)]
+}
+
+[sub_resource type="Animation" id="Animation_7e4nj"]
+resource_name = "手柄进入"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("手柄:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(-0.033333335, 0.4, 0.43333334, 0.4666667),
+"transitions": PackedFloat32Array(1, 0.21022414, 0.17677675, 1),
+"update": 0,
+"values": [Vector2(-88, 192), Vector2(320, 192), Vector2(295, 192), Vector2(300, 192)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_ja110"]
+_data = {
+&"RESET": SubResource("Animation_sojaf"),
+&"手柄进入": SubResource("Animation_7e4nj")
+}
 
 [node name="menu_ui" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -8.0
-offset_right = -8.0
 grow_horizontal = 2
 grow_vertical = 2
+metadata/_edit_lock_ = true
 
 [node name="边框" parent="." instance=ExtResource("1_qfxjv")]
 layout_mode = 1
+anchors_preset = 0
+anchor_left = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 0.0
+offset_right = 1152.0
+offset_bottom = 648.0
+grow_horizontal = 1
+grow_vertical = 1
+scale = Vector2(1.0008767, 1.0094744)
+
+[node name="水管" type="TextureRect" parent="."]
+layout_mode = 0
+offset_top = 63.999996
+offset_right = 869.0
+offset_bottom = 1099.0
+scale = Vector2(0.7532401, 0.44281524)
+texture = ExtResource("4_ja110")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_ja110")
+}
+
+[node name="cheese" parent="." node_paths=PackedStringArray("_animationplayer") instance=ExtResource("2_nr1r5")]
+layout_mode = 1
+offset_left = 63.999973
+offset_top = -88.0
+offset_right = 1089.0
+offset_bottom = 576.0
+scale = Vector2(0.16128315, 0.15557368)
+pivot_offset = Vector2(512, 332)
+expand_mode = 0
+_animationplayer = NodePath("../AnimationPlayer")
+
+[node name="空格" type="TextureButton" parent="."]
+layout_mode = 0
+offset_left = 352.0
+offset_top = 536.0
+offset_right = 1034.0
+offset_bottom = 653.0
+scale = Vector2(0.6820166, 0.6820166)
+action_mode = 0
+texture_normal = ExtResource("5_sojaf")
+texture_pressed = ExtResource("6_ikupr")
+texture_hover = ExtResource("7_p44tl")
 
 [node name="手柄" parent="." instance=ExtResource("4_7e4nj")]
 layout_mode = 0
-offset_left = -167.99997
-offset_top = 191.99998
-offset_right = 1739.0
+offset_left = -112.0
+offset_top = 192.0
+offset_right = 1794.9912
 offset_bottom = 1472.0
 rotation = 1.5707964
 scale = Vector2(0.1854808, 0.1854808)
 
-[node name="电线" type="TextureRect" parent="."]
-layout_mode = 0
-offset_left = 216.0
-offset_top = 144.0
-offset_right = 1249.5687
-offset_bottom = 1179.0
-scale = Vector2(0.5650326, 0.38797444)
-texture = ExtResource("4_ja110")
-
-[node name="cheese" parent="." instance=ExtResource("2_nr1r5")]
-layout_mode = 0
-offset_left = -296.0
-offset_top = -304.00003
-offset_right = 1468.0
-offset_bottom = 722.0
-scale = Vector2(0.13127445, 0.1266273)
+[connection signal="button_down" from="空格" to="cheese" method="animationplayer"]

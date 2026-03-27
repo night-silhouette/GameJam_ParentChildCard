@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://kqcdybnf0ah1"
-path="res://.godot/imported/马车 第一帧.png-3d1f37a9daafb69ab187dd9e9546b037.ctex"
+path="res://.godot/imported/马车 第一帧.png-3f9755740db64a3dc442b19add384d45.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://asset（素材-美术和音乐）/使用素材/战斗外/游戏模式选择与匹配/马车/马车 第一帧.png"
-dest_files=["res://.godot/imported/马车 第一帧.png-3d1f37a9daafb69ab187dd9e9546b037.ctex"]
+source_file="res://素材/使用素材/战斗外/游戏模式选择与匹配/马车/马车 第一帧.png"
+dest_files=["res://.godot/imported/马车 第一帧.png-3f9755740db64a3dc442b19add384d45.ctex"]
 
 [params]
 

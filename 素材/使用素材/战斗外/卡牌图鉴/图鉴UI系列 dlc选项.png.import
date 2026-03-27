@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bv0x1stp2n3qd"
-path="res://.godot/imported/图鉴UI系列 dlc选项.png-a8bedff33a4eb8f22bce23595bc0eee7.ctex"
+path="res://.godot/imported/图鉴UI系列 dlc选项.png-d06895d588703592c5fb553b0d95441b.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://asset（素材-美术和音乐）/使用素材/战斗外/卡牌图鉴/图鉴UI系列 dlc选项.png"
-dest_files=["res://.godot/imported/图鉴UI系列 dlc选项.png-a8bedff33a4eb8f22bce23595bc0eee7.ctex"]
+source_file="res://素材/使用素材/战斗外/卡牌图鉴/图鉴UI系列 dlc选项.png"
+dest_files=["res://.godot/imported/图鉴UI系列 dlc选项.png-d06895d588703592c5fb553b0d95441b.ctex"]
 
 [params]
 

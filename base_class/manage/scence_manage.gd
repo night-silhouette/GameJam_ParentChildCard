@@ -20,6 +20,9 @@ func fchange_scence(state):
 
 		"tologin":
 			next_path = "res://game_scene/login/login_scence.tscn"
+			
+		"tomenu":
+			next_path = "res://game_scene/menu/menu_backgrounf.tscn"
 
 	await goto_scene(next_path)
 

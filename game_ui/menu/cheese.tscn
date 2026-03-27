@@ -1,6 +1,6 @@
 [gd_scene load_steps=6 format=3 uid="uid://d2g5id28y0yre"]
 
-[ext_resource type="Texture2D" uid="uid://nn0c5tm67pq3" path="res://asset（素材-美术和音乐）/使用素材/战斗外/游戏初始界面/（大块的奶酪）.png" id="1_m73gy"]
+[ext_resource type="Texture2D" uid="uid://nn0c5tm67pq3" path="res://素材/使用素材/战斗外/游戏初始界面/（大块的奶酪）.png" id="1_m73gy"]
 [ext_resource type="Script" uid="uid://dx3qm1nmglgig" path="res://game_ui/menu/cheese.gd" id="2_m73gy"]
 
 [sub_resource type="Animation" id="Animation_oo6xv"]
@@ -20,7 +20,6 @@ tracks/0/keys = {
 
 [sub_resource type="Animation" id="Animation_psaq6"]
 resource_name = "抖动"
-loop_mode = 1
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -40,9 +39,12 @@ tracks/1/path = NodePath(".")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
-"times": PackedFloat32Array(0.1),
-"transitions": PackedFloat32Array(1),
+"times": PackedFloat32Array(0.1, 0.3),
+"transitions": PackedFloat32Array(1, 1),
 "values": [{
+"args": [],
+"method": &"spawn_piece"
+}, {
 "args": [],
 "method": &"spawn_piece"
 }]
@@ -60,7 +62,6 @@ offset_top = -120.0
 offset_right = 929.0
 offset_bottom = 544.0
 scale = Vector2(0.50675523, 0.50675523)
-pivot_offset = Vector2(882, 513)
 texture = ExtResource("1_m73gy")
 expand_mode = 1
 script = ExtResource("2_m73gy")
@@ -69,4 +70,3 @@ script = ExtResource("2_m73gy")
 libraries = {
 &"": SubResource("AnimationLibrary_l21x2")
 }
-autoplay = "抖动"

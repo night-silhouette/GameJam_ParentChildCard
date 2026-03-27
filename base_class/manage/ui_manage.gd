@@ -19,7 +19,8 @@ func fui_change(state):
 	match state:
 		"tologin":
 			next_path = "res://game_ui/login/login_ui.tscn"
-			print("成功")
+		"tomenu":
+			next_path = "res://game_ui/menu/menu_ui.tscn"
 
 	await goto_ui(next_path)
 

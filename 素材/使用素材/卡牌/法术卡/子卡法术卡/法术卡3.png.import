@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dbpd724ehkyuo"
-path="res://.godot/imported/法术卡3.png-45ec7a4c84e9a38910ae9325d8067268.ctex"
+path="res://.godot/imported/法术卡3.png-5615675ff42e91f18aa283abc2c23d6b.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://asset（素材-美术和音乐）/使用素材/重置卡牌/法术卡/子卡法术卡/法术卡3.png"
-dest_files=["res://.godot/imported/法术卡3.png-45ec7a4c84e9a38910ae9325d8067268.ctex"]
+source_file="res://素材/使用素材/卡牌/法术卡/子卡法术卡/法术卡3.png"
+dest_files=["res://.godot/imported/法术卡3.png-5615675ff42e91f18aa283abc2c23d6b.ctex"]
 
 [params]
 

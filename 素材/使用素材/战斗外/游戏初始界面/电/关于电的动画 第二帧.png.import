@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bf4dw1ytmibs2"
-path="res://.godot/imported/关于电的动画 第二帧.png-d0d33011ce0b8d6d99e8816c21b6c020.ctex"
+path="res://.godot/imported/关于电的动画 第二帧.png-ef5fe3220034069af6b64c866e3ac28f.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://asset（素材-美术和音乐）/使用素材/战斗外/游戏初始界面/电/关于电的动画 第二帧.png"
-dest_files=["res://.godot/imported/关于电的动画 第二帧.png-d0d33011ce0b8d6d99e8816c21b6c020.ctex"]
+source_file="res://素材/使用素材/战斗外/游戏初始界面/电/关于电的动画 第二帧.png"
+dest_files=["res://.godot/imported/关于电的动画 第二帧.png-ef5fe3220034069af6b64c866e3ac28f.ctex"]
 
 [params]
 

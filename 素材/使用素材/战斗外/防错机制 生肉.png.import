@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cx3vjy2jemhb0"
-path="res://.godot/imported/防错机制 生肉.png-7a92b348c0d083840971a014ff15412a.ctex"
+path="res://.godot/imported/防错机制 生肉.png-c8ef3f9a322d6a1846af3efe5a785203.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://asset（素材-美术和音乐）/使用素材/战斗外/防错机制 生肉.png"
-dest_files=["res://.godot/imported/防错机制 生肉.png-7a92b348c0d083840971a014ff15412a.ctex"]
+source_file="res://素材/使用素材/战斗外/防错机制 生肉.png"
+dest_files=["res://.godot/imported/防错机制 生肉.png-c8ef3f9a322d6a1846af3efe5a785203.ctex"]
 
 [params]
 

@@ -1,15 +1,8 @@
-[gd_scene load_steps=15 format=3 uid="uid://c5jghvjdypfe7"]
+[gd_scene load_steps=8 format=3 uid="uid://cddav4ag3tolj"]
 
 [ext_resource type="Script" uid="uid://c03fvfgcyxqfd" path="res://game_ui/menu/总ui.gd" id="1_k0v5d"]
-[ext_resource type="Texture2D" uid="uid://bs4uq6gwmakq5" path="res://asset（素材-美术和音乐）/GUI/UI10 .png" id="2_2itfe"]
 [ext_resource type="Script" uid="uid://c4gn4igdad3md" path="res://game_ui/menu/船.gd" id="3_83bur"]
-[ext_resource type="PackedScene" uid="uid://kg260t0l1qv4" path="res://game_ui/menu/按钮界面.tscn" id="4_54oca"]
 [ext_resource type="Script" uid="uid://dyd0eh3h6go" path="res://game_ui/menu/边框.gd" id="5_h0pbo"]
-[ext_resource type="Texture2D" uid="uid://kd787lop3kko" path="res://asset（素材-美术和音乐）/GUI/UI2.png" id="6_xa2yr"]
-[ext_resource type="Script" uid="uid://bxeidr7pjh1j6" path="res://game_ui/menu/down.gd" id="7_jvukp"]
-[ext_resource type="Texture2D" uid="uid://3wdprvmx20rw" path="res://asset（素材-美术和音乐）/GUI/剑UI .png" id="8_sbfww"]
-[ext_resource type="Script" uid="uid://j4lcgp0sggpo" path="res://game_ui/menu/left.gd" id="9_a3km7"]
-[ext_resource type="Texture2D" uid="uid://c6vfyyncgw66b" path="res://asset（素材-美术和音乐）/GUI/UI7.png" id="10_eykj4"]
 
 [sub_resource type="Animation" id="Animation_u0u8m"]
 length = 0.001
@@ -149,20 +142,11 @@ offset_right = -731.352
 offset_bottom = 204.20773
 scale = Vector2(1.03, 1.03)
 pivot_offset = Vector2(60, 58)
-texture = ExtResource("2_2itfe")
 expand_mode = 1
 script = ExtResource("3_83bur")
 speed = 0.5
 amplitude = 26.0
 ro_speed = 0.05
-
-[node name="按钮界面" parent="总UI" instance=ExtResource("4_54oca")]
-layout_mode = 0
-offset_left = -43.0
-offset_top = 1.0000019
-offset_right = 1236.0
-offset_bottom = 1904.0
-scale = Vector2(0.2846036, 0.27719468)
 
 [node name="边框" type="Control" parent="总UI"]
 z_index = 10
@@ -197,11 +181,10 @@ offset_right = 71.12799
 offset_bottom = 23.776001
 grow_vertical = 2
 mouse_filter = 2
-texture = ExtResource("6_xa2yr")
 expand_mode = 1
 metadata/_edit_lock_ = true
 
-[node name="右" type="TextureRect" parent="总UI/边框/左右" node_paths=PackedStringArray("Duichen", "animationpalyer")]
+[node name="右" type="TextureRect" parent="总UI/边框/左右"]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.81200004
@@ -213,13 +196,9 @@ offset_right = 235.9574
 offset_bottom = 16.0
 grow_vertical = 2
 mouse_filter = 2
-texture = ExtResource("6_xa2yr")
 expand_mode = 1
 flip_h = true
 flip_v = true
-script = ExtResource("7_jvukp")
-Duichen = NodePath("../左")
-animationpalyer = NodePath("../../边框动画")
 metadata/_edit_lock_ = true
 
 [node name="剑" type="TextureRect" parent="总UI/边框"]
@@ -237,7 +216,6 @@ offset_bottom = -2.734375
 grow_horizontal = 0
 grow_vertical = 2
 pivot_offset = Vector2(210.22, 608)
-texture = ExtResource("8_sbfww")
 expand_mode = 1
 metadata/_edit_lock_ = true
 
@@ -259,12 +237,11 @@ offset_right = 242.79993
 offset_bottom = 1001.5999
 rotation = 1.5707964
 mouse_filter = 2
-texture = ExtResource("6_xa2yr")
 expand_mode = 1
 metadata/_edit_use_anchors_ = true
 metadata/_edit_lock_ = true
 
-[node name="下" type="TextureRect" parent="总UI/边框/上下" node_paths=PackedStringArray("Duichen", "animationpalyer")]
+[node name="下" type="TextureRect" parent="总UI/边框/上下"]
 layout_mode = 1
 anchors_preset = -1
 anchor_top = 12.330001
@@ -277,11 +254,7 @@ offset_bottom = 1359.8062
 grow_vertical = 2
 rotation = -1.5707964
 mouse_filter = 2
-texture = ExtResource("6_xa2yr")
 expand_mode = 1
-script = ExtResource("9_a3km7")
-Duichen = NodePath("../上")
-animationpalyer = NodePath("../../边框动画")
 metadata/_edit_lock_ = true
 
 [node name="边框动画" type="AnimationPlayer" parent="总UI/边框"]
@@ -297,7 +270,6 @@ offset_top = 200.00005
 offset_right = 1618.1957
 offset_bottom = 672.4217
 rotation = 0.8978362
-texture = ExtResource("10_eykj4")
 expand_mode = 1
 metadata/_edit_lock_ = true
 

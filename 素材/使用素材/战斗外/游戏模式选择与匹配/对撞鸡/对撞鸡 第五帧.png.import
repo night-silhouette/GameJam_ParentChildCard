@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c8dvvfcp7p1tv"
-path="res://.godot/imported/对撞鸡 第五帧.png-5cecbecdd6d94ffa258bd2cee9a85e15.ctex"
+path="res://.godot/imported/对撞鸡 第五帧.png-c26773bae394f356f0031d49fe863269.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://asset（素材-美术和音乐）/使用素材/战斗外/游戏模式选择与匹配/对撞鸡/对撞鸡 第五帧.png"
-dest_files=["res://.godot/imported/对撞鸡 第五帧.png-5cecbecdd6d94ffa258bd2cee9a85e15.ctex"]
+source_file="res://素材/使用素材/战斗外/游戏模式选择与匹配/对撞鸡/对撞鸡 第五帧.png"
+dest_files=["res://.godot/imported/对撞鸡 第五帧.png-c26773bae394f356f0031d49fe863269.ctex"]
 
 [params]
 

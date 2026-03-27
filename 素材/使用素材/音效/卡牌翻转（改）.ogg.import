@@ -3,12 +3,12 @@
 importer="oggvorbisstr"
 type="AudioStreamOggVorbis"
 uid="uid://c24fhgq1v6b6l"
-path="res://.godot/imported/卡牌翻转（改）.ogg-efe40c7db823e41a083b924ac9da20a0.oggvorbisstr"
+path="res://.godot/imported/卡牌翻转（改）.ogg-b443c2cc68d6a1840e3bad976c4e2f9b.oggvorbisstr"
 
 [deps]
 
-source_file="res://asset（素材-美术和音乐）/新音效/卡牌翻转（改）.ogg"
-dest_files=["res://.godot/imported/卡牌翻转（改）.ogg-efe40c7db823e41a083b924ac9da20a0.oggvorbisstr"]
+source_file="res://素材/使用素材/音效/卡牌翻转（改）.ogg"
+dest_files=["res://.godot/imported/卡牌翻转（改）.ogg-b443c2cc68d6a1840e3bad976c4e2f9b.oggvorbisstr"]
 
 [params]
 

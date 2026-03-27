@@ -3,12 +3,12 @@
 importer="oggvorbisstr"
 type="AudioStreamOggVorbis"
 uid="uid://2jdaexy20bby"
-path="res://.godot/imported/获得新卡.ogg-44c634beccc87c6213dd6943c6dc2bb2.oggvorbisstr"
+path="res://.godot/imported/获得新卡.ogg-3f79e00a258b1724fa6adb0d4580a12c.oggvorbisstr"
 
 [deps]
 
-source_file="res://asset（素材-美术和音乐）/新音效/获得新卡.ogg"
-dest_files=["res://.godot/imported/获得新卡.ogg-44c634beccc87c6213dd6943c6dc2bb2.oggvorbisstr"]
+source_file="res://素材/使用素材/音效/获得新卡.ogg"
+dest_files=["res://.godot/imported/获得新卡.ogg-3f79e00a258b1724fa6adb0d4580a12c.oggvorbisstr"]
 
 [params]
 

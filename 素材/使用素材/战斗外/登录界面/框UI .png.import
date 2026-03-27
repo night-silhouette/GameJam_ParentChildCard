@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://8tl4lolrrkqd"
-path="res://.godot/imported/框UI .png-9e3eb31a870feb328f2fa7827a4f5bed.ctex"
+path="res://.godot/imported/框UI .png-5d76797ef7966f378f7e869a9fd865a2.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://asset（素材-美术和音乐）/使用素材/战斗外/登录界面/框UI .png"
-dest_files=["res://.godot/imported/框UI .png-9e3eb31a870feb328f2fa7827a4f5bed.ctex"]
+source_file="res://素材/使用素材/战斗外/登录界面/框UI .png"
+dest_files=["res://.godot/imported/框UI .png-5d76797ef7966f378f7e869a9fd865a2.ctex"]
 
 [params]
 

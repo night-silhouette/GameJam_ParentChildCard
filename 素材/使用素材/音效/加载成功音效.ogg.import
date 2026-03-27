@@ -3,12 +3,12 @@
 importer="oggvorbisstr"
 type="AudioStreamOggVorbis"
 uid="uid://sncxqgnidhpq"
-path="res://.godot/imported/加载成功音效.ogg-54b3215510f450254ecfe90670d9d075.oggvorbisstr"
+path="res://.godot/imported/加载成功音效.ogg-2ed2002fa5735a7acfb4fb45c03f590e.oggvorbisstr"
 
 [deps]
 
-source_file="res://asset（素材-美术和音乐）/新音效/加载成功音效.ogg"
-dest_files=["res://.godot/imported/加载成功音效.ogg-54b3215510f450254ecfe90670d9d075.oggvorbisstr"]
+source_file="res://素材/使用素材/音效/加载成功音效.ogg"
+dest_files=["res://.godot/imported/加载成功音效.ogg-2ed2002fa5735a7acfb4fb45c03f590e.oggvorbisstr"]
 
 [params]
 

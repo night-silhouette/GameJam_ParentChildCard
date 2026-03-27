@@ -3,12 +3,12 @@
 importer="oggvorbisstr"
 type="AudioStreamOggVorbis"
 uid="uid://w2k4yhu7eay8"
-path="res://.godot/imported/游戏对局转盘转动音效和菜单选择转动音效（改）.ogg-1adcf4e9a4012947880a54615404244a.oggvorbisstr"
+path="res://.godot/imported/游戏对局转盘转动音效和菜单选择转动音效（改）.ogg-c875e70f64a4839e9216d41247b9d07a.oggvorbisstr"
 
 [deps]
 
-source_file="res://asset（素材-美术和音乐）/新音效/游戏对局转盘转动音效和菜单选择转动音效（改）.ogg"
-dest_files=["res://.godot/imported/游戏对局转盘转动音效和菜单选择转动音效（改）.ogg-1adcf4e9a4012947880a54615404244a.oggvorbisstr"]
+source_file="res://素材/使用素材/音效/游戏对局转盘转动音效和菜单选择转动音效（改）.ogg"
+dest_files=["res://.godot/imported/游戏对局转盘转动音效和菜单选择转动音效（改）.ogg-c875e70f64a4839e9216d41247b9d07a.oggvorbisstr"]
 
 [params]
 

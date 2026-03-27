@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://baapps5xxsd61"
-path="res://.godot/imported/加载动画 泥人三帧.png-4eab88ea00d2bd698a7da10f01459716.ctex"
+path="res://.godot/imported/加载动画 泥人三帧.png-00578669fcf107c7daaf20a8073d0170.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://asset（素材-美术和音乐）/使用素材/战斗外/游戏登陆第一个加载版面/泥人/加载动画 泥人三帧.png"
-dest_files=["res://.godot/imported/加载动画 泥人三帧.png-4eab88ea00d2bd698a7da10f01459716.ctex"]
+source_file="res://素材/使用素材/战斗外/游戏登陆第一个加载版面/泥人/加载动画 泥人三帧.png"
+dest_files=["res://.godot/imported/加载动画 泥人三帧.png-00578669fcf107c7daaf20a8073d0170.ctex"]
 
 [params]
 

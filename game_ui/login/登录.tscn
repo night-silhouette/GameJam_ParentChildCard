@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://0c577rnp585t"]
 
-[ext_resource type="Texture2D" uid="uid://cmmdqfmeqrtvr" path="res://asset（素材-美术和音乐）/账号系列UI/登录注册UI 一.png" id="1_gj8vc"]
+[ext_resource type="Texture2D" uid="uid://dpvu2sw38ci4d" path="res://素材/使用素材/战斗外/登录界面/登录注册UI 一.png" id="1_gj8vc"]
 
 [node name="登录" type="TextureButton"]
 offset_right = 40.0

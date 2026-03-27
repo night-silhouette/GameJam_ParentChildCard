@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://nn0c5tm67pq3"
-path="res://.godot/imported/（大块的奶酪）.png-84eed29872be8f96adb773501d5b66a3.ctex"
+path="res://.godot/imported/（大块的奶酪）.png-23ed40bc133de9daf197619a52f52ac0.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://asset（素材-美术和音乐）/使用素材/战斗外/游戏初始界面/（大块的奶酪）.png"
-dest_files=["res://.godot/imported/（大块的奶酪）.png-84eed29872be8f96adb773501d5b66a3.ctex"]
+source_file="res://素材/使用素材/战斗外/游戏初始界面/（大块的奶酪）.png"
+dest_files=["res://.godot/imported/（大块的奶酪）.png-23ed40bc133de9daf197619a52f52ac0.ctex"]
 
 [params]
 

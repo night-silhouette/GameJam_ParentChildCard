@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://vheo0mh0gpfc"
-path="res://.godot/imported/按钮UI（初始） 二版.png-78539381930135f24e06a9dfaf449674.ctex"
+path="res://.godot/imported/按钮UI（初始） 二版.png-0ae13de4434de33b94f369e24d1fa54a.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://asset（素材-美术和音乐）/使用素材/战斗外/游戏初始界面/按钮UI（初始） 二版.png"
-dest_files=["res://.godot/imported/按钮UI（初始） 二版.png-78539381930135f24e06a9dfaf449674.ctex"]
+source_file="res://素材/使用素材/战斗外/游戏初始界面/按钮UI（初始） 二版.png"
+dest_files=["res://.godot/imported/按钮UI（初始） 二版.png-0ae13de4434de33b94f369e24d1fa54a.ctex"]
 
 [params]
 

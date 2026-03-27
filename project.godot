@@ -31,6 +31,7 @@ ApiManager="*res://base_class/net/Api_manager.gd"
 [display]
 
 window/stretch/mode="canvas_items"
+mouse_cursor/custom_image_hotspot=Vector2(27, 13)
 
 [global_group]
 
