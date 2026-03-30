@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://6drvwctgyu2f"]
+[gd_scene load_steps=12 format=3 uid="uid://6drvwctgyu2f"]
 
 [ext_resource type="PackedScene" uid="uid://pmiymeegg054" path="res://game_ui/menu/边框.tscn" id="1_qfxjv"]
 [ext_resource type="PackedScene" uid="uid://d2g5id28y0yre" path="res://game_ui/menu/cheese.tscn" id="2_nr1r5"]
@@ -7,6 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://b1emd6a6b35lg" path="res://素材/使用素材/战斗外/游戏初始界面/空格/空格 第一帧.png" id="5_sojaf"]
 [ext_resource type="Texture2D" uid="uid://b5d68ur7fvk3g" path="res://素材/使用素材/战斗外/游戏初始界面/空格/空格 第三帧.png" id="6_ikupr"]
 [ext_resource type="Texture2D" uid="uid://vjjfuxdlx3ie" path="res://素材/使用素材/战斗外/游戏初始界面/空格/空格 第二帧.png" id="7_p44tl"]
+[ext_resource type="Script" uid="uid://fu0n2fjolu38" path="res://game_ui/menu/注销.gd" id="8_ikupr"]
 
 [sub_resource type="Animation" id="Animation_sojaf"]
 length = 0.001
@@ -111,4 +112,16 @@ offset_bottom = 1472.0
 rotation = 1.5707964
 scale = Vector2(0.1854808, 0.1854808)
 
+[node name="注销" type="Button" parent="."]
+layout_mode = 0
+offset_left = 888.0
+offset_top = 376.0
+offset_right = 928.0
+offset_bottom = 407.0
+scale = Vector2(4.093587, 3.7094772)
+text = "注销
+"
+script = ExtResource("8_ikupr")
+
 [connection signal="button_down" from="空格" to="cheese" method="animationplayer"]
+[connection signal="button_down" from="注销" to="注销" method="_on_button_down"]

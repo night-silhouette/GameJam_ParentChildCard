@@ -16,7 +16,7 @@ func _handle_raw_api_data(api_name: String, method: int, code: int, data: Varian
 # 登录和token
 	print("进入解包层")
 	if code != 0 :
-		print(NetError.error_message[code]);
+		print("code = ",code,NetError.get_message(code));
 		return
 		
 	match api_name:

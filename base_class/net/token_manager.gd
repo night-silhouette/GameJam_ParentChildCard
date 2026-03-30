@@ -11,7 +11,6 @@ const SAVE_PATH = "user://token.save"
 # =========================
 func save_token(new_token: String):
 	token = new_token
-	print(token);
 	var data = {
 		"token": new_token
 	}
@@ -53,7 +52,7 @@ func load_token():
 		print("错误：解析成功但不是字典，实际类型是：", typeof(data))
 	else:
 		token = data.get("token", "")
-		print("成功加载 Token:", token)
+		print("成功加载 Token")
 
 # =========================
 # 获取 Token

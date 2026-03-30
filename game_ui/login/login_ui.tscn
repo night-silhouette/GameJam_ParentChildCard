@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://fgsyyjjbkfvm"]
+[gd_scene load_steps=10 format=3 uid="uid://fgsyyjjbkfvm"]
 
 [ext_resource type="Texture2D" uid="uid://8tl4lolrrkqd" path="res://素材/使用素材/战斗外/登录界面/框UI .png" id="1_ykqqb"]
 [ext_resource type="Script" uid="uid://cb62jus2rhe04" path="res://game_ui/login/边框.gd" id="2_vbx44"]
@@ -6,6 +6,10 @@
 [ext_resource type="Texture2D" uid="uid://cdmmmn8wc03lv" path="res://素材/使用素材/战斗外/登录界面/密码UI .png" id="4_emvpi"]
 [ext_resource type="PackedScene" uid="uid://0c577rnp585t" path="res://game_ui/login/登录.tscn" id="4_kyjnp"]
 [ext_resource type="PackedScene" uid="uid://ctblgd8opayyp" path="res://game_ui/login/注册.tscn" id="5_vbx44"]
+[ext_resource type="Script" uid="uid://dl05si0l430e1" path="res://game_ui/login/login_button.gd" id="6_0i0dv"]
+[ext_resource type="Script" uid="uid://bop5kkut6uywi" path="res://game_ui/login/注册按钮.gd" id="8_ykqqb"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ykqqb"]
 
 [node name="login_ui" type="Control"]
 layout_mode = 3
@@ -18,18 +22,14 @@ metadata/_edit_lock_ = true
 
 [node name="页面" type="TextureRect" parent="."]
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
 offset_left = 328.0
-offset_top = 128.0
-offset_right = 791.0
-offset_bottom = 639.0
-grow_horizontal = 2
-grow_vertical = 2
+offset_top = 144.0
+offset_right = 1943.0
+offset_bottom = 1303.0
 scale = Vector2(0.31794798, 0.31794798)
 texture = ExtResource("1_ykqqb")
 script = ExtResource("2_vbx44")
+metadata/_edit_lock_ = true
 
 [node name="账号" type="TextureRect" parent="页面"]
 layout_mode = 1
@@ -63,35 +63,39 @@ scale = Vector2(0.16671503, 0.16671503)
 texture = ExtResource("4_emvpi")
 metadata/_edit_lock_ = true
 
-[node name="password" type="LineEdit" parent="页面"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 301.93616
-offset_top = 427.74292
-offset_right = 301.93616
-offset_bottom = 427.74292
-grow_horizontal = 2
-grow_vertical = 2
-scale = Vector2(0.79347795, 0.18625382)
-metadata/_edit_lock_ = true
-
 [node name="username" type="LineEdit" parent="页面"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 301.93622
+offset_left = 301.93628
 offset_top = 226.45212
-offset_right = 301.93604
-offset_bottom = 226.45215
+offset_right = -29.83496
+offset_bottom = -731.2571
 grow_horizontal = 2
 grow_vertical = 2
-scale = Vector2(0.7919236, 0.16005927)
-metadata/_edit_lock_ = true
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 76
+theme_override_styles/normal = SubResource("StyleBoxEmpty_ykqqb")
+max_length = 16
 
-[node name="登录" parent="页面" instance=ExtResource("4_kyjnp")]
+[node name="password" type="LineEdit" parent="页面"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 301.9362
+offset_top = 427.74292
+offset_right = -29.835083
+offset_bottom = -529.9663
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 76
+theme_override_styles/normal = SubResource("StyleBoxEmpty_ykqqb")
+max_length = 16
+
+[node name="登录" parent="页面" node_paths=PackedStringArray("username", "password") instance=ExtResource("4_kyjnp")]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -104,9 +108,12 @@ grow_horizontal = 2
 grow_vertical = 2
 scale = Vector2(0.16240437, 0.16240437)
 stretch_mode = 0
+script = ExtResource("6_0i0dv")
+username = NodePath("../username")
+password = NodePath("../password")
 metadata/_edit_lock_ = true
 
-[node name="注册" parent="页面" instance=ExtResource("5_vbx44")]
+[node name="注册" parent="页面" node_paths=PackedStringArray("username", "password") instance=ExtResource("5_vbx44")]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.11100001
@@ -121,4 +128,10 @@ grow_horizontal = 2
 grow_vertical = 2
 scale = Vector2(0.16853562, 0.16853562)
 stretch_mode = 0
+script = ExtResource("8_ykqqb")
+username = NodePath("../username")
+password = NodePath("../password")
 metadata/_edit_lock_ = true
+
+[connection signal="button_down" from="页面/登录" to="页面/登录" method="_on_button_down"]
+[connection signal="button_down" from="页面/注册" to="页面/注册" method="_on_button_down"]

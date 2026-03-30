@@ -15,7 +15,10 @@ enum ResponseStatusCode {
 	ResponseNotImplemented,
 	ResponseIncorrectPassword,
 	ResponseTokenMissing,
-	ResponseForbidden
+	ResponseForbidden,
+	ResponseRepeatRequest,
+	ResponseUnknownError,
+	ResponseTokenHasUpdate
 }
 
 var error_message := {
@@ -45,7 +48,10 @@ var error_message := {
 
 	ResponseStatusCode.ResponseTokenMissing: "缺少Token",
 
-	ResponseStatusCode.ResponseForbidden: "没有权限"
+	ResponseStatusCode.ResponseForbidden: "没有权限",
+	ResponseStatusCode.ResponseRepeatRequest: "重复请求",
+	ResponseStatusCode.ResponseUnknownError: "未知错误",
+	ResponseStatusCode.ResponseTokenHasUpdate: "Token已被更新"
 }
 
 func get_message(code:int) -> String:
