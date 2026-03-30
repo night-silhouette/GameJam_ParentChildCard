@@ -22,5 +22,8 @@
     <schema id="15" parent="1" name="7"/>
     <schema id="16" parent="1" name="8"/>
     <schema id="17" parent="1" name="9"/>
+    <redis-key id="18" parent="2" name="user:active:14">
+      <Type>string</Type>
+    </redis-key>
   </database-model>
 </dataSource>

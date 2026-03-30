@@ -1,6 +1,7 @@
 package UserService
 
 import (
+	"context"
 	"pcc_card/application/entity/User_entity"
 	"pcc_card/application/service"
 	"pcc_card/global"
@@ -15,8 +16,8 @@ type User_service interface {
 	Find_user_by_name(name string) (*User_entity.User, global.ResponseStatusCode)
 	Find_user_by_id(id int) (*User_entity.User, global.ResponseStatusCode)
 	Check_password(id int, password string) global.ResponseStatusCode
-	Release_token(userID int) (string, global.ResponseStatusCode)
-	Is_valid_token(tokenString string) (int, bool, global.ResponseStatusCode)
+	Release_token(userID int, ctx context.Context) (string, global.ResponseStatusCode)
+	Is_valid_token(tokenString string, ctx context.Context) (int, bool, global.ResponseStatusCode)
 	Create_user(user *User_entity.User) global.ResponseStatusCode
 	Delete_user(e *User_entity.User) global.ResponseStatusCode
 	Update_user(e *User_entity.User) global.ResponseStatusCode

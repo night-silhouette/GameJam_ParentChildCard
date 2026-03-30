@@ -26,6 +26,8 @@ type User_repo interface {
 	Get_by_id(id int) (*User_entity.User, global.ResponseStatusCode)
 	Update(e *User_entity.User) global.ResponseStatusCode
 	Delete(e *User_entity.User) global.ResponseStatusCode
+	UpdateActiveInRedisByUserId(id int, ctx context.Context) int
+	CheckActiveInRedisByUserId(id int, ctx context.Context) int
 }
 
 type User_repo_impl struct { //repo的实现
