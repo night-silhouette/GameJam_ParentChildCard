@@ -1,0 +1,194 @@
+[gd_scene load_steps=22 format=3 uid="uid://ksn78bvhd0ee"]
+
+[ext_resource type="Texture2D" uid="uid://beyfmncxthool" path="res://素材/使用素材/战斗外/游戏模式选择与匹配/硬币/硬币.png" id="1_d5gmh"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0t63x"]
+atlas = ExtResource("1_d5gmh")
+region = Rect2(0, 0, 274, 266)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_v7riw"]
+atlas = ExtResource("1_d5gmh")
+region = Rect2(274, 0, 274, 266)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pdq0q"]
+atlas = ExtResource("1_d5gmh")
+region = Rect2(548, 0, 274, 266)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_w14il"]
+atlas = ExtResource("1_d5gmh")
+region = Rect2(822, 0, 274, 266)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_h4etq"]
+atlas = ExtResource("1_d5gmh")
+region = Rect2(1096, 0, 274, 266)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_o4fra"]
+atlas = ExtResource("1_d5gmh")
+region = Rect2(1370, 0, 274, 266)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_te2np"]
+atlas = ExtResource("1_d5gmh")
+region = Rect2(1644, 0, 274, 266)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_m1j4n"]
+atlas = ExtResource("1_d5gmh")
+region = Rect2(1918, 0, 274, 266)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_v1mwu"]
+atlas = ExtResource("1_d5gmh")
+region = Rect2(0, 266, 274, 266)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_uf4yh"]
+atlas = ExtResource("1_d5gmh")
+region = Rect2(274, 266, 274, 266)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ciu18"]
+atlas = ExtResource("1_d5gmh")
+region = Rect2(548, 266, 274, 266)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ybu58"]
+atlas = ExtResource("1_d5gmh")
+region = Rect2(822, 266, 274, 266)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_s5w7y"]
+atlas = ExtResource("1_d5gmh")
+region = Rect2(1096, 266, 274, 266)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_relgi"]
+atlas = ExtResource("1_d5gmh")
+region = Rect2(1370, 266, 274, 266)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3gef1"]
+atlas = ExtResource("1_d5gmh")
+region = Rect2(1644, 266, 274, 266)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4rshd"]
+atlas = ExtResource("1_d5gmh")
+region = Rect2(1918, 266, 274, 266)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_6qpsl"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0t63x")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_v7riw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pdq0q")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_w14il")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_h4etq")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_o4fra")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_te2np")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_m1j4n")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_v1mwu")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_uf4yh")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ciu18")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ybu58")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_s5w7y")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_relgi")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3gef1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4rshd")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="Animation" id="Animation_oechm"]
+resource_name = "硬币旋转"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("AnimatedSprite2D:sprite_frames")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [SubResource("SpriteFrames_6qpsl")]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("AnimatedSprite2D:frame")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(-0.06666667, 0.7, 1.4666667, 2.2333333, 2.8666666, 3.6666667, 4.5, 5.766667),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [1, 2, 3, 8, 8, 8, 8, 1]
+}
+
+[sub_resource type="Animation" id="Animation_x3tkn"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("AnimatedSprite2D:sprite_frames")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [SubResource("SpriteFrames_6qpsl")]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("AnimatedSprite2D:frame")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [8]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_huwo7"]
+_data = {
+&"RESET": SubResource("Animation_x3tkn"),
+&"硬币旋转": SubResource("Animation_oechm")
+}
+
+[node name="coin" type="Node2D"]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_6qpsl")
+frame = 8
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_huwo7")
+}
