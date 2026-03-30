@@ -37,6 +37,7 @@ export default function () {
     },
     };
 
+
     const token = loginRes.json().data.token;
     const WS_URL = `ws://127.0.0.1:10086/v1/ws/?token=${token}`;
  

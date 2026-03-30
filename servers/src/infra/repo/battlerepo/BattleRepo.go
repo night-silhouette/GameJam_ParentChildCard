@@ -4,6 +4,8 @@ import (
 	"database/sql"
 	"encoding/json"
 	"pcc_card/infra/repo"
+
+	"github.com/redis/go-redis/v9"
 )
 
 type BattleRepo interface {
@@ -13,10 +15,12 @@ type BattleRepo interface {
 
 type BattleRepoImpl struct {
 	db *sql.DB
+	rd *redis.Client
 }
 
-func (r *BattleRepoImpl) Set_db(db *sql.DB) {
+func (r *BattleRepoImpl) Set_db(db *sql.DB, rd *redis.Client) {
 	r.db = db
+	r.rd = rd
 }
 
 func (r *BattleRepoImpl) ReadCardByID(ID int) map[string]any {

@@ -1,6 +1,7 @@
 package userrepo
 
 import (
+	"context"
 	"database/sql"
 	"errors"
 	"fmt"
@@ -9,6 +10,7 @@ import (
 	"pcc_card/infra/repo"
 
 	"github.com/jackc/pgx/v5/pgconn"
+	"github.com/redis/go-redis/v9"
 )
 
 //数据库表user字段名：
@@ -28,10 +30,12 @@ type User_repo interface {
 
 type User_repo_impl struct { //repo的实现
 	db *sql.DB
+	rd *redis.Client
 }
 
-func (r *User_repo_impl) Set_db(db *sql.DB) {
+func (r *User_repo_impl) Set_db(db *sql.DB, rd *redis.Client) {
 	r.db = db
+	r.rd = rd
 }
 
 func (r *User_repo_impl) Create(e *User_entity.User) global.ResponseStatusCode {
@@ -121,4 +125,31 @@ func (r *User_repo_impl) Delete(e *User_entity.User) global.ResponseStatusCode {
 		return global.ResponseDataNotFound
 	}
 	return global.ResponseSuccess
+}
+
+func (r *User_repo_impl) UpdateActiveInRedisByUserId(id int, ctx context.Context) int { //添加或者自增
+	var res int
+	param := fmt.Sprintf("user:active:%d", id)
+	count, _ := r.rd.Exists(ctx, param).Result()
+	if count == 0 {
+		r.rd.Set(ctx, param, 0, 0)
+		res = 0
+	} else {
+		value, _ := r.rd.Get(ctx, param).Int()
+		value += 1
+		r.rd.Set(ctx, param, value, 0)
+		res = value
+	}
+	return res
+}
+
+func (r *User_repo_impl) CheckActiveInRedisByUserId(id int, ctx context.Context) int {
+	param := fmt.Sprintf("user:active:%d", id)
+	count, _ := r.rd.Exists(ctx, param).Result()
+	if count == 0 {
+		return -1
+	} else {
+		value, _ := r.rd.Get(ctx, param).Int()
+		return value
+	}
 }
