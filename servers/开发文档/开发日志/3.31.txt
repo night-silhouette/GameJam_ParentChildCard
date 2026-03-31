@@ -1,0 +1,2 @@
+1.在设计邮箱数据库的时候，想关于外键的问题，最好还是决定把delete做成软删除
+现在的delete接口，只会把user的name改成“已注销用户_ID”，然后把他的hash_password crash掉

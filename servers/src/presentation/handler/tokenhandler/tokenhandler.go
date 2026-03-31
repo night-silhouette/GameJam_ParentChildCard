@@ -51,7 +51,7 @@ func (u *Token_handler_impl) Post() gin.HandlerFunc {
 			response.Fail(c, err)
 			return
 		}
-		token, err := u.s.Release_token(id, c)
+		token, err := u.s.Release_token(id, c.Request.Context())
 		if err != global.ResponseSuccess {
 			response.Fail(c, err)
 			return
@@ -105,7 +105,7 @@ func (u *Token_handler_impl) Middleware_token_check() gin.HandlerFunc {
 			c.Abort()
 			return
 		}
-		id, is_admin, err := u.s.Is_valid_token(token, c)
+		id, is_admin, err := u.s.Is_valid_token(token, c.Request.Context())
 		if err != global.ResponseSuccess {
 			response.Fail(c, err)
 			c.Abort()

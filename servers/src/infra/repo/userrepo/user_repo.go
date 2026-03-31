@@ -28,6 +28,8 @@ type User_repo interface {
 	Delete(e *User_entity.User) global.ResponseStatusCode
 	UpdateActiveInRedisByUserId(id int, ctx context.Context) int
 	CheckActiveInRedisByUserId(id int, ctx context.Context) int
+	ChangeUserNameByID(id int, name string) global.ResponseStatusCode
+	DestroyPassword(id int) global.ResponseStatusCode
 }
 
 type User_repo_impl struct { //repo的实现
@@ -154,4 +156,29 @@ func (r *User_repo_impl) CheckActiveInRedisByUserId(id int, ctx context.Context)
 		value, _ := r.rd.Get(ctx, param).Int()
 		return value
 	}
+}
+
+func (r *User_repo_impl) ChangeUserNameByID(id int, name string) global.ResponseStatusCode {
+	query := "update users set user_name = $1 where id = $2"
+	res, err := r.db.Exec(query, name, id)
+	if err != nil {
+		fmt.Println(err)
+		return global.ResponseInternalServersError
+	}
+	count, _ := res.RowsAffected()
+	if count == 0 {
+		return global.ResponseDataNotFound
+	}
+
+	return global.ResponseSuccess
+}
+
+func (r *User_repo_impl) DestroyPassword(id int) global.ResponseStatusCode {
+	query := "update users set hash_password = 'DISABLED_' || hash_password where id = $1"
+	_, err := r.db.Exec(query, id)
+	if err != nil {
+		fmt.Println(err)
+		return global.ResponseInternalServersError
+	}
+	return global.ResponseSuccess
 }

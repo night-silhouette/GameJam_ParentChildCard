@@ -127,6 +127,7 @@ func (u *User_handler_impl) Delete() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		is_admin := c.GetBool("is_admin")
 		user_id := c.GetInt("id")
+
 		var id int
 		var req UserDeleteReqDto
 		if err := c.ShouldBindQuery(&req); err != nil {
@@ -134,12 +135,13 @@ func (u *User_handler_impl) Delete() gin.HandlerFunc {
 			return
 		}
 		id = req.ID
-		if !is_admin && user_id != id {
+		if !is_admin && id != 0 {
 			response.Fail(c, global.ResponseForbidden)
 			return
 		}
-		e, _ := u.s.Find_user_by_id(id)
-		err := u.s.Delete_user(e)
+
+		err := u.s.Delete_user(user_id, c.Request.Context())
+
 		if err != global.ResponseSuccess {
 			response.Fail(c, err)
 			return

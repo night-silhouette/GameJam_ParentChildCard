@@ -9,7 +9,7 @@ type UserPostDto struct {
 	Password string `form:"password" json:"password" binding:"required,max=256"`
 }
 type UserDeleteReqDto struct {
-	ID int `form:"id" json:"id"  binding:"min=1"`
+	ID int `form:"id" json:"id"`
 }
 
 type UserPutReqDto struct {
