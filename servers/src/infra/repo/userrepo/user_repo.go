@@ -5,9 +5,12 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"log"
 	"pcc_card/application/entity/User_entity"
+	"pcc_card/application/entity/mail"
 	"pcc_card/global"
 	"pcc_card/infra/repo"
+	"strings"
 
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/redis/go-redis/v9"
@@ -30,6 +33,11 @@ type User_repo interface {
 	CheckActiveInRedisByUserId(id int, ctx context.Context) int
 	ChangeUserNameByID(id int, name string) global.ResponseStatusCode
 	DestroyPassword(id int) global.ResponseStatusCode
+	UpdateMail(f *mail.Filter, data *mail.Mail) global.ResponseStatusCode
+	SaveMail(m *mail.Mail) global.ResponseStatusCode
+	DeleteMail(f *mail.Filter) global.ResponseStatusCode
+	FindMails(f mail.Filter) ([]*mail.Mail, global.ResponseStatusCode)
+	CheckMailUnReadNumByUserId(userId int) (int, global.ResponseStatusCode)
 }
 
 type User_repo_impl struct { //repo的实现
@@ -181,4 +189,242 @@ func (r *User_repo_impl) DestroyPassword(id int) global.ResponseStatusCode {
 		return global.ResponseInternalServersError
 	}
 	return global.ResponseSuccess
+}
+
+//----------------------------------------------------mails----------------------------------------------------------
+
+//type Mail struct {
+//	AcceptId int    `json:"accept_id"`
+//	SendId int    `json:"send_id"`
+//	Body     string `json:"body"`
+//	Category string `json:"category"`
+//	Status   int    `json:"status"`
+//}
+
+func (r *User_repo_impl) SaveMail(m *mail.Mail) global.ResponseStatusCode {
+	if m.SendId == 0 || m.AcceptId == 0 || m.Category == "" {
+		return global.ResponseRequiredParamsMissing
+	}
+	query := "INSERT INTO mails(send_id, accept_id, body, category,status) values ($1, $2, $3, $4,$5)"
+	_, err := r.db.Exec(query, m.SendId, m.AcceptId, m.Body, m.Category, m.Status)
+	if err != nil {
+		log.Fatalln(err.Error())
+		return global.ResponseInternalServersError
+	}
+	return global.ResponseSuccess
+}
+
+func (r *User_repo_impl) DeleteMail(f *mail.Filter) global.ResponseStatusCode {
+	query := "delete from mails where 1=1"
+	var args []interface{}
+	argCount := 1
+	if f.Id != "" {
+		query += fmt.Sprintf(" and id = $%d", argCount)
+		args = append(args, f.Id)
+		argCount++
+	}
+	//1. 处理 AcceptId
+	if f.AcceptId != "" {
+		query += fmt.Sprintf(" and accept_id = $%d", argCount)
+		args = append(args, f.AcceptId)
+		argCount++
+	}
+
+	// 2. 处理 SendId
+	if f.SendId != "" {
+		query += fmt.Sprintf(" and send_id = $%d", argCount)
+		args = append(args, f.SendId)
+		argCount++
+	}
+
+	// 3. 处理 Category
+	if f.Category != "" {
+		query += fmt.Sprintf(" and category = $%d", argCount)
+		args = append(args, f.Category)
+		argCount++
+	}
+
+	// 4. 处理 Status
+	if f.Status != "" {
+		query += fmt.Sprintf(" and status = $%d", argCount)
+		args = append(args, f.Status)
+		argCount++
+	}
+
+	// 5. 安全检查：如果没有任何过滤条件，拒绝执行
+	if argCount == 1 {
+		return global.ResponseRequiredParamsMissing
+	}
+
+	// 6. 执行删除
+	result, err := r.db.Exec(query, args...)
+	if err != nil {
+		return global.ResponseInternalServersError
+	}
+
+	rows, _ := result.RowsAffected()
+	if rows == 0 {
+		return global.ResponseDataNotFound
+	}
+
+	return global.ResponseSuccess
+}
+
+func (r *User_repo_impl) FindMails(f mail.Filter) ([]*mail.Mail, global.ResponseStatusCode) {
+	query := "select id,accept_id, send_id, body, category, status,created_at from mails where 1=1"
+	var args []interface{}
+	argCount := 1
+	if f.Id != "" {
+		query += fmt.Sprintf(" and id = $%d", argCount)
+		args = append(args, f.Id)
+		argCount++
+	}
+
+	if f.AcceptId != "" {
+		query += fmt.Sprintf(" and accept_id = $%d", argCount)
+		args = append(args, f.AcceptId)
+		argCount++
+	}
+	if f.SendId != "" {
+		query += fmt.Sprintf(" and send_id = $%d", argCount)
+		args = append(args, f.SendId)
+		argCount++
+	}
+	if f.Category != "" {
+		query += fmt.Sprintf(" and category = $%d", argCount)
+		args = append(args, f.Category)
+		argCount++
+	}
+	if f.Status != "" {
+		query += fmt.Sprintf(" and status = $%d", argCount)
+		args = append(args, f.Status)
+		argCount++
+	}
+
+	query += " order by created_at desc"
+
+	rows, err := r.db.Query(query, args...)
+	if err != nil {
+		return nil, global.ResponseInternalServersError
+	}
+	defer rows.Close()
+
+	var mails []*mail.Mail
+	for rows.Next() {
+		var m mail.Mail
+		if err := rows.Scan(&m.Id, &m.AcceptId, &m.SendId, &m.Body, &m.Category, &m.Status, &m.CreateAt); err != nil {
+			return nil, global.ResponseInternalServersError
+		}
+		mails = append(mails, &m)
+	}
+
+	if len(mails) == 0 {
+		return nil, global.ResponseDataNotFound
+	}
+
+	return mails, global.ResponseSuccess
+}
+
+func (r *User_repo_impl) UpdateMail(f *mail.Filter, data *mail.Mail) global.ResponseStatusCode {
+	// 1. 基础语句
+	query := "update mails set "
+	var args []interface{}
+	argCount := 1
+
+	// --- 第一步：拼接 SET 部分 (要改什么) ---
+	// 注意：这里我们只更新有意义的字段，比如 Body, Category, Status
+	var setClauses []string
+
+	// 如果 Body 不为空，说明要改正文
+	if data.Body != "" {
+		setClauses = append(setClauses, fmt.Sprintf("body = $%d", argCount))
+		args = append(args, data.Body)
+		argCount++
+	}
+
+	// 如果 Category 不为空，说明要改分类
+	if data.Category != "" {
+		setClauses = append(setClauses, fmt.Sprintf("category = $%d", argCount))
+		args = append(args, data.Category)
+		argCount++
+	}
+
+	// 更新状态 (比如从 0 未读变成 1 已读)
+	// 这里假设 Status 是传进来的新状态
+	setClauses = append(setClauses, fmt.Sprintf("status = $%d", argCount))
+	args = append(args, data.Status)
+	argCount++
+
+	// 如果没有任何要改的内容，直接返回
+	if len(setClauses) == 0 {
+		return global.ResponseRequiredParamsMissing
+	}
+	query += strings.Join(setClauses, ", ")
+
+	// --- 第二步：拼接 WHERE 部分 (你的 Filter 条件) ---
+	query += " where 1=1"
+	if f.Id != "" {
+		query += fmt.Sprintf(" and id = $%d", argCount)
+		args = append(args, f.Id)
+		argCount++
+	}
+
+	if f.AcceptId != "" {
+		query += fmt.Sprintf(" and accept_id = $%d", argCount)
+		args = append(args, f.AcceptId)
+		argCount++
+	}
+
+	if f.SendId != "" {
+		query += fmt.Sprintf(" and send_id = $%d", argCount)
+		args = append(args, f.SendId)
+		argCount++
+	}
+
+	if f.Category != "" {
+		query += fmt.Sprintf(" and category = $%d", argCount)
+		args = append(args, f.Category)
+		argCount++
+	}
+
+	if f.Status != "" {
+		query += fmt.Sprintf(" and status = $%d", argCount)
+		args = append(args, f.Status)
+		argCount++
+	}
+
+	// 安全检查：Update 必须带条件，否则拒绝执行，防止全表更新
+	if !strings.Contains(query, "and") {
+		return global.ResponseRequiredParamsMissing
+	}
+
+	// 2. 执行更新
+	result, err := r.db.Exec(query, args...)
+	if err != nil {
+		return global.ResponseInternalServersError
+	}
+
+	// 3. 检查是否真的更新到了数据
+	rows, _ := result.RowsAffected()
+	if rows == 0 {
+		return global.ResponseDataNotFound
+	}
+
+	return global.ResponseSuccess
+}
+
+func (r *User_repo_impl) CheckMailUnReadNumByUserId(userId int) (int, global.ResponseStatusCode) {
+	query := "select unread_count from users where id=$1"
+	var unreadCount int
+
+	err := r.db.QueryRow(query, userId).Scan(&unreadCount)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return 0, global.ResponseDataNotFound
+		}
+		log.Println(err)
+		return 0, global.ResponseInternalServersError
+	}
+	return unreadCount, global.ResponseSuccess
+
 }

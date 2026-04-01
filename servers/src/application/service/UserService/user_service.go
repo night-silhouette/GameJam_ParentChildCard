@@ -92,7 +92,6 @@ func (u *User_service_impl) Update_user(e *User_entity.User) global.ResponseStat
 	if !(e.Password == "") {
 		e.Password = u.hash_password(e.Password)
 	}
-
 	err := u.repo.Update(e)
 	return err
 }
