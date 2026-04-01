@@ -1,0 +1,6 @@
+锁问题还没解决！！！
+
+然后，statemachine的cancelfunc现在放在battle里面。以后写battle从battlecontainer里删除的时候，要把它cancel掉
+
+靠
+但是真说回来，这个生命周期的管理有点累啊

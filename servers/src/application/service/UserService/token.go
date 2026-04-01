@@ -1,8 +1,8 @@
 package UserService
 
 import (
+	"context"
 	"errors"
-	"fmt"
 	"pcc_card/global"
 	"pcc_card/infra/config"
 	"time"
@@ -16,7 +16,8 @@ func (u *User_service_impl) Init_key() {
 	Key = config.Read_secret_key()
 }
 
-func (u *User_service_impl) Release_token(userID int) (string, global.ResponseStatusCode) {
+func (u *User_service_impl) Release_token(userID int, ctx context.Context) (string, global.ResponseStatusCode) {
+	Active := u.repo.UpdateActiveInRedisByUserId(userID, ctx)
 	expire_time := time.Now().Add(time.Hour * 24 * global.TokenExpiredTime)
 	e, err := u.repo.Get_by_id(userID)
 	if err != global.ResponseSuccess {
@@ -25,6 +26,7 @@ func (u *User_service_impl) Release_token(userID int) (string, global.ResponseSt
 	claims := &Claims{
 		UserId:   userID,
 		Is_admin: e.Is_admin,
+		Active:   Active,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(expire_time),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
@@ -34,7 +36,6 @@ func (u *User_service_impl) Release_token(userID int) (string, global.ResponseSt
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	tokenString, _ := token.SignedString([]byte(Key))
-	fmt.Println(tokenString)
 	return tokenString, global.ResponseSuccess
 }
 
@@ -42,9 +43,11 @@ type Claims struct {
 	UserId   int  `json:"user_id"`
 	Is_admin bool `json:"is_admin"`
 	jwt.RegisteredClaims
+	Active int
 }
 
-func (u *User_service_impl) Is_valid_token(tokenString string) (int, bool, global.ResponseStatusCode) {
+func (u *User_service_impl) Is_valid_token(tokenString string, ctx context.Context) (int, bool, global.ResponseStatusCode) {
+	var Flag global.ResponseStatusCode
 	claims := &Claims{}
 	_, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
 		keyBytes := []byte(Key)
@@ -62,7 +65,15 @@ func (u *User_service_impl) Is_valid_token(tokenString string) (int, bool, globa
 		}
 	}
 	id := claims.UserId
+	RealActive := u.repo.CheckActiveInRedisByUserId(id, ctx)
 	is_admin := claims.Is_admin
-	return id, is_admin, global.ResponseSuccess
+	active := claims.Active
+	if RealActive == active {
+		Flag = global.ResponseSuccess
+	} else {
+		Flag = global.ResponseTokenHasUpdate
+	}
+	
+	return id, is_admin, Flag
 
 }

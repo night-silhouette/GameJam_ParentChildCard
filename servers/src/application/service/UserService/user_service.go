@@ -1,6 +1,8 @@
 package UserService
 
 import (
+	"context"
+	"fmt"
 	"pcc_card/application/entity/User_entity"
 	"pcc_card/application/service"
 	"pcc_card/global"
@@ -15,11 +17,12 @@ type User_service interface {
 	Find_user_by_name(name string) (*User_entity.User, global.ResponseStatusCode)
 	Find_user_by_id(id int) (*User_entity.User, global.ResponseStatusCode)
 	Check_password(id int, password string) global.ResponseStatusCode
-	Release_token(userID int) (string, global.ResponseStatusCode)
-	Is_valid_token(tokenString string) (int, bool, global.ResponseStatusCode)
+	Release_token(userID int, ctx context.Context) (string, global.ResponseStatusCode)
+	Is_valid_token(tokenString string, ctx context.Context) (int, bool, global.ResponseStatusCode)
 	Create_user(user *User_entity.User) global.ResponseStatusCode
-	Delete_user(e *User_entity.User) global.ResponseStatusCode
+
 	Update_user(e *User_entity.User) global.ResponseStatusCode
+	Delete_user(id int, ctx context.Context) global.ResponseStatusCode
 }
 
 type User_service_impl struct {
@@ -68,15 +71,28 @@ func (u *User_service_impl) Create_user(user *User_entity.User) global.ResponseS
 	return u.repo.Create(user)
 }
 
-func (u *User_service_impl) Delete_user(e *User_entity.User) global.ResponseStatusCode {
-	err := u.repo.Delete(e)
+func (u *User_service_impl) Delete_user(id int, ctx context.Context) global.ResponseStatusCode {
+	e := User_entity.User{
+		Id:   id,
+		Name: fmt.Sprintf("已注销用户_%d", id),
+	}
+	err := u.repo.ChangeUserNameByID(e.Id, e.Name)
 	if err != global.ResponseSuccess {
 		return err
 	}
+	err = u.repo.DestroyPassword(e.Id)
+	if err != global.ResponseSuccess {
+		return err
+	}
+	u.repo.UpdateActiveInRedisByUserId(e.Id, ctx)
 	return global.ResponseSuccess
+
 }
 func (u *User_service_impl) Update_user(e *User_entity.User) global.ResponseStatusCode {
-	e.Password = u.hash_password(e.Password)
+	if !(e.Password == "") {
+		e.Password = u.hash_password(e.Password)
+	}
+
 	err := u.repo.Update(e)
 	return err
 }
