@@ -1,5 +1,16 @@
-[gd_scene format=3 uid="uid://qmpeulit58cj"]
+[gd_scene load_steps=2 format=3 uid="uid://qmpeulit58cj"]
+
+[ext_resource type="Texture2D" uid="uid://bxbpcw7rdnhhj" path="res://素材/使用素材/战斗内/桌面/桌面.png" id="1_qk6wh"]
 
 [node name="battle_ui" type="Control"]
 layout_mode = 3
 anchors_preset = 0
+
+[node name="桌面" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = 280.00003
+offset_top = 128.00002
+offset_right = 2451.0
+offset_bottom = 1407.0
+scale = Vector2(0.2842165, 0.2842165)
+texture = ExtResource("1_qk6wh")

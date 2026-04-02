@@ -1,0 +1,38 @@
+[gd_scene load_steps=5 format=3 uid="uid://dngn8v87puqiy"]
+
+[ext_resource type="Texture2D" uid="uid://sb5rd3551f8n" path="res://素材/使用素材/战斗内/桌面/信息框 -母牌.png" id="1_b7cwm"]
+[ext_resource type="PackedScene" uid="uid://b1k8uu41o35rw" path="res://game_ui/battle/说明按钮.tscn" id="1_kvn7f"]
+[ext_resource type="Texture2D" uid="uid://8o0dnf3ax4mg" path="res://素材/使用素材/战斗内/桌面/说明/板.png" id="3_a4ah5"]
+[ext_resource type="Script" uid="uid://cv1dky3kp3m2m" path="res://game_ui/battle/说明框.gd" id="4_bd56b"]
+
+[node name="母卡详细" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="信息框" type="TextureRect" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+texture = ExtResource("1_b7cwm")
+
+[node name="说明按钮" parent="." instance=ExtResource("1_kvn7f")]
+layout_mode = 0
+offset_left = 280.00003
+offset_top = 200.0
+offset_right = 482.00003
+offset_bottom = 421.0
+scale = Vector2(0.3250097, 0.3250097)
+
+[node name="说明框" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = 336.0
+offset_top = 232.0
+offset_right = 1329.0
+offset_bottom = 1023.0
+scale = Vector2(0.2086424, 0.2086424)
+texture = ExtResource("3_a4ah5")
+script = ExtResource("4_bd56b")

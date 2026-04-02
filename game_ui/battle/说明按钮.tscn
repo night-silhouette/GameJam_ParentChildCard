@@ -1,0 +1,14 @@
+[gd_scene load_steps=4 format=3 uid="uid://b1k8uu41o35rw"]
+
+[ext_resource type="Texture2D" uid="uid://cvgk4ebfiddnr" path="res://素材/使用素材/战斗内/桌面/说明/按钮/1.png" id="1_ii7wj"]
+[ext_resource type="Texture2D" uid="uid://mge5bx0aen63" path="res://素材/使用素材/战斗内/桌面/说明/按钮/2.png" id="2_rut03"]
+[ext_resource type="Script" uid="uid://bsbyvphtisl5l" path="res://game_ui/battle/说明按钮.gd" id="3_rut03"]
+
+[node name="说明按钮" type="TextureButton"]
+offset_right = 40.0
+offset_bottom = 40.0
+texture_normal = ExtResource("1_ii7wj")
+texture_pressed = ExtResource("2_rut03")
+script = ExtResource("3_rut03")
+
+[connection signal="button_down" from="." to="." method="_on_button_down"]

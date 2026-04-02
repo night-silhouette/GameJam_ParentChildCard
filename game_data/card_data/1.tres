@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="spell_card" load_steps=2 format=3 uid="uid://8clqbdc2hn1b"]
+
+[ext_resource type="Script" uid="uid://n4oku7m18lm3" path="res://base_class/card/spell_card.gd" id="1_r61cm"]
+
+[resource]
+script = ExtResource("1_r61cm")
+id = 1
+name = "挖掘死者"
+metadata/_custom_type_script = "uid://n4oku7m18lm3"

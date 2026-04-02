@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://wvj1qln41qo6"]
+[gd_scene load_steps=4 format=3 uid="uid://wvj1qln41qo6"]
 
 [ext_resource type="Texture2D" uid="uid://2ura82rr5p8g" path="res://素材/使用素材/战斗外/游戏初始界面/手柄（放在主界面） .png" id="1_r5vdw"]
 [ext_resource type="PackedScene" uid="uid://bvywilaq1ou8w" path="res://game_ui/menu/笑脸按钮.tscn" id="2_wbpcn"]
+[ext_resource type="Script" uid="uid://dbuaqkmylseks" path="res://game_ui/menu/联机按钮.gd" id="3_3ajty"]
 
 [node name="手柄" type="TextureRect"]
 offset_left = -384.0
@@ -17,6 +18,7 @@ offset_left = 200.0
 offset_top = 144.0
 offset_right = 933.6356
 offset_bottom = 736.0
+script = ExtResource("3_3ajty")
 
 [node name="笑脸按钮2" parent="." instance=ExtResource("2_wbpcn")]
 layout_mode = 0
@@ -24,3 +26,5 @@ offset_left = 1096.0
 offset_top = 152.0
 offset_right = 1829.6356
 offset_bottom = 744.0
+
+[connection signal="button_down" from="笑脸按钮" to="笑脸按钮" method="_on_button_down"]

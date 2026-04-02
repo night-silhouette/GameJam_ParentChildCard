@@ -3,10 +3,10 @@
 [ext_resource type="PackedScene" uid="uid://pmiymeegg054" path="res://game_ui/menu/边框.tscn" id="1_qfxjv"]
 [ext_resource type="PackedScene" uid="uid://d2g5id28y0yre" path="res://game_ui/menu/cheese.tscn" id="2_nr1r5"]
 [ext_resource type="PackedScene" uid="uid://wvj1qln41qo6" path="res://game_ui/menu/手柄.tscn" id="4_7e4nj"]
+[ext_resource type="Texture2D" uid="uid://bip7yjcb4ps6r" path="res://素材/使用素材/战斗外/游戏初始界面/空格/1.png" id="4_ikupr"]
 [ext_resource type="Texture2D" uid="uid://cgxvptm58j2v4" path="res://素材/使用素材/战斗外/游戏初始界面/水管.png" id="4_ja110"]
-[ext_resource type="Texture2D" uid="uid://b1emd6a6b35lg" path="res://素材/使用素材/战斗外/游戏初始界面/空格/空格 第一帧.png" id="5_sojaf"]
-[ext_resource type="Texture2D" uid="uid://b5d68ur7fvk3g" path="res://素材/使用素材/战斗外/游戏初始界面/空格/空格 第三帧.png" id="6_ikupr"]
-[ext_resource type="Texture2D" uid="uid://vjjfuxdlx3ie" path="res://素材/使用素材/战斗外/游戏初始界面/空格/空格 第二帧.png" id="7_p44tl"]
+[ext_resource type="Texture2D" uid="uid://dqfo7jshfxoge" path="res://素材/使用素材/战斗外/游戏初始界面/空格/3.png" id="5_p44tl"]
+[ext_resource type="Texture2D" uid="uid://bxwynusbxmspc" path="res://素材/使用素材/战斗外/游戏初始界面/空格/2.png" id="6_31yhv"]
 [ext_resource type="Script" uid="uid://fu0n2fjolu38" path="res://game_ui/menu/注销.gd" id="8_ikupr"]
 
 [sub_resource type="Animation" id="Animation_sojaf"]
@@ -99,9 +99,9 @@ offset_right = 1034.0
 offset_bottom = 653.0
 scale = Vector2(0.6820166, 0.6820166)
 action_mode = 0
-texture_normal = ExtResource("5_sojaf")
-texture_pressed = ExtResource("6_ikupr")
-texture_hover = ExtResource("7_p44tl")
+texture_normal = ExtResource("4_ikupr")
+texture_pressed = ExtResource("5_p44tl")
+texture_hover = ExtResource("6_31yhv")
 
 [node name="手柄" parent="." instance=ExtResource("4_7e4nj")]
 layout_mode = 0

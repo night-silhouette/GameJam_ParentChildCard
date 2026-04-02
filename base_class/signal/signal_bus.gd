@@ -73,3 +73,9 @@ signal user_registered_success()
 
 ## [配对 E] 用户资料修改成功
 signal user_updated_success()
+
+
+
+#按钮信号
+signal battle_information
+signal online_match
