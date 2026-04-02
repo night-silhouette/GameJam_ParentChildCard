@@ -1,0 +1,8 @@
+接口也要接受接口，不要强转成实例impl
+type User_service_impl struct {
+	repo repo.User_repo
+}
+
+func (u *User_service_impl) Set_repo(r repo.Repo) {
+	u.repo = r.(repo.User_repo)
+}

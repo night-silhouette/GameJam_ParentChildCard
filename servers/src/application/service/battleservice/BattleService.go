@@ -12,6 +12,7 @@ type BattleService interface {
 	AddMatch(id int)
 	IsHasID(id int) bool
 	GetMatchSignals() *sync.Map
+	GetCardInfoByID(ID int) map[string]any
 }
 
 type BattleServiceImpl struct {
@@ -30,4 +31,8 @@ func (u *BattleServiceImpl) IsHasID(id int) bool {
 }
 func (u *BattleServiceImpl) GetMatchSignals() *sync.Map {
 	return &MatchSignals
+}
+
+func (u *BattleServiceImpl) GetCardInfoByID(ID int) map[string]any {
+	return u.repo.ReadCardByID(ID)
 }
