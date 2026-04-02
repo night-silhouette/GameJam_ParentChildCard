@@ -1,5 +1,6 @@
 extends TextureButton
 
-
+var flag = false;
 func _on_button_down() -> void:
-	visible = true;
+	flag = !flag;
+	$"../说明框".visible = flag;

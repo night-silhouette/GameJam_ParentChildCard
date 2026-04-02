@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bxbpcw7rdnhhj"
-path="res://.godot/imported/桌面.png-7b19aa1e41d6c156511eb3dbb7c2ec8d.ctex"
+path="res://.godot/imported/桌面.png-f40d8efcfd9ee8138f59324832a085d7.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://素材/使用素材/战斗内/桌面/桌面.png"
-dest_files=["res://.godot/imported/桌面.png-7b19aa1e41d6c156511eb3dbb7c2ec8d.ctex"]
+source_file="res://素材/使用素材/战斗内/桌面/说明/桌面.png"
+dest_files=["res://.godot/imported/桌面.png-f40d8efcfd9ee8138f59324832a085d7.ctex"]
 
 [params]
 
