@@ -26,9 +26,9 @@ func call_api(api_name: String, method: int, body_data: Dictionary = {}, use_tok
 	# 4. （Body）
 	var body_string = ""
 	# 如果字典里有东西，而且不是 GET 请求（GET不用带body），就把它转成 JSON 罐头
-	if not body_data.is_empty() and method != HTTPClient.METHOD_GET:
+	if not body_data.is_empty() :
 		body_string = JSON.stringify(body_data)
-		
+	#print(body_string);
 	# 5. 快递员出发！
 	var final_url = BASE_URL + api_name
 	var err = http.request(final_url, headers, method, body_string)
@@ -42,6 +42,7 @@ func call_api(api_name: String, method: int, body_data: Dictionary = {}, use_tok
 func on_request_completed(result, response_code, headers, body, http_node, api_name, method):
 	http_node.queue_free()
 	
+	print("状态",response_code);
 	if result != HTTPRequest.RESULT_SUCCESS or response_code != 200:
 		
 		SignalBus.raw_api_responded.emit(api_name, method, -1, null, "网络异常")

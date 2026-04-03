@@ -4,17 +4,10 @@ var myid;
 func _ready():
 	print("=== FULL API TEST START ===")
 
-	# 监听所有关键结果
-	_connect_signals()
 
-	await get_tree().create_timer(1.0).timeout
-
-	#await test_register()
-	#await test_login()
-	await test_validate_token()
-	await test_get_self()
-	await test_update_user()
-
+	test_request_delete_mail();
+	
+	
 	print("=== TEST FLOW END ===")
 
 
@@ -51,22 +44,23 @@ func _connect_signals():
 	SignalBus.user_updated_success.connect(func():
 		print("[OK] update success")
 	)
-
+	
+	
 
 # =========================
 # 测试流程（带等待）
 # =========================
 
-#func test_register():
-	#print("\n[TEST] register")
-	#SignalBus.request_register_user.emit("test_user1", "123456")
-	#await wait()
-#
-#
-#func test_login():
-	#print("\n[TEST] login")
-	#SignalBus.request_login.emit("test_user1", "123456")
-	#await wait()
+func test_register():
+	print("\n[TEST] register")
+	SignalBus.request_register_user.emit("test_user1", "123456")
+	await wait()
+
+
+func test_login():
+	print("\n[TEST] login")
+	SignalBus.request_login.emit("fht", "20051118fht")
+	await wait()
 
 
 func test_validate_token():
@@ -90,7 +84,23 @@ func test_update_user():
 
 	await wait()
 
-
+func test_send_mail():
+	print("send")
+	
+	SignalBus.request_send_mail.emit(14,"12345467")
+	
+func test_get_mail_number():
+	
+	SignalBus.request_get_mail_numberN.emit();
+	
+func test_get_mail():
+	SignalBus.request_get_mail.emit(2);
+	
+func test_request_delete_mail():
+	print("emit 前")
+	var data: Array[int] = [47, 46];
+	SignalBus.request_delete_mail.emit(data)
+	print("emit 后")
 # =========================
 # 等待（防止请求挤一起）
 # =========================

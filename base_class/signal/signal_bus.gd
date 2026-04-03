@@ -47,6 +47,13 @@ signal request_delete_user_self()
 ## [配对 G] 根据 ID 删除指定用户（管理权限）
 signal request_delete_user_by_id(id: int)
 
+signal request_send_mail(id:int,txt:String);
+
+signal request_get_mail_numberN();
+
+signal request_get_mail(page:int);
+
+signal request_delete_mail(data : Array[int]);
 
 # ==========================================
 # 3. 网络接收信号 (Incoming - 服务器返回结果)
@@ -74,7 +81,13 @@ signal user_registered_success()
 ## [配对 E] 用户资料修改成功
 signal user_updated_success()
 
+signal send_mail_success();
 
+signal get_mail_numberN_success();
+
+signal get_mail_success();
+
+signal delete_mail_success();
 
 #按钮信号
 signal battle_information

@@ -68,4 +68,19 @@ func _handle_raw_api_data(api_name: String, method: int, code: int, data: Varian
 				# PUT 是修改资料
 					if code == 0:
 						SignalBus.user_updated_success.emit()
-						
+		"/v1/mail/":
+			if method == HTTPClient.METHOD_POST:
+				SignalBus.send_mail_success.emit();
+				print("send-successs")
+			if method == HTTPClient.METHOD_GET:
+				SignalBus.get_mail_success.emit();
+				print(data)
+			if method == HTTPClient.METHOD_DELETE:
+				SignalBus.delete_mail_success.emit();
+				print("delet_success")
+				
+		"/v1/mail/status/":
+			if method == HTTPClient.METHOD_GET:
+				print(data);
+				SignalBus.get_mail_numberN_success.emit();
+			

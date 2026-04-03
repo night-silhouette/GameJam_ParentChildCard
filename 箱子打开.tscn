@@ -1,0 +1,86 @@
+[gd_scene load_steps=13 format=3 uid="uid://b3rvrkc3s32ci"]
+
+[ext_resource type="Texture2D" uid="uid://3casn66e7f33" path="res://素材/使用素材/战斗内/判定/箱子.png" id="1_lys1p"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_674nr"]
+atlas = ExtResource("1_lys1p")
+region = Rect2(0, 0, 540, 446)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lwlne"]
+atlas = ExtResource("1_lys1p")
+region = Rect2(540, 0, 540, 446)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2vybc"]
+atlas = ExtResource("1_lys1p")
+region = Rect2(1080, 0, 540, 446)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7t5rk"]
+atlas = ExtResource("1_lys1p")
+region = Rect2(1620, 0, 540, 446)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4ay1g"]
+atlas = ExtResource("1_lys1p")
+region = Rect2(2160, 0, 540, 446)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4x2pm"]
+atlas = ExtResource("1_lys1p")
+region = Rect2(0, 446, 540, 446)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_e8ds8"]
+atlas = ExtResource("1_lys1p")
+region = Rect2(540, 446, 540, 446)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_yd02a"]
+atlas = ExtResource("1_lys1p")
+region = Rect2(1080, 446, 540, 446)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_uciht"]
+atlas = ExtResource("1_lys1p")
+region = Rect2(1620, 446, 540, 446)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_f6wln"]
+atlas = ExtResource("1_lys1p")
+region = Rect2(2160, 446, 540, 446)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_gjkfi"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_674nr")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lwlne")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2vybc")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7t5rk")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4ay1g")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4x2pm")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_e8ds8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_yd02a")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_uciht")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_f6wln")
+}],
+"loop": false,
+"name": &"default",
+"speed": 5.0
+}]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D"]
+sprite_frames = SubResource("SpriteFrames_gjkfi")
+frame = 9
+frame_progress = 1.0

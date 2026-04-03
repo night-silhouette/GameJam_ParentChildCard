@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dgyqirah3ilvl"
-path="res://.godot/imported/卡库栏底版 .png-b4d735e7a0d29412e21599b147885136.ctex"
+uid="uid://bqjqlgyg7sxdi"
+path="res://.godot/imported/9.png-94824ac82207a83fb5519016a4c98663.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://素材/使用素材/战斗内/桌面/卡牌库/卡库栏底版 .png"
-dest_files=["res://.godot/imported/卡库栏底版 .png-b4d735e7a0d29412e21599b147885136.ctex"]
+source_file="res://素材/使用素材/战斗内/效果/母卡法术卡6/9.png"
+dest_files=["res://.godot/imported/9.png-94824ac82207a83fb5519016a4c98663.ctex"]
 
 [params]
 

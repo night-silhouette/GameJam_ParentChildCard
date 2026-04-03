@@ -14,8 +14,15 @@ func _ready():
 	SignalBus.request_update_user.connect(_on_update_user)
 	SignalBus.request_delete_user_self.connect(_on_delete_user_self)
 	SignalBus.request_delete_user_by_id.connect(_on_delete_user_by_id)
-
-
+	
+	SignalBus.request_send_mail.connect(_request_send_mail)
+	
+	SignalBus.request_get_mail_numberN.connect(_request_get_mail_numberN);
+	SignalBus.request_get_mail.connect(_request_get_mail);
+	
+	SignalBus.request_delete_mail.connect(_request_delete_mail);
+	
+	
 # =========================
 # Token
 # =========================
@@ -87,3 +94,33 @@ func _on_delete_user_self():
 func _on_delete_user_by_id(id: int):
 	var url = "/v1/user?id=" + str(id)
 	NetworkClient.call_api(url, HTTPClient.METHOD_DELETE)
+
+	
+func _request_send_mail(id:int,txt:String):
+	var url ="/v1/mail/";
+	var body = {
+		"accept_id" :id,
+		"body" : txt
+	}
+	NetworkClient.call_api(url,HTTPClient.METHOD_POST,body);
+	
+func _request_get_mail_numberN():
+	var url="/v1/mail/status/";
+	NetworkClient.call_api(url,HTTPClient.METHOD_GET);
+	
+	
+func _request_get_mail(page : int):
+	var url = "/v1/mail/";
+	var body ={
+		"page" : page
+	}
+	print(body)
+	NetworkClient.call_api(url,HTTPClient.METHOD_GET,body);
+	
+func _request_delete_mail(id:Array[int]):
+	print("xin");
+	var url = "/v1/mail/";
+	var body ={
+		"mail_id" : id
+	}
+	NetworkClient.call_api(url,HTTPClient.METHOD_DELETE,body);

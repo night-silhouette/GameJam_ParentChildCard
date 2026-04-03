@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://cdv8fd6skc7tr"]
+
+[ext_resource type="Texture2D" uid="uid://3casn66e7f33" path="res://素材/使用素材/战斗内/判定/箱子.png" id="1_xidcm"]
+
+[node name="Sprite2D" type="Sprite2D"]
+texture = ExtResource("1_xidcm")
+hframes = 5
+vframes = 2
