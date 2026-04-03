@@ -74,3 +74,13 @@ func RegisterBattleWS(h battlehandler.BattleHandler) {
 	R.GET("/v1/debug/match_pool/", h.DebugGetMachData())
 	R.GET("/v1/debug/battle_container", h.DebugBattleContainer())
 }
+
+func RegisterMailRoute(h userhandler.User_handler) {
+	R.POST("/v1/mail/", h.SendMail())
+	R.GET("/v1/mail/", h.GetAllOnePage())
+	R.DELETE("v1/mail/All/", h.DeleteMailAll())
+	R.DELETE("/v1/mail/", h.DeleteMailByMailId())
+	R.POST("/v1/mail/status/", h.ChangeMailStatus())
+	R.GET("/v1/mail/status/", h.GetMailStatus())
+	
+}

@@ -36,7 +36,7 @@ type User_repo interface {
 	UpdateMail(f *mail.Filter, data *mail.Mail) global.ResponseStatusCode
 	SaveMail(m *mail.Mail) global.ResponseStatusCode
 	DeleteMail(f *mail.Filter) global.ResponseStatusCode
-	FindMails(f mail.Filter) ([]*mail.Mail, global.ResponseStatusCode)
+	FindMails(f mail.Filter, page int) ([]*mail.Mail, global.ResponseStatusCode)
 	CheckMailUnReadNumByUserId(userId int) (int, global.ResponseStatusCode)
 }
 
@@ -270,7 +270,10 @@ func (r *User_repo_impl) DeleteMail(f *mail.Filter) global.ResponseStatusCode {
 	return global.ResponseSuccess
 }
 
-func (r *User_repo_impl) FindMails(f mail.Filter) ([]*mail.Mail, global.ResponseStatusCode) {
+func (r *User_repo_impl) FindMails(f mail.Filter, page int) ([]*mail.Mail, global.ResponseStatusCode) {
+	if page <= 0 {
+		page = 1
+	}
 	query := "select id,accept_id, send_id, body, category, status,created_at from mails where 1=1"
 	var args []interface{}
 	argCount := 1
@@ -300,11 +303,18 @@ func (r *User_repo_impl) FindMails(f mail.Filter) ([]*mail.Mail, global.Response
 		args = append(args, f.Status)
 		argCount++
 	}
-
+	offset := (page - 1) * 8
 	query += " order by created_at desc"
+	query += fmt.Sprintf(" limit $%d", argCount)
+	args = append(args, 8)
+	argCount++
+	query += fmt.Sprintf(" offset $%d", argCount)
+	args = append(args, offset)
+	argCount++
 
 	rows, err := r.db.Query(query, args...)
 	if err != nil {
+		log.Fatalln(err.Error())
 		return nil, global.ResponseInternalServersError
 	}
 	defer rows.Close()
@@ -312,7 +322,8 @@ func (r *User_repo_impl) FindMails(f mail.Filter) ([]*mail.Mail, global.Response
 	var mails []*mail.Mail
 	for rows.Next() {
 		var m mail.Mail
-		if err := rows.Scan(&m.Id, &m.AcceptId, &m.SendId, &m.Body, &m.Category, &m.Status, &m.CreateAt); err != nil {
+		if err := rows.Scan(&m.MailId, &m.AcceptId, &m.SendId, &m.Body, &m.Category, &m.Status, &m.CreateAt); err != nil {
+			log.Fatalln(err.Error())
 			return nil, global.ResponseInternalServersError
 		}
 		mails = append(mails, &m)
@@ -428,3 +439,5 @@ func (r *User_repo_impl) CheckMailUnReadNumByUserId(userId int) (int, global.Res
 	return unreadCount, global.ResponseSuccess
 
 }
+
+//func (r *User_repo_impl) UserSearch(NameVague)

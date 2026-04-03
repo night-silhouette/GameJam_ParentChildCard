@@ -18,6 +18,12 @@ type User_handler interface {
 	Put() gin.HandlerFunc
 	Delete() gin.HandlerFunc
 	Patch() gin.HandlerFunc
+	GetAllOnePage() gin.HandlerFunc
+	GetMailStatus() gin.HandlerFunc
+	SendMail() gin.HandlerFunc
+	ChangeMailStatus() gin.HandlerFunc
+	DeleteMailByMailId() gin.HandlerFunc
+	DeleteMailAll() gin.HandlerFunc
 }
 type User_handler_impl struct {
 	s UserService.User_service

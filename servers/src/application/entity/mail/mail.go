@@ -7,7 +7,7 @@ var CategoryMap = map[string]int{
 }
 
 type Mail struct {
-	Id       int       `json:"id"`
+	MailId   int       `json:"mail_id"`
 	AcceptId int       `json:"accept_id"`
 	SendId   int       `json:"send_id"`
 	Body     string    `json:"body"`
