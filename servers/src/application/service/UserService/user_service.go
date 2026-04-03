@@ -29,6 +29,7 @@ type User_service interface {
 	SendMail(SendId int, body string, AcceptId int) global.ResponseStatusCode
 	DeleteMailByMailId(MailId int, AcceptId int) global.ResponseStatusCode
 	DeleteMailAll(AcceptId int) global.ResponseStatusCode
+	UserSearch(NameVague string) (global.ResponseStatusCode, []*User_entity.User)
 }
 
 type User_service_impl struct {

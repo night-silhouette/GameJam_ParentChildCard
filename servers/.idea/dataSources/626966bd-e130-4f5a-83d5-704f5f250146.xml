@@ -106263,19 +106263,26 @@ send_id</ColNames>
       <StateNumber>5110</StateNumber>
       <UnderlyingIndexId>32879</UnderlyingIndexId>
     </key>
-    <trigger id="18171" parent="6077" name="updateunreadcount">
+    <key id="18171" parent="6077" name="mails_pkey">
+      <NameSurrogate>1</NameSurrogate>
+      <ObjectId>32888</ObjectId>
+      <Primary>1</Primary>
+      <StateNumber>5117</StateNumber>
+      <UnderlyingIndexId>32887</UnderlyingIndexId>
+    </key>
+    <trigger id="18172" parent="6077" name="updateunreadcount">
       <Events>IUD</Events>
       <ObjectId>32884</ObjectId>
       <StateNumber>5114</StateNumber>
       <CallRoutineId>32883</CallRoutineId>
     </trigger>
-    <check id="18172" parent="6078" name="chk_username_len">
+    <check id="18173" parent="6078" name="chk_username_len">
       <ColNames>user_name</ColNames>
       <ObjectId>16468</ObjectId>
       <Predicate>length(user_name) &lt;= 16</Predicate>
       <StateNumber>793</StateNumber>
     </check>
-    <column id="18173" parent="6078" name="id">
+    <column id="18174" parent="6078" name="id">
       <IdentityKind>by-default</IdentityKind>
       <NotNull>1</NotNull>
       <Position>1</Position>
@@ -106284,21 +106291,21 @@ send_id</ColNames>
       <SequenceId>32844</SequenceId>
       <TypeId>23</TypeId>
     </column>
-    <column id="18174" parent="6078" name="user_name">
+    <column id="18175" parent="6078" name="user_name">
       <NotNull>1</NotNull>
       <Position>2</Position>
       <StateNumber>789</StateNumber>
       <StoredType>text|0s</StoredType>
       <TypeId>25</TypeId>
     </column>
-    <column id="18175" parent="6078" name="hash_password">
+    <column id="18176" parent="6078" name="hash_password">
       <NotNull>1</NotNull>
       <Position>3</Position>
       <StateNumber>790</StateNumber>
       <StoredType>text|0s</StoredType>
       <TypeId>25</TypeId>
     </column>
-    <column id="18176" parent="6078" name="create_at">
+    <column id="18177" parent="6078" name="create_at">
       <DefaultExpression>now()</DefaultExpression>
       <NotNull>1</NotNull>
       <Position>4</Position>
@@ -106306,20 +106313,20 @@ send_id</ColNames>
       <StoredType>timestamp with time zone|0s</StoredType>
       <TypeId>1184</TypeId>
     </column>
-    <column id="18177" parent="6078" name="is_admin">
+    <column id="18178" parent="6078" name="is_admin">
       <Position>5</Position>
       <StateNumber>840</StateNumber>
       <StoredType>boolean|0s</StoredType>
       <TypeId>16</TypeId>
     </column>
-    <column id="18178" parent="6078" name="unread_count">
+    <column id="18179" parent="6078" name="unread_count">
       <DefaultExpression>0</DefaultExpression>
       <Position>6</Position>
       <StateNumber>5112</StateNumber>
       <StoredType>integer|0s</StoredType>
       <TypeId>23</TypeId>
     </column>
-    <index id="18179" parent="6078" name="user_pkey">
+    <index id="18180" parent="6078" name="user_pkey">
       <ColNames>id</ColNames>
       <ObjectId>24652</ObjectId>
       <Primary>1</Primary>
@@ -106327,7 +106334,7 @@ send_id</ColNames>
       <Unique>1</Unique>
       <AccessMethodId>403</AccessMethodId>
     </index>
-    <index id="18180" parent="6078" name="uk_user_name">
+    <index id="18181" parent="6078" name="uk_user_name">
       <ColNames>user_name</ColNames>
       <ObjectId>24654</ObjectId>
       <StateNumber>799</StateNumber>
@@ -106337,13 +106344,13 @@ send_id</ColNames>
       <CollationIds>100</CollationIds>
       <CollationParentNames>pg_catalog</CollationParentNames>
     </index>
-    <key id="18181" parent="6078" name="user_pkey">
+    <key id="18182" parent="6078" name="user_pkey">
       <ObjectId>24653</ObjectId>
       <Primary>1</Primary>
       <StateNumber>798</StateNumber>
       <UnderlyingIndexId>24652</UnderlyingIndexId>
     </key>
-    <key id="18182" parent="6078" name="uk_user_name">
+    <key id="18183" parent="6078" name="uk_user_name">
       <ObjectId>24655</ObjectId>
       <StateNumber>799</StateNumber>
       <UnderlyingIndexId>24654</UnderlyingIndexId>

@@ -22,3 +22,7 @@ type UserPatchDto struct {
 	Name     string `form:"name" json:"name" binding:"max=16"`
 	Password string `form:"password" json:"password" binding:"max=256"`
 }
+
+type UserVagueSearchReq struct {
+	VagueName string `form:"vague_name" json:"vague_name" binding:"required,max=16"`
+}

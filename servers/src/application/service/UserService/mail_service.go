@@ -2,6 +2,7 @@ package UserService
 
 import (
 	"fmt"
+	"pcc_card/application/entity/User_entity"
 	"pcc_card/application/entity/mail"
 	"pcc_card/global"
 )
@@ -41,4 +42,8 @@ func (u *User_service_impl) DeleteMailAll(AcceptId int) global.ResponseStatusCod
 		return err
 	}
 	return global.ResponseSuccess
+}
+
+func (u *User_service_impl) UserSearch(NameVague string) (global.ResponseStatusCode, []*User_entity.User) {
+	return u.repo.UserSearch(NameVague)
 }

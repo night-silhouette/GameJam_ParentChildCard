@@ -5,14 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="760cea56-5efb-4b56-8acc-717cb714ebef" name="更改" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/626966bd-e130-4f5a-83d5-704f5f250146.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/626966bd-e130-4f5a-83d5-704f5f250146.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/application/entity/mail/mail.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/entity/mail/mail.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/service/UserService/mail_service.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/service/UserService/mail_service.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/application/service/UserService/user_service.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/service/UserService/user_service.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/cmd/main/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/cmd/main/main.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/infra/repo/userrepo/user_repo.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/infra/repo/userrepo/user_repo.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/presentation/handler/userhandler/dto.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/presentation/handler/userhandler/dto.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/presentation/handler/userhandler/userhandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/presentation/handler/userhandler/userhandler.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/presentation/route/route.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/presentation/route/route.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/开发文档/开发日志/4.2占用端口进程.txt" beforeDir="false" afterPath="$PROJECT_DIR$/开发文档/开发日志/4.2占用端口进程.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

@@ -1,6 +1,7 @@
 package userhandler
 
 import (
+	"fmt"
 	"pcc_card/application/entity/User_entity"
 	"pcc_card/application/service"
 	"pcc_card/application/service/UserService"
@@ -24,6 +25,7 @@ type User_handler interface {
 	ChangeMailStatus() gin.HandlerFunc
 	DeleteMailByMailId() gin.HandlerFunc
 	DeleteMailAll() gin.HandlerFunc
+	UserVagueSearch() gin.HandlerFunc
 }
 type User_handler_impl struct {
 	s UserService.User_service
@@ -199,5 +201,21 @@ func (u *User_handler_impl) Patch() gin.HandlerFunc {
 			return
 		}
 		response.Success(c, "ok")
+	}
+}
+
+func (u *User_handler_impl) UserVagueSearch() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		req := UserVagueSearchReq{}
+		if err := c.ShouldBind(&req); err != nil {
+			fmt.Println(err)
+			return
+		}
+		err, uList := u.s.UserSearch(req.VagueName)
+		if err != global.ResponseSuccess {
+			response.Fail(c, err)
+			return
+		}
+		response.Success(c, uList)
 	}
 }

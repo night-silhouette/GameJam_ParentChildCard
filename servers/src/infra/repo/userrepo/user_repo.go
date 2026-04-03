@@ -38,6 +38,7 @@ type User_repo interface {
 	DeleteMail(f *mail.Filter) global.ResponseStatusCode
 	FindMails(f mail.Filter, page int) ([]*mail.Mail, global.ResponseStatusCode)
 	CheckMailUnReadNumByUserId(userId int) (int, global.ResponseStatusCode)
+	UserSearch(NameVague string) (global.ResponseStatusCode, []*User_entity.User)
 }
 
 type User_repo_impl struct { //repo的实现
@@ -440,4 +441,32 @@ func (r *User_repo_impl) CheckMailUnReadNumByUserId(userId int) (int, global.Res
 
 }
 
-//func (r *User_repo_impl) UserSearch(NameVague)
+func (r *User_repo_impl) UserSearch(NameVague string) (global.ResponseStatusCode, []*User_entity.User) {
+	query := `
+        select id, user_name 
+        from users 
+        where user_name ilike $1 
+        order by similarity(user_name, $2) desc 
+        limit 8`
+	pattern := "%" + NameVague + "%"
+	var uList []*User_entity.User
+	rows, err := r.db.Query(query, pattern, NameVague)
+
+	if err != nil {
+		log.Println(err)
+		return global.ResponseDataNotFound, nil
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var u User_entity.User
+		if err := rows.Scan(&u.Id, &u.Name); err != nil {
+			log.Println(err)
+			return global.ResponseInternalServersError, nil
+		}
+		uList = append(uList, &u)
+	}
+	if len(uList) == 0 {
+		return global.ResponseDataNotFound, nil
+	}
+	return global.ResponseSuccess, uList
+}
