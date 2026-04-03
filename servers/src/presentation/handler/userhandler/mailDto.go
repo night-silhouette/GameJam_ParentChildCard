@@ -5,7 +5,7 @@ type MailGetReq struct {
 }
 type MailPostReq struct {
 	AcceptId int    `form:"accept_id" json:"accept_id" binding:"required"`
-	Body     string `form:"body" json:"body" binding:"required"`
+	Body     string `form:"body" json:"body" binding:"required,max=500"`
 }
 
 type MailStatusPostReq struct {

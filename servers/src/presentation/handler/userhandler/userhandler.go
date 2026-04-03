@@ -10,6 +10,7 @@ import (
 	"pcc_card/presentation/response"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
 )
 
 type User_handler interface {
@@ -50,7 +51,7 @@ func (u *User_handler_impl) Get() gin.HandlerFunc {
 			return
 		}
 		var req UserSearchReqDto
-		if err := c.ShouldBindQuery(&req); err != nil {
+		if err := c.ShouldBindWith(&req, binding.JSON); err != nil {
 			response.Fail(c, global.ResponseInvalidReqParams)
 			return
 		}

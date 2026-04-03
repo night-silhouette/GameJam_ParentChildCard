@@ -5,12 +5,14 @@ import (
 	"pcc_card/presentation/response"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
 )
 
 func (u *User_handler_impl) GetAllOnePage() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var req MailGetReq
-		if err := c.ShouldBindQuery(&req); err != nil {
+
+		if err := c.ShouldBindWith(&req, binding.JSON); err != nil {
 			response.Fail(c, global.ResponseInvalidReqParams)
 			return
 		}
