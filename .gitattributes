@@ -1,2 +1,12 @@
 # Normalize EOL for all files that Git considers text files.
 * text=auto eol=lf
+
+# 自动合并 import 文件，不再跳出冲突窗口
+*.import merge=union
+
+# 强制将以下文件视为二进制，防止 Git 损坏它们
+*.scn binary
+*.res binary
+*.stex binary
+*.wav binary
+*.ogg binary
