@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"pcc_card/application/entity/User_entity"
+	"pcc_card/application/entity/mail"
 	"pcc_card/application/service"
 	"pcc_card/global"
 	"pcc_card/infra/repo"
@@ -20,9 +21,15 @@ type User_service interface {
 	Release_token(userID int, ctx context.Context) (string, global.ResponseStatusCode)
 	Is_valid_token(tokenString string, ctx context.Context) (int, bool, global.ResponseStatusCode)
 	Create_user(user *User_entity.User) global.ResponseStatusCode
-
+	ChangeMailStatus(AcceptId int, MailId int, status int) global.ResponseStatusCode
 	Update_user(e *User_entity.User) global.ResponseStatusCode
 	Delete_user(id int, ctx context.Context) global.ResponseStatusCode
+	GetAllOnePage(AcceptId int, page int) ([]*mail.Mail, global.ResponseStatusCode)
+	GetMailStatus(id int) (int, global.ResponseStatusCode)
+	SendMail(SendId int, body string, AcceptId int) global.ResponseStatusCode
+	DeleteMailByMailId(MailId int, AcceptId int) global.ResponseStatusCode
+	DeleteMailAll(AcceptId int) global.ResponseStatusCode
+	UserSearch(NameVague string) (global.ResponseStatusCode, []*User_entity.User)
 }
 
 type User_service_impl struct {
@@ -92,7 +99,6 @@ func (u *User_service_impl) Update_user(e *User_entity.User) global.ResponseStat
 	if !(e.Password == "") {
 		e.Password = u.hash_password(e.Password)
 	}
-
 	err := u.repo.Update(e)
 	return err
 }

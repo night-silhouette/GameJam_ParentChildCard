@@ -34,19 +34,19 @@ func main() {
 	route.Init()
 	user(DB, RD)
 	Battle(DB, RD)
-
 	route.Run()
 
 }
 
 func user(DB *sql.DB, RD *redis.Client) {
 	user_repo := repo.New_repo[*userrepo.User_repo_impl](DB, RD)
+
 	user_service := service.New_service[*UserService.User_service_impl](user_repo)
 	user_handler := handler.New_handler[*userhandler.User_handler_impl](user_service)
 	token_handler := handler.New_handler[*tokenhandler.Token_handler_impl](user_service)
 	route.Register_token_routes(token_handler)
 	route.Register_user_routes(user_handler)
-
+	route.RegisterMailRoute(user_handler)
 }
 
 func Battle(DB *sql.DB, RD *redis.Client) {
