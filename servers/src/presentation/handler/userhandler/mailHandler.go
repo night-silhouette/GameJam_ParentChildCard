@@ -83,14 +83,14 @@ func (u *User_handler_impl) DeleteMailByMailId() gin.HandlerFunc {
 			response.Fail(c, global.ResponseInvalidReqParams)
 			return
 		}
-		for MailId := range req.MailId {
-			err := u.s.DeleteMailByMailId(id, MailId)
+		for _, MailId := range req.MailId {
+			err := u.s.DeleteMailByMailId(MailId, id)
 			if err != global.ResponseSuccess {
 				response.Fail(c, err)
 				return
 			}
 		}
-		response.Success(c, "clz我猜你做到这要4月10号啦")
+		response.Success(c, "ok")
 	}
 }
 

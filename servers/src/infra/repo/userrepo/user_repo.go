@@ -258,8 +258,7 @@ func (r *User_repo_impl) DeleteMail(f *mail.Filter) global.ResponseStatusCode {
 	}
 
 	// 6. 执行删除
-	fmt.Println(args)
-	fmt.Println(query)
+
 	result, err := r.db.Exec(query, args...)
 	if err != nil {
 		return global.ResponseInternalServersError

@@ -30,7 +30,9 @@ func (u *User_service_impl) ChangeMailStatus(AcceptId int, MailId int, status in
 }
 
 func (u *User_service_impl) DeleteMailByMailId(MailId int, AcceptId int) global.ResponseStatusCode {
-	err := u.repo.DeleteMail(&mail.Filter{Id: fmt.Sprintf("%d", MailId), AcceptId: fmt.Sprintf("%d", AcceptId)})
+	f := &mail.Filter{Id: fmt.Sprintf("%d", MailId), AcceptId: fmt.Sprintf("%d", AcceptId)}
+
+	err := u.repo.DeleteMail(f)
 	if err != global.ResponseSuccess {
 		return err
 	}
