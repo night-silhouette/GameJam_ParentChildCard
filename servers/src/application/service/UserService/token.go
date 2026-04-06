@@ -19,10 +19,13 @@ func (u *User_service_impl) Init_key() {
 func (u *User_service_impl) Release_token(userID int, ctx context.Context) (string, global.ResponseStatusCode) {
 	Active := u.repo.UpdateActiveInRedisByUserId(userID, ctx)
 	expire_time := time.Now().Add(time.Hour * 24 * global.TokenExpiredTime)
-	e, err := u.repo.Get_by_id(userID)
+
+	// 修改点：传入 ctx 和 u.repo.Get_db()
+	e, err := u.repo.Get_by_id(ctx, u.repo.Get_db(), userID)
 	if err != global.ResponseSuccess {
 		return "", global.ResponseDataNotFound
 	}
+
 	claims := &Claims{
 		UserId:   userID,
 		Is_admin: e.Is_admin,
@@ -73,7 +76,6 @@ func (u *User_service_impl) Is_valid_token(tokenString string, ctx context.Conte
 	} else {
 		Flag = global.ResponseTokenHasUpdate
 	}
-	
-	return id, is_admin, Flag
 
+	return id, is_admin, Flag
 }

@@ -1,6 +1,7 @@
 package battleservice
 
 import (
+	"context"
 	"pcc_card/application/entity/Card/CardAbstract"
 	"pcc_card/application/entity/Card/CardImpl"
 )
@@ -75,7 +76,7 @@ func (c *CardList) init(s BattleService) {
 		CardImpl.NewCard44(),
 	}
 	for _, e := range c.data {
-		info := s.GetCardInfoByID(e.GetID())
+		info := s.GetCardInfoByID(context.Background(), e.GetID())
 		e.SetInfo(info)
 	}
 }

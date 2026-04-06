@@ -17,7 +17,8 @@ func (u *User_handler_impl) GetAllOnePage() gin.HandlerFunc {
 			return
 		}
 		id := c.GetInt("id")
-		res, err := u.s.GetAllOnePage(id, req.Page)
+		// 传入 c.Request.Context()
+		res, err := u.s.GetAllOnePage(c.Request.Context(), id, req.Page)
 		if err != global.ResponseSuccess {
 			response.Fail(c, err)
 			return
@@ -29,7 +30,8 @@ func (u *User_handler_impl) GetAllOnePage() gin.HandlerFunc {
 func (u *User_handler_impl) GetMailStatus() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id := c.GetInt("id")
-		res, err := u.s.GetMailStatus(id)
+		// 传入 c.Request.Context()
+		res, err := u.s.GetMailStatus(c.Request.Context(), id)
 		if err != global.ResponseSuccess {
 			response.Fail(c, err)
 			return
@@ -46,7 +48,8 @@ func (u *User_handler_impl) SendMail() gin.HandlerFunc {
 			return
 		}
 		id := c.GetInt("id")
-		err := u.s.SendMail(id, req.Body, req.AcceptId)
+		// 传入 c.Request.Context()
+		err := u.s.SendMail(c.Request.Context(), id, req.Body, req.AcceptId)
 		if err != global.ResponseSuccess {
 			response.Fail(c, err)
 			return
@@ -64,14 +67,14 @@ func (u *User_handler_impl) ChangeMailStatus() gin.HandlerFunc {
 			return
 		}
 		for MailId := range req.MailId {
-			err := u.s.ChangeMailStatus(id, MailId, req.Status)
+			// 传入 c.Request.Context()
+			err := u.s.ChangeMailStatus(c.Request.Context(), id, MailId, req.Status)
 			if err != global.ResponseSuccess {
 				response.Fail(c, err)
 				return
 			}
 		}
 		response.Success(c, "ok")
-
 	}
 }
 
@@ -83,12 +86,10 @@ func (u *User_handler_impl) DeleteMailByMailId() gin.HandlerFunc {
 			response.Fail(c, global.ResponseInvalidReqParams)
 			return
 		}
-		for _, MailId := range req.MailId {
-			err := u.s.DeleteMailByMailId(MailId, id)
-			if err != global.ResponseSuccess {
-				response.Fail(c, err)
-				return
-			}
+		err := u.s.DeleteMailByMailId(c.Request.Context(), req.MailId, id)
+		if err != global.ResponseSuccess {
+			response.Fail(c, err)
+			return
 		}
 		response.Success(c, "ok")
 	}
@@ -97,7 +98,8 @@ func (u *User_handler_impl) DeleteMailByMailId() gin.HandlerFunc {
 func (u *User_handler_impl) DeleteMailAll() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id := c.GetInt("id")
-		err := u.s.DeleteMailAll(id)
+		// 传入 c.Request.Context()
+		err := u.s.DeleteMailAll(c.Request.Context(), id)
 		if err != global.ResponseSuccess {
 			response.Fail(c, err)
 			return

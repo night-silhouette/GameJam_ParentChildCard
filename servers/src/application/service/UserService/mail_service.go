@@ -1,51 +1,70 @@
 package UserService
 
 import (
+	"context"
 	"fmt"
 	"pcc_card/application/entity/User_entity"
 	"pcc_card/application/entity/mail"
 	"pcc_card/global"
 )
 
-func (u *User_service_impl) GetAllOnePage(AcceptId int, page int) ([]*mail.Mail, global.ResponseStatusCode) {
-	res, err := u.repo.FindMails(mail.Filter{AcceptId: fmt.Sprintf("%d", AcceptId)}, page)
-	return res, err
-}
-func (u *User_service_impl) GetMailStatus(id int) (int, global.ResponseStatusCode) {
-	res, err := u.repo.CheckMailUnReadNumByUserId(id)
+func (u *User_service_impl) GetAllOnePage(ctx context.Context, AcceptId int, page int) ([]*mail.Mail, global.ResponseStatusCode) {
+	// 传入 ctx 和 u.repo.Get_db()
+	res, err := u.repo.FindMails(ctx, u.repo.Get_db(), mail.Filter{AcceptId: fmt.Sprintf("%d", AcceptId)}, page)
 	return res, err
 }
 
-func (u *User_service_impl) SendMail(SendId int, body string, AcceptId int) global.ResponseStatusCode {
+func (u *User_service_impl) GetMailStatus(ctx context.Context, id int) (int, global.ResponseStatusCode) {
+	// 传入 ctx 和 u.repo.Get_db()
+	res, err := u.repo.CheckMailUnReadNumByUserId(ctx, u.repo.Get_db(), id)
+	return res, err
+}
+
+func (u *User_service_impl) SendMail(ctx context.Context, SendId int, body string, AcceptId int) global.ResponseStatusCode {
 	m := mail.NewMail(AcceptId, SendId, body, "UserMail")
-	err := u.repo.SaveMail(m)
+	// 传入 ctx 和 u.repo.Get_db()
+	err := u.repo.SaveMail(ctx, u.repo.Get_db(), m)
 	return err
 }
-func (u *User_service_impl) ChangeMailStatus(AcceptId int, MailId int, status int) global.ResponseStatusCode {
-	err := u.repo.UpdateMail(&mail.Filter{Id: fmt.Sprintf("%d", MailId), AcceptId: fmt.Sprintf("%d", AcceptId)}, &mail.Mail{Status: status})
+
+func (u *User_service_impl) ChangeMailStatus(ctx context.Context, AcceptId int, MailId int, status int) global.ResponseStatusCode {
+	// 传入 ctx 和 u.repo.Get_db()
+	err := u.repo.UpdateMail(ctx, u.repo.Get_db(), &mail.Filter{Id: fmt.Sprintf("%d", MailId), AcceptId: fmt.Sprintf("%d", AcceptId)}, &mail.Mail{Status: status})
 	if err != global.ResponseSuccess {
 		return err
 	}
 	return global.ResponseSuccess
 }
 
-func (u *User_service_impl) DeleteMailByMailId(MailId int, AcceptId int) global.ResponseStatusCode {
-	f := &mail.Filter{Id: fmt.Sprintf("%d", MailId), AcceptId: fmt.Sprintf("%d", AcceptId)}
+func (u *User_service_impl) DeleteMailByMailId(ctx context.Context, MailId []int, AcceptId int) global.ResponseStatusCode {
+	tx, err := u.repo.Get_db().BeginTx(ctx, nil)
+	defer tx.Rollback()
+	if err != nil {
+		return global.ResponseInternalServersError
+	}
+	for _, id := range MailId {
+		f := &mail.Filter{Id: fmt.Sprintf("%d", id), AcceptId: fmt.Sprintf("%d", AcceptId)}
+		err2 := u.repo.DeleteMail(ctx, tx, f)
+		if err2 != global.ResponseSuccess {
+			return err2
+		}
+	}
+	err = tx.Commit()
+	if err != nil {
+		return global.ResponseInternalServersError
+	}
+	return global.ResponseSuccess
+}
 
-	err := u.repo.DeleteMail(f)
+func (u *User_service_impl) DeleteMailAll(ctx context.Context, AcceptId int) global.ResponseStatusCode {
+
+	err := u.repo.DeleteMail(ctx, u.repo.Get_db(), &mail.Filter{AcceptId: fmt.Sprintf("%d", AcceptId)})
 	if err != global.ResponseSuccess {
 		return err
 	}
 	return global.ResponseSuccess
 }
-func (u *User_service_impl) DeleteMailAll(AcceptId int) global.ResponseStatusCode {
-	err := u.repo.DeleteMail(&mail.Filter{AcceptId: fmt.Sprintf("%d", AcceptId)})
-	if err != global.ResponseSuccess {
-		return err
-	}
-	return global.ResponseSuccess
-}
 
-func (u *User_service_impl) UserSearch(NameVague string) (global.ResponseStatusCode, []*User_entity.User) {
-	return u.repo.UserSearch(NameVague)
+func (u *User_service_impl) UserSearch(ctx context.Context, NameVague string) (global.ResponseStatusCode, []*User_entity.User) {
+	return u.repo.UserSearch(ctx, u.repo.Get_db(), NameVague)
 }

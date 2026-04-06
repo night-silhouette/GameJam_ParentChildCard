@@ -1,6 +1,7 @@
 package battleservice
 
 import (
+	"context"
 	"pcc_card/application/service"
 	"pcc_card/infra/repo"
 	"pcc_card/infra/repo/battlerepo"
@@ -12,7 +13,7 @@ type BattleService interface {
 	AddMatch(id int)
 	IsHasID(id int) bool
 	GetMatchSignals() *sync.Map
-	GetCardInfoByID(ID int) map[string]any
+	GetCardInfoByID(ctx context.Context, ID int) map[string]any
 }
 
 type BattleServiceImpl struct {
@@ -33,6 +34,6 @@ func (u *BattleServiceImpl) GetMatchSignals() *sync.Map {
 	return &MatchSignals
 }
 
-func (u *BattleServiceImpl) GetCardInfoByID(ID int) map[string]any {
-	return u.repo.ReadCardByID(ID)
+func (u *BattleServiceImpl) GetCardInfoByID(ctx context.Context, ID int) map[string]any {
+	return u.repo.ReadCardByID(ctx, u.repo.Get_db(), ID)
 }
