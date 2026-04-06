@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bd7up75av4bbg"
-path="res://.godot/imported/左臂.png-07c0baa4c67ffbbcb75a3ad5929c9be7.ctex"
+path="res://.godot/imported/左臂.png-f30cf88427b15638da157cfc35ecafcd.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://素材/使用素材/战斗内/效果/母卡战斗卡11/组件/左臂.png"
-dest_files=["res://.godot/imported/左臂.png-07c0baa4c67ffbbcb75a3ad5929c9be7.ctex"]
+source_file="res://素材/使用素材/战斗内/效果/20/组件/左臂.png"
+dest_files=["res://.godot/imported/左臂.png-f30cf88427b15638da157cfc35ecafcd.ctex"]
 
 [params]
 

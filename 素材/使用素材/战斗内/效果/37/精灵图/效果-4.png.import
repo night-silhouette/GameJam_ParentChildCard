@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c7v2ntvye3nvn"
-path="res://.godot/imported/效果-4.png-5ed1baa525b71bafebabd8ca277dc96f.ctex"
+path="res://.godot/imported/效果-4.png-216c6d81ce9a167ed006789883ef3664.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://素材/使用素材/战斗内/效果/母卡战斗卡22/精灵图/效果-4.png"
-dest_files=["res://.godot/imported/效果-4.png-5ed1baa525b71bafebabd8ca277dc96f.ctex"]
+source_file="res://素材/使用素材/战斗内/效果/37/精灵图/效果-4.png"
+dest_files=["res://.godot/imported/效果-4.png-216c6d81ce9a167ed006789883ef3664.ctex"]
 
 [params]
 

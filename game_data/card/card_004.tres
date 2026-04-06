@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="CardResource" load_steps=3 format=3 uid="uid://h55vkji4ggg6"]
+
+[ext_resource type="Script" uid="uid://cik6i25pfmxeg" path="res://base_class/card/card_data.gd" id="1_prpv2"]
+[ext_resource type="Texture2D" uid="uid://dq8xdl8f62m1o" path="res://素材/使用素材/卡牌/法术卡/母卡法术卡/4.png" id="1_wdklq"]
+
+[resource]
+script = ExtResource("1_prpv2")
+card_texture = ExtResource("1_wdklq")
+name = "诅"
+id = 4
+effect_description = "使用效果：单独使用：强制所有敌方血量变为当前敌方战斗牌血量（超过血量上线变为不可恢复的虚血）组合使用：废除所有卡牌技能且废除所有法术卡全部投入弃牌堆(咒牌是战斗牌，在同一回合打出，所有卡牌（包括手牌）)"
+notes = "组合使用：当出战卡是咒"

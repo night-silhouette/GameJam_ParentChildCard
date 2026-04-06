@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cr481v5omt2le"
-path="res://.godot/imported/刃.png-c2f6a74258a635bdfbe56db4e0931c52.ctex"
+path="res://.godot/imported/刃.png-fef75b7d924d0e4d13a965b369c27132.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://素材/使用素材/战斗内/效果/母卡战斗卡22/组件/刃.png"
-dest_files=["res://.godot/imported/刃.png-c2f6a74258a635bdfbe56db4e0931c52.ctex"]
+source_file="res://素材/使用素材/战斗内/效果/37/组件/刃.png"
+dest_files=["res://.godot/imported/刃.png-fef75b7d924d0e4d13a965b369c27132.ctex"]
 
 [params]
 

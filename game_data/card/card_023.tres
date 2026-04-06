@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="CardResource" load_steps=3 format=3 uid="uid://cq7scns6e0yx1"]
+
+[ext_resource type="Texture2D" uid="uid://dq6c8jt6m45fi" path="res://素材/使用素材/卡牌/法术卡/子卡法术卡/23.png" id="1_cihqb"]
+[ext_resource type="Script" uid="uid://cik6i25pfmxeg" path="res://base_class/card/card_data.gd" id="1_xs8y8"]
+
+[resource]
+script = ExtResource("1_xs8y8")
+card_texture = ExtResource("1_cihqb")
+name = "耸肩无视"
+id = 23
+is_sub_card = true
+effect_description = "使用效果：指定任意一张战斗卡生命与攻击数值乘二（己方与敌方均可）且自该牌生效后凡在场战斗卡淘汰两张，在回合行动后（法术卡发动后）将从弃牌堆中抽取一张牌加入己方牌库"
+notes = "获得条件：一张战斗牌连续存活20回合；弃牌堆：所有人的死亡的战斗母卡和使用过的法术牌存放在此"

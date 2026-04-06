@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="CardResource" load_steps=3 format=3 uid="uid://cmoqyq3r3nho7"]
+
+[ext_resource type="Texture2D" uid="uid://d0s4rpo3erqve" path="res://素材/使用素材/卡牌/战斗卡/子卡战斗卡/30.png" id="1_a34ud"]
+[ext_resource type="Script" uid="uid://cik6i25pfmxeg" path="res://base_class/card/card_data.gd" id="1_molr1"]
+
+[resource]
+script = ExtResource("1_molr1")
+card_texture = ExtResource("1_a34ud")
+name = "苦口冰激凌"
+id = 30
+damage = 1
+max_health = 1
+is_sub_card = true
+is_combat_card = true
+effect_description = "被动：上场时给予对方3层捆缚；主动：选择一名敌人与其交换现有数值；特性：在手牌中未出战时，敌方无法使用技能牌"
+notes = "获得条件：局内加入至手牌的法术牌数量是且仅是2时且其中一张牌进入弃牌堆;捆缚:无法使用角色攻击或技能，每回合减少一层"

@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="CardResource" load_steps=3 format=3 uid="uid://ceh5ajyutvn17"]
+
+[ext_resource type="Script" uid="uid://cik6i25pfmxeg" path="res://base_class/card/card_data.gd" id="1_0oqrm"]
+[ext_resource type="Texture2D" uid="uid://dlhpj6pxf3orr" path="res://素材/使用素材/卡牌/战斗卡/母卡战斗卡/37.png" id="1_gsc2f"]
+
+[resource]
+script = ExtResource("1_0oqrm")
+card_texture = ExtResource("1_gsc2f")
+name = "多动症"
+id = 37
+damage = 1
+max_health = 4
+is_combat_card = true
+effect_description = "被动：击杀敌方一张出战牌后，再攻击一次。（每使用此牌击杀一张敌方战斗卡，行动上多一次攻击次数）"

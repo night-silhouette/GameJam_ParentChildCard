@@ -1,0 +1,35 @@
+[gd_scene load_steps=6 format=3 uid="uid://dby5nhsinvtdj"]
+
+[ext_resource type="Texture2D" uid="uid://dyodgbpsub8ax" path="res://素材/使用素材/战斗内/手部/右/右-攻击.png" id="1_tjxjj"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_drqn3"]
+atlas = ExtResource("1_tjxjj")
+region = Rect2(0, 0, 274, 750)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vt8pv"]
+atlas = ExtResource("1_tjxjj")
+region = Rect2(274, 0, 274, 750)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jc113"]
+atlas = ExtResource("1_tjxjj")
+region = Rect2(548, 0, 274, 750)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_m8aii"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_drqn3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vt8pv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jc113")
+}],
+"loop": true,
+"name": &"default",
+"speed": 10.0
+}]
+
+[node name="右手攻击" type="AnimatedSprite2D"]
+sprite_frames = SubResource("SpriteFrames_m8aii")

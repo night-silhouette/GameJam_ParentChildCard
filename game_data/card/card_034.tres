@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="CardResource" load_steps=3 format=3 uid="uid://cudqidgrii8o"]
+
+[ext_resource type="Script" uid="uid://cik6i25pfmxeg" path="res://base_class/card/card_data.gd" id="1_icio4"]
+[ext_resource type="Texture2D" uid="uid://bbui8wa8r654o" path="res://素材/使用素材/卡牌/法术卡/母卡法术卡/34.png" id="1_rwuxa"]
+
+[resource]
+script = ExtResource("1_icio4")
+card_texture = ExtResource("1_rwuxa")
+name = "攻守易形"
+id = 34
+effect_description = "使用效果：交换双方出战的所有战斗卡，10回合后交换回来，如果被交换的战斗卡死亡，便不会返回"

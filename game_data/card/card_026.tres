@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="CardResource" load_steps=3 format=3 uid="uid://en0cv4fmqh0c"]
+
+[ext_resource type="Texture2D" uid="uid://ootgeyp5ekx8" path="res://素材/使用素材/卡牌/战斗卡/子卡战斗卡/26.png" id="1_acdom"]
+[ext_resource type="Script" uid="uid://cik6i25pfmxeg" path="res://base_class/card/card_data.gd" id="1_rxnsh"]
+
+[resource]
+script = ExtResource("1_rxnsh")
+card_texture = ExtResource("1_acdom")
+name = "小熊"
+id = 26
+damage = 7
+max_health = 10
+is_sub_card = true
+is_combat_card = true
+effect_description = "技能条件：使用三次母卡战斗卡技能获得一次技能（英雄牌属于子卡战斗卡类别）技能效果：立即击杀敌方在场战斗卡（子卡和母卡）"
+notes = "获得条件：卡牌“纽带”触发"

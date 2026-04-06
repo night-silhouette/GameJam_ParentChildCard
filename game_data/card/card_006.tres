@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="CardResource" load_steps=3 format=3 uid="uid://b2lnyj6vq0yfb"]
+
+[ext_resource type="Texture2D" uid="uid://b5ahlr77e60ju" path="res://素材/使用素材/卡牌/战斗卡/母卡战斗卡/6.png" id="1_uegb4"]
+[ext_resource type="Script" uid="uid://cik6i25pfmxeg" path="res://base_class/card/card_data.gd" id="1_xfg1u"]
+
+[resource]
+script = ExtResource("1_xfg1u")
+card_texture = ExtResource("1_uegb4")
+name = "纽带"
+id = 6
+max_health = 2
+is_combat_card = true
+effect_description = "主动：使用技能后获得一层闪避，连续闪避五回合或存活10回合可召唤英雄牌，召唤后本体死亡"
+notes = "闪避：免除下一次的受击伤害 ；英雄牌：特殊子牌；召唤：强制召唤"

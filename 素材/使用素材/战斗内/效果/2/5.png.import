@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bor18iyoq5yab"
-path="res://.godot/imported/5.png-1c4a1564fda5f0a41b7ea1efae9386c1.ctex"
+path="res://.godot/imported/5.png-334815e0e2e324dd0100227356b6dcac.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://素材/使用素材/战斗内/效果/母卡法术卡6/5.png"
-dest_files=["res://.godot/imported/5.png-1c4a1564fda5f0a41b7ea1efae9386c1.ctex"]
+source_file="res://素材/使用素材/战斗内/效果/2/5.png"
+dest_files=["res://.godot/imported/5.png-334815e0e2e324dd0100227356b6dcac.ctex"]
 
 [params]
 

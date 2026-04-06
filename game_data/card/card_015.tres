@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="CardResource" load_steps=3 format=3 uid="uid://dop755gbf6of4"]
+
+[ext_resource type="Script" uid="uid://cik6i25pfmxeg" path="res://base_class/card/card_data.gd" id="1_80kmn"]
+[ext_resource type="Texture2D" uid="uid://cjpdw0mxg0xeq" path="res://素材/使用素材/卡牌/战斗卡/母卡战斗卡/15.png" id="1_m0wfr"]
+
+[resource]
+script = ExtResource("1_80kmn")
+card_texture = ExtResource("1_m0wfr")
+name = "故障机器人"
+id = 15
+damage = 1
+max_health = 9
+is_combat_card = true
+effect_description = "主动：发动第一次攻击之后获得两层吸血"
+notes = "吸血：攻击时恢复1点生命"

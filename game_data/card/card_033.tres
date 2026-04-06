@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="CardResource" load_steps=3 format=3 uid="uid://punp2654id5i"]
+
+[ext_resource type="Texture2D" uid="uid://cg4cqo5twa3nk" path="res://素材/使用素材/卡牌/法术卡/母卡法术卡/33.png" id="1_5ielx"]
+[ext_resource type="Script" uid="uid://cik6i25pfmxeg" path="res://base_class/card/card_data.gd" id="1_j5hlt"]
+
+[resource]
+script = ExtResource("1_j5hlt")
+card_texture = ExtResource("1_5ielx")
+name = "湮灭"
+id = 33
+effect_description = "使用效果：指定一张敌方出战牌处决"
+notes = "处决：无视所有效果秒杀"

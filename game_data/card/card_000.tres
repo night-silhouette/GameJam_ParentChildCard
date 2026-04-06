@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="CardResource" load_steps=3 format=3 uid="uid://6urat4idclm6"]
+
+[ext_resource type="Script" uid="uid://cik6i25pfmxeg" path="res://base_class/card/card_data.gd" id="1_jsel6"]
+[ext_resource type="Texture2D" uid="uid://bhtjrj54ybhe8" path="res://素材/使用素材/卡牌/法术卡/母卡法术卡/0.png" id="1_sjhwh"]
+
+[resource]
+script = ExtResource("1_jsel6")
+card_texture = ExtResource("1_sjhwh")
+name = "挖掘死者"
+effect_description = "使用效果：使用时，从弃牌堆抽取一张加入自己的手牌"
+notes = "弃牌堆：所有人的死亡的战斗母卡和使用过的法术牌存放在此"

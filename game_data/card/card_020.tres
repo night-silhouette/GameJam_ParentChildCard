@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="CardResource" load_steps=3 format=3 uid="uid://b8ohmkukaw28s"]
+
+[ext_resource type="Script" uid="uid://cik6i25pfmxeg" path="res://base_class/card/card_data.gd" id="1_0gctb"]
+[ext_resource type="Texture2D" uid="uid://drpn35vehngn1" path="res://素材/使用素材/卡牌/战斗卡/母卡战斗卡/20.png" id="1_87tey"]
+
+[resource]
+script = ExtResource("1_0gctb")
+card_texture = ExtResource("1_87tey")
+name = "拳击手"
+id = 20
+damage = 2
+max_health = 5
+is_combat_card = true
+effect_description = "主动：初始技能伤害为一，蓄力两回合为4，蓄力三回合技能效果为处决"
+notes = "蓄力：使用技能但不造成伤害；处决：无视所有效果秒杀"

@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="CardResource" load_steps=3 format=3 uid="uid://bqder7dca1rrk"]
+
+[ext_resource type="Script" uid="uid://cik6i25pfmxeg" path="res://base_class/card/card_data.gd" id="1_axqbp"]
+[ext_resource type="Texture2D" uid="uid://cwu1mo5ikut2i" path="res://素材/使用素材/卡牌/战斗卡/母卡战斗卡/36.png" id="1_jd2wi"]
+
+[resource]
+script = ExtResource("1_axqbp")
+card_texture = ExtResource("1_jd2wi")
+name = "魂"
+id = 36
+damage = 1
+max_health = 5
+is_combat_card = true
+effect_description = "被动：每次死亡扣除一点血量上限，然后恢复至满血"
