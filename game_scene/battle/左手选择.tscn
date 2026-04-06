@@ -1,0 +1,85 @@
+[gd_scene load_steps=13 format=3 uid="uid://fet1lyswjkrj"]
+
+[ext_resource type="Texture2D" uid="uid://b4s7yb8cirgr1" path="res://素材/使用素材/战斗内/手部/左/左-选择.png" id="1_g253n"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tmdab"]
+atlas = ExtResource("1_g253n")
+region = Rect2(0, 0, 329, 617)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_u57yu"]
+atlas = ExtResource("1_g253n")
+region = Rect2(329, 0, 329, 617)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0cqwd"]
+atlas = ExtResource("1_g253n")
+region = Rect2(658, 0, 329, 617)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jlc00"]
+atlas = ExtResource("1_g253n")
+region = Rect2(987, 0, 329, 617)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ywlcy"]
+atlas = ExtResource("1_g253n")
+region = Rect2(1316, 0, 329, 617)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ljjsf"]
+atlas = ExtResource("1_g253n")
+region = Rect2(1645, 0, 329, 617)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7vcnm"]
+atlas = ExtResource("1_g253n")
+region = Rect2(1316, 0, 329, 617)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qgv4k"]
+atlas = ExtResource("1_g253n")
+region = Rect2(987, 0, 329, 617)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_penbi"]
+atlas = ExtResource("1_g253n")
+region = Rect2(658, 0, 329, 617)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0f3n8"]
+atlas = ExtResource("1_g253n")
+region = Rect2(329, 0, 329, 617)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_mxhtp"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_tmdab")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_u57yu")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0cqwd")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jlc00")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ywlcy")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ljjsf")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7vcnm")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qgv4k")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_penbi")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0f3n8")
+}],
+"loop": true,
+"name": &"default",
+"speed": 10.0
+}]
+
+[node name="左手选择" type="AnimatedSprite2D"]
+sprite_frames = SubResource("SpriteFrames_mxhtp")
+frame_progress = 0.7158596

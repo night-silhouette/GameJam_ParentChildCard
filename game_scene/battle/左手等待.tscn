@@ -1,0 +1,70 @@
+[gd_scene load_steps=11 format=3 uid="uid://cei7ntyypjqo2"]
+
+[ext_resource type="Texture2D" uid="uid://uproewkcrocl" path="res://素材/使用素材/战斗内/手部/左/左-等待.png" id="1_7iqa0"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_krfxg"]
+atlas = ExtResource("1_7iqa0")
+region = Rect2(0, 0, 329, 617)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gukan"]
+atlas = ExtResource("1_7iqa0")
+region = Rect2(329, 0, 329, 617)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kgtif"]
+atlas = ExtResource("1_7iqa0")
+region = Rect2(658, 0, 329, 617)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pj7vy"]
+atlas = ExtResource("1_7iqa0")
+region = Rect2(987, 0, 329, 617)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_07yu4"]
+atlas = ExtResource("1_7iqa0")
+region = Rect2(1316, 0, 329, 617)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gyyo5"]
+atlas = ExtResource("1_7iqa0")
+region = Rect2(987, 0, 329, 617)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_w0jaq"]
+atlas = ExtResource("1_7iqa0")
+region = Rect2(658, 0, 329, 617)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7e5ud"]
+atlas = ExtResource("1_7iqa0")
+region = Rect2(329, 0, 329, 617)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_6nij0"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_krfxg")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gukan")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kgtif")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pj7vy")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_07yu4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gyyo5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_w0jaq")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7e5ud")
+}],
+"loop": true,
+"name": &"default",
+"speed": 10.0
+}]
+
+[node name="左手等待" type="AnimatedSprite2D"]
+sprite_frames = SubResource("SpriteFrames_6nij0")

@@ -1,0 +1,85 @@
+[gd_scene load_steps=13 format=3 uid="uid://uc3hy00ibb8q"]
+
+[ext_resource type="Texture2D" uid="uid://b0v7rcbq2r75d" path="res://素材/使用素材/战斗内/手部/左/左-技能.png" id="1_wnrl1"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_x2wn6"]
+atlas = ExtResource("1_wnrl1")
+region = Rect2(0, 0, 333, 738)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_re1vi"]
+atlas = ExtResource("1_wnrl1")
+region = Rect2(333, 0, 333, 738)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fgg84"]
+atlas = ExtResource("1_wnrl1")
+region = Rect2(666, 0, 333, 738)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_v643x"]
+atlas = ExtResource("1_wnrl1")
+region = Rect2(999, 0, 333, 738)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3pw5f"]
+atlas = ExtResource("1_wnrl1")
+region = Rect2(1332, 0, 333, 738)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mjxx6"]
+atlas = ExtResource("1_wnrl1")
+region = Rect2(1665, 0, 333, 738)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8t7nw"]
+atlas = ExtResource("1_wnrl1")
+region = Rect2(1332, 0, 333, 738)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gvct6"]
+atlas = ExtResource("1_wnrl1")
+region = Rect2(999, 0, 333, 738)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6mej1"]
+atlas = ExtResource("1_wnrl1")
+region = Rect2(666, 0, 333, 738)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lqsq3"]
+atlas = ExtResource("1_wnrl1")
+region = Rect2(333, 0, 333, 738)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_6oskj"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_x2wn6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_re1vi")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fgg84")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_v643x")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3pw5f")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mjxx6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8t7nw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gvct6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6mej1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lqsq3")
+}],
+"loop": true,
+"name": &"default",
+"speed": 10.0
+}]
+
+[node name="左手魔法" type="AnimatedSprite2D"]
+sprite_frames = SubResource("SpriteFrames_6oskj")
+frame_progress = 0.073503695

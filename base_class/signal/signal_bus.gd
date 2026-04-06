@@ -2,7 +2,6 @@ extends Node
 
 # ==========================================
 # 1. 游戏内/系统通用信号
-# 用于处理本地场景切换、UI 刷新或底层网络状态
 # ==========================================
 
 ## 切换场景。用法：SignalBus.change_scence.emit("res://levels/main.tscn")
@@ -16,8 +15,7 @@ signal network_disconnected()
 
 
 # ==========================================
-# 2. 网络请求信号 (Outgoing - 发送给服务器)
-# 命名规范：以 request_ 开头。通常在 UI 脚本中 emit
+#http请求信号
 # ==========================================
 
 ## [配对 A] 登录请求
@@ -92,3 +90,26 @@ signal delete_mail_success();
 #按钮信号
 signal battle_information
 signal online_match
+
+
+#WS！！！！！！！！！！
+signal to_connect_ws
+# WS连接
+signal ws_connected
+signal ws_disconnected
+# 原始消息
+signal raw_ws_responded(code, data, msg)
+# 战斗
+signal battle_started
+signal battle_over
+# 匹配
+signal match_canceled
+# 卡牌数据
+signal self_cards_updated(cards)
+signal opponent_cards_updated(cards)
+
+
+signal request_cancel_match
+signal request_get_self_cards
+signal request_get_opponent_cards
+signal request_over_battle

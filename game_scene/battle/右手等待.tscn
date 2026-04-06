@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://bkpyion2g4g7t"]
+[gd_scene load_steps=11 format=3 uid="uid://bkpyion2g4g7t"]
 
 [ext_resource type="Texture2D" uid="uid://evuliy620l4x" path="res://素材/使用素材/战斗内/手部/右/右-等待.png" id="1_7k0n6"]
 
@@ -22,6 +22,18 @@ region = Rect2(987, 0, 329, 617)
 atlas = ExtResource("1_7k0n6")
 region = Rect2(1316, 0, 329, 617)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_7k0n6"]
+atlas = ExtResource("1_7k0n6")
+region = Rect2(987, 0, 329, 617)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_x7673"]
+atlas = ExtResource("1_7k0n6")
+region = Rect2(658, 0, 329, 617)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_e4css"]
+atlas = ExtResource("1_7k0n6")
+region = Rect2(329, 0, 329, 617)
+
 [sub_resource type="SpriteFrames" id="SpriteFrames_x7673"]
 animations = [{
 "frames": [{
@@ -39,13 +51,21 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_ufs2t")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7k0n6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_x7673")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_e4css")
 }],
-"loop": false,
+"loop": true,
 "name": &"default",
 "speed": 10.0
 }]
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D"]
+[node name="右手等待" type="AnimatedSprite2D"]
 sprite_frames = SubResource("SpriteFrames_x7673")
-frame = 4
-frame_progress = 1.0
+frame_progress = 0.8972212

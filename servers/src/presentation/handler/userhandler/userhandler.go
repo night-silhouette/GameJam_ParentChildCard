@@ -1,6 +1,7 @@
 package userhandler
 
 import (
+	"fmt"
 	"pcc_card/application/entity/User_entity"
 	"pcc_card/application/service"
 	"pcc_card/application/service/UserService"
@@ -9,6 +10,7 @@ import (
 	"pcc_card/presentation/response"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
 )
 
 type User_handler interface {
@@ -18,6 +20,13 @@ type User_handler interface {
 	Put() gin.HandlerFunc
 	Delete() gin.HandlerFunc
 	Patch() gin.HandlerFunc
+	GetAllOnePage() gin.HandlerFunc
+	GetMailStatus() gin.HandlerFunc
+	SendMail() gin.HandlerFunc
+	ChangeMailStatus() gin.HandlerFunc
+	DeleteMailByMailId() gin.HandlerFunc
+	DeleteMailAll() gin.HandlerFunc
+	UserVagueSearch() gin.HandlerFunc
 }
 type User_handler_impl struct {
 	s UserService.User_service
@@ -42,7 +51,7 @@ func (u *User_handler_impl) Get() gin.HandlerFunc {
 			return
 		}
 		var req UserSearchReqDto
-		if err := c.ShouldBindQuery(&req); err != nil {
+		if err := c.ShouldBindWith(&req, binding.JSON); err != nil {
 			response.Fail(c, global.ResponseInvalidReqParams)
 			return
 		}
@@ -193,5 +202,21 @@ func (u *User_handler_impl) Patch() gin.HandlerFunc {
 			return
 		}
 		response.Success(c, "ok")
+	}
+}
+
+func (u *User_handler_impl) UserVagueSearch() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		req := UserVagueSearchReq{}
+		if err := c.ShouldBind(&req); err != nil {
+			fmt.Println(err)
+			return
+		}
+		err, uList := u.s.UserSearch(req.VagueName)
+		if err != global.ResponseSuccess {
+			response.Fail(c, err)
+			return
+		}
+		response.Success(c, uList)
 	}
 }

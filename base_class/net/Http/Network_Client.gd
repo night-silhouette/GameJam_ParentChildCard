@@ -1,5 +1,5 @@
 extends Node
-const BASE_URL = "http://120.26.145.68:10086" 
+
 
 
 func call_api(api_name: String, method: int, body_data: Dictionary = {}, use_token: bool = true):
@@ -30,7 +30,7 @@ func call_api(api_name: String, method: int, body_data: Dictionary = {}, use_tok
 		body_string = JSON.stringify(body_data)
 	#print(body_string);
 	# 5. 快递员出发！
-	var final_url = BASE_URL + api_name
+	var final_url = Global.BASE_URL + api_name
 	var err = http.request(final_url, headers, method, body_string)
 	
 	# 防御性编程：如果连门都没出（比如 URL 格式写错了），直接销毁快递员，省得卡在那儿

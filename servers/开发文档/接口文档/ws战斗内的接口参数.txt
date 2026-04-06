@@ -1,0 +1,66 @@
+接口名是/v1/ws/
+
+请求这个参数就会默认进入匹配
+返回字段格式是
+res{
+    code:...
+    msg:...
+    data:Action
+}
+--Action的定义如下:
+type Action struct {
+	ActionCode ActionCode `json:"action_code"`
+	ActionName string     `json:"action_name"`
+	ActionData any        `json:"action_data"`
+}
+
+--ActionCode的定义如下:
+type ActionCode int
+const (
+	CancelMatch ActionCode
+	GetSelfCardInHard
+	GetOpponentCardInHard
+	OverBattle
+	StartBattle
+)
+var ActionName = map[ActionCode]string{
+	CancelMatch:           "取消匹配",
+	GetSelfCardInHard:     "获取自己的卡牌信息",
+	GetOpponentCardInHard: "获取对手的卡牌信息",
+	OverBattle:            "结束战斗",
+	StartBattle:           "开始战斗",
+}
+
+一但请求了这个接口，就会进入匹配，如果想退出匹配就发送一个action_code为CancelMatch的action(action_name和action_data字段为空)
+如果没有退出，成功进入游戏，服务器会发送OverBattle的action
+
+进入游戏之后
+传递对应的action
+如发送GetSelfCardInHard的action，那么就会收到服务器返回过来的
+res{
+  code:...
+  msg:...
+  data:Action
+}
+这样的格式的数据，你从中获取就是，res.data.action_data
+
+
+讲好了这个大致的用法
+后面就是默认说的是各个action的res.data.action_data格式(后面简拼为ActData)
+
+1.GetSelfCardInHard和GetOpponentCardInHard的ActData都是一个数组，然后里面是card对象
+card对象是{
+    Id     int     `json:"id"`
+    Hp     float64 `json:"hp"`
+    Damage float64 `json:"damage"`
+    BuffId int     `json:"buff_id"`
+ }
+这个是实时的，就是你请求的这个时刻，card此时的属性
+
+2.OverBattle
+字面意思，发送这个action就会结束游戏
+
+
+现在就写了这么多，上上周写的，下周我再重新回到游戏内核的开发，这个ws的action以后就会越来越多
+
+

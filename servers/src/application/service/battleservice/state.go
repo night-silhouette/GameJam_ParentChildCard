@@ -33,6 +33,10 @@ func (s *StateMachine) process(GoCtx context.Context) {
 			res := s.c.GetCardInHard(id)
 			ResponseChan <- BattleDto.NewAction(BattleDto.GetSelfCardInHard, res.Self)
 		}
+		if action.ActionCode == BattleDto.GetOpponentCardInHard {
+			res := s.c.GetCardInHard(id)
+			ResponseChan <- BattleDto.NewAction(BattleDto.GetOpponentCardInHard, res.Opponent)
+		}
 		if action.ActionCode == BattleDto.OverBattle {
 			ResponseChan <- BattleDto.NewAction(BattleDto.OverBattle, "ok")
 		}

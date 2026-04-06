@@ -1,4 +1,4 @@
-@tool
+
 extends Node
 
 # 在检查器中点击这个开关开始执行

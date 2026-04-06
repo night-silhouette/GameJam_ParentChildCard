@@ -57,6 +57,7 @@ func Register_user_routes(h userhandler.User_handler) {
 	v1_user.PATCH("/", h.Patch())
 	v1_user.DELETE("/", h.Delete())
 	v1_user.PUT("/", h.Put())
+	v1_user.GET("/vague/", h.UserVagueSearch())
 }
 
 func Register_token_routes(h tokenhandler.Token_handler) {
@@ -73,4 +74,14 @@ func RegisterBattleWS(h battlehandler.BattleHandler) {
 	R.GET("/v1/ws/", h.BattleWs())
 	R.GET("/v1/debug/match_pool/", h.DebugGetMachData())
 	R.GET("/v1/debug/battle_container", h.DebugBattleContainer())
+}
+
+func RegisterMailRoute(h userhandler.User_handler) {
+	R.POST("/v1/mail/", h.SendMail())
+	R.GET("/v1/mail/", h.GetAllOnePage())
+	R.DELETE("v1/mail/All/", h.DeleteMailAll())
+	R.DELETE("/v1/mail/", h.DeleteMailByMailId())
+	R.POST("/v1/mail/status/", h.ChangeMailStatus())
+	R.GET("/v1/mail/status/", h.GetMailStatus())
+
 }
