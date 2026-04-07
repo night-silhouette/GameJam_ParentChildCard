@@ -10,7 +10,7 @@ import (
 
 func (u *User_handler_impl) CreateFriendship() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var req PostFriendshipsQeq
+		var req PostFriendshipsReq
 		if err := c.ShouldBindWith(&req, binding.JSON); err != nil {
 			response.Fail(c, global.ResponseInvalidReqParams)
 			return
@@ -32,14 +32,18 @@ func (u *User_handler_impl) GetFriendships() gin.HandlerFunc {
 			response.Fail(c, err)
 			return
 		}
-		response.Success(c, idMap)
+		result := []GetFriendshipsRes{}
+		for key, value := range idMap {
+			result = append(result, GetFriendshipsRes{key, value})
+		}
+		response.Success(c, result)
 	}
 }
 
 func (u *User_handler_impl) DeleteFriendships() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id := c.GetInt("id")
-		var req DeleteFriendshipsQeq
+		var req DeleteFriendshipsReq
 		if err := c.ShouldBindWith(&req, binding.JSON); err != nil {
 			response.Fail(c, global.ResponseInvalidReqParams)
 			return

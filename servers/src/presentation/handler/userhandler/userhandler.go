@@ -62,9 +62,9 @@ func (u *User_handler_impl) Get() gin.HandlerFunc {
 			return
 		}
 
-		if req.ID != 0 {
+		if req.Id != 0 {
 			// 传入 c.Request.Context()
-			e, status := u.s.Find_user_by_id(c.Request.Context(), req.ID)
+			e, status := u.s.Find_user_by_id(c.Request.Context(), req.Id)
 			if status == global.ResponseSuccess {
 				response.Success(c, e)
 				return
@@ -149,7 +149,7 @@ func (u *User_handler_impl) Delete() gin.HandlerFunc {
 			response.Fail(c, global.ResponseInvalidReqParams)
 			return
 		}
-		id = req.ID
+		id = req.Id
 		if !is_admin && id != 0 {
 			response.Fail(c, global.ResponseForbidden)
 			return

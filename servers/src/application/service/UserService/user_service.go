@@ -115,7 +115,6 @@ func (u *User_service_impl) Update_user(ctx context.Context, e *User_entity.User
 	if !(e.Password == "") {
 		e.Password = u.hash_password(e.Password)
 	}
-	// 传入 ctx 和 u.repo.Get_db()
 	err := u.repo.Update(ctx, u.repo.Get_db(), e)
 	return err
 }
@@ -128,7 +127,7 @@ func (u *User_service_impl) DeleteFriendships(ctx context.Context, id1 int, id2 
 }
 func (u *User_service_impl) FindFriendships(ctx context.Context, id int) (global.ResponseStatusCode, map[int]string) {
 	err, idList := u.repo.FindFriendships(ctx, u.repo.Get_db(), id)
-	var res map[int]string
+	res := make(map[int]string)
 	if err != global.ResponseSuccess {
 		return err, nil
 	}
@@ -171,7 +170,7 @@ func (u *User_service_impl) AddFriendshipsRequest(ctx context.Context, userId in
 }
 func (u *User_service_impl) ChangeFriendshipsRequest(ctx context.Context, RequestId int, IsFriend bool, mailId int) global.ResponseStatusCode {
 	var SendId int
-	mailList, err := u.repo.FindMails(ctx, u.repo.Get_db(), mail.Filter{Id: fmt.Sprintf("%s", mailId)}, 1)
+	mailList, err := u.repo.FindMails(ctx, u.repo.Get_db(), mail.Filter{Id: fmt.Sprintf("%d", mailId)}, 1)
 	if err != global.ResponseSuccess {
 		return err
 	}
@@ -183,5 +182,10 @@ func (u *User_service_impl) ChangeFriendshipsRequest(ctx context.Context, Reques
 		return global.ResponseForbidden
 	}
 	SendId = m.SendId
-	return u.repo.ChangeFriendships(ctx, u.repo.Get_db(), RequestId, SendId, IsFriend)
+	if IsFriend {
+		return u.repo.ChangeFriendships(ctx, u.repo.Get_db(), RequestId, SendId, IsFriend)
+	} else {
+		return u.repo.DeleteFriendships(ctx, u.repo.Get_db(), RequestId, SendId)
+	}
+
 }

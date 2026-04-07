@@ -1,8 +1,12 @@
 package userhandler
 
-type PostFriendshipsQeq struct {
+type PostFriendshipsReq struct {
 	Id int `form:"id" json:"id"`
 }
-type DeleteFriendshipsQeq struct {
+type DeleteFriendshipsReq struct {
 	Id int `form:"id" json:"id"`
+}
+type GetFriendshipsRes struct {
+	Id   int    `json:"id"`
+	Name string `json:"name"`
 }
