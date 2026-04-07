@@ -48,17 +48,17 @@ func (u *BattleHandlerImpl) DebugBattleContainer() gin.HandlerFunc {
 }
 
 func (u *BattleHandlerImpl) AddMatch(c *gin.Context, conn *websocket.Conn, goctx context.Context, res chan battleservice.PlayerChannel) {
-    id := c.GetInt("id")
-    if !u.s.IsHasID(id) {
-       u.s.AddMatch(id)
+    Id := c.GetInt("Id")
+    if !u.s.IsHasID(Id) {
+       u.s.AddMatch(Id)
        matchSignals := u.s.GetMatchSignals()
        myChan := make(chan battleservice.MatchResult, 1)
-       matchSignals.Store(id, myChan)
-       defer battleservice.MatchSignals.Delete(id)
+       matchSignals.Store(Id, myChan)
+       defer battleservice.MatchSignals.Delete(Id)
        select {
        case result := <-myChan:
-          Bt := battleservice.BC.GetBattleByUserID(id)
-          playerChan := Bt.GetPlayerChanByUserID(id)
+          Bt := battleservice.BC.GetBattleByUserID(Id)
+          playerChan := Bt.GetPlayerChanByUserID(Id)
           res <- playerChan
           res <- playerChan //因为最初这里的子线程信息传递设计比较乱，造成了有极强的耦合。由于分发playerChan的管道，外面有两个接受者，所以
           //这里要塞入两份指针，一份给req，还有一份给response
@@ -66,7 +66,7 @@ func (u *BattleHandlerImpl) AddMatch(c *gin.Context, conn *websocket.Conn, goctx
           response.WsSuccess(conn, BattleDto.NewAction(BattleDto.StartBattle, result))
           return
        case <-goctx.Done():
-          battleservice.MatchPool.Delete(id)
+          battleservice.MatchPool.Delete(Id)
           return
        }
 
@@ -93,14 +93,14 @@ func (u *BattleHandlerImpl) BattleWs() gin.HandlerFunc {
        defer conn.Close()
        //升级逻辑完成
        response.WsSuccess(conn, "ws连接成功")
-       id := c.GetInt("id")
+       Id := c.GetInt("Id")
        transformAddMatchWithThis := make(chan battleservice.PlayerChannel, 2)
        go u.AddMatch(c, conn, goctx, transformAddMatchWithThis)
-       go u.ListenResquest(conn, id, goctx, transformAddMatchWithThis)
+       go u.ListenResquest(conn, Id, goctx, transformAddMatchWithThis)
 
        playerChan := <-transformAddMatchWithThis
        var OverGameChan chan bool
-       go u.ListenResponse(conn, id, playerChan.ResponseChan, goctx, OverGameChan)
+       go u.ListenResponse(conn, Id, playerChan.ResponseChan, goctx, OverGameChan)
        ret, _ := <-OverGameChan
        if ret {
           return
@@ -109,7 +109,7 @@ func (u *BattleHandlerImpl) BattleWs() gin.HandlerFunc {
 
 }
 
-func (u *BattleHandlerImpl) ListenResquest(conn *websocket.Conn, id int, goctx context.Context, trans chan battleservice.PlayerChannel) {
+func (u *BattleHandlerImpl) ListenResquest(conn *websocket.Conn, Id int, goctx context.Context, trans chan battleservice.PlayerChannel) {
     var playerC chan BattleDto.Action
     for {
        _, p, err := conn.ReadMessage()
@@ -137,8 +137,8 @@ func (u *BattleHandlerImpl) ListenResquest(conn *websocket.Conn, id int, goctx c
        }
        //action解析完成
        if action.ActionCode == BattleDto.CancelMatch {
-          battleservice.MatchSignals.Delete(id)
-          battleservice.MatchPool.Delete(id)
+          battleservice.MatchSignals.Delete(Id)
+          battleservice.MatchPool.Delete(Id)
           response.WsSuccess(conn, "取消成功")
           time.Sleep(time.Millisecond * 200)
           conn.Close()
@@ -156,7 +156,7 @@ func (u *BattleHandlerImpl) ListenResquest(conn *websocket.Conn, id int, goctx c
     }
 }
 
-func (u *BattleHandlerImpl) ListenResponse(conn *websocket.Conn, id int, playerC chan BattleDto.Action, goctx context.Context, OverGamechan chan bool) {
+func (u *BattleHandlerImpl) ListenResponse(conn *websocket.Conn, Id int, playerC chan BattleDto.Action, goctx context.Context, OverGamechan chan bool) {
     for {
        select {
        case Res, _ := <-playerC:

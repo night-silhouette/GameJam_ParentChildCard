@@ -59,6 +59,16 @@ func Resquest(url string, method string, payload []byte, result any) {
 
 }
 
+func v1_friendships_post(token string) {
+	res := NewResult("")
+	param := NewPayLoad(map[string]string{
+		"id": "14",
+	})
+	Resquest(fmt.Sprintf("v1/friendships/?token=%s", token), http.MethodPost, param, res)
+	
+	fmt.Println(res)
+}
+
 func Resgister(userID int, Res chan<- any) {
 	param := NewPayLoad(map[string]string{
 		"name":     fmt.Sprintf("go_tester_%d", userID),
@@ -138,11 +148,12 @@ func main() {
 	}()
 
 	var Wswg sync.WaitGroup
-	for v := range PlayerChan {
+	for t := range PlayerChan {
 		Wswg.Add(1)
 		go func() {
 			defer Wswg.Done()
-			connectWS(v.(string))
+			v1_friendships_post(t.(string))
+			//connectWS(t.(string))
 		}()
 
 	}

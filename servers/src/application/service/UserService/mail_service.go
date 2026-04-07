@@ -15,33 +15,42 @@ func (u *User_service_impl) GetAllOnePage(ctx context.Context, AcceptId int, pag
 }
 
 func (u *User_service_impl) GetMailStatus(ctx context.Context, id int) (int, global.ResponseStatusCode) {
-	// 传入 ctx 和 u.repo.Get_db()
 	res, err := u.repo.CheckMailUnReadNumByUserId(ctx, u.repo.Get_db(), id)
 	return res, err
 }
 
-func (u *User_service_impl) SendMail(ctx context.Context, SendId int, body string, AcceptId int) global.ResponseStatusCode {
-	m := mail.NewMail(AcceptId, SendId, body, "UserMail")
-	// 传入 ctx 和 u.repo.Get_db()
-	err := u.repo.SaveMail(ctx, u.repo.Get_db(), m)
-	return err
-}
-
-func (u *User_service_impl) ChangeMailStatus(ctx context.Context, AcceptId int, MailId int, status int) global.ResponseStatusCode {
-	// 传入 ctx 和 u.repo.Get_db()
-	err := u.repo.UpdateMail(ctx, u.repo.Get_db(), &mail.Filter{Id: fmt.Sprintf("%d", MailId), AcceptId: fmt.Sprintf("%d", AcceptId)}, &mail.Mail{Status: status})
+func (u *User_service_impl) SendMail(ctx context.Context, SendId int, body string, AcceptId int, Category string) global.ResponseStatusCode {
+	m, err := mail.NewMail(AcceptId, SendId, body, Category)
 	if err != global.ResponseSuccess {
 		return err
 	}
+	err = u.repo.SaveMail(ctx, u.repo.Get_db(), m)
+	return err
+}
+
+func (u *User_service_impl) ChangeMailStatus(ctx context.Context, AcceptId int, MailId []int, status int) global.ResponseStatusCode {
+	tx, errDb := u.repo.Get_db().BeginTx(ctx, nil)
+	if errDb != nil {
+		return global.ResponseInternalServersError
+	}
+	defer tx.Rollback()
+
+	for _, id := range MailId {
+		err := u.repo.UpdateMail(ctx, tx, &mail.Filter{Id: fmt.Sprintf("%d", id), AcceptId: fmt.Sprintf("%d", AcceptId)}, &mail.Mail{Status: status})
+		if err != global.ResponseSuccess {
+			return err
+		}
+	}
+	tx.Commit()
 	return global.ResponseSuccess
 }
 
 func (u *User_service_impl) DeleteMailByMailId(ctx context.Context, MailId []int, AcceptId int) global.ResponseStatusCode {
 	tx, err := u.repo.Get_db().BeginTx(ctx, nil)
-	defer tx.Rollback()
 	if err != nil {
 		return global.ResponseInternalServersError
 	}
+	defer tx.Rollback()
 	for _, id := range MailId {
 		f := &mail.Filter{Id: fmt.Sprintf("%d", id), AcceptId: fmt.Sprintf("%d", AcceptId)}
 		err2 := u.repo.DeleteMail(ctx, tx, f)

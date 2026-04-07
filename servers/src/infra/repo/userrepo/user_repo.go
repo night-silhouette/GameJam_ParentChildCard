@@ -34,6 +34,10 @@ type User_repo interface {
 	FindMails(ctx context.Context, db repo.SQLQueryer, f mail.Filter, page int) ([]*mail.Mail, global.ResponseStatusCode)
 	CheckMailUnReadNumByUserId(ctx context.Context, db repo.SQLQueryer, userId int) (int, global.ResponseStatusCode)
 	UserSearch(ctx context.Context, db repo.SQLQueryer, NameVague string) (global.ResponseStatusCode, []*User_entity.User)
+	SaveFriendships(ctx context.Context, db repo.SQLQueryer, id1 int, id2 int) global.ResponseStatusCode
+	FindFriendships(ctx context.Context, db repo.SQLQueryer, userId int) (global.ResponseStatusCode, []int)
+	DeleteFriendships(ctx context.Context, db repo.SQLQueryer, id1 int, id2 int) global.ResponseStatusCode
+	ChangeFriendships(ctx context.Context, db repo.SQLQueryer, id1 int, id2 int, request bool) global.ResponseStatusCode
 }
 
 type User_repo_impl struct {
@@ -86,6 +90,7 @@ func (r *User_repo_impl) Get_by_name(ctx context.Context, db repo.SQLQueryer, na
 }
 
 func (r *User_repo_impl) Get_by_id(ctx context.Context, db repo.SQLQueryer, id int) (*User_entity.User, global.ResponseStatusCode) {
+
 	query := "select id, user_name, hash_password, is_admin from users where id = $1"
 	row := db.QueryRowContext(ctx, query, id)
 	e := User_entity.User{}
@@ -197,6 +202,7 @@ func (r *User_repo_impl) CheckActiveInRedisByUserId(id int, ctx context.Context)
 
 func (r *User_repo_impl) SaveMail(ctx context.Context, db repo.SQLQueryer, m *mail.Mail) global.ResponseStatusCode {
 	if m.SendId == 0 || m.AcceptId == 0 || m.Category == "" {
+
 		return global.ResponseRequiredParamsMissing
 	}
 	query := "insert into mails (send_id, accept_id, body, category, status) values ($1, $2, $3, $4, $5)"
@@ -428,4 +434,66 @@ func (r *User_repo_impl) UserSearch(ctx context.Context, db repo.SQLQueryer, Nam
 		return global.ResponseDataNotFound, nil
 	}
 	return global.ResponseSuccess, uList
+}
+
+func (r *User_repo_impl) ChangeFriendships(ctx context.Context, db repo.SQLQueryer, id1 int, id2 int, request bool) global.ResponseStatusCode {
+	if id1 > id2 {
+		id1, id2 = id2, id1
+	}
+	query := "update friendships set request=$1 where user_id_1=$2 and user_id_2=$3"
+	_, err := db.ExecContext(ctx, query, request, id1, id2)
+	if err != nil {
+		return global.ResponseInternalServersError
+	}
+	return global.ResponseSuccess
+}
+
+func (r *User_repo_impl) SaveFriendships(ctx context.Context, db repo.SQLQueryer, id1 int, id2 int) global.ResponseStatusCode {
+	if id1 > id2 {
+		id1, id2 = id2, id1
+	}
+	query := "INSERT INTO friendships (user_id_1, user_id_2,request) VALUES ($1, $2,false)"
+	_, err := db.ExecContext(ctx, query, id1, id2)
+	if err != nil {
+		return global.ResponseInternalServersError
+	}
+	return global.ResponseSuccess
+}
+func (r *User_repo_impl) DeleteFriendships(ctx context.Context, db repo.SQLQueryer, id1 int, id2 int) global.ResponseStatusCode {
+	if id1 > id2 {
+		id1, id2 = id2, id1
+	}
+	query := "DELETE FROM friendships WHERE user_id_1 = $1 AND user_id_2 = $2"
+	_, err := db.ExecContext(ctx, query, id1, id2)
+	if err != nil {
+		return global.ResponseInternalServersError
+	}
+	return global.ResponseSuccess
+}
+
+func (r *User_repo_impl) FindFriendships(ctx context.Context, db repo.SQLQueryer, userId int) (global.ResponseStatusCode, []int) {
+	query := "select user_id_1, user_id_2 from friendships where $1 in (user_id_1, user_id_2) and request=true;"
+	rows, err := db.QueryContext(ctx, query, userId)
+	if err != nil {
+		return global.ResponseInternalServersError, nil
+	}
+	defer rows.Close()
+
+	var res []int
+	for rows.Next() {
+		var id1, id2 int
+		if err := rows.Scan(&id1, &id2); err != nil {
+			return global.ResponseInternalServersError, nil
+		}
+		if id1 == userId {
+			res = append(res, id2)
+		} else {
+			res = append(res, id1)
+		}
+	}
+	if err = rows.Err(); err != nil {
+		return global.ResponseInternalServersError, nil
+	}
+
+	return global.ResponseSuccess, res
 }

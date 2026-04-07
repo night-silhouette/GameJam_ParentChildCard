@@ -5,18 +5,23 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="760cea56-5efb-4b56-8acc-717cb714ebef" name="更改" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/626966bd-e130-4f5a-83d5-704f5f250146.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/626966bd-e130-4f5a-83d5-704f5f250146.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/626966bd-e130-4f5a-83d5-704f5f250146/storage_v2/_src_/database/pccard.g1fAxA/schema/public.abK9xQ.meta" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/626966bd-e130-4f5a-83d5-704f5f250146/storage_v2/_src_/database/pccard.g1fAxA/schema/public.abK9xQ.meta" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/entity/mail/mail.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/entity/mail/mail.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/application/service/UserService/mail_service.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/service/UserService/mail_service.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/application/service/UserService/token.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/service/UserService/token.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/application/service/UserService/user_service.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/service/UserService/user_service.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/application/service/battleservice/BattleService.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/service/battleservice/BattleService.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/application/service/battleservice/cardlist.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/service/battleservice/cardlist.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/infra/repo/battlerepo/BattleRepo.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/infra/repo/battlerepo/BattleRepo.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/infra/repo/repo.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/infra/repo/repo.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/cmd/main/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/cmd/main/main.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/infra/repo/userrepo/user_repo.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/infra/repo/userrepo/user_repo.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/presentation/handler/tokenhandler/tokenhandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/presentation/handler/tokenhandler/tokenhandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/presentation/handler/userhandler/dto.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/presentation/handler/userhandler/dto.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/presentation/handler/userhandler/mailDto.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/presentation/handler/userhandler/mailDto.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/presentation/handler/userhandler/mailHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/presentation/handler/userhandler/mailHandler.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/presentation/handler/userhandler/userhandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/presentation/handler/userhandler/userhandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/presentation/route/route.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/presentation/route/route.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/GoTest/main/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/test/GoTest/main/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/开发文档/开发日志/未解之谜.txt" beforeDir="false" afterPath="$PROJECT_DIR$/开发文档/开发日志/未解之谜.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/开发文档/接口文档/ws战斗内的接口参数.txt" beforeDir="false" afterPath="$PROJECT_DIR$/开发文档/接口文档/ws战斗内的接口参数.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/开发文档/接口文档/接口参数(总合，都在这了).txt" beforeDir="false" afterPath="$PROJECT_DIR$/开发文档/接口文档/接口参数(总合，都在这了).txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -52,42 +57,43 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;DefaultGoTemplateProperty&quot;: &quot;Go File&quot;,
-    &quot;Go 构建.go build main.go.executor&quot;: &quot;Run&quot;,
-    &quot;Go 构建.go build pcc_card/cmd/main.executor&quot;: &quot;Run&quot;,
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.GoLinterPluginOnboardingV2&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.GoLinterPluginStorageMigration&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.go.analysis.ui.options.defaults&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.go.formatter.settings.were.checked&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.go.modules.go.list.on.any.changes.was.set&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
-    &quot;SHELLCHECK.PATH&quot;: &quot;/Users/night/Library/Application Support/JetBrains/GoLand2025.3/plugins/Shell Script/shellcheck&quot;,
-    &quot;Shell Script.deploy.sh.executor&quot;: &quot;Run&quot;,
-    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;feat/backend/3__15&quot;,
-    &quot;go.sdk.automatically.set&quot;: &quot;true&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/night/Desktop/GameJam_ParentChildCard/servers&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;run.configurations.included.in.services&quot;: &quot;true&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;go&quot;,
-    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "DefaultGoTemplateProperty": "Go File",
+    "Go 构建.go build GoTest/main.executor": "Run",
+    "Go 构建.go build main.go.executor": "Run",
+    "Go 构建.go build pcc_card/cmd/main.executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.GoLinterPluginOnboardingV2": "true",
+    "RunOnceActivity.GoLinterPluginStorageMigration": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.go.analysis.ui.options.defaults": "true",
+    "RunOnceActivity.go.formatter.settings.were.checked": "true",
+    "RunOnceActivity.go.modules.go.list.on.any.changes.was.set": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "SHELLCHECK.PATH": "/Users/night/Library/Application Support/JetBrains/GoLand2025.3/plugins/Shell Script/shellcheck",
+    "Shell Script.deploy.sh.executor": "Run",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
+    "git-widget-placeholder": "feat/backend/3__15",
+    "go.sdk.automatically.set": "true",
+    "ignore.virus.scanning.warn.message": "true",
+    "junie.onboarding.icon.badge.shown": "true",
+    "last_opened_file_path": "/Users/night/Desktop/GameJam_ParentChildCard/servers",
+    "node.js.detected.package.eslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "run.configurations.included.in.services": "true",
+    "settings.editor.selected.configurable": "go",
+    "to.speed.mode.migration.done": "true"
   },
-  &quot;keyToStringList&quot;: {
-    &quot;DatabaseDriversLRU&quot;: [
-      &quot;postgresql&quot;
+  "keyToStringList": {
+    "DatabaseDriversLRU": [
+      "postgresql"
     ]
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/src/application/entity/Card/skill_card" />
@@ -112,6 +118,7 @@
         <entry key="GoApplicationRunConfiguration">
           <value>
             <map>
+              <entry key="go build GoTest/main" value="FAILED" />
               <entry key="go build pcc_card/cmd/main" value="STOPPED" />
             </map>
           </value>
@@ -135,6 +142,15 @@
       <package value="pcc_card" />
       <directory value="$PROJECT_DIR$" />
       <filePath value="$PROJECT_DIR$/src/application/entity/Card/character_card/CharacterCardTemplate.go" />
+      <method v="2" />
+    </configuration>
+    <configuration name="go build GoTest/main" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+      <module name="servers" />
+      <working_directory value="$PROJECT_DIR$/test/GoTest" />
+      <kind value="PACKAGE" />
+      <package value="GoTest/main" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$/test/GoTest/main/main.go" />
       <method v="2" />
     </configuration>
     <configuration name="go build main.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
@@ -181,6 +197,7 @@
     <recent_temporary>
       <list>
         <item itemvalue="Go 构建.go build pcc_card/cmd/main" />
+        <item itemvalue="Go 构建.go build GoTest/main" />
         <item itemvalue="Go 构建.go build CharacterCardTemplate.go" />
         <item itemvalue="Go 构建.go build main.go" />
         <item itemvalue="Shell Script.deploy.sh" />

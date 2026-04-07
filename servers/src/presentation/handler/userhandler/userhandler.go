@@ -27,6 +27,10 @@ type User_handler interface {
 	DeleteMailByMailId() gin.HandlerFunc
 	DeleteMailAll() gin.HandlerFunc
 	UserVagueSearch() gin.HandlerFunc
+	CreateFriendship() gin.HandlerFunc
+	GetFriendships() gin.HandlerFunc
+	DeleteFriendships() gin.HandlerFunc
+	ChangeFriendshipsRequest() gin.HandlerFunc
 }
 
 type User_handler_impl struct {

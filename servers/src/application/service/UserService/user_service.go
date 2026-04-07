@@ -22,15 +22,20 @@ type User_service interface {
 	Release_token(userID int, ctx context.Context) (string, global.ResponseStatusCode)
 	Is_valid_token(tokenString string, ctx context.Context) (int, bool, global.ResponseStatusCode)
 	Create_user(ctx context.Context, user *User_entity.User) global.ResponseStatusCode
-	ChangeMailStatus(ctx context.Context, AcceptId int, MailId int, status int) global.ResponseStatusCode
+	ChangeMailStatus(ctx context.Context, AcceptId int, MailId []int, status int) global.ResponseStatusCode
 	Update_user(ctx context.Context, e *User_entity.User) global.ResponseStatusCode
 	Delete_user(ctx context.Context, id int) global.ResponseStatusCode
 	GetAllOnePage(ctx context.Context, AcceptId int, page int) ([]*mail.Mail, global.ResponseStatusCode)
 	GetMailStatus(ctx context.Context, id int) (int, global.ResponseStatusCode)
-	SendMail(ctx context.Context, SendId int, body string, AcceptId int) global.ResponseStatusCode
+	SendMail(ctx context.Context, SendId int, body string, AcceptId int, Category string) global.ResponseStatusCode
 	DeleteMailByMailId(ctx context.Context, MailId []int, AcceptId int) global.ResponseStatusCode
 	DeleteMailAll(ctx context.Context, AcceptId int) global.ResponseStatusCode
 	UserSearch(ctx context.Context, NameVague string) (global.ResponseStatusCode, []*User_entity.User)
+	CreateFriendships(ctx context.Context, id1 int, id2 int) global.ResponseStatusCode
+	DeleteFriendships(ctx context.Context, id1 int, id2 int) global.ResponseStatusCode
+	FindFriendships(ctx context.Context, id int) (global.ResponseStatusCode, map[int]string)
+	AddFriendshipsRequest(ctx context.Context, userId int, requestId int) global.ResponseStatusCode
+	ChangeFriendshipsRequest(ctx context.Context, RequestId int, IsFriend bool, mailId int) global.ResponseStatusCode
 }
 
 type User_service_impl struct {
@@ -113,4 +118,70 @@ func (u *User_service_impl) Update_user(ctx context.Context, e *User_entity.User
 	// 传入 ctx 和 u.repo.Get_db()
 	err := u.repo.Update(ctx, u.repo.Get_db(), e)
 	return err
+}
+
+func (u *User_service_impl) CreateFriendships(ctx context.Context, id1 int, id2 int) global.ResponseStatusCode {
+	return u.repo.SaveFriendships(ctx, u.repo.Get_db(), id1, id2)
+}
+func (u *User_service_impl) DeleteFriendships(ctx context.Context, id1 int, id2 int) global.ResponseStatusCode {
+	return u.repo.DeleteFriendships(ctx, u.repo.Get_db(), id1, id2)
+}
+func (u *User_service_impl) FindFriendships(ctx context.Context, id int) (global.ResponseStatusCode, map[int]string) {
+	err, idList := u.repo.FindFriendships(ctx, u.repo.Get_db(), id)
+	var res map[int]string
+	if err != global.ResponseSuccess {
+		return err, nil
+	}
+	for _, id := range idList {
+		e, err := u.repo.Get_by_id(ctx, u.repo.Get_db(), id)
+		if err != global.ResponseSuccess {
+			return err, nil
+		}
+		res[id] = e.Name
+	}
+	return global.ResponseSuccess, res
+}
+func (u *User_service_impl) AddFriendshipsRequest(ctx context.Context, userId int, requestId int) global.ResponseStatusCode {
+	tx, errDb := u.repo.Get_db().BeginTx(ctx, nil)
+	if errDb != nil {
+		return global.ResponseInternalServersError
+
+	}
+	defer tx.Rollback()
+
+	e, err := u.repo.Get_by_id(ctx, u.repo.Get_db(), userId)
+	if err != global.ResponseSuccess {
+		return err
+	}
+	UserName := e.Name
+	m, err := mail.NewMail(requestId, userId, fmt.Sprintf("%s向你发起好友请求", UserName), "FriendshipsRequest")
+	if err != global.ResponseSuccess {
+		return err
+	}
+	err = u.repo.SaveMail(ctx, tx, m)
+	if err != global.ResponseSuccess {
+		return err
+	}
+	err = u.repo.SaveFriendships(ctx, u.repo.Get_db(), userId, requestId)
+	if err != global.ResponseSuccess {
+		return err
+	}
+	tx.Commit()
+	return global.ResponseSuccess
+}
+func (u *User_service_impl) ChangeFriendshipsRequest(ctx context.Context, RequestId int, IsFriend bool, mailId int) global.ResponseStatusCode {
+	var SendId int
+	mailList, err := u.repo.FindMails(ctx, u.repo.Get_db(), mail.Filter{Id: fmt.Sprintf("%s", mailId)}, 1)
+	if err != global.ResponseSuccess {
+		return err
+	}
+	m := mailList[0]
+	if m.Category != "FriendshipsRequest" {
+		return global.ResponseInvalidReqParams
+	}
+	if m.AcceptId != RequestId {
+		return global.ResponseForbidden
+	}
+	SendId = m.SendId
+	return u.repo.ChangeFriendships(ctx, u.repo.Get_db(), RequestId, SendId, IsFriend)
 }
