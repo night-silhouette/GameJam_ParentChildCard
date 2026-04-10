@@ -4,19 +4,28 @@ func _ready():
 	SignalBus.raw_ws_responded.connect(_handle_ws_data)
 
 func _handle_ws_data(code: int, data: Variant, msg: String):
-	
-	if code != 0 :
-		print("code = ",code,NetError.get_message(code));
+	if code != 0:
+		print("错误码: ", code, NetError.get_message(code))
 		return
 	
 	if data == null:
+		return
+
+	# 👇 核心修复逻辑：如果是字符串，就再解析一次
+	if data is String:
+		data = JSON.parse_string(data)
+		
+	print("Data 的原始类型是: ", type_string(typeof(data)))	
+	
+	# 确保现在 data 是字典，避免再次崩溃
+	if typeof(data) != TYPE_DICTIONARY:
+		print("[错误] Data 格式非法，无法读取 action_code")
 		return
 	
 	var action_code = int(data["action_code"])
 	var action_data = data["action_data"]
 	
 	_dispatch(action_code, action_data)
-
 
 func _dispatch(action_code: int, action_data):
 	# 1. 检查是否存在该协议

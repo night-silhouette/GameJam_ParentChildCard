@@ -2,8 +2,10 @@ extends Node
 
 var token: String = ""
 
-const SAVE_PATH = "user://token.save"
+# 调试开关（true=正常存储，false=只用内存）
+var enable_save := true
 
+const SAVE_PATH = "user://token.save"
 
 
 # =========================
@@ -11,12 +13,16 @@ const SAVE_PATH = "user://token.save"
 # =========================
 func save_token(new_token: String):
 	token = new_token
+
+	if not enable_save:
+		print("调试模式：Token 仅存内存")
+		return
+
 	var data = {
 		"token": new_token
 	}
 
 	var file = FileAccess.open(SAVE_PATH, FileAccess.WRITE)
-	var text = file.get_as_text()
 	file.store_string(JSON.stringify(data))
 	file.close()
 
@@ -26,8 +32,11 @@ func save_token(new_token: String):
 # =========================
 # 读取 Token
 # =========================
-
 func load_token():
+	if not enable_save:
+		print("调试模式：不从本地读取 Token")
+		return
+
 	if not FileAccess.file_exists(SAVE_PATH):
 		print("错误：本地根本没有这个文件")
 		return
@@ -54,6 +63,7 @@ func load_token():
 		token = data.get("token", "")
 		print("成功加载 Token")
 
+
 # =========================
 # 获取 Token
 # =========================
@@ -66,6 +76,10 @@ func get_token() -> String:
 # =========================
 func clear_token():
 	token = ""
+
+	if not enable_save:
+		print("调试模式：只清除内存 Token")
+		return
 
 	if FileAccess.file_exists(SAVE_PATH):
 		DirAccess.remove_absolute(SAVE_PATH)

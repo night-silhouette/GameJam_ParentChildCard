@@ -4,7 +4,7 @@ var myid;
 func _ready():
 	print("=== FULL API TEST START ===")
 
-
+	test_login();
 	test_request_delete_mail();
 	
 	
@@ -98,7 +98,7 @@ func test_get_mail():
 	
 func test_request_delete_mail():
 	print("emit 前")
-	var data: Array[int] = [47, 46];
+	var data: Array[int] = [42,43,44];
 	SignalBus.request_delete_mail.emit(data)
 	print("emit 后")
 # =========================
