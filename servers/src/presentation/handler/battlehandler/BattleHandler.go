@@ -63,7 +63,7 @@ func (u *BattleHandlerImpl) AddMatch(c *gin.Context, conn *websocket.Conn, goctx
 			res <- playerChan //因为最初这里的子线程信息传递设计比较乱，造成了有极强的耦合。由于分发playerChan的管道，外面有两个接受者，所以
 			//这里要塞入两份指针，一份给req，还有一份给response
 
-			response.WsSuccess(conn, BattleDto.NewAction(BattleDto.StartBattle, result))
+			response.WsSuccess(conn, BattleDto.NewAction(BattleDto.StartBattle, BattleDto.Notify, result))
 			return
 		case <-goctx.Done():
 			battleservice.MatchPool.Delete(id)
@@ -96,7 +96,7 @@ func (u *BattleHandlerImpl) BattleWs() gin.HandlerFunc {
 		id := c.GetInt("id")
 		transformAddMatchWithThis := make(chan battleservice.PlayerChannel, 2)
 		go u.AddMatch(c, conn, goctx, transformAddMatchWithThis)
-		go u.ListenResquest(conn, id, goctx, transformAddMatchWithThis)
+		go u.ListenResquest(conn, id, goctx, transformAddMatchWithThis, cancel)
 
 		playerChan := <-transformAddMatchWithThis
 		var OverGameChan chan bool = make(chan bool, 1)
@@ -109,7 +109,7 @@ func (u *BattleHandlerImpl) BattleWs() gin.HandlerFunc {
 
 }
 
-func (u *BattleHandlerImpl) ListenResquest(conn *websocket.Conn, id int, goctx context.Context, trans chan battleservice.PlayerChannel) {
+func (u *BattleHandlerImpl) ListenResquest(conn *websocket.Conn, id int, goctx context.Context, trans chan battleservice.PlayerChannel, cancelFunc context.CancelFunc) {
 	var playerC chan BattleDto.Action
 	go func() {
 		select {
@@ -122,6 +122,7 @@ func (u *BattleHandlerImpl) ListenResquest(conn *websocket.Conn, id int, goctx c
 	for {
 		_, p, err := conn.ReadMessage()
 		if err != nil {
+			cancelFunc()
 			return
 		}
 
@@ -150,7 +151,7 @@ func (u *BattleHandlerImpl) ListenResquest(conn *websocket.Conn, id int, goctx c
 			return
 		default:
 			if playerC == nil {
-				response.WsFailWithMsg(conn, global.ResponseInvalidReqParams, "正在匹配中")
+				response.WsFailWithMsg(conn, global.BattleInvalidTiming, "正在匹配中")
 			}
 		}
 
@@ -161,7 +162,7 @@ func (u *BattleHandlerImpl) ListenResponse(conn *websocket.Conn, id int, playerC
 	for {
 		select {
 		case Res, _ := <-playerC:
-			fmt.Println("ListenResponse res:", Res)
+
 			if Res.ActionCode == BattleDto.OverBattle {
 				OverGamechan <- true
 			}

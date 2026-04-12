@@ -5,8 +5,49 @@ import (
 	"pcc_card/application/entity/Card/CardAbstract"
 )
 
+// MetaCardChange 用于在CtxStateNotify传输状态的元数据
+type MetaCardChange struct {
+	Old *CardAbstract.Card
+	New *CardAbstract.Card
+}
+
+// CtxStateNotify 内嵌到ctx里面，监听数据变化
+type CtxStateNotify struct {
+	ParentCardChange  chan MetaCardChange
+	ChildCardBTChange chan MetaCardChange
+	SkillCardBTChange chan MetaCardChange
+}
+
+func NewCtxStateNotify() *CtxStateNotify {
+	N := &CtxStateNotify{}
+	N.ParentCardChange = make(chan MetaCardChange)
+
+	return N
+
+}
+
 type Ctx struct {
-	PlayerDataMap map[int]*PlayerData
+	PlayerDataMap  map[int]*PlayerData
+	CtxStateNotify *CtxStateNotify
+}
+
+func (c *Ctx) SetParentCardBT(id int, new *CardAbstract.Card) {
+	pData := c.PlayerDataMap[id]
+	old := pData.ParentCardBT
+	pData.ParentCardBT = new
+	c.CtxStateNotify.ParentCardChange <- MetaCardChange{old, new}
+}
+func (c *Ctx) SetChildCardBT(id int, new *CardAbstract.Card) {
+	pData := c.PlayerDataMap[id]
+	old := pData.ChildCardBT
+	pData.ChildCardBT = new
+	c.CtxStateNotify.ParentCardChange <- MetaCardChange{old, new}
+}
+func (c *Ctx) SetSkillCardBT(id int, new *CardAbstract.Card) {
+	pData := c.PlayerDataMap[id]
+	old := pData.SkillCardBT
+	pData.SkillCardBT = new
+	c.CtxStateNotify.ParentCardChange <- MetaCardChange{old, new}
 }
 
 type PlayerData struct {
@@ -14,6 +55,7 @@ type PlayerData struct {
 	CardInHand   *[]CardAbstract.Card
 	ParentCardBT *CardAbstract.Card
 	ChildCardBT  *CardAbstract.Card
+	SkillCardBT  *CardAbstract.Card
 }
 
 func NewPlayerData(ID int) *PlayerData {
@@ -28,6 +70,7 @@ func NewCtx(idA int, idB int) *Ctx {
 	c.PlayerDataMap = make(map[int]*PlayerData, 2)
 	c.PlayerDataMap[idA] = NewPlayerData(idA)
 	c.PlayerDataMap[idB] = NewPlayerData(idB)
+	c.CtxStateNotify = NewCtxStateNotify()
 	return c
 }
 

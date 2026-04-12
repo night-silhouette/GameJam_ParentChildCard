@@ -29,17 +29,18 @@ type StateMachine struct {
 func (s *StateMachine) process(GoCtx context.Context) {
 
 	handleAction := func(id int, action BattleDto.Action, AcceptChan <-chan BattleDto.Action, ResponseChan chan<- BattleDto.Action) {
-		if action.ActionCode == BattleDto.GetSelfCardInHard {
+		if action.ActionCode == BattleDto.GetSelfCardInHard && action.Predicates == BattleDto.Query { //获取自己手牌
 			res := s.c.GetCardInHard(id)
-			ResponseChan <- BattleDto.NewAction(BattleDto.GetSelfCardInHard, res.Self)
+			ResponseChan <- BattleDto.NewAction(BattleDto.GetSelfCardInHard, BattleDto.Result, res.Self)
 		}
-		if action.ActionCode == BattleDto.GetOpponentCardInHard {
+		if action.ActionCode == BattleDto.GetOpponentCardInHard && action.Predicates == BattleDto.Query { //获取对方手牌
 			res := s.c.GetCardInHard(id)
-			ResponseChan <- BattleDto.NewAction(BattleDto.GetOpponentCardInHard, res.Opponent)
+			ResponseChan <- BattleDto.NewAction(BattleDto.GetOpponentCardInHard, BattleDto.Result, res.Opponent)
 		}
-		if action.ActionCode == BattleDto.OverBattle {
-			ResponseChan <- BattleDto.NewAction(BattleDto.OverBattle, "ok")
+		if action.ActionCode == BattleDto.OverBattle && action.Predicates == BattleDto.Notify { //结束战斗
+			ResponseChan <- BattleDto.NewAction(BattleDto.OverBattle, BattleDto.Notify, "ok")
 		}
+
 	}
 
 	for {
@@ -85,7 +86,7 @@ func NewStateMachine(c *Ctx, id1 int, id2 int, Nt *NotifyManager) (*StateMachine
 	for _, element := range StateMachineImpl.StateList {
 		element.Init(id1, id2, c, Nt, StateMachineImpl)
 	}
-	StateMachineImpl.finish("shuffleDeal")
+	StateMachineImpl.finish("shuffleDeal") //这个状态的enter结束之后，才会开启state machine的process
 	GoCtx, cancelFunc := context.WithCancel(context.Background())
 	go StateMachineImpl.process(GoCtx)
 	return StateMachineImpl, cancelFunc
@@ -93,7 +94,12 @@ func NewStateMachine(c *Ctx, id1 int, id2 int, Nt *NotifyManager) (*StateMachine
 
 func (s *StateMachine) RegisterState() {
 	s.StateList = map[string]State{
-		"shuffleDeal": &ShuffleDeal{},
+		"shuffleDeal":         &ShuffleDeal{},
+		"SelectCharacterCard": &SelectCharacterCard{},
+		"SelectSkillCard":     &SelectSkillCard{},
+		"Judge":               &Judge{},
+		"Combat":              &Combat{},
+		"SkillCardCalc":       &SkillCardCalc{},
 	}
 }
 
@@ -115,7 +121,7 @@ func (s *StateTemplate) Init(id1 int, id2 int, c *Ctx, Nt *NotifyManager, SM *St
 	s.SM = SM
 }
 
-// ----------------------------------------------------------------------------------------------------------------------------
+// -------------------------------------ShuffleDeal---------------------------------------------------------------------------------------
 
 type ShuffleDeal struct {
 	StateTemplate
@@ -182,4 +188,57 @@ func (s *ShuffleDeal) RandomCard() bool {
 
 func (s *ShuffleDeal) exit() {}
 
-//----------------------------------------------------------------------------------------------------------------------
+//---------------------------------------SelectCharacterCard-------------------------------------------------------------------------------
+
+type SelectCharacterCard struct {
+	StateTemplate
+}
+
+func (i *SelectCharacterCard) enter() {
+}
+
+func (i *SelectCharacterCard) exit() {
+}
+
+func (i *SelectCharacterCard) process(GoCtx context.Context) {
+}
+
+//---------------------------------------SelectSkillCard-------------------------------------------------------------------------------
+
+type SelectSkillCard struct {
+	StateTemplate
+}
+
+func (s *SelectSkillCard) enter()                        {}
+func (s *SelectSkillCard) exit()                         {}
+func (s *SelectSkillCard) process(GoCtx context.Context) {}
+
+//---------------------------------------Judge-------------------------------------------------------------------------------
+
+type Judge struct {
+	StateTemplate
+}
+
+func (J *Judge) enter()                        {}
+func (J *Judge) exit()                         {}
+func (J *Judge) process(GoCtx context.Context) {}
+
+//---------------------------------------Combat-------------------------------------------------------------------------------
+
+type Combat struct {
+	StateTemplate
+}
+
+func (c *Combat) enter()                        {}
+func (c *Combat) exit()                         {}
+func (c *Combat) process(GoCtx context.Context) {}
+
+//---------------------------------------SkillCardCalc-------------------------------------------------------------------------------
+
+type SkillCardCalc struct {
+	StateTemplate
+}
+
+func (s *SkillCardCalc) enter()                        {}
+func (s *SkillCardCalc) exit()                         {}
+func (s *SkillCardCalc) process(GoCtx context.Context) {}

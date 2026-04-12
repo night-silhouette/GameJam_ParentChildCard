@@ -4,6 +4,7 @@ type Action struct {
 	ActionCode ActionCode `json:"action_code"`
 	ActionName string     `json:"action_name"`
 	ActionData any        `json:"action_data"`
+	Predicates Predicates `json:"predicates"`
 }
 
 type ActionCode int
@@ -24,10 +25,21 @@ var ActionName = map[ActionCode]string{
 	StartBattle:           "开始战斗",
 }
 
-func NewAction(actionCode ActionCode, ActionData any) Action {
+type Predicates int
+
+const (
+	Empty Predicates = iota
+	Notify
+	Query
+	Result
+	finish
+)
+
+func NewAction(actionCode ActionCode, Predicates Predicates, ActionData any) Action {
 	res := Action{}
 	res.ActionCode = actionCode
 	res.ActionName = ActionName[actionCode]
 	res.ActionData = ActionData
+	res.Predicates = Predicates
 	return res
 }

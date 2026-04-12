@@ -103,6 +103,15 @@ func (u *Token_handler_impl) Middleware_token_check() gin.HandlerFunc {
 			return
 		}
 
+		if path == "/v1/time/" && method == http.MethodGet {
+			c.Next()
+			return
+		}
+		if path == "/v1/debug/time/" && method == http.MethodGet {
+			c.Next()
+			return
+		}
+
 		token := c.GetHeader("Authorization")
 		if token == "" {
 			token = c.Query("token")

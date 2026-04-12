@@ -31,6 +31,8 @@ type User_handler interface {
 	GetFriendships() gin.HandlerFunc
 	DeleteFriendships() gin.HandlerFunc
 	ChangeFriendshipsRequest() gin.HandlerFunc
+	TimeSync() gin.HandlerFunc
+	TimeDebug() gin.HandlerFunc
 }
 
 type User_handler_impl struct {

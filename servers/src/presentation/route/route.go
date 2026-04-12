@@ -57,6 +57,9 @@ func Register_user_routes(h userhandler.User_handler) {
 	v1_user.DELETE("/", h.Delete())
 	v1_user.PUT("/", h.Put())
 	v1_user.GET("/vague/", h.UserVagueSearch())
+
+	R.GET("/v1/time/", h.TimeSync())
+	R.GET("/v1/debug/time/", h.TimeDebug())
 }
 
 func Register_token_routes(h tokenhandler.Token_handler) {
