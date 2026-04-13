@@ -78,5 +78,6 @@ func (c *CardList) init(s BattleService) {
 	for _, e := range c.data {
 		info := s.GetCardInfoByID(context.Background(), e.GetID())
 		e.SetInfo(info)
+		e.SetStateCodeChan(make(chan CardAbstract.StateCode))
 	}
 }

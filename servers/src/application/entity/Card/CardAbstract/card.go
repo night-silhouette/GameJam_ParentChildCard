@@ -7,6 +7,8 @@ type Card interface {
 	SetInfo(info map[string]any)
 	GetInfo() map[string]any
 	Clone() Card
+	GetStateCodeChan() chan StateCode
+	SetStateCodeChan(chan StateCode)
 }
 
 func GetCardDto(c Card) BattleData.CardDto {
@@ -23,3 +25,9 @@ func GetCardDto(c Card) BattleData.CardDto {
 	}
 	return res
 }
+
+type StateCode int
+
+const (
+	Died StateCode = iota
+)

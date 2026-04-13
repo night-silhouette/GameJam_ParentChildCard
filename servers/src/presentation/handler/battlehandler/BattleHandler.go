@@ -42,7 +42,6 @@ func (u *BattleHandlerImpl) DebugGetMachData() gin.HandlerFunc {
 func (u *BattleHandlerImpl) DebugBattleContainer() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		res := battleservice.BC.GetBattleData()
-		fmt.Println(res)
 		response.Success(c, res)
 	}
 }
@@ -92,7 +91,7 @@ func (u *BattleHandlerImpl) BattleWs() gin.HandlerFunc {
 		defer cancel()
 		defer conn.Close()
 		//升级逻辑完成
-		response.WsSuccess(conn, "ws连接成功")
+
 		id := c.GetInt("id")
 		transformAddMatchWithThis := make(chan battleservice.PlayerChannel, 2)
 		go u.AddMatch(c, conn, goctx, transformAddMatchWithThis)
