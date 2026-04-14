@@ -22,7 +22,9 @@ func _ready():
 	
 	SignalBus.request_delete_mail.connect(_request_delete_mail);
 	
-	
+	SignalBus.request_get_time.connect(_request_get_time)
+	SignalBus.request_debug_time.connect(_request_debug_time);
+	SignalBus.request_debug_matchpool.connect(_request_debug_matchpool)
 # =========================
 # Token
 # =========================
@@ -66,7 +68,6 @@ func _on_register_user(name: String, password: String):
 		"name": name,
 		"password": password
 	}
-	print("zhuc")
 	NetworkClient.call_api("/v1/user/", HTTPClient.METHOD_POST, body, false)
 
 
@@ -97,10 +98,12 @@ func _on_delete_user_by_id(id: int):
 
 	
 func _request_send_mail(id:int,txt:String):
+	
 	var url ="/v1/mail/";
 	var body = {
 		"accept_id" :id,
-		"body" : txt
+		"body" : txt,
+		"category": "UserMail"
 	}
 	NetworkClient.call_api(url,HTTPClient.METHOD_POST,body);
 	
@@ -114,13 +117,25 @@ func _request_get_mail(page : int):
 	var body ={
 		"page" : page
 	}
-	print(body)
 	NetworkClient.call_api(url,HTTPClient.METHOD_GET,body);
 	
 func _request_delete_mail(id:Array[int]):
-	print("xin");
 	var url = "/v1/mail/";
 	var body ={
 		"mail_id" : id
 	}
 	NetworkClient.call_api(url,HTTPClient.METHOD_DELETE,body);
+func _request_get_time(T1 :int):
+	var url = "/v1/time/"
+	var body ={
+		"t1" : T1
+	}
+	NetworkClient.call_api(url,HTTPClient.METHOD_GET,body)
+	
+func _request_debug_time():
+	var url = "/v1/debug/time/";
+	NetworkClient.call_api(url,HTTPClient.METHOD_GET)
+	
+func _request_debug_matchpool():
+	var url="/v1/debug/match_pool/";
+	NetworkClient.call_api(url,HTTPClient.METHOD_GET);

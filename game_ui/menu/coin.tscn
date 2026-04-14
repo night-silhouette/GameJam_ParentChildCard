@@ -1,14 +1,6 @@
-[gd_scene load_steps=21 format=3 uid="uid://cfsmqjjmevec7"]
+[gd_scene load_steps=19 format=3 uid="uid://cfsmqjjmevec7"]
 
 [ext_resource type="Texture2D" uid="uid://beyfmncxthool" path="res://素材/使用素材/战斗外/游戏模式选择与匹配/硬币/硬币.png" id="1_sv2rj"]
-
-[sub_resource type="Animation" id="Animation_6qpsl"]
-resource_name = "硬币旋转"
-
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_d5gmh"]
-_data = {
-&"硬币旋转": SubResource("Animation_6qpsl")
-}
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_3xxct"]
 atlas = ExtResource("1_sv2rj")
@@ -74,7 +66,7 @@ region = Rect2(1644, 266, 274, 266)
 atlas = ExtResource("1_sv2rj")
 region = Rect2(1918, 266, 274, 266)
 
-[sub_resource type="SpriteFrames" id="SpriteFrames_6qpsl"]
+[sub_resource type="SpriteFrames" id="SpriteFrames_sv2rj"]
 animations = [{
 "frames": [{
 "duration": 1.0,
@@ -130,13 +122,6 @@ animations = [{
 "speed": 10.0
 }]
 
-[node name="coin" type="Node2D"]
-
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-libraries = {
-&"": SubResource("AnimationLibrary_d5gmh")
-}
-
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-sprite_frames = SubResource("SpriteFrames_6qpsl")
+[node name="coin" type="AnimatedSprite2D"]
+sprite_frames = SubResource("SpriteFrames_sv2rj")
 animation = &"硬币旋转"

@@ -3,7 +3,6 @@ extends Node
 var token: String = ""
 
 # 调试开关（true=正常存储，false=只用内存）
-var enable_save := true
 
 const SAVE_PATH = "user://token.save"
 
@@ -14,7 +13,7 @@ const SAVE_PATH = "user://token.save"
 func save_token(new_token: String):
 	token = new_token
 
-	if not enable_save:
+	if not Global.token_save:
 		print("调试模式：Token 仅存内存")
 		return
 
@@ -26,14 +25,14 @@ func save_token(new_token: String):
 	file.store_string(JSON.stringify(data))
 	file.close()
 
-	print("Token saved")
+	#print("Token saved")
 
 
 # =========================
 # 读取 Token
 # =========================
 func load_token():
-	if not enable_save:
+	if not Global.token_save:
 		print("调试模式：不从本地读取 Token")
 		return
 
@@ -61,7 +60,7 @@ func load_token():
 		print("错误：解析成功但不是字典，实际类型是：", typeof(data))
 	else:
 		token = data.get("token", "")
-		print("成功加载 Token")
+		#print("成功加载 Token")
 
 
 # =========================
@@ -77,7 +76,7 @@ func get_token() -> String:
 func clear_token():
 	token = ""
 
-	if not enable_save:
+	if not Global.token_save:
 		print("调试模式：只清除内存 Token")
 		return
 

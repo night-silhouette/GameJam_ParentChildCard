@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://cxdry4r5td2d1"]
+
+[ext_resource type="Texture2D" uid="uid://bjdo8j6bxw5wk" path="res://素材/使用素材/战斗内/桌面/卡牌库/卡库按钮/分离/大/1.png" id="1_6kaig"]
+[ext_resource type="Texture2D" uid="uid://15ejqdp52ire" path="res://素材/使用素材/战斗内/桌面/卡牌库/卡库按钮/分离/大/2.png" id="2_nte8p"]
+
+[node name="牌库_母牌" type="TextureButton"]
+offset_right = 40.0
+offset_bottom = 40.0
+toggle_mode = true
+texture_normal = ExtResource("1_6kaig")
+texture_pressed = ExtResource("2_nte8p")

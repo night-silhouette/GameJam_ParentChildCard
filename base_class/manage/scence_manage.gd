@@ -23,6 +23,9 @@ func fchange_scence(state):
 			
 		"tomenu":
 			next_path = "res://game_scene/menu/menu_backgrounf.tscn"
+			
+		"tobattle":
+			next_path = "res://game_scene/battle/battle_scence.tscn"
 
 	await goto_scene(next_path)
 

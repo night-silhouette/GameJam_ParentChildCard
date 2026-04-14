@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://h80nmsn1fyoy"]
+
+[ext_resource type="Script" uid="uid://nm64ril150gr" path="res://time_offset.gd" id="1_iqo6c"]
+
+[node name="time_offset" type="Node"]
+script = ExtResource("1_iqo6c")

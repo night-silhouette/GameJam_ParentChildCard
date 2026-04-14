@@ -53,6 +53,11 @@ signal request_get_mail(page:int);
 
 signal request_delete_mail(data : Array[int]);
 
+signal request_post_friend_mail();
+
+signal request_get_time(time: int);
+
+
 # ==========================================
 # 3. 网络接收信号 (Incoming - 服务器返回结果)
 # 命名规范：以 success/failed/fetched 结尾
@@ -87,6 +92,10 @@ signal get_mail_success();
 
 signal delete_mail_success();
 
+signal get_time_success(Tserver : int);
+
+signal get_time_debug(T:int);
+
 #按钮信号
 signal battle_information
 signal online_match
@@ -110,6 +119,11 @@ signal opponent_cards_updated(cards)
 
 
 signal request_cancel_match
-signal request_get_self_cards
+signal request_get_self_cards;
 signal request_get_opponent_cards
 signal request_over_battle
+
+
+
+signal request_debug_time();
+signal request_debug_matchpool();

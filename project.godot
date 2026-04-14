@@ -35,6 +35,7 @@ BattleResponseManager="*res://base_class/net/WS/Battle_ResponseManager.gd"
 [display]
 
 window/stretch/mode="canvas_items"
+mouse_cursor/custom_image="uid://gecwkapu6ss8"
 mouse_cursor/custom_image_hotspot=Vector2(27, 13)
 
 [global_group]

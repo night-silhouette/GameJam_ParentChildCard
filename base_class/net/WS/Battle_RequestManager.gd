@@ -18,4 +18,5 @@ func _ready():
 
 # 3. 统一的处理函数
 func _on_request_received(action_code: int):
+	print("request_action: ",action_code)
 	BattleWs.send_action(action_code);

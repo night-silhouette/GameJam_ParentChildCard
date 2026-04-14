@@ -16,3 +16,4 @@ class_name CardResource extends Resource
 @export_group("Descriptions")
 @export_multiline var effect_description: String
 @export_multiline var notes: String
+	

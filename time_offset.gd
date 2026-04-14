@@ -1,0 +1,33 @@
+extends Node
+var offset :int;
+func _ready() -> void:
+	var _offset : Array =[];
+	for i in range(10):
+		var val = await time_offset()
+		_offset.append(val) # 动态添加到末尾
+	
+	offset = _offset.min();
+	
+
+func time_offset() -> int:
+	var T1 = Time.get_ticks_msec()
+
+	SignalBus.request_get_time.emit(T1)
+
+	var Tservers = await SignalBus.get_time_success
+
+	var T2 = Time.get_ticks_msec()
+	var RTT = T2 - T1
+
+	return Tservers - T1 - (RTT / 2)
+	
+func switch_time(T:int):
+	var time = T - offset;
+	var duration = time - Time.get_ticks_msec();
+	var formatted = format_duration(duration);
+	
+
+func format_duration(ms: int) -> String:
+	var s = ms / 1000
+	return "%02d:%02d.%03d" % [s / 60, s % 60, ms % 1000]
+	

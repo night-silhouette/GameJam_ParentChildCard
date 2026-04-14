@@ -4,7 +4,7 @@ extends Node
 
 func call_api(api_name: String, method: int, body_data: Dictionary = {}, use_token: bool = true):
 	# 1. 招募一个临时的快递员
-	print("api调用成功")
+	#print("api调用成功")
 	var http = HTTPRequest.new()
 	add_child(http) # 让他归 Net 管
 	
@@ -42,14 +42,14 @@ func call_api(api_name: String, method: int, body_data: Dictionary = {}, use_tok
 func on_request_completed(result, response_code, headers, body, http_node, api_name, method):
 	http_node.queue_free()
 	
-	print("状态",response_code);
+	#print("状态",response_code);
 	if result != HTTPRequest.RESULT_SUCCESS or response_code != 200:
 		
 		SignalBus.raw_api_responded.emit(api_name, method, -1, null, "网络异常")
 		
 		return
 	
-	print("网络成功返回")
+	#print("网络成功返回")
 	var res = JSON.parse_string(body.get_string_from_utf8())
 	
 	var code = res["code"]

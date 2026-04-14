@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://bon6yfd3gs5v4"]
+
+[ext_resource type="Texture2D" uid="uid://tddde7i0smeu" path="res://素材/使用素材/战斗外/游戏初始界面/按钮UI（初始）.png" id="1_wbiam"]
+[ext_resource type="Texture2D" uid="uid://vheo0mh0gpfc" path="res://素材/使用素材/战斗外/游戏初始界面/按钮UI（初始） 二版.png" id="2_u135h"]
+
+[node name="牌库_战斗牌" type="TextureButton"]
+offset_right = 40.0
+offset_bottom = 40.0
+toggle_mode = true
+texture_normal = ExtResource("1_wbiam")
+texture_pressed = ExtResource("2_u135h")

@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3 uid="uid://dpfvbx3mhmx8g"]
+
+[ext_resource type="Texture2D" uid="uid://cqlahnfnf0hd6" path="res://素材/使用素材/战斗内/桌面/卡牌库/页面按钮-卡库/右1.png" id="1_anax7"]
+[ext_resource type="Texture2D" uid="uid://c3m27jimbdrm1" path="res://素材/使用素材/战斗内/桌面/卡牌库/页面按钮-卡库/右2.png" id="2_cwyk8"]
+
+[node name="右切换" type="TextureButton"]
+offset_right = 40.0
+offset_bottom = 40.0
+texture_normal = ExtResource("1_anax7")
+texture_pressed = ExtResource("2_cwyk8")

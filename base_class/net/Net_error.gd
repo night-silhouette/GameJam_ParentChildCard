@@ -18,7 +18,8 @@ enum ResponseStatusCode {
 	ResponseForbidden,
 	ResponseRepeatRequest,
 	ResponseUnknownError,
-	ResponseTokenHasUpdate
+	ResponseTokenHasUpdate,
+	BattleInvalidTiming
 }
 
 var error_message := {
@@ -51,7 +52,8 @@ var error_message := {
 	ResponseStatusCode.ResponseForbidden: "没有权限",
 	ResponseStatusCode.ResponseRepeatRequest: "重复请求",
 	ResponseStatusCode.ResponseUnknownError: "未知错误",
-	ResponseStatusCode.ResponseTokenHasUpdate: "Token已被更新"
+	ResponseStatusCode.ResponseTokenHasUpdate: "Token已被更新",
+	ResponseStatusCode.BattleInvalidTiming: "不在正确的战斗时机"
 }
 
 func get_message(code:int) -> String:

@@ -21,7 +21,8 @@ func fui_change(state):
 			next_path = "res://game_ui/login/login_ui.tscn"
 		"tomenu":
 			next_path = "res://game_ui/menu/menu_ui.tscn"
-
+		"tobattle":
+			next_path = "res://game_ui/battle/battle_ui.tscn"
 	await goto_ui(next_path)
 
 

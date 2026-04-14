@@ -5,7 +5,6 @@ var is_connected := false
 func _ready() -> void:
 	SignalBus.to_connect_ws.connect(_connect_ws);
 func _connect_ws():
-	# 假设你的 Token 存在 Global 里
 	
 	var base_url = Global.BASE_URL.replace("http", "ws") + "/v1/ws/"
 	# 👇 将 token 作为 URL 参数拼上去（注意问号）
@@ -57,16 +56,21 @@ func _on_message(msg: String):
 	SignalBus.raw_ws_responded.emit(code, data, msg_str)
 	
 # 发消息（统一入口）
-func send_action(action_code: int, action_data = null):
+func send_action(action_code: int, action_data = null, predicates: int = 1): # 1 对应 Notify 或你的默认值
 	if ws.get_ready_state() != WebSocketPeer.STATE_OPEN:
-		print("WS未连接")
+		print("WS未连接，无法发送 Action: ", action_code)
 		return
 	
+	# 构建与后端 Go 结构体完全一致的字典
 	var action = {
 		"action_code": action_code,
-		"action_name": "",
-		"action_data": action_data
+		"action_name": "", # 后端 map 里有，这里通常可以传空或对应的字符串
+		"action_data": action_data,
+		"predicates": predicates
 	}
 	
 	var json = JSON.stringify(action)
 	ws.send_text(json)
+	
+	# 调试用：打印发送的内容
+	# print("向后端发送: ", json)

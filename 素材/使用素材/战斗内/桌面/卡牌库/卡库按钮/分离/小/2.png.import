@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b8jdywpk5kriq"
-path="res://.godot/imported/2.png-e1f7184f7d0d1c1aab525f0916586394.ctex"
+path="res://.godot/imported/2.png-d35b49365156e32d60acbe4b7e94ea1f.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://素材/使用素材/战斗内/桌面/卡牌库/卡库按钮/牌库按钮/小/2.png"
-dest_files=["res://.godot/imported/2.png-e1f7184f7d0d1c1aab525f0916586394.ctex"]
+source_file="res://素材/使用素材/战斗内/桌面/卡牌库/卡库按钮/分离/小/2.png"
+dest_files=["res://.godot/imported/2.png-d35b49365156e32d60acbe4b7e94ea1f.ctex"]
 
 [params]
 

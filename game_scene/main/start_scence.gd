@@ -27,7 +27,7 @@ func _token_fail():
 
 func _on_timer_timeout() -> void:
 	
-	if token_success :
+	if token_success and Global.token_save :
 		SignalBus.change_scence.emit("tomenu");
 		SignalBus.change_ui.emit("tomenu");
 		print("menu")

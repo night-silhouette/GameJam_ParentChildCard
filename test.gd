@@ -1,11 +1,11 @@
 extends Node
-
+@export var save_token :bool =true;
 var myid;
 func _ready():
+	Global.token_save = save_token;
 	print("=== FULL API TEST START ===")
 
-	test_login();
-	test_request_delete_mail();
+	SignalBus.request_debug_matchpool.emit();
 	
 	
 	print("=== TEST FLOW END ===")
