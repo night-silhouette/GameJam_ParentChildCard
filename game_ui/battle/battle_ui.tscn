@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://qmpeulit58cj"]
+[gd_scene load_steps=5 format=3 uid="uid://qmpeulit58cj"]
 
 [ext_resource type="Script" uid="uid://bufkfun0806kd" path="res://game_ui/battle/battle_ui.gd" id="1_kyy0w"]
 [ext_resource type="Texture2D" uid="uid://bxbpcw7rdnhhj" path="res://素材/使用素材/战斗内/桌面/说明/桌面.png" id="1_qk6wh"]
 [ext_resource type="PackedScene" uid="uid://ghdb3fyl2y4m" path="res://game_ui/battle/牌库/牌库.tscn" id="2_dog1f"]
+[ext_resource type="Script" uid="uid://ctldl5kprxqch" path="res://game_ui/battle/object_pool.gd" id="4_an7ui"]
 
 [node name="battle_ui" type="Control"]
 layout_mode = 3
@@ -11,17 +12,21 @@ script = ExtResource("1_kyy0w")
 
 [node name="桌面" type="TextureRect" parent="."]
 layout_mode = 0
-offset_left = 280.00003
-offset_top = 88.00001
-offset_right = 2451.0
-offset_bottom = 1367.0
+offset_left = 297.0
+offset_top = 104.0
+offset_right = 2468.0
+offset_bottom = 1383.0
 scale = Vector2(0.2842165, 0.2842165)
 texture = ExtResource("1_qk6wh")
 
-[node name="牌库" parent="." instance=ExtResource("2_dog1f")]
+[node name="牌库" parent="." node_paths=PackedStringArray("object_pool") instance=ExtResource("2_dog1f")]
 layout_mode = 0
 offset_left = 352.0
 offset_top = 471.99997
 offset_right = 352.0
 offset_bottom = 471.99997
 scale = Vector2(0.12876277, 0.12843001)
+object_pool = NodePath("../object_pool")
+
+[node name="object_pool" type="Node" parent="."]
+script = ExtResource("4_an7ui")

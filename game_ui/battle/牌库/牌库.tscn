@@ -1,6 +1,7 @@
-[gd_scene load_steps=11 format=3 uid="uid://ghdb3fyl2y4m"]
+[gd_scene load_steps=12 format=3 uid="uid://ghdb3fyl2y4m"]
 
 [ext_resource type="Texture2D" uid="uid://dgyqirah3ilvl" path="res://素材/使用素材/战斗内/桌面/卡库栏底版 .png" id="1_bph07"]
+[ext_resource type="Script" uid="uid://o22ntqwsm4oj" path="res://game_ui/battle/牌库/牌库.gd" id="1_vdd75"]
 [ext_resource type="PackedScene" uid="uid://bp71b2dyx86dg" path="res://game_ui/battle/牌库/牌库_子牌.tscn" id="2_6ohfy"]
 [ext_resource type="PackedScene" uid="uid://cxdry4r5td2d1" path="res://game_ui/battle/牌库/牌库_母牌.tscn" id="3_vdd75"]
 [ext_resource type="Texture2D" uid="uid://cdd5vqa74dri8" path="res://素材/使用素材/战斗内/桌面/卡牌库/分割更换-卡库.png" id="4_08b1w"]
@@ -47,6 +48,7 @@ _data = {
 [node name="牌库" type="Control"]
 layout_mode = 3
 anchors_preset = 0
+script = ExtResource("1_vdd75")
 
 [node name="牌库底板" type="TextureRect" parent="."]
 layout_mode = 0
@@ -77,6 +79,7 @@ offset_left = 984.0
 offset_top = -456.0
 offset_right = 1359.0002
 offset_bottom = 1136.0
+scale = Vector2(0.8713167, 1.0147517)
 texture = ExtResource("4_08b1w")
 
 [node name="切换" type="Control" parent="."]

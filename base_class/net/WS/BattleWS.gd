@@ -71,6 +71,6 @@ func send_action(action_code: int, action_data = null, predicates: int = 1): # 1
 	
 	var json = JSON.stringify(action)
 	ws.send_text(json)
-	
+	print("send成功")
 	# 调试用：打印发送的内容
 	# print("向后端发送: ", json)

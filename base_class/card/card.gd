@@ -1,12 +1,20 @@
 extends Control
 
-@onready var display: TextureRect = $Display
-var hp : int;
-var atk : int ;
+@onready var display: TextureRect = $"卡牌纹理"
+var net_ID ;
+var hp ;
+var atk  ;
 
-# 每次刷新都会调用这个函数
-func update_from_network(base_res: CardResource, net_data: Dictionary) -> void:
-	# 1. 基础信息刷新（资源路径、名称等静态内容）
-	if base_res and base_res.card_texture:
-		display.texture = base_res.card_texture
+func init_card(base_res: CardResource) -> void:
+	display.texture = base_res.card_texture
+	if base_res.is_combat_card :
+		hp = base_res.max_health;
+		atk = base_res.damage;
+func update():
+	pass;
 	
+func free_card():
+	display.texture = null;
+	hp = null;
+	atk = null;
+	net_ID = null;
