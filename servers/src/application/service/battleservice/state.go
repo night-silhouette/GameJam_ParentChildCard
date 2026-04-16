@@ -224,17 +224,17 @@ func (s *ShuffleDeal) RandomCard() bool {
 	numA := global.InitCardNum
 	numB := global.InitCardNum
 	i := 0
-	CardInHandA := make([]CardAbstract.Card, 0, numA)
-	s.c.PlayerDataMap[s.SM.Id1].CardInHand = &CardInHandA
-	CardInHandB := make([]CardAbstract.Card, 0, numB)
-	s.c.PlayerDataMap[s.SM.Id2].CardInHand = &CardInHandB
+	CardInHandA := make(map[int]CardAbstract.Card)
+	s.c.PlayerDataMap[s.SM.Id1].CardInHand = CardInHandA
+	CardInHandB := make(map[int]CardAbstract.Card)
+	s.c.PlayerDataMap[s.SM.Id2].CardInHand = CardInHandB
 	CharacterNumA := 0
 	CharacterNumB := 0
 
 	for ; i < len(*cList); i++ {
 		if (*cList)[i].GetInfo()["is_parent"] == true { //id1
 			(*cList)[i].SetOwnerId(s.Id1)
-			CardInHandA = append(CardInHandA, (*cList)[i])
+			CardInHandA[(*cList)[i].GetTempId()] = (*cList)[i]
 			if _, ok := (*cList)[i].(CardAbstract.Character); ok {
 				CharacterNumA++
 			}
@@ -247,7 +247,7 @@ func (s *ShuffleDeal) RandomCard() bool {
 	for ; i < len(*cList); i++ {
 		if (*cList)[i].GetInfo()["is_parent"] == true {
 			(*cList)[i].SetOwnerId(s.Id2)
-			CardInHandB = append(CardInHandB, (*cList)[i])
+			CardInHandB[(*cList)[i].GetTempId()] = (*cList)[i]
 			if _, ok := (*cList)[i].(CardAbstract.Character); ok {
 				CharacterNumB++
 			}
@@ -339,8 +339,20 @@ func (s *SelectSkillCard) process(GoCtx context.Context) {
 			fmt.Println(data)
 			if data.Where == BattleData.SkillCard {
 				cardTempId := data.CardTempId
-				
-				s.c.SetSkillCardBT()
+				if card, ok := s.c.PlayerDataMap[id].CardInHand[cardTempId]; ok { //上的是不是skillcard
+
+					if _, ok := card.(CardAbstract.SkillCard); ok {
+						delete(s.c.PlayerDataMap[id].CardInHand, cardTempId)
+						s.c.SetSkillCardBT(id, card)
+					} else {
+						s.SM.SendActionById(id, BattleDto.NewErrAction(global.BattleCardCategoryError))
+						return
+					}
+				} else {
+					s.SM.SendActionById(id, BattleDto.NewErrAction(global.BattleInvalidTiming))
+					return
+				}
+
 			}
 
 		}

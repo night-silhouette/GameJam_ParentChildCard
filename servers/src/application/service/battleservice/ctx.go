@@ -108,8 +108,8 @@ func NewCardObserver(ParentContext context.Context, ctx *Ctx) *CardObserver {
 					case o.Collector <- Meta:
 					default:
 
-						ctx.StateMachine.SendActionById(ctx.StateMachine.Id1, BattleDto.NewErrAction(global.EffectStackOverflow))
-						ctx.StateMachine.SendActionById(ctx.StateMachine.Id2, BattleDto.NewErrAction(global.EffectStackOverflow))
+						ctx.StateMachine.SendActionById(ctx.StateMachine.Id1, BattleDto.NewErrAction(global.BattleEffectStackOverflow))
+						ctx.StateMachine.SendActionById(ctx.StateMachine.Id2, BattleDto.NewErrAction(global.BattleEffectStackOverflow))
 						log.Println("collector channel full")
 					}
 				case <-o.ParentContext.Done():
@@ -167,7 +167,7 @@ func (c *Ctx) SetSkillCardBT(id int, new *CardAbstract.Card) {
 
 type PlayerData struct {
 	ID           int
-	CardInHand   *[]CardAbstract.Card
+	CardInHand   map[int]CardAbstract.Card
 	ParentCardBT *CardAbstract.Card
 	ChildCardBT  *CardAbstract.Card
 	SkillCardBT  *CardAbstract.Card
@@ -175,7 +175,7 @@ type PlayerData struct {
 
 func NewPlayerData(ID int) *PlayerData {
 	p := &PlayerData{}
-	p.CardInHand = &[]CardAbstract.Card{}
+	p.CardInHand = make(map[int]CardAbstract.Card)
 	p.ID = ID
 	return p
 }
@@ -187,22 +187,23 @@ func (c *Ctx) GetCardInHard(id_self int) *BattleData.CardInHand {
 	for key := range c.PlayerDataMap {
 		if key != id_self {
 			id_opponent = key
+			break
 		}
 	}
-	res := BattleData.CardInHand{}
-	res.Self = make([]BattleData.CardDto, 0, 20)
-	res.Opponent = make([]BattleData.CardDto, 0, 20)
-	list_self := c.PlayerDataMap[id_self].CardInHand
-	list_opponent := c.PlayerDataMap[id_opponent].CardInHand
-	for i := 0; i < len(*list_self); i++ {
-		card := (*list_self)[i]
+	res := &BattleData.CardInHand{}
+
+	mapSelf := c.PlayerDataMap[id_self].CardInHand
+	mapOpponent := c.PlayerDataMap[id_opponent].CardInHand
+
+	res.Self = make([]BattleData.CardDto, 0, len(mapSelf))
+	res.Opponent = make([]BattleData.CardDto, 0, len(mapOpponent))
+	for _, card := range mapSelf {
 		res.Self = append(res.Self, CardAbstract.GetCardDto(card))
 	}
-	for i := 0; i < len(*list_opponent); i++ {
-		card := (*list_opponent)[i]
+	for _, card := range mapOpponent {
 		res.Opponent = append(res.Opponent, CardAbstract.GetCardDto(card))
 	}
-	return &res
+	return res
 }
 
 //__________________________________________对card提供对接口______________________________________________

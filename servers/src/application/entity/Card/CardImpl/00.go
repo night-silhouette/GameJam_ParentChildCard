@@ -10,6 +10,8 @@ func NewCard00() *Card00 {
 	return &Card00{}
 }
 
+func (c *Card00) PlayMagic() {}
+
 func (c *Card00) GetID() int {
 	return 0
 }
