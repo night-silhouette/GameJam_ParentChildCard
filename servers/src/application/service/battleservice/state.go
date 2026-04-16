@@ -3,12 +3,10 @@ package battleservice
 import (
 	"context"
 	"math/rand"
-	"pcc_card/Util"
 	"pcc_card/application/entity/Card/CardAbstract"
 	"pcc_card/global"
 	"pcc_card/presentation/handler/battlehandler/BattleDto"
 	"sync"
-	"time"
 )
 
 type State interface {
@@ -92,6 +90,7 @@ func (s *StateMachine) finish(NextState string) {
 func NewStateMachine(c *Ctx, id1 int, id2 int, Nt *NotifyManager, ParentNodeCtx context.Context) *StateMachine {
 
 	StateMachineImpl := &StateMachine{}
+	c.StateMachine = StateMachineImpl
 	StateMachineImpl.ParentNodeCtx = ParentNodeCtx
 	StateMachineImpl.c = c //ctx的注入
 	StateMachineImpl.Id1 = id1
@@ -168,6 +167,12 @@ func (s *ShuffleDeal) process(GoCtx context.Context) {
 
 func (s *ShuffleDeal) RandomCard() bool {
 	cList := s.SM.CardListCopy
+	for _, card := range *cList {
+		card.SetBtCtx(s.c)
+		card.SetTempId(s.c.entityCounter)
+		s.c.entityCounter++
+	}
+
 	rand.Shuffle(len(*cList), func(i, j int) {
 		(*cList)[i], (*cList)[j] = (*cList)[j], (*cList)[i]
 	})
@@ -183,7 +188,8 @@ func (s *ShuffleDeal) RandomCard() bool {
 	CharacterNumB := 0
 
 	for ; i < len(*cList); i++ {
-		if (*cList)[i].GetInfo()["is_parent"] == true {
+		if (*cList)[i].GetInfo()["is_parent"] == true { //id1
+			(*cList)[i].SetOwnerId(s.Id1)
 			CardInHandA = append(CardInHandA, (*cList)[i])
 			if _, ok := (*cList)[i].(CardAbstract.Character); ok {
 				CharacterNumA++
@@ -196,6 +202,7 @@ func (s *ShuffleDeal) RandomCard() bool {
 	}
 	for ; i < len(*cList); i++ {
 		if (*cList)[i].GetInfo()["is_parent"] == true {
+			(*cList)[i].SetOwnerId(s.Id2)
 			CardInHandB = append(CardInHandB, (*cList)[i])
 			if _, ok := (*cList)[i].(CardAbstract.Character); ok {
 				CharacterNumB++
@@ -233,15 +240,15 @@ func (s *SelectCharacterCard) Init(id1 int, id2 int, c *Ctx, Nt *NotifyManager, 
 }
 
 func (s *SelectCharacterCard) enter() {
-	var waitTime time.Duration
-	waitTime = global.SelectCharacterTime * time.Second
-	if s.IsFirst {
-		s.IsFirst = false
-		waitTime = 25
-	}
-	act := BattleDto.NewAction(BattleDto.SelectCharacterCard, BattleDto.Query, Util.SendTime(waitTime))
-	s.SM.SendActionById(s.Id1, act)
-	s.SM.SendActionById(s.Id1, act)
+	//var waitTime time.Duration
+	//waitTime = global.SelectCharacterTime * time.Second
+	//if s.IsFirst {
+	//	s.IsFirst = false
+	//	waitTime = 25
+	//}
+	//act := BattleDto.NewAction(BattleDto.SelectCharacterCard, BattleDto.Query, Util.SendTime(waitTime))
+	//s.SM.SendActionById(s.Id1, act)
+	//s.SM.SendActionById(s.Id1, act)
 
 }
 
@@ -252,16 +259,16 @@ func (s *SelectCharacterCard) exit() {
 func (s *SelectCharacterCard) process(GoCtx context.Context) {
 
 	handleAction := func(id int, action BattleDto.Action, ResponseChan chan<- BattleDto.Action) {
-		if action.ActionCode == BattleDto.SelectCharacterCard && action.Predicates == BattleDto.Result {
-
-			//todo 上牌
-
-			s.SM.Mutex.Lock()
-			s.TaskCount--
-			if s.TaskCount == 0 {
-				s.SM.finish("SelectSkillCard")
-			}
-		}
+		//if action.ActionCode == BattleDto.SelectCharacterCard && action.Predicates == BattleDto.Result {
+		//
+		//	//todo 上牌
+		//
+		//	s.SM.Mutex.Lock()
+		//	s.TaskCount--
+		//	if s.TaskCount <= 0 {
+		//		s.SM.finish("SelectSkillCard")
+		//	}
+		//}
 	}
 	s.SM.AcceptAction(GoCtx, handleAction)
 

@@ -1,5 +1,7 @@
 package BattleDto
 
+import "pcc_card/global"
+
 type Action struct {
 	ActionCode ActionCode `json:"action_code"`
 	ActionName string     `json:"action_name"`
@@ -10,7 +12,8 @@ type Action struct {
 type ActionCode int
 
 const (
-	CancelMatch ActionCode = iota
+	Fault ActionCode = iota
+	CancelMatch
 	GetSelfCardInHard
 	GetOpponentCardInHard
 	OverBattle
@@ -43,5 +46,13 @@ func NewAction(actionCode ActionCode, Predicates Predicates, ActionData any) Act
 	res.ActionName = ActionName[actionCode]
 	res.ActionData = ActionData
 	res.Predicates = Predicates
+	return res
+}
+
+func NewErrAction(code global.ResponseStatusCode) Action {
+	res := Action{}
+	res.ActionCode = Fault
+	res.Predicates = Empty
+	res.ActionData = code
 	return res
 }

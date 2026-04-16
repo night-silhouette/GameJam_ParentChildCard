@@ -21,6 +21,7 @@ const (
 	ResponseUnknownError
 	ResponseTokenHasUpdate
 	BattleInvalidTiming
+	EffectStackOverflow
 )
 
 var StatusMsg = map[ResponseStatusCode]string{
@@ -42,4 +43,5 @@ var StatusMsg = map[ResponseStatusCode]string{
 	ResponseUnknownError:          "发生了一个未知错误，抱歉",
 	ResponseTokenHasUpdate:        "token被更新,此token失效",
 	BattleInvalidTiming:           "不在正确的战斗时机",
+	EffectStackOverflow:           "卡牌效果结算堆栈溢出",
 }

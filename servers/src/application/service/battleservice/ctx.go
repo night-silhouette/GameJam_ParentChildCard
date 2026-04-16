@@ -2,13 +2,20 @@ package battleservice
 
 import (
 	"context"
+	"log"
 	"pcc_card/application/entity/BattleData"
 	"pcc_card/application/entity/Card/CardAbstract"
+	"pcc_card/application/entity/protocolCardWithCtx"
+	"pcc_card/global"
+	"pcc_card/presentation/handler/battlehandler/BattleDto"
 )
 
 type Ctx struct {
 	ParentContext context.Context
 
+	StateMachine   *StateMachine
+	entityCounter  int //自增字段，用来生成tempId
+	EffectsStack   *EffectStack
 	CardObserver   *CardObserver
 	PlayerDataMap  map[int]*PlayerData
 	CtxStateNotify *CtxStateNotify
@@ -17,6 +24,8 @@ type Ctx struct {
 
 func NewCtx(idA int, idB int, CardPool *[]CardAbstract.Card, ParentContext context.Context) *Ctx {
 	c := &Ctx{}
+	c.EffectsStack = NewEffectStack()
+	c.entityCounter = 1
 	c.ParentContext = ParentContext
 	c.CardPool = CardPool
 	c.PlayerDataMap = make(map[int]*PlayerData, 2)
@@ -27,36 +36,82 @@ func NewCtx(idA int, idB int, CardPool *[]CardAbstract.Card, ParentContext conte
 	return c
 }
 
+//__________________________________________EffectsStack______________________________________________
+
+func (c *Ctx) StackSettle(action BattleDto.Action) {
+
+	select {
+	case firstEffect := <-c.CardObserver.Collector:
+		c.EffectsStack.Push(firstEffect.Effect)
+		c.resolveAllChains(action)
+	}
+}
+
+func (c *Ctx) resolveAllChains(action BattleDto.Action) {
+	for {
+		c.CardObserver.DrainCollector()
+
+		if c.EffectsStack.IsEmpty() {
+
+			c.StateMachine.SendActionById(c.StateMachine.Id2, action)
+			c.StateMachine.SendActionById(c.StateMachine.Id1, action)
+
+			break
+		}
+		effect := c.EffectsStack.Pop()
+		effect.Execute()
+	}
+}
+
 //__________________________________________CardObserver______________________________________________
 
 type CardObserver struct {
 	ctx           *Ctx
 	ParentContext context.Context
-	collector     chan MetaCardStateCode
+	Collector     chan MetaCardState
 }
 
-type MetaCardStateCode struct {
-	CardId    int
-	StateCode CardAbstract.StateCode
+func (O *CardObserver) DrainCollector() {
+	for {
+		select {
+		case e := <-O.Collector:
+			// 只要管道里有东西，就一直 Push 到栈里
+			O.ctx.EffectsStack.Push(e.Effect)
+		default:
+			return
+		}
+	}
+}
+
+type MetaCardState struct {
+	CardId int
+	Effect protocolCardWithCtx.Effect
 }
 
 func NewCardObserver(ParentContext context.Context, ctx *Ctx) *CardObserver {
 	o := &CardObserver{}
 	o.ParentContext = ParentContext
-	o.collector = make(chan MetaCardStateCode, 16)
+	o.Collector = make(chan MetaCardState, 128)
 	o.ctx = ctx
 	CardPool := *o.ctx.CardPool
 
 	for _, card := range CardPool {
 
 		go func(card CardAbstract.Card) { //给每一张卡开一个哨兵
-			var CardChan <-chan CardAbstract.StateCode
+			var CardChan <-chan protocolCardWithCtx.Effect
 			CardChan = card.GetStateCodeChan()
 			for {
 				select {
 				case code := <-CardChan:
-					Meta := MetaCardStateCode{card.GetID(), code}
-					o.collector <- Meta
+					Meta := MetaCardState{card.GetID(), code}
+					select {
+					case o.Collector <- Meta:
+					default:
+
+						ctx.StateMachine.SendActionById(ctx.StateMachine.Id1, BattleDto.NewErrAction(global.EffectStackOverflow))
+						ctx.StateMachine.SendActionById(ctx.StateMachine.Id2, BattleDto.NewErrAction(global.EffectStackOverflow))
+						log.Println("collector channel full")
+					}
 				case <-o.ParentContext.Done():
 					return
 				}
@@ -64,20 +119,7 @@ func NewCardObserver(ParentContext context.Context, ctx *Ctx) *CardObserver {
 		}(card)
 
 	}
-
-	go o.CardResponse(ParentContext)
 	return o
-}
-func (o *CardObserver) CardResponse(ParentContext context.Context) {
-	for {
-		select {
-		case Meta := <-o.collector:
-			switch Meta.StateCode {
-			case CardAbstract.Died:
-				
-			}
-		}
-	}
 }
 
 //__________________________________________CtxStateNotify______________________________________________
@@ -138,7 +180,7 @@ func NewPlayerData(ID int) *PlayerData {
 	return p
 }
 
-//__________________________________________杂项______________________________________________
+//__________________________________________对外访问数据口(dto)______________________________________________
 
 func (c *Ctx) GetCardInHard(id_self int) *BattleData.CardInHand {
 	var id_opponent int
@@ -162,3 +204,5 @@ func (c *Ctx) GetCardInHard(id_self int) *BattleData.CardInHand {
 	}
 	return &res
 }
+
+//__________________________________________对card提供对接口______________________________________________

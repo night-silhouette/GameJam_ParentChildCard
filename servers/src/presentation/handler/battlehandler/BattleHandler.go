@@ -164,8 +164,13 @@ func (u *BattleHandlerImpl) ListenResponse(conn *websocket.Conn, id int, playerC
 
 			if Res.ActionCode == BattleDto.OverBattle {
 				OverGamechan <- true
-			}
-			response.WsSuccess(conn, Res)
+			} //结束战斗
+			if Res.ActionCode == BattleDto.Fault {
+				code := Res.ActionData.(global.ResponseStatusCode)
+				response.WsFail(conn, code)
+			} //监听内部错误
+			response.WsSuccess(conn, Res) //直接返回action
+
 		case <-goctx.Done():
 			return
 		}
