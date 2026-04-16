@@ -168,6 +168,7 @@ func (u *BattleHandlerImpl) ListenResponse(conn *websocket.Conn, id int, playerC
 			if Res.ActionCode == BattleDto.Fault {
 				code := Res.ActionData.(global.ResponseStatusCode)
 				response.WsFail(conn, code)
+				continue
 			} //监听内部错误
 			response.WsSuccess(conn, Res) //直接返回action
 

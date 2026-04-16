@@ -2,11 +2,15 @@ package battleservice
 
 import (
 	"context"
+	"fmt"
 	"math/rand"
+	"pcc_card/application/entity/BattleData"
 	"pcc_card/application/entity/Card/CardAbstract"
 	"pcc_card/global"
 	"pcc_card/presentation/handler/battlehandler/BattleDto"
 	"sync"
+
+	"github.com/mitchellh/mapstructure"
 )
 
 type State interface {
@@ -15,6 +19,8 @@ type State interface {
 	Init(id1 int, id2 int, c *Ctx, Nt *NotifyManager, SM *StateMachine)
 	process(GoCtx context.Context)
 	AddTaskCount()
+	SetName(name string)
+	GetName() string
 }
 
 type StateMachine struct {
@@ -25,10 +31,27 @@ type StateMachine struct {
 	Id2          int
 	StateList    map[string]State
 	CurrentState State
+	StateStack   []State
 	c            *Ctx
 	Nt           *NotifyManager
 	CardListCopy *[]CardAbstract.Card
 	cancelFunc   context.CancelFunc
+}
+
+func (s *StateMachine) StatePush(CurrentState string, NewState string) {
+	temp := s.StateList[CurrentState]
+	s.StateStack = append(s.StateStack, temp) //把现在的state压入栈
+	s.finish(NewState)                        //切换到新的state
+}
+func (s *StateMachine) StatePop() { //切换到，上一次压栈的状态
+	if len(s.StateStack) == 0 {
+		return
+	}
+	lastIndex := len(s.StateStack) - 1
+	pop := s.StateStack[lastIndex]
+	s.finish(pop.GetName())
+	s.StateStack[lastIndex] = nil
+	s.StateStack = s.StateStack[:lastIndex]
 }
 
 func (s *StateMachine) AcceptAction(goCtx context.Context, handleAction func(id int, action BattleDto.Action, ResponseChan chan<- BattleDto.Action)) {
@@ -97,6 +120,7 @@ func NewStateMachine(c *Ctx, id1 int, id2 int, Nt *NotifyManager, ParentNodeCtx 
 	StateMachineImpl.Id2 = id2
 	StateMachineImpl.Nt = Nt //Nt的注入
 	StateMachineImpl.CardListCopy = c.CardPool
+	StateMachineImpl.StateStack = make([]State, 0)
 
 	StateMachineImpl.RegisterState()
 	for _, element := range StateMachineImpl.StateList {
@@ -115,11 +139,15 @@ func (s *StateMachine) RegisterState() {
 		"Combat":              &Combat{},
 		"SkillCardCalc":       &SkillCardCalc{},
 	}
+	for key, element := range s.StateList {
+		element.SetName(key)
+	}
 }
 
 //----------------------------------------------------------------------------------------------------------------------
 
 type StateTemplate struct {
+	name      string
 	Id1       int
 	Id2       int
 	c         *Ctx
@@ -139,10 +167,26 @@ func (s *StateTemplate) Init(id1 int, id2 int, c *Ctx, Nt *NotifyManager, SM *St
 func (s *StateTemplate) exit() {
 	s.TaskCount = 0
 }
+
+func (s *StateTemplate) process(GoCtx context.Context) {
+
+	handleAction := func(id int, action BattleDto.Action, ResponseChan chan<- BattleDto.Action) {
+	}
+	s.SM.AcceptAction(GoCtx, handleAction)
+}
+
 func (s *StateTemplate) AddTaskCount() {
 	s.SM.Mutex.Lock()
 	defer s.SM.Mutex.Unlock()
 	s.TaskCount++
+}
+
+func (s *StateTemplate) SetName(name string) {
+	s.name = name
+}
+
+func (s *StateTemplate) GetName() string {
+	return s.name
 }
 
 // -------------------------------------ShuffleDeal---------------------------------------------------------------------------------------
@@ -158,11 +202,11 @@ func (s *ShuffleDeal) enter() {
 			break
 		}
 	}
-	s.SM.finish("SelectCharacterCard")
+	s.SM.finish("SelectSkillCard")
 }
 
 func (s *ShuffleDeal) process(GoCtx context.Context) {
-
+	//空的逻辑，不继承templete
 }
 
 func (s *ShuffleDeal) RandomCard() bool {
@@ -280,9 +324,30 @@ type SelectSkillCard struct {
 	StateTemplate
 }
 
-func (s *SelectSkillCard) enter()                        {}
-func (s *SelectSkillCard) exit()                         {}
-func (s *SelectSkillCard) process(GoCtx context.Context) {}
+func (s *SelectSkillCard) enter() {}
+func (s *SelectSkillCard) exit()  {}
+func (s *SelectSkillCard) process(GoCtx context.Context) {
+	handleAction := func(id int, action BattleDto.Action, ResponseChan chan<- BattleDto.Action) {
+		if action.ActionCode == BattleDto.DeployCard && action.Predicates == BattleDto.Notify {
+			var data BattleData.SelectCard
+			err := mapstructure.Decode(action.ActionData, &data)
+			if err != nil {
+				fmt.Println(err)
+				s.SM.SendActionById(id, BattleDto.NewErrAction(global.ResponseInvalidReqParams))
+				return
+			}
+			fmt.Println(data)
+			if data.Where == BattleData.SkillCard {
+				cardTempId := data.CardTempId
+				
+				s.c.SetSkillCardBT()
+			}
+
+		}
+	}
+	s.SM.AcceptAction(GoCtx, handleAction)
+
+}
 
 //---------------------------------------Judge-------------------------------------------------------------------------------
 

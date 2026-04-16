@@ -18,7 +18,7 @@ const (
 	GetOpponentCardInHard
 	OverBattle
 	StartBattle
-	SelectCharacterCard
+	DeployCard
 )
 
 var ActionName = map[ActionCode]string{
@@ -27,7 +27,7 @@ var ActionName = map[ActionCode]string{
 	GetOpponentCardInHard: "获取对手的卡牌信息",
 	OverBattle:            "结束战斗",
 	StartBattle:           "开始战斗",
-	SelectCharacterCard:   "选择角色牌",
+	DeployCard:            "部署一张牌",
 }
 
 type Predicates int
