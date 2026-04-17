@@ -16,11 +16,12 @@ import (
 type State interface {
 	enter()
 	exit()
-	Init(id1 int, id2 int, c *Ctx, Nt *NotifyManager, SM *StateMachine)
+	Init(id1 int, id2 int, c *Ctx, Nt *NotifyManager, SM *StateMachine, sub State)
 	process(GoCtx context.Context)
 	AddTaskCount()
 	SetName(name string)
 	GetName() string
+	SpecialInit()
 }
 
 type StateMachine struct {
@@ -63,7 +64,7 @@ func (s *StateMachine) AcceptAction(goCtx context.Context, handleAction func(id 
 			handleAction(s.Id1, action, s.Nt.ChanMap[s.Id1].ResponseChan)
 			s.SharedProcess(s.Id1, action, s.Nt.ChanMap[s.Id1].ResponseChan)
 		case action := <-s.Nt.ChanMap[s.Id2].AcceptChan:
-			handleAction(s.Id2, action, s.Nt.ChanMap[s.Id2].ResponseChan)
+			handleAction(s.Id2, action, s.Nt.ChanMap[s.Id2].ResponseChan) //!!!
 			s.SharedProcess(s.Id2, action, s.Nt.ChanMap[s.Id2].ResponseChan)
 		}
 	}
@@ -103,6 +104,7 @@ func (s *StateMachine) finish(NextState string) {
 	if NextState != "" {
 		s.CurrentState = NextStateObj
 		s.CurrentState.enter()
+
 		var GoCtx context.Context
 		GoCtx, s.cancelFunc = context.WithCancel(s.ParentNodeCtx)
 		go s.CurrentState.process(GoCtx)
@@ -124,7 +126,7 @@ func NewStateMachine(c *Ctx, id1 int, id2 int, Nt *NotifyManager, ParentNodeCtx 
 
 	StateMachineImpl.RegisterState()
 	for _, element := range StateMachineImpl.StateList {
-		element.Init(id1, id2, c, Nt, StateMachineImpl)
+		element.Init(id1, id2, c, Nt, StateMachineImpl, element)
 	}
 	StateMachineImpl.finish("ShuffleDeal")
 	return StateMachineImpl
@@ -156,18 +158,16 @@ type StateTemplate struct {
 	TaskCount int
 }
 
-func (s *StateTemplate) Init(id1 int, id2 int, c *Ctx, Nt *NotifyManager, SM *StateMachine) {
+func (s *StateTemplate) Init(id1 int, id2 int, c *Ctx, Nt *NotifyManager, SM *StateMachine, sub State) {
 	s.Id1 = id1
 	s.Id2 = id2
 	s.c = c
 	s.Nt = Nt
 	s.SM = SM
 	s.TaskCount = 0
-	s.SpecialInit()
+	sub.SpecialInit()
 }
-func (s *StateTemplate) SpecialInit() {
-
-}
+func (s *StateTemplate) SpecialInit() {}
 func (s *StateTemplate) exit() {
 	s.TaskCount = 0
 }
@@ -345,7 +345,7 @@ func (s *SelectSkillCard) exit() {
 func (s *SelectSkillCard) process(GoCtx context.Context) {
 	handleAction := func(id int, action BattleDto.Action, ResponseChan chan<- BattleDto.Action) {
 		if s.TaskMap[id] {
-			s.SM.SendActionById(s.Id1, BattleDto.NewErrAction(global.ResponseRepeatRequest))
+			s.SM.SendActionById(s.Id1, BattleDto.NewErrAction(global.ResponseRepeatRequest)) //!!!
 			return
 		}
 
@@ -368,7 +368,7 @@ func (s *SelectSkillCard) process(GoCtx context.Context) {
 						s.SM.SendActionById(id, BattleDto.NewAction(BattleDto.DeployCard, BattleDto.Succeed, "技能牌选择成功"))
 						s.TaskMap[id] = true
 					} else {
-						s.SM.SendActionById(id, BattleDto.NewErrAction(global.BattleCardCategoryError))
+						s.SM.SendActionById(id, BattleDto.NewErrAction(global.BattleCardCategoryError)) //竞争了
 						return
 					}
 				} else {

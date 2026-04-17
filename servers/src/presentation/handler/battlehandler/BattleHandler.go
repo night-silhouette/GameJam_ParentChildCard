@@ -12,6 +12,7 @@ import (
 	"pcc_card/presentation/handler"
 	"pcc_card/presentation/handler/battlehandler/BattleDto"
 	"pcc_card/presentation/response"
+	"sync"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -25,7 +26,8 @@ type BattleHandler interface {
 	DebugBattleContainer() gin.HandlerFunc
 }
 type BattleHandlerImpl struct {
-	s battleservice.BattleService
+	s       battleservice.BattleService
+	writeMu sync.Mutex
 }
 
 func (u *BattleHandlerImpl) Set_service(svc service.Service) {
@@ -109,20 +111,16 @@ func (u *BattleHandlerImpl) BattleWs() gin.HandlerFunc {
 
 func (u *BattleHandlerImpl) ListenResquest(conn *websocket.Conn, id int, goctx context.Context, trans chan battleservice.PlayerChannel, cancelFunc context.CancelFunc) {
 	var playerC chan BattleDto.Action
-	go func() {
-		select {
-		case <-goctx.Done():
-			return
-		case playerChan := <-trans:
-			playerC = playerChan.AcceptChan
-
-		}
-	}()
 	for {
 		_, p, err := conn.ReadMessage()
 		if err != nil {
 			cancelFunc()
 			return
+		}
+		select {
+		case playerChan := <-trans:
+			playerC = playerChan.AcceptChan
+		default:
 		}
 
 		decoder := json.NewDecoder(bytes.NewReader(p))
@@ -167,6 +165,7 @@ func (u *BattleHandlerImpl) ListenResponse(conn *websocket.Conn, id int, playerC
 			} //结束战斗
 			if Res.ActionCode == BattleDto.Fault {
 				code := Res.ActionData.(global.ResponseStatusCode)
+
 				response.WsFail(conn, code)
 				continue
 			} //监听内部错误
