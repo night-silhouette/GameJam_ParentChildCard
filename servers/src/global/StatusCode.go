@@ -24,6 +24,7 @@ const (
 	BattleInvalidTiming
 	BattleEffectStackOverflow
 	BattleCardCategoryError
+	BattleCardNotFound
 )
 
 var StatusMsg = map[ResponseStatusCode]string{
@@ -47,4 +48,5 @@ var StatusMsg = map[ResponseStatusCode]string{
 	BattleInvalidTiming:           "不在正确的战斗时机",
 	BattleEffectStackOverflow:     "卡牌效果结算堆栈溢出",
 	BattleCardCategoryError:       "卡牌种类有误",
+	BattleCardNotFound:            "此牌没有被找到",
 }

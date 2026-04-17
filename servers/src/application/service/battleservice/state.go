@@ -91,7 +91,7 @@ func (s *StateMachine) finish(NextState string) {
 	NextStateObj, _ := s.StateList[NextState]
 
 	if s.CurrentState == NextStateObj {
-		s.CurrentState.AddTaskCount()
+		//s.CurrentState.AddTaskCount()
 		return
 	}
 	if s.cancelFunc != nil {
@@ -163,6 +163,10 @@ func (s *StateTemplate) Init(id1 int, id2 int, c *Ctx, Nt *NotifyManager, SM *St
 	s.Nt = Nt
 	s.SM = SM
 	s.TaskCount = 0
+	s.SpecialInit()
+}
+func (s *StateTemplate) SpecialInit() {
+
 }
 func (s *StateTemplate) exit() {
 	s.TaskCount = 0
@@ -265,6 +269,8 @@ func (s *ShuffleDeal) RandomCard() bool {
 
 func (s *ShuffleDeal) exit() {
 	s.StateTemplate.exit()
+	s.SM.SendActionById(s.Id1, BattleDto.NewAction(BattleDto.StartBattle, BattleDto.Notify, ""))
+	s.SM.SendActionById(s.Id2, BattleDto.NewAction(BattleDto.StartBattle, BattleDto.Notify, ""))
 }
 
 //---------------------------------------SelectCharacterCard-------------------------------------------------------------------------------
@@ -274,13 +280,8 @@ type SelectCharacterCard struct {
 	StateTemplate
 }
 
-func (s *SelectCharacterCard) Init(id1 int, id2 int, c *Ctx, Nt *NotifyManager, SM *StateMachine) { //复写init，初始化isfrist
-	s.Id1 = id1
-	s.Id2 = id2
-	s.c = c
-	s.Nt = Nt
-	s.SM = SM
-	s.IsFirst = true
+func (s *SelectCharacterCard) SpecialInit() {
+	s.IsFirst = false
 }
 
 func (s *SelectCharacterCard) enter() {
@@ -322,13 +323,34 @@ func (s *SelectCharacterCard) process(GoCtx context.Context) {
 
 type SelectSkillCard struct {
 	StateTemplate
+	TaskMap map[int]bool
 }
 
-func (s *SelectSkillCard) enter() {}
-func (s *SelectSkillCard) exit()  {}
+func (s *SelectSkillCard) SpecialInit() {
+	s.TaskMap = make(map[int]bool)
+	s.TaskMap[s.Id1] = false
+	s.TaskMap[s.Id2] = false
+}
+
+func (s *SelectSkillCard) enter() {
+	s.SM.SendActionById(s.Id1, BattleDto.NewAction(BattleDto.DeployCard, BattleDto.Query, BattleData.SelectCard{Where: BattleData.SkillCard}))
+	s.SM.SendActionById(s.Id2, BattleDto.NewAction(BattleDto.DeployCard, BattleDto.Query, BattleData.SelectCard{Where: BattleData.SkillCard}))
+
+}
+func (s *SelectSkillCard) exit() {
+	s.StateTemplate.exit()
+	s.TaskMap[s.Id1] = false
+	s.TaskMap[s.Id2] = false
+}
 func (s *SelectSkillCard) process(GoCtx context.Context) {
 	handleAction := func(id int, action BattleDto.Action, ResponseChan chan<- BattleDto.Action) {
-		if action.ActionCode == BattleDto.DeployCard && action.Predicates == BattleDto.Notify {
+		if s.TaskMap[id] {
+			s.SM.SendActionById(s.Id1, BattleDto.NewErrAction(global.ResponseRepeatRequest))
+			return
+		}
+
+		if action.ActionCode == BattleDto.DeployCard && action.Predicates == BattleDto.Result {
+
 			var data BattleData.SelectCard
 			err := mapstructure.Decode(action.ActionData, &data)
 			if err != nil {
@@ -336,20 +358,21 @@ func (s *SelectSkillCard) process(GoCtx context.Context) {
 				s.SM.SendActionById(id, BattleDto.NewErrAction(global.ResponseInvalidReqParams))
 				return
 			}
-			fmt.Println(data)
 			if data.Where == BattleData.SkillCard {
-				cardTempId := data.CardTempId
-				if card, ok := s.c.PlayerDataMap[id].CardInHand[cardTempId]; ok { //上的是不是skillcard
 
-					if _, ok := card.(CardAbstract.SkillCard); ok {
+				cardTempId := data.CardTempId
+				if card, ok := s.c.PlayerDataMap[id].CardInHand[cardTempId]; ok { //手牌里有不有
+					if _, ok := card.(CardAbstract.SkillCard); ok { //上的是不是skillcard
 						delete(s.c.PlayerDataMap[id].CardInHand, cardTempId)
 						s.c.SetSkillCardBT(id, card)
+						s.SM.SendActionById(id, BattleDto.NewAction(BattleDto.DeployCard, BattleDto.Succeed, "技能牌选择成功"))
+						s.TaskMap[id] = true
 					} else {
 						s.SM.SendActionById(id, BattleDto.NewErrAction(global.BattleCardCategoryError))
 						return
 					}
 				} else {
-					s.SM.SendActionById(id, BattleDto.NewErrAction(global.BattleInvalidTiming))
+					s.SM.SendActionById(id, BattleDto.NewErrAction(global.BattleCardNotFound))
 					return
 				}
 

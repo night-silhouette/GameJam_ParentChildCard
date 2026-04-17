@@ -38,6 +38,7 @@ const (
 	Query
 	Result
 	finish
+	Succeed
 )
 
 func NewAction(actionCode ActionCode, Predicates Predicates, ActionData any) Action {

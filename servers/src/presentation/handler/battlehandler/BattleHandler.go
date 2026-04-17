@@ -55,14 +55,13 @@ func (u *BattleHandlerImpl) AddMatch(c *gin.Context, conn *websocket.Conn, goctx
 		matchSignals.Store(id, myChan)
 		defer battleservice.MatchSignals.Delete(id)
 		select {
-		case result := <-myChan:
+		case <-myChan:
 			Bt := battleservice.BC.GetBattleByUserID(id)
 			playerChan := Bt.GetPlayerChanByUserID(id)
 			res <- playerChan
 			res <- playerChan //因为最初这里的子线程信息传递设计比较乱，造成了有极强的耦合。由于分发playerChan的管道，外面有两个接受者，所以
 			//这里要塞入两份指针，一份给req，还有一份给response
 
-			response.WsSuccess(conn, BattleDto.NewAction(BattleDto.StartBattle, BattleDto.Notify, result))
 			return
 		case <-goctx.Done():
 			battleservice.MatchPool.Delete(id)
@@ -116,6 +115,7 @@ func (u *BattleHandlerImpl) ListenResquest(conn *websocket.Conn, id int, goctx c
 			return
 		case playerChan := <-trans:
 			playerC = playerChan.AcceptChan
+
 		}
 	}()
 	for {

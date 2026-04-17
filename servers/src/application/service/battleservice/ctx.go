@@ -126,8 +126,8 @@ func NewCardObserver(ParentContext context.Context, ctx *Ctx) *CardObserver {
 
 // MetaCardBTChange 用于在CtxStateNotify传输状态的元数据
 type MetaCardBTChange struct {
-	Old *CardAbstract.Card
-	New *CardAbstract.Card
+	Old CardAbstract.Card
+	New CardAbstract.Card
 }
 
 // CtxStateNotify 内嵌到ctx里面，监听数据变化
@@ -139,24 +139,26 @@ type CtxStateNotify struct {
 
 func NewCtxStateNotify() *CtxStateNotify {
 	N := &CtxStateNotify{}
-	N.ParentCardChange = make(chan MetaCardBTChange)
+	N.ParentCardChange = make(chan MetaCardBTChange, 4)
+	N.ChildCardBTChange = make(chan MetaCardBTChange, 4)
+	N.SkillCardBTChange = make(chan MetaCardBTChange, 4)
 	return N
 
 }
 
-func (c *Ctx) SetParentCardBT(id int, new *CardAbstract.Card) {
+func (c *Ctx) SetParentCardBT(id int, new CardAbstract.Card) {
 	pData := c.PlayerDataMap[id]
 	old := pData.ParentCardBT
 	pData.ParentCardBT = new
 	c.CtxStateNotify.ParentCardChange <- MetaCardBTChange{old, new}
 }
-func (c *Ctx) SetChildCardBT(id int, new *CardAbstract.Card) {
+func (c *Ctx) SetChildCardBT(id int, new CardAbstract.Card) {
 	pData := c.PlayerDataMap[id]
 	old := pData.ChildCardBT
 	pData.ChildCardBT = new
 	c.CtxStateNotify.ParentCardChange <- MetaCardBTChange{old, new}
 }
-func (c *Ctx) SetSkillCardBT(id int, new *CardAbstract.Card) {
+func (c *Ctx) SetSkillCardBT(id int, new CardAbstract.Card) {
 	pData := c.PlayerDataMap[id]
 	old := pData.SkillCardBT
 	pData.SkillCardBT = new
@@ -168,9 +170,9 @@ func (c *Ctx) SetSkillCardBT(id int, new *CardAbstract.Card) {
 type PlayerData struct {
 	ID           int
 	CardInHand   map[int]CardAbstract.Card
-	ParentCardBT *CardAbstract.Card
-	ChildCardBT  *CardAbstract.Card
-	SkillCardBT  *CardAbstract.Card
+	ParentCardBT CardAbstract.Card
+	ChildCardBT  CardAbstract.Card
+	SkillCardBT  CardAbstract.Card
 }
 
 func NewPlayerData(ID int) *PlayerData {
