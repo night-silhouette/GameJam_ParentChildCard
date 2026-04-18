@@ -165,12 +165,15 @@ func (u *BattleHandlerImpl) ListenResponse(conn *websocket.Conn, id int, playerC
 			} //结束战斗
 			if Res.ActionCode == BattleDto.Fault {
 				code := Res.ActionData.(global.ResponseStatusCode)
-
+				u.writeMu.Lock()
 				response.WsFail(conn, code)
+				u.writeMu.Unlock()
+
 				continue
 			} //监听内部错误
+			u.writeMu.Lock()
 			response.WsSuccess(conn, Res) //直接返回action
-
+			u.writeMu.Unlock()
 		case <-goctx.Done():
 			return
 		}

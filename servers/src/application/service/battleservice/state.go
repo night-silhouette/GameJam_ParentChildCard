@@ -4,11 +4,13 @@ import (
 	"context"
 	"fmt"
 	"math/rand"
+	"pcc_card/Util"
 	"pcc_card/application/entity/BattleData"
 	"pcc_card/application/entity/Card/CardAbstract"
 	"pcc_card/global"
 	"pcc_card/presentation/handler/battlehandler/BattleDto"
 	"sync"
+	"time"
 
 	"github.com/mitchellh/mapstructure"
 )
@@ -23,6 +25,22 @@ type State interface {
 	GetName() string
 	SpecialInit()
 }
+
+func (s *StateMachine) RegisterState() {
+	s.StateList = map[string]State{
+		"ShuffleDeal":         &ShuffleDeal{},
+		"SelectCharacterCard": &SelectCharacterCard{},
+		"SelectSkillCard":     &SelectSkillCard{},
+		"Judge":               &Judge{},
+		"Combat":              &Combat{},
+		"SkillCardCalc":       &SkillCardCalc{},
+	}
+	for key, element := range s.StateList {
+		element.SetName(key)
+	}
+}
+
+//#region StateMachine
 
 type StateMachine struct {
 	Mutex         sync.RWMutex
@@ -44,6 +62,7 @@ func (s *StateMachine) StatePush(CurrentState string, NewState string) {
 	s.StateStack = append(s.StateStack, temp) //把现在的state压入栈
 	s.finish(NewState)                        //切换到新的state
 }
+
 func (s *StateMachine) StatePop() { //切换到，上一次压栈的状态
 	if len(s.StateStack) == 0 {
 		return
@@ -89,6 +108,8 @@ func (s *StateMachine) SendActionById(id int, action BattleDto.Action) {
 }
 
 func (s *StateMachine) finish(NextState string) {
+	s.Mutex.Lock()
+	defer s.Mutex.Unlock()
 	NextStateObj, _ := s.StateList[NextState]
 
 	if s.CurrentState == NextStateObj {
@@ -132,21 +153,8 @@ func NewStateMachine(c *Ctx, id1 int, id2 int, Nt *NotifyManager, ParentNodeCtx 
 	return StateMachineImpl
 }
 
-func (s *StateMachine) RegisterState() {
-	s.StateList = map[string]State{
-		"ShuffleDeal":         &ShuffleDeal{},
-		"SelectCharacterCard": &SelectCharacterCard{},
-		"SelectSkillCard":     &SelectSkillCard{},
-		"Judge":               &Judge{},
-		"Combat":              &Combat{},
-		"SkillCardCalc":       &SkillCardCalc{},
-	}
-	for key, element := range s.StateList {
-		element.SetName(key)
-	}
-}
-
-//----------------------------------------------------------------------------------------------------------------------
+//#endregion
+//#region StateTemplate
 
 type StateTemplate struct {
 	name      string
@@ -193,7 +201,8 @@ func (s *StateTemplate) GetName() string {
 	return s.name
 }
 
-// -------------------------------------ShuffleDeal---------------------------------------------------------------------------------------
+//#endregion
+//#region State:ShuffleDeal
 
 type ShuffleDeal struct {
 	StateTemplate
@@ -206,7 +215,7 @@ func (s *ShuffleDeal) enter() {
 			break
 		}
 	}
-	s.SM.finish("SelectSkillCard")
+	go s.SM.finish("Judge")
 }
 
 func (s *ShuffleDeal) process(GoCtx context.Context) {
@@ -273,7 +282,8 @@ func (s *ShuffleDeal) exit() {
 	s.SM.SendActionById(s.Id2, BattleDto.NewAction(BattleDto.StartBattle, BattleDto.Notify, ""))
 }
 
-//---------------------------------------SelectCharacterCard-------------------------------------------------------------------------------
+//#endregion
+//#region State:SelectCharacterCard
 
 type SelectCharacterCard struct {
 	IsFirst bool
@@ -319,7 +329,8 @@ func (s *SelectCharacterCard) process(GoCtx context.Context) {
 
 }
 
-//---------------------------------------SelectSkillCard-------------------------------------------------------------------------------
+//#endregion
+//#region State:SelectSkillCard
 
 type SelectSkillCard struct {
 	StateTemplate
@@ -345,7 +356,7 @@ func (s *SelectSkillCard) exit() {
 func (s *SelectSkillCard) process(GoCtx context.Context) {
 	handleAction := func(id int, action BattleDto.Action, ResponseChan chan<- BattleDto.Action) {
 		if s.TaskMap[id] {
-			s.SM.SendActionById(s.Id1, BattleDto.NewErrAction(global.ResponseRepeatRequest)) //!!!
+			s.SM.SendActionById(s.Id1, BattleDto.NewErrAction(global.ResponseRepeatRequest))
 			return
 		}
 
@@ -367,8 +378,11 @@ func (s *SelectSkillCard) process(GoCtx context.Context) {
 						s.c.SetSkillCardBT(id, card)
 						s.SM.SendActionById(id, BattleDto.NewAction(BattleDto.DeployCard, BattleDto.Succeed, "技能牌选择成功"))
 						s.TaskMap[id] = true
+						if s.TaskMap[s.Id1] && s.TaskMap[s.Id2] {
+							s.SM.SendActionById(s.Id1, BattleDto.NewAction(BattleDto.DeployCard, BattleDto.Finish, "技能牌全部选择完毕"))
+						}
 					} else {
-						s.SM.SendActionById(id, BattleDto.NewErrAction(global.BattleCardCategoryError)) //竞争了
+						s.SM.SendActionById(id, BattleDto.NewErrAction(global.BattleCardCategoryError))
 						return
 					}
 				} else {
@@ -384,15 +398,127 @@ func (s *SelectSkillCard) process(GoCtx context.Context) {
 
 }
 
-//---------------------------------------Judge-------------------------------------------------------------------------------
+//#endregion
+//region State:Judge
 
 type Judge struct {
 	StateTemplate
+	Mutex     sync.Mutex
+	TaskMap   map[int]int
+	ChanStop  chan struct{}
+	ChanCrash chan struct{}
 }
 
-func (J *Judge) enter()                        {}
-func (J *Judge) exit()                         {}
-func (J *Judge) process(GoCtx context.Context) {}
+type JudgeData struct {
+	JudgeData int `json:"judge_data" mapstructure:"judge_data"`
+}
+
+func (J *Judge) SpecialInit() {
+	J.TaskMap = make(map[int]int)
+}
+
+func JudgeWin(Jd1 int, Jd2 int) int { //输出Jd1是否win
+	if Jd1 == Jd2 {
+		return 0
+	}
+	if (Jd1+1)%3 == Jd2 {
+		return 1
+	}
+	return -1
+}
+
+type JudgeEndTime struct {
+	JudgeEndTime int64 `json:"judge_end_time" mapstructure:"judge_end_time"`
+}
+
+func NewJudgeEndTime() JudgeEndTime {
+	result := JudgeEndTime{}
+	result.JudgeEndTime = Util.SendTime(global.JudgeWaitTime)
+	return result
+}
+
+func (J *Judge) EndJudge() {
+	J.Mutex.Lock()
+	defer J.Mutex.Unlock()
+	for Key, value := range J.TaskMap {
+		if value == 3 {
+			J.TaskMap[Key] = Util.RandomRange(0, 2)
+		}
+	}
+
+	J.SM.SendActionById(J.Id1, BattleDto.NewAction(BattleDto.Judge, BattleDto.Finish, NewJudgeRes(J.TaskMap[J.Id1], J.TaskMap[J.Id2], JudgeWin(J.TaskMap[J.Id1], J.TaskMap[J.Id2]))))
+	J.SM.SendActionById(J.Id2, BattleDto.NewAction(BattleDto.Judge, BattleDto.Finish, NewJudgeRes(J.TaskMap[J.Id2], J.TaskMap[J.Id1], JudgeWin(J.TaskMap[J.Id2], J.TaskMap[J.Id1]))))
+
+}
+
+func (J *Judge) enter() {
+	J.TaskMap[J.Id1] = 3 //设为一个不可能值作为检查是否返回了
+	J.TaskMap[J.Id2] = 3
+
+	chanStop, chanCrash := Util.CreateTimer(time.Second*global.JudgeWaitTime, J.EndJudge)
+	J.ChanCrash = chanCrash
+	J.ChanStop = chanStop
+
+	J.SM.SendActionById(J.Id1, BattleDto.NewAction(BattleDto.Judge, BattleDto.Query, NewJudgeEndTime()))
+	J.SM.SendActionById(J.Id2, BattleDto.NewAction(BattleDto.Judge, BattleDto.Query, NewJudgeEndTime()))
+}
+func (J *Judge) exit() {
+	J.TaskMap[J.Id1] = 3
+	J.TaskMap[J.Id1] = 3
+	J.ChanStop = nil
+	J.ChanCrash = nil
+}
+
+type JudgeRes struct {
+	Self     int `json:"self" mapstructure:"self"`
+	Opponent int `json:"opponent" mapstructure:"opponent"`
+	IsWin    int `json:"is_win" mapstructure:"is_win"`
+}
+
+func NewJudgeRes(self int, opponent int, IsWin int) *JudgeRes {
+	J := &JudgeRes{}
+	J.Self = self
+	J.Opponent = opponent
+	J.IsWin = IsWin
+	return J
+}
+
+func (J *Judge) process(GoCtx context.Context) {
+	handleAction := func(id int, action BattleDto.Action, ResponseChan chan<- BattleDto.Action) {
+		if action.ActionCode == BattleDto.Judge && action.Predicates == BattleDto.Result {
+			J.Mutex.Lock()
+			var data JudgeData
+			err := mapstructure.Decode(action.ActionData, &data)
+			if err != nil {
+				fmt.Println(err)
+				J.SM.SendActionById(id, BattleDto.NewErrAction(global.ResponseInvalidReqParams))
+				return
+			}
+			Jd := data.JudgeData
+			if !(0 <= Jd && Jd <= 2) {
+				J.SM.SendActionById(id, BattleDto.NewErrAction(global.ResponseInvalidReqParams))
+			}
+			J.TaskMap[id] = Jd
+			J.SM.SendActionById(id, BattleDto.NewAction(BattleDto.Judge, BattleDto.Succeed, "")) //单方选好了，存储进去了
+
+			flag := true
+			for _, value := range J.TaskMap {
+				if value == 3 {
+					flag = false
+				}
+			}
+			J.Mutex.Unlock()
+			if flag { //双方都已经选好了
+				J.ChanStop <- struct{}{}
+			}
+
+		}
+
+	}
+	J.SM.AcceptAction(GoCtx, handleAction)
+}
+
+//endregion
 
 //---------------------------------------Combat-------------------------------------------------------------------------------
 

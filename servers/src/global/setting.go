@@ -14,4 +14,5 @@ const (
 	InitCardNum         = 11
 	SelectCharacterTime = 10 //s
 	SelectSkillCardTime = 10 //s
+	JudgeWaitTime       = 6  //s
 )

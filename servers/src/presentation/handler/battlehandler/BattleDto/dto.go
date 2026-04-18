@@ -19,6 +19,7 @@ const (
 	OverBattle
 	StartBattle
 	DeployCard
+	Judge
 )
 
 var ActionName = map[ActionCode]string{
@@ -28,6 +29,7 @@ var ActionName = map[ActionCode]string{
 	OverBattle:            "结束战斗",
 	StartBattle:           "开始战斗",
 	DeployCard:            "部署一张牌",
+	Judge:                 "战斗回合判断",
 }
 
 type Predicates int
@@ -37,7 +39,7 @@ const (
 	Notify
 	Query
 	Result
-	finish
+	Finish
 	Succeed
 )
 
