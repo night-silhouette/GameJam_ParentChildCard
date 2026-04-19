@@ -16,20 +16,28 @@ const (
 	CancelMatch
 	GetSelfCardInHard
 	GetOpponentCardInHard
+	GetBtCardInfo
 	OverBattle
 	StartBattle
 	DeployCard
 	Judge
+	MatchSuccess
+	AnimationPlayEnd
+	Combat
 )
 
 var ActionName = map[ActionCode]string{
 	CancelMatch:           "取消匹配",
 	GetSelfCardInHard:     "获取自己的卡牌信息",
 	GetOpponentCardInHard: "获取对手的卡牌信息",
+	GetBtCardInfo:         "获取场上的战斗信息",
 	OverBattle:            "结束战斗",
 	StartBattle:           "开始战斗",
 	DeployCard:            "部署一张牌",
 	Judge:                 "战斗回合判断",
+	MatchSuccess:          "匹配成功",
+	AnimationPlayEnd:      "动画结束",
+	Combat:                "执行战斗行动",
 }
 
 type Predicates int

@@ -208,4 +208,83 @@ func (c *Ctx) GetCardInHard(id_self int) *BattleData.CardInHand {
 	return res
 }
 
+func (c *Ctx) GetBtCardInfo(id int) BattleData.BtCardInfo {
+	GetDtoDefault := func(card CardAbstract.Card) BattleData.CardDto {
+		if card == nil {
+			res := BattleData.CardDto{}
+			res.BuffId = -1
+			res.Id = -1
+			return res
+		}
+		return CardAbstract.GetCardDto(card)
+	}
+
+	var BtCardInfo BattleData.BtCardInfo
+	for key, value := range c.PlayerDataMap {
+		if key == id {
+			BtCardInfo.Self.ChildCardBt = GetDtoDefault(value.ChildCardBT)
+			BtCardInfo.Self.SkillCardBt = GetDtoDefault(value.SkillCardBT)
+			BtCardInfo.Self.ParentCardBt = GetDtoDefault(value.ParentCardBT)
+		} else {
+			BtCardInfo.Opponent.ChildCardBt = GetDtoDefault(value.ChildCardBT)
+			BtCardInfo.Opponent.SkillCardBt = GetDtoDefault(value.SkillCardBT)
+			BtCardInfo.Opponent.ParentCardBt = GetDtoDefault(value.ParentCardBT)
+		}
+	}
+	return BtCardInfo
+}
+
 //__________________________________________对card提供对接口______________________________________________
+
+//__________________________________________对卡牌数据的操作算法______________________________________________
+
+func (c *Ctx) RandomSelectCard(id int) BattleData.Where { //这个是个不安全方法，就是你要保证他是一定还有牌可以上的（就是，没死掉的）
+	playerData := c.PlayerDataMap[id]
+	cardInHard := playerData.CardInHand
+	for cardId, card := range cardInHard {
+		if _, ok := card.(CardAbstract.Character); !ok {
+			continue
+		}
+
+		if card.GetInfo()["is_parent"].(bool) {
+			c.SetParentCardBT(id, card)
+			delete(cardInHard, cardId)
+			return BattleData.ParentCard
+		} else {
+			c.SetChildCardBT(id, card)
+			delete(cardInHard, cardId)
+			return BattleData.ChildCard
+		}
+	}
+	return -1
+}
+
+func (c *Ctx) CheckCard(id int) bool {
+	playerData := c.PlayerDataMap[id]
+	flag := false //没有牌
+	if playerData.ParentCardBT != nil {
+		flag = true
+	}
+	if playerData.ChildCardBT != nil {
+		flag = true
+	}
+	return flag
+}
+
+// SetCardBt 带删除了的
+func (c *Ctx) SetCardBt(id int, card CardAbstract.Card) {
+	playerData := c.PlayerDataMap[id]
+	if _, ok := card.(CardAbstract.SkillCard); ok {
+		c.SetSkillCardBT(id, card)
+		delete(playerData.CardInHand, card.GetTempId())
+		return
+	}
+	if card.GetInfo()["is_parent"].(bool) {
+		c.SetParentCardBT(id, card)
+		delete(playerData.CardInHand, card.GetTempId())
+		return
+	}
+	c.SetChildCardBT(id, card)
+	delete(playerData.CardInHand, card.GetTempId())
+
+}

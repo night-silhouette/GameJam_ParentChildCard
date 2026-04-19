@@ -5,35 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="760cea56-5efb-4b56-8acc-717cb714ebef" name="更改" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/626966bd-e130-4f5a-83d5-704f5f250146.corrupted.20260330-091953.reason.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/626966bd-e130-4f5a-83d5-704f5f250146.corrupted.20260330-091953.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/626966bd-e130-4f5a-83d5-704f5f250146.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/626966bd-e130-4f5a-83d5-704f5f250146/storage_v2/_src_/database/pccard.g1fAxA.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/626966bd-e130-4f5a-83d5-704f5f250146/storage_v2/_src_/database/pccard.g1fAxA/schema/information_schema.FNRwLQ.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/626966bd-e130-4f5a-83d5-704f5f250146/storage_v2/_src_/database/pccard.g1fAxA/schema/pg_catalog.0S1ZNQ.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/626966bd-e130-4f5a-83d5-704f5f250146/storage_v2/_src_/database/pccard.g1fAxA/schema/public.abK9xQ.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/626966bd-e130-4f5a-83d5-704f5f250146/storage_v2/_src_/database/pccard.g1fAxA/schema/public.abK9xQ.zip" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/626966bd-e130-4f5a-83d5-704f5f250146/storage_v2/_src_/database/postgres.edMnLQ.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/626966bd-e130-4f5a-83d5-704f5f250146/storage_v2/_src_/database/postgres.edMnLQ/schema/information_schema.FNRwLQ.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/626966bd-e130-4f5a-83d5-704f5f250146/storage_v2/_src_/database/postgres.edMnLQ/schema/pg_catalog.0S1ZNQ.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/626966bd-e130-4f5a-83d5-704f5f250146/storage_v2/_src_/database/postgres.edMnLQ/schema/public.abK9xQ.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/data_source_mapping.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/go.imports.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/servers.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/sqldialects.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/application/entity/BattleData/CardInHard.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/entity/BattleData/CardInHard.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/application/entity/Card/CardAbstract/card.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/entity/Card/CardAbstract/card.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/application/entity/Card/CardImpl/BaseCard.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/entity/Card/CardImpl/BaseCard.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/application/service/battleservice/cardlist.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/service/battleservice/cardlist.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/application/service/battleservice/ctx.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/service/battleservice/ctx.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/application/service/battleservice/state.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/service/battleservice/state.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/src/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/src/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/global/setting.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/global/setting.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/presentation/handler/battlehandler/BattleDto/dto.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/presentation/handler/battlehandler/BattleDto/dto.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/presentation/handler/battlehandler/BattleHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/presentation/handler/battlehandler/BattleHandler.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -74,6 +50,8 @@
   &quot;keyToString&quot;: {
     &quot;DefaultGoTemplateProperty&quot;: &quot;Go File&quot;,
     &quot;Go 构建.go build GoTest/main.executor&quot;: &quot;Run&quot;,
+    &quot;Go 构建.go build main.go -race -gcflags=\&quot;-l\&quot; -gcflags=\&quot;-m\&quot;.executor&quot;: &quot;Run&quot;,
+    &quot;Go 构建.go build main.go -race -gcflags=\&quot;-l\&quot;.executor&quot;: &quot;Run&quot;,
     &quot;Go 构建.go build main.go.executor&quot;: &quot;Run&quot;,
     &quot;Go 构建.go build pcc_card/cmd/main.executor&quot;: &quot;Run&quot;,
     &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
@@ -131,14 +109,14 @@
         <entry key="GoApplicationRunConfiguration">
           <value>
             <map>
-              <entry key="go build pcc_card/cmd/main" value="STOPPED" />
+              <entry key="go build main.go -race -gcflags=&quot;-l&quot;" value="STOPPED" />
             </map>
           </value>
         </entry>
       </map>
     </option>
   </component>
-  <component name="RunManager" selected="Go 构建.go build pcc_card/cmd/main">
+  <component name="RunManager" selected="Go 构建.go build main.go -race -gcflags=&quot;-l&quot;">
     <configuration default="true" type="GoApplicationRunConfiguration" factoryName="Go Application">
       <module name="servers" />
       <working_directory value="$PROJECT_DIR$" />
@@ -165,6 +143,16 @@
       <filePath value="$PROJECT_DIR$/test/GoTest/main/main.go" />
       <method v="2" />
     </configuration>
+    <configuration name="go build main.go -race -gcflags=&quot;-l&quot;" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true">
+      <module name="servers" />
+      <working_directory value="$PROJECT_DIR$/src" />
+      <go_parameters value="-race -gcflags=&quot;-l&quot;" />
+      <kind value="FILE" />
+      <package value="src/cmd/main" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$/src/cmd/main/main.go" />
+      <method v="2" />
+    </configuration>
     <configuration name="go build main.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
       <module name="servers" />
       <working_directory value="$PROJECT_DIR$" />
@@ -173,12 +161,12 @@
       <filePath value="$PROJECT_DIR$/go_test/base64Captcha/main.go" />
       <method v="2" />
     </configuration>
-    <configuration name="go build pcc_card/cmd/main" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
-      <working_directory value="$PROJECT_DIR$/src" />
-      <kind value="PACKAGE" />
-      <package value="pcc_card/cmd/main" />
+    <configuration name="go build main.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+      <module name="servers" />
+      <working_directory value="$PROJECT_DIR$" />
+      <kind value="FILE" />
       <directory value="$PROJECT_DIR$" />
-      <filePath value="$PROJECT_DIR$/src/cmd/main/main.go" />
+      <filePath value="$PROJECT_DIR$/go_test/base64Captcha/main.go" />
       <method v="2" />
     </configuration>
     <configuration default="true" type="GoTestRunConfiguration" factoryName="Go Test">
@@ -205,9 +193,16 @@
       <envs />
       <method v="2" />
     </configuration>
+    <list>
+      <item itemvalue="Go 构建.go build main.go" />
+      <item itemvalue="Go 构建.go build CharacterCardTemplate.go" />
+      <item itemvalue="Go 构建.go build GoTest/main" />
+      <item itemvalue="Go 构建.go build main.go -race -gcflags=&quot;-l&quot;" />
+      <item itemvalue="Shell Script.deploy.sh" />
+    </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Go 构建.go build pcc_card/cmd/main" />
+        <item itemvalue="Go 构建.go build main.go -race -gcflags=&quot;-l&quot;" />
         <item itemvalue="Go 构建.go build GoTest/main" />
         <item itemvalue="Go 构建.go build CharacterCardTemplate.go" />
         <item itemvalue="Go 构建.go build main.go" />

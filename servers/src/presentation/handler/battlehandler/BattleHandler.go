@@ -148,7 +148,9 @@ func (u *BattleHandlerImpl) ListenResquest(conn *websocket.Conn, id int, goctx c
 			return
 		default:
 			if playerC == nil {
+				u.writeMu.Lock()
 				response.WsFailWithMsg(conn, global.BattleInvalidTiming, "正在匹配中")
+				u.writeMu.Unlock()
 			}
 		}
 
