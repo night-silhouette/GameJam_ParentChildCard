@@ -1,8 +1,10 @@
 package battleservice
 
 import (
+	"context"
 	"pcc_card/application/entity/Card/CardAbstract"
 	"pcc_card/application/entity/Card/CardImpl"
+	"pcc_card/application/entity/protocolCardWithCtx"
 )
 
 type CardList struct {
@@ -75,7 +77,15 @@ func (c *CardList) init(s BattleService) {
 		CardImpl.NewCard44(),
 	}
 	for _, e := range c.data {
-		info := s.GetCardInfoByID(e.GetID())
+		info := s.GetCardInfoByID(context.Background(), e.GetID())
 		e.SetInfo(info)
+		e.SetStateCodeChan(make(chan protocolCardWithCtx.Effect))
+
+		if val, ok := info["hp"]; ok && val != nil {
+			e.SetHpNow(info["hp"].(float64))
+		}
+		if val, ok := info["damage"]; ok && val != nil {
+			e.SetAtkNow(info["damage"].(float64))
+		}
 	}
 }

@@ -20,6 +20,7 @@ type Token_handler interface {
 	Delete() gin.HandlerFunc
 	Patch() gin.HandlerFunc
 }
+
 type Token_handler_impl struct {
 	s UserService.User_service
 }
@@ -27,6 +28,7 @@ type Token_handler_impl struct {
 func (u *Token_handler_impl) Set_service(svc service.Service) {
 	u.s = svc.(UserService.User_service)
 }
+
 func (u *Token_handler_impl) Get() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		response.Success(c, "验证成功")
@@ -40,17 +42,20 @@ func (u *Token_handler_impl) Post() gin.HandlerFunc {
 			response.Fail(c, global.ResponseInvalidReqParams)
 			return
 		}
-		e, err := u.s.Find_user_by_name(dto.Name)
+		// 传入 c.Request.Context()
+		e, err := u.s.Find_user_by_name(c.Request.Context(), dto.Name)
 		if err != global.ResponseSuccess {
 			response.Fail(c, err)
 			return
 		}
 		id := e.Id
-		err = u.s.Check_password(id, dto.Password)
+		// 传入 c.Request.Context()
+		err = u.s.Check_password(c.Request.Context(), id, dto.Password)
 		if err != global.ResponseSuccess {
 			response.Fail(c, err)
 			return
 		}
+		// 这里原本就有 Context，保持
 		token, err := u.s.Release_token(id, c.Request.Context())
 		if err != global.ResponseSuccess {
 			response.Fail(c, err)
@@ -59,18 +64,21 @@ func (u *Token_handler_impl) Post() gin.HandlerFunc {
 		response.Success(c, gin.H{"token": token})
 	}
 }
+
 func (u *Token_handler_impl) Put() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		response.Fail(c, global.ResponseNotImplemented)
 		return
 	}
 }
+
 func (u *Token_handler_impl) Delete() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		response.Fail(c, global.ResponseNotImplemented)
 		return
 	}
 }
+
 func (u *Token_handler_impl) Patch() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		response.Fail(c, global.ResponseNotImplemented)
@@ -95,6 +103,15 @@ func (u *Token_handler_impl) Middleware_token_check() gin.HandlerFunc {
 			return
 		}
 
+		if path == "/v1/time/" && method == http.MethodGet {
+			c.Next()
+			return
+		}
+		if path == "/v1/debug/time/" && method == http.MethodGet {
+			c.Next()
+			return
+		}
+
 		token := c.GetHeader("Authorization")
 		if token == "" {
 			token = c.Query("token")
@@ -105,6 +122,7 @@ func (u *Token_handler_impl) Middleware_token_check() gin.HandlerFunc {
 			c.Abort()
 			return
 		}
+		// 传入 c.Request.Context()，用于内部的 Redis 状态校验
 		id, is_admin, err := u.s.Is_valid_token(token, c.Request.Context())
 		if err != global.ResponseSuccess {
 			response.Fail(c, err)

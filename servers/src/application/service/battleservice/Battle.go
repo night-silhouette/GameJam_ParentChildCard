@@ -9,21 +9,25 @@ import (
 var battleIDCounter int64
 
 type Battle struct {
-	mu                     sync.RWMutex //房间锁
-	BattleID               int
-	SM                     *StateMachine
-	Ctx                    *Ctx
-	Nt                     *NotifyManager
-	StateMachineCancelFunc context.CancelFunc
+	mu sync.RWMutex //房间锁
+
+	Context context.Context //生命周期总控制
+	Cancel  context.CancelFunc
+
+	BattleID int
+	SM       *StateMachine
+	Ctx      *Ctx
+	Nt       *NotifyManager
 }
 
 func NewBattle(UserA int, UserB int) *Battle {
+	rootContext := context.Background()
+	BattleContext, cancel := context.WithCancel(rootContext)
 	id := int(atomic.AddInt64(&battleIDCounter, 1))
-	ctx := NewCtx(UserA, UserB)
+	ctx := NewCtx(UserA, UserB, CardListImpl.Copy(), BattleContext)
 	Nt := NewNotifyManager(UserA, UserB, 32) //初始化bufferSize
-	SM, StateMachineCancelFunc := NewStateMachine(ctx, UserA, UserB, Nt)
-
-	return &Battle{BattleID: id, SM: SM, Ctx: ctx, Nt: Nt, StateMachineCancelFunc: StateMachineCancelFunc}
+	SM := NewStateMachine(ctx, UserA, UserB, Nt, BattleContext)
+	return &Battle{BattleID: id, SM: SM, Ctx: ctx, Nt: Nt, Context: BattleContext, Cancel: cancel}
 }
 
 func (b *Battle) GetPlayerChanByUserID(id int) PlayerChannel {

@@ -27,7 +27,14 @@ type User_handler interface {
 	DeleteMailByMailId() gin.HandlerFunc
 	DeleteMailAll() gin.HandlerFunc
 	UserVagueSearch() gin.HandlerFunc
+	CreateFriendship() gin.HandlerFunc
+	GetFriendships() gin.HandlerFunc
+	DeleteFriendships() gin.HandlerFunc
+	ChangeFriendshipsRequest() gin.HandlerFunc
+	TimeSync() gin.HandlerFunc
+	TimeDebug() gin.HandlerFunc
 }
+
 type User_handler_impl struct {
 	s UserService.User_service
 }
@@ -42,7 +49,8 @@ func (u *User_handler_impl) Get() gin.HandlerFunc {
 		user_id := c.GetInt("id")
 
 		if !is_admin {
-			e, err := u.s.Find_user_by_id(user_id)
+			// 传入 c.Request.Context()
+			e, err := u.s.Find_user_by_id(c.Request.Context(), user_id)
 			if err != global.ResponseSuccess {
 				response.Fail(c, err)
 				return
@@ -56,8 +64,9 @@ func (u *User_handler_impl) Get() gin.HandlerFunc {
 			return
 		}
 
-		if req.ID != 0 {
-			e, status := u.s.Find_user_by_id(req.ID)
+		if req.Id != 0 {
+			// 传入 c.Request.Context()
+			e, status := u.s.Find_user_by_id(c.Request.Context(), req.Id)
 			if status == global.ResponseSuccess {
 				response.Success(c, e)
 				return
@@ -66,7 +75,8 @@ func (u *User_handler_impl) Get() gin.HandlerFunc {
 				return
 			}
 		} else if req.Name != "" {
-			e, status := u.s.Find_user_by_name(req.Name)
+			// 传入 c.Request.Context()
+			e, status := u.s.Find_user_by_name(c.Request.Context(), req.Name)
 			if status == global.ResponseSuccess {
 				response.Success(c, e)
 				return
@@ -78,7 +88,6 @@ func (u *User_handler_impl) Get() gin.HandlerFunc {
 			response.Fail(c, global.ResponseInvalidReqParams)
 			return
 		}
-
 	}
 }
 
@@ -86,7 +95,6 @@ func (u *User_handler_impl) Post() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var data UserPostDto
 		if err := c.ShouldBind(&data); err != nil {
-
 			response.Fail(c, global.ResponseInvalidReqParams)
 			return
 		}
@@ -95,14 +103,14 @@ func (u *User_handler_impl) Post() gin.HandlerFunc {
 			return
 		}
 		e := &User_entity.User{Id: -1, Name: data.Name, Password: data.Password, Is_admin: false}
-		err := u.s.Create_user(e)
+		// 传入 c.Request.Context()
+		err := u.s.Create_user(c.Request.Context(), e)
 		if err != global.ResponseSuccess {
 			response.Fail(c, err)
 			return
 		}
 		response.Success(c, "ok")
 		return
-
 	}
 }
 
@@ -121,14 +129,14 @@ func (u *User_handler_impl) Put() gin.HandlerFunc {
 		}
 
 		e := &User_entity.User{Id: req.Id, Name: req.Name, Password: req.Password}
-		err := u.s.Update_user(e)
+		// 传入 c.Request.Context()
+		err := u.s.Update_user(c.Request.Context(), e)
 		if err != global.ResponseSuccess {
 			response.Fail(c, err)
 			return
 		}
 		response.Success(c, "ok")
 		return
-
 	}
 }
 
@@ -143,13 +151,14 @@ func (u *User_handler_impl) Delete() gin.HandlerFunc {
 			response.Fail(c, global.ResponseInvalidReqParams)
 			return
 		}
-		id = req.ID
+		id = req.Id
 		if !is_admin && id != 0 {
 			response.Fail(c, global.ResponseForbidden)
 			return
 		}
 
-		err := u.s.Delete_user(user_id, c.Request.Context())
+		// 这里原本就是 c.Request.Context()，保持
+		err := u.s.Delete_user(c.Request.Context(), user_id)
 
 		if err != global.ResponseSuccess {
 			response.Fail(c, err)
@@ -172,7 +181,8 @@ func (u *User_handler_impl) Patch() gin.HandlerFunc {
 			response.Fail(c, global.ResponseInvalidReqParams)
 			return
 		}
-		e, err := u.s.Find_user_by_id(user_id)
+		// 传入 c.Request.Context()
+		e, err := u.s.Find_user_by_id(c.Request.Context(), user_id)
 		if err != global.ResponseSuccess {
 			response.Fail(c, err)
 			return
@@ -185,18 +195,19 @@ func (u *User_handler_impl) Patch() gin.HandlerFunc {
 			e.Name = req.Name
 		}
 		if req.Password != "" {
-			OK := u.s.Check_password(user_id, req.Password)
+			// 传入 c.Request.Context()
+			OK := u.s.Check_password(c.Request.Context(), user_id, req.Password)
 			if OK == global.ResponseSuccess {
 				response.Fail(c, global.ResponseInvalidReqParams)
 				return
 			} else {
 				e.Password = req.Password
 			}
-
 		} else {
 			e.Password = ""
 		}
-		err = u.s.Update_user(e)
+		// 传入 c.Request.Context()
+		err = u.s.Update_user(c.Request.Context(), e)
 		if err != global.ResponseSuccess {
 			response.Fail(c, err)
 			return
@@ -212,7 +223,8 @@ func (u *User_handler_impl) UserVagueSearch() gin.HandlerFunc {
 			fmt.Println(err)
 			return
 		}
-		err, uList := u.s.UserSearch(req.VagueName)
+		// 传入 c.Request.Context()
+		err, uList := u.s.UserSearch(c.Request.Context(), req.VagueName)
 		if err != global.ResponseSuccess {
 			response.Fail(c, err)
 			return

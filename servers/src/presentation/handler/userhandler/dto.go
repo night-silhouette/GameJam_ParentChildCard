@@ -1,7 +1,7 @@
 package userhandler
 
 type UserSearchReqDto struct {
-	ID   int    `form:"id" json:"id"`
+	Id   int    `form:"id" json:"id"`
 	Name string `form:"name" json:"name" binding:"max=32"`
 }
 type UserPostDto struct {
@@ -9,7 +9,7 @@ type UserPostDto struct {
 	Password string `form:"password" json:"password" binding:"required,max=256"`
 }
 type UserDeleteReqDto struct {
-	ID int `form:"id" json:"id"`
+	Id int `form:"id" json:"id"`
 }
 
 type UserPutReqDto struct {

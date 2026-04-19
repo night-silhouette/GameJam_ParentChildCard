@@ -47,6 +47,7 @@ func user(DB *sql.DB, RD *redis.Client) {
 	route.Register_token_routes(token_handler)
 	route.Register_user_routes(user_handler)
 	route.RegisterMailRoute(user_handler)
+	route.RegisterFriendshipsRoutes(user_handler)
 }
 
 func Battle(DB *sql.DB, RD *redis.Client) {

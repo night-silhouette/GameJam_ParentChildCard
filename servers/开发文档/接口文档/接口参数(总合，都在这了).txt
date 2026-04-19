@@ -33,13 +33,13 @@ res:"pong"
 get:
     if ！is_admin(只能查自己):
         req:/
-        res:"id": 15,
+        res:"Id": 15,
             "name": "test1",
             "password": "$2a$10$yDqrivLBRrDizIWiR3xhpOzbG.rE5MmqvjdbPK5/M0T7pt0Z2S2NO",
             "is_admin": false
     else:
-        req:name=x || id=y
-        res:"id": y,
+        req:name=x || Id=y
+        res:"Id": y,
             "name": "x",
             "password": "...",
             "is_admin": ...
@@ -52,10 +52,10 @@ delete:
         req:/
         res:/
     else:
-        req:id=x
+        req:Id=x
         res:/
 put:
-    req:	Id       int    `form:"id" binding:"required,min=1"`
+    req:	Id       int    `form:"Id" binding:"required,min=1"`
         	Name     string `form:"name" binding:"required,max=16"`
         	Password string `form:"password" binding:"required,max=256"`(都小写)
     res:/

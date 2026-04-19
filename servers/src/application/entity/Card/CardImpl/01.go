@@ -2,10 +2,11 @@ package CardImpl
 
 import "pcc_card/application/entity/Card/CardAbstract"
 
-
 type Card01 struct {
 	BaseCard
 }
+
+func (c *Card01) PlayMagic() {}
 
 func NewCard01() *Card01 {
 	return &Card01{}
