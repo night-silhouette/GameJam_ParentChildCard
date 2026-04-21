@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://6drvwctgyu2f"]
+[gd_scene load_steps=15 format=3 uid="uid://6drvwctgyu2f"]
 
 [ext_resource type="PackedScene" uid="uid://drl0a5cxlyiu6" path="res://game_ui/mask.tscn" id="1_31yhv"]
 [ext_resource type="PackedScene" uid="uid://pmiymeegg054" path="res://game_ui/menu/边框.tscn" id="1_qfxjv"]
@@ -10,6 +10,7 @@
 [ext_resource type="Texture2D" uid="uid://bxwynusbxmspc" path="res://素材/使用素材/战斗外/游戏初始界面/空格/2.png" id="6_31yhv"]
 [ext_resource type="Script" uid="uid://fu0n2fjolu38" path="res://game_ui/menu/注销.gd" id="8_ikupr"]
 [ext_resource type="PackedScene" uid="uid://cfsmqjjmevec7" path="res://game_ui/menu/coin.tscn" id="9_p44tl"]
+[ext_resource type="Texture2D" uid="uid://c1wklq6ii6b4v" path="res://素材/使用素材/战斗外/好友/信封/信封效果/1.png" id="11_jisbt"]
 
 [sub_resource type="Animation" id="Animation_sojaf"]
 length = 0.001
@@ -107,17 +108,6 @@ scale = Vector2(0.1854808, 0.1854808)
 animatedSprite2D = NodePath("../coin")
 colorRect = NodePath("../mask")
 
-[node name="注销" type="Button" parent="."]
-layout_mode = 0
-offset_left = 888.0
-offset_top = 376.0
-offset_right = 928.0
-offset_bottom = 407.0
-scale = Vector2(4.093587, 3.7094772)
-text = "注销
-"
-script = ExtResource("8_ikupr")
-
 [node name="空格" type="TextureButton" parent="."]
 layout_mode = 0
 offset_left = 352.0
@@ -138,5 +128,22 @@ layout_mode = 0
 visible = false
 position = Vector2(576, 320)
 
-[connection signal="button_down" from="注销" to="注销" method="_on_button_down"]
+[node name="Button" type="Button" parent="."]
+visible = false
+layout_mode = 0
+offset_left = 952.00006
+offset_top = 496.0
+offset_right = 992.00006
+offset_bottom = 527.0
+scale = Vector2(3.9431431, 3.978341)
+text = "注销
+"
+script = ExtResource("8_ikupr")
+
+[node name="信封" type="Sprite2D" parent="."]
+position = Vector2(1096, 103.99999)
+scale = Vector2(0.19546409, 0.19546409)
+texture = ExtResource("11_jisbt")
+
 [connection signal="button_down" from="空格" to="cheese" method="animationplayer"]
+[connection signal="button_down" from="Button" to="Button" method="_on_button_down"]

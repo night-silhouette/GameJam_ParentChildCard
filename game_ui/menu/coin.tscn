@@ -125,3 +125,4 @@ animations = [{
 [node name="coin" type="AnimatedSprite2D"]
 sprite_frames = SubResource("SpriteFrames_sv2rj")
 animation = &"硬币旋转"
+frame_progress = 0.6132423

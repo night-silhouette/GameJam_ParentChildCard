@@ -28,6 +28,7 @@ offset_bottom = 421.0
 scale = Vector2(0.3250097, 0.3250097)
 
 [node name="说明框" type="TextureRect" parent="."]
+visible = false
 layout_mode = 0
 offset_left = 336.0
 offset_top = 232.0

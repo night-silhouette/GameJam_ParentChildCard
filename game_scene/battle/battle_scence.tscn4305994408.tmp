@@ -1,0 +1,85 @@
+[gd_scene load_steps=9 format=3 uid="uid://c85a1ra55sbk0"]
+
+[ext_resource type="Texture2D" uid="uid://dng874p0igvq" path="res://素材/使用素材/战斗内/转换.png" id="1_chjg7"]
+[ext_resource type="Texture2D" uid="uid://bxbpcw7rdnhhj" path="res://素材/使用素材/战斗内/桌面/说明/桌面.png" id="2_330rk"]
+[ext_resource type="Texture2D" uid="uid://b46o5twbahh3c" path="res://素材/使用素材/战斗内/桌面/状态栏/状态栏.png" id="2_o4khw"]
+[ext_resource type="PackedScene" uid="uid://ghdb3fyl2y4m" path="res://game_ui/battle/牌库/牌库.tscn" id="3_8qm6s"]
+[ext_resource type="Texture2D" uid="uid://cc1wnd0t8ijw" path="res://素材/使用素材/战斗内/桌面/状态栏/滑轮.png" id="3_330rk"]
+[ext_resource type="PackedScene" uid="uid://lr0vlyrlvftn" path="res://game_scene/battle/进度条.tscn" id="4_330rk"]
+[ext_resource type="Script" uid="uid://ctldl5kprxqch" path="res://game_ui/battle/object_pool.gd" id="4_cqcp3"]
+[ext_resource type="PackedScene" uid="uid://c21g6pu7bxtii" path="res://game_scene/battle/法术抽取.tscn" id="5_8qm6s"]
+
+[node name="battle_scence" type="Node"]
+
+[node name="ColorRect" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+metadata/_edit_lock_ = true
+
+[node name="边框" type="TextureRect" parent="."]
+offset_top = -3296.0002
+offset_right = 1858.0
+offset_bottom = 3099.9998
+scale = Vector2(0.620303, 0.620303)
+texture = ExtResource("1_chjg7")
+expand_mode = 1
+metadata/_edit_lock_ = true
+
+[node name="桌面" type="TextureRect" parent="."]
+offset_left = 192.0
+offset_top = 88.00001
+offset_right = 2363.0
+offset_bottom = 1367.0
+scale = Vector2(0.3266327, 0.3212349)
+texture = ExtResource("2_330rk")
+
+[node name="object_pool" type="Node" parent="."]
+script = ExtResource("4_cqcp3")
+
+[node name="牌库" parent="." instance=ExtResource("3_8qm6s")]
+offset_left = 320.0
+offset_top = 512.0
+offset_right = 320.0
+offset_bottom = 512.0
+scale = Vector2(0.1331276, 0.1331276)
+
+[node name="法术抽取" parent="." instance=ExtResource("5_8qm6s")]
+offset_left = 15.999999
+offset_top = 184.0
+offset_right = 359.0
+offset_bottom = 749.0
+scale = Vector2(0.38455874, 0.38455874)
+
+[node name="状态栏" type="TextureRect" parent="."]
+offset_left = 968.0
+offset_top = 72.0
+offset_right = 1357.0
+offset_bottom = 1492.0
+scale = Vector2(0.35018504, 0.35018504)
+texture = ExtResource("2_o4khw")
+metadata/_edit_lock_ = true
+
+[node name="滑轮" type="TextureRect" parent="."]
+offset_left = 1040.0
+offset_top = 56.000008
+offset_right = 1403.0
+offset_bottom = 554.0
+scale = Vector2(0.32631004, 0.32631004)
+texture = ExtResource("3_330rk")
+metadata/_edit_lock_ = true
+
+[node name="进度条" parent="." instance=ExtResource("4_330rk")]
+anchors_preset = 0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 24.0
+offset_top = 24.0
+offset_right = 24.0
+offset_bottom = 24.0
+grow_horizontal = 1
+grow_vertical = 1
+scale = Vector2(0.19120544, 0.19120544)
+metadata/_edit_lock_ = true

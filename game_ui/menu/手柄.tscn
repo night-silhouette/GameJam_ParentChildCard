@@ -14,6 +14,7 @@ script = ExtResource("2_3ajty")
 metadata/_edit_lock_ = true
 
 [node name="笑脸按钮" parent="." instance=ExtResource("2_wbpcn")]
+z_index = 0
 layout_mode = 0
 offset_left = 200.0
 offset_top = 144.0
@@ -21,6 +22,7 @@ offset_right = 933.6356
 offset_bottom = 736.0
 
 [node name="笑脸按钮2" parent="." instance=ExtResource("2_wbpcn")]
+z_index = 0
 layout_mode = 0
 offset_left = 1096.0
 offset_top = 152.0

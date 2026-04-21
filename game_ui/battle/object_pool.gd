@@ -14,7 +14,6 @@ func _ready():
 
 func create_new_card():
 	var card = CARD_SCENE.instantiate()
-	
 	card.visible = false
 	return card
 
@@ -25,13 +24,20 @@ func pre_warm_pool(amount: int):
 		add_child(card)
 
 func get_card():
-	var card
 	if _pool.size() > 0:
-		card = _pool.pop_back() # 从仓库拿最后一张
-
-	card.visible = true
-	return card
-
+		var card = _pool.pop_back()
+		
+		# 关键步骤：从 object_pool 的子节点列表中移除
+		# 这样它就变成了一个“自由”节点，可以被 add_child 到其他地方
+		if card.get_parent():
+			card.get_parent().remove_child(card)
+			
+		card.visible = true
+		return card
+	else:
+		# 如果池子空了，临时创建一个（防止报错）
+		return create_new_card()
+		
 func return_card(card):
 	if card.get_parent():
 		card.get_parent().remove_child(card)

@@ -1,11 +1,8 @@
-[gd_scene load_steps=2 format=3 uid="uid://lwlayl41iys2"]
-
-[ext_resource type="Texture2D" uid="uid://o5cipelnfla7" path="res://素材/使用素材/战斗外/游戏初始界面/底板.jpg" id="1_t7hfh"]
+[gd_scene format=3 uid="uid://lwlayl41iys2"]
 
 [node name="menu_backgrounf" type="Node2D"]
 
-[node name="background2" type="TextureRect" parent="."]
+[node name="ColorRect" type="ColorRect" parent="."]
 offset_right = 1152.0
 offset_bottom = 648.0
-texture = ExtResource("1_t7hfh")
-expand_mode = 1
+color = Color(0.9297146, 0.9297147, 0.9297146, 1)

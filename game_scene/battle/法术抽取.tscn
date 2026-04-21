@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://c21g6pu7bxtii"]
+
+[ext_resource type="Texture2D" uid="uid://bdterl2d6fvqo" path="res://素材/使用素材/战斗内/桌面/选取法术/底.png" id="1_qy3x0"]
+
+[node name="法术抽取" type="TextureRect"]
+offset_right = 40.0
+offset_bottom = 40.0
+texture = ExtResource("1_qy3x0")

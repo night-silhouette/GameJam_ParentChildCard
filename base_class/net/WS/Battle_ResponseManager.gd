@@ -71,6 +71,7 @@ func _dispatch(action_code: int, action_data: Variant, predicate: int):
 		target_signal.emit()
 	else:
 		target_signal.emit(action_data)
+		print(action_data);
 enum Predicates {
 	EMPTY = 0,
 	NOTIFY = 1, # 后端主动通知（如：对手出牌了）

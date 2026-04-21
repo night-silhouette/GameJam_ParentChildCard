@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://3hsix5gk3ayx"
-path="res://.godot/imported/文字栏.png-8a289f25a015fa15b07413a67257cc63.ctex"
+uid="uid://2r8yai3w7hev"
+path="res://.godot/imported/1.png-eee24ff05a80237400d8111db10e3610.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://素材/使用素材/战斗内/桌面/状态栏/文字栏.png"
-dest_files=["res://.godot/imported/文字栏.png-8a289f25a015fa15b07413a67257cc63.ctex"]
+source_file="res://素材/使用素材/选择/确认/1.png"
+dest_files=["res://.godot/imported/1.png-eee24ff05a80237400d8111db10e3610.ctex"]
 
 [params]
 
