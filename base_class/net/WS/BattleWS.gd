@@ -56,7 +56,7 @@ func _on_message(msg: String):
 	SignalBus.raw_ws_responded.emit(code, data, msg_str)
 	
 # 发消息（统一入口）
-func send_action(action_code: int, action_data = null, predicates: int = 1): # 1 对应 Notify 或你的默认值
+func send_action(action_code: int, action_data = null, predicates: int = 2): # 1 对应 Notify 或你的默认值
 	if ws.get_ready_state() != WebSocketPeer.STATE_OPEN:
 		print("WS未连接，无法发送 Action: ", action_code)
 		return

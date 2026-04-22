@@ -1,5 +1,6 @@
-[gd_scene load_steps=10 format=3 uid="uid://c85a1ra55sbk0"]
+[gd_scene load_steps=12 format=3 uid="uid://c85a1ra55sbk0"]
 
+[ext_resource type="Script" uid="uid://dw1q80ff6ue4v" path="res://game_scene/battle/battle_scence.gd" id="1_51ed8"]
 [ext_resource type="Texture2D" uid="uid://dng874p0igvq" path="res://素材/使用素材/战斗内/转换.png" id="1_chjg7"]
 [ext_resource type="Texture2D" uid="uid://bxbpcw7rdnhhj" path="res://素材/使用素材/战斗内/桌面/说明/桌面.png" id="2_330rk"]
 [ext_resource type="Texture2D" uid="uid://b46o5twbahh3c" path="res://素材/使用素材/战斗内/桌面/状态栏/状态栏.png" id="2_o4khw"]
@@ -8,10 +9,12 @@
 [ext_resource type="PackedScene" uid="uid://lr0vlyrlvftn" path="res://game_scene/battle/进度条.tscn" id="4_330rk"]
 [ext_resource type="Script" uid="uid://ctldl5kprxqch" path="res://game_ui/battle/object_pool.gd" id="4_cqcp3"]
 [ext_resource type="PackedScene" uid="uid://c21g6pu7bxtii" path="res://game_scene/battle/法术抽取.tscn" id="5_8qm6s"]
+[ext_resource type="Script" uid="uid://cy15d728nlkst" path="res://base_class/manage/card_manager.gd" id="9_oo4tg"]
 
 [sub_resource type="Theme" id="Theme_275nv"]
 
 [node name="battle_scence" type="Node"]
+script = ExtResource("1_51ed8")
 
 [node name="ColorRect" type="ColorRect" parent="."]
 anchors_preset = 15
@@ -31,23 +34,24 @@ expand_mode = 1
 metadata/_edit_lock_ = true
 
 [node name="桌面" type="TextureRect" parent="."]
-offset_left = 240.0
-offset_top = 80.0
-offset_right = 2411.0
-offset_bottom = 1359.0
+offset_left = 272.00003
+offset_top = 64.0
+offset_right = 2443.0
+offset_bottom = 1343.0
 scale = Vector2(0.25540674, 0.251186)
 texture = ExtResource("2_330rk")
 
 [node name="object_pool" type="Node" parent="."]
 script = ExtResource("4_cqcp3")
 
-[node name="牌库" parent="." node_paths=PackedStringArray("object_pool") instance=ExtResource("3_8qm6s")]
-offset_left = 207.99998
-offset_top = 400.0
-offset_right = 207.99998
-offset_bottom = 400.0
+[node name="牌库" parent="." node_paths=PackedStringArray("object_pool", "card_manager") instance=ExtResource("3_8qm6s")]
+offset_left = 248.0
+offset_top = 392.0
+offset_right = 248.0
+offset_bottom = 392.0
 scale = Vector2(0.17075504, 0.22147548)
 object_pool = NodePath("../object_pool")
+card_manager = NodePath("../card_manager")
 
 [node name="法术抽取" parent="." instance=ExtResource("5_8qm6s")]
 offset_left = 16.000002
@@ -89,3 +93,6 @@ metadata/_edit_lock_ = true
 offset_right = 8.0
 offset_bottom = 8.0
 theme = SubResource("Theme_275nv")
+
+[node name="card_manager" type="Node" parent="."]
+script = ExtResource("9_oo4tg")

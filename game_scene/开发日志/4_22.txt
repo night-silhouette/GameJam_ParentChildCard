@@ -1,0 +1,10 @@
+懒得写这块，反正很痛苦，清理孤儿import命令行
+Get-ChildItem -Recurse -Filter *.import | ForEach-Object {
+    $importFile = $_.FullName
+    $original = $importFile -replace '\.import$', ''
+
+    if (-not (Test-Path $original)) {
+        Write-Host "Deleting orphan import: $importFile"
+        Remove-Item $importFile
+    }
+}

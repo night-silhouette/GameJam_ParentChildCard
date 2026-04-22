@@ -1,0 +1,45 @@
+# NetDef.gd (建议作为独立脚本或 Autoload)
+extends RefCounted
+class_name NetDef
+
+enum Predicate {
+	EMPTY = 0,
+	NOTIFY = 1,
+	QUERY = 2,
+	RESULT = 3,
+	FINISH = 4,
+	SUCCEED = 5
+}
+
+enum Action {
+	FAULT = 0,
+	CANCEL_MATCH = 1,
+	GET_SELF_CARDS = 2,
+	GET_OPPONENT_CARDS = 3,
+	GET_BT_INFO = 4,
+	OVER_BATTLE = 5,
+	START_BATTLE = 6,
+	DEPLOY_CARD = 7,
+	JUDGE = 8,
+	MATCH_SUCCESS = 9,
+	ANIMATION_END = 10,
+	COMBAT = 11,
+}
+
+const ACTION_NAME = {
+	Action.CANCEL_MATCH: "取消匹配",
+	Action.GET_SELF_CARDS: "获取自己的卡牌信息",
+	Action.GET_OPPONENT_CARDS: "获取对手的卡牌信息",
+	Action.GET_BT_INFO: "获取场上的战斗信息",
+	Action.OVER_BATTLE: "结束战斗",
+	Action.START_BATTLE: "开始战斗",
+	Action.DEPLOY_CARD: "部署一张牌",
+	Action.JUDGE: "战斗回合判断",
+	Action.MATCH_SUCCESS: "匹配成功",
+	Action.ANIMATION_END: "动画结束",
+	Action.COMBAT: "执行战斗行动"
+}
+
+# 辅助函数：快速获取名字打印日志
+static func get_action_name(code: int) -> String:
+	return ACTION_NAME.get(code, "未知动作(Code:%d)" % code)

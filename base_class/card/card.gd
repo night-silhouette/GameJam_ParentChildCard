@@ -4,6 +4,7 @@ extends Control
 var net_ID ;
 var hp ;
 var atk  ;
+var buff_id ;
 
 func init_card(base_res: CardResource) -> void:
 	display.texture = base_res.card_texture

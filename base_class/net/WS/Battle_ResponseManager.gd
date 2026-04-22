@@ -1,81 +1,55 @@
+# ActionReceiver.gd (处理服务器发来的消息)
 extends Node
 
 func _ready():
 	SignalBus.raw_ws_responded.connect(_handle_ws_data)
 
 func _handle_ws_data(code: int, data: Variant, msg: String):
-	if code != 0:
-		# 处理业务级错误
-		
-		return
-	print("msg: ",msg)
-	if data == null: return
+	if code != 0 or data == null: return
 	if data is String: data = JSON.parse_string(data)
 
 	var action_code = int(data.get("action_code", -1))
 	var action_data = data.get("action_data", null)
-	var predicate = int(data.get("predicates", 0)) # 获取后端分类
-
-	# 根据分类进行初步过滤或预处理
-	match predicate:
-		Predicates.NOTIFY:
-			print("[WS通知] 收到系统推送到 Action: ", action_code)
-		Predicates.RESULT:
-			print("[WS结果] action: ", action_code)
-		Predicates.QUERY:
-			print("[WS查询] action: ",action_code)
-
+	var predicate = int(data.get("predicates", 0)) 
+	
+	print("[WS 接收] -> ", predicate, "：", NetDef.get_action_name(action_code))
+	
 	_dispatch(action_code, action_data, predicate)
 
-# 配置表格式：{ action_code: { predicate: [预期类型, 信号] } }
-var _dispatch_map = {
-	0: { # CancelMatch
-		Predicates.RESULT: [TYPE_NIL, SignalBus.match_canceled]
-	},
-	1: { # GetSelfCardInHard
-		Predicates.QUERY: [TYPE_ARRAY, SignalBus.self_cards_updated]
-	},
-	2: { # GetOpponentCardInHard
-		Predicates.QUERY: [TYPE_ARRAY, SignalBus.opponent_cards_updated]
-	},
-	3: { # OverBattle
-		Predicates.NOTIFY: [TYPE_NIL, SignalBus.battle_over]
-	},
-	4: { # StartBattle
-		Predicates.NOTIFY: [TYPE_NIL, SignalBus.battle_started]
-	}
-}
-
+# 核心的分发器：明明白白写清楚每一个 Action 是怎么处理的
 func _dispatch(action_code: int, action_data: Variant, predicate: int):
-	if not _dispatch_map.has(action_code):
-		push_warning("未处理的 ActionCode: ", action_code)
-		return
+	match action_code:
 		
-	var predicate_map = _dispatch_map[action_code]
-	
-	if not predicate_map.has(predicate):
-		push_warning("Action %d 下未处理的 Predicate: %d" % [action_code, predicate])
-		return
-		
-	var config = predicate_map[predicate]
-	var expected_type = config[0]
-	var target_signal = config[1]
-
-	# 类型校验
-	if expected_type != TYPE_NIL and typeof(action_data) != expected_type:
-		push_error("数据类型不匹配")
-		return
-
-	# 发射信号
-	if expected_type == TYPE_NIL:
-		target_signal.emit()
-	else:
-		target_signal.emit(action_data)
-		print(action_data);
-enum Predicates {
-	EMPTY = 0,
-	NOTIFY = 1, # 后端主动通知（如：对手出牌了）
-	QUERY = 2,  # 客户端查询的返回（如：获取卡组列表）
-	RESULT = 3, # 动作执行的结果（如：选牌成功/失败）
-	FINISH = 4  # 流程结束
-}
+		NetDef.Action.GET_SELF_CARDS:
+			# 针对获取手牌，只有结果返回时才处理
+			if predicate == NetDef.Predicate.RESULT:
+				# 在这里你可以自由地做中间处理，比如数据转换、校验
+				if action_data is Array:
+					SignalBus.self_cards_updated.emit(action_data)
+					
+				else:
+					push_error("GET_SELF_CARDS 返回格式错误，期望 Array")
+					
+		NetDef.Action.START_BATTLE:
+			if predicate == NetDef.Predicate.NOTIFY:
+				SignalBus.battle_started.emit()
+				
+		NetDef.Action.DEPLOY_CARD:
+			if predicate == NetDef.Predicate.NOTIFY:
+				# 假设部署卡牌时，action_data 是一个包含 ID 和位置的字典
+				# 你可以在这里做进一步解析后再散发
+				if action_data is Dictionary:
+					var card_id = action_data.get("card_id", "")
+					var pos = action_data.get("position", Vector2.ZERO)
+					SignalBus.enemy_card_deployed.emit(card_id, pos)
+					
+		NetDef.Action.CANCEL_MATCH:
+			if predicate == NetDef.Predicate.RESULT:
+				SignalBus.match_canceled.emit()
+		NetDef.Action.MATCH_SUCCESS:
+			if predicate == NetDef.Predicate.NOTIFY:
+				SignalBus.match_success.emit();
+				
+		_:
+			# 未处理的 action
+			push_warning("未处理的下发动作 -> ", NetDef.get_action_name(action_code))

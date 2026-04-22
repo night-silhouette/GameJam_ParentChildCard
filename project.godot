@@ -31,7 +31,6 @@ Global="*res://base_class/global.gd"
 BattleRequestManager="*res://base_class/net/WS/Battle_RequestManager.gd"
 BattleWs="*res://base_class/net/WS/BattleWS.gd"
 BattleResponseManager="*res://base_class/net/WS/Battle_ResponseManager.gd"
-CardManager="*res://base_class/manage/card_manager.gd"
 
 [display]
 
