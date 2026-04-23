@@ -148,7 +148,7 @@ func (u *BattleHandlerImpl) ListenResquest(conn *websocket.Conn, id int, goctx c
 			playerC = playerChan.AcceptChan
 		default:
 		}
-		if !u.Interceptor.ShouldBlock(p) {
+		if u.Interceptor.ShouldBlock(p) {
 			fmt.Println("被拦截啦")
 			continue
 		}

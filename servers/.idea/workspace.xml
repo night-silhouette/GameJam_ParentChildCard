@@ -6,10 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="760cea56-5efb-4b56-8acc-717cb714ebef" name="更改" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/application/entity/BattleData/Combat.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/entity/BattleData/Combat.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/application/service/battleservice/ctx.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/service/battleservice/ctx.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/application/service/battleservice/state.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/service/battleservice/state.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/global/StatusCode.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/global/StatusCode.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/global/setting.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/global/setting.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/presentation/handler/battlehandler/BattleHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/presentation/handler/battlehandler/BattleHandler.go" afterDir="false" />
     </list>
@@ -68,7 +65,7 @@
     "SHELLCHECK.PATH": "/Users/night/Library/Application Support/JetBrains/GoLand2025.3/plugins/Shell Script/shellcheck",
     "Shell Script.deploy.sh.executor": "Run",
     "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
-    "git-widget-placeholder": "feat/backend/3__15",
+    "git-widget-placeholder": "remake__v2",
     "go.sdk.automatically.set": "true",
     "ignore.virus.scanning.warn.message": "true",
     "junie.onboarding.icon.badge.shown": "true",

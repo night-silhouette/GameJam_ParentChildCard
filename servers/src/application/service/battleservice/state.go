@@ -94,6 +94,7 @@ type StateMachine struct {
 	Winner         int
 	Loser          int
 	CombatDataChan chan BattleData.CombatDto
+	CombatTime     time.Duration
 }
 
 type StateWaitTime struct {
@@ -192,6 +193,7 @@ func NewStateMachine(c *Ctx, id1 int, id2 int, Nt *NotifyManager, ParentNodeCtx 
 	StateMachineImpl.CardListCopy = c.CardPool
 	StateMachineImpl.StateStack = make([]State, 0)
 	StateMachineImpl.CombatDataChan = make(chan BattleData.CombatDto, 1)
+	StateMachineImpl.CombatTime = global.CombatWaitTime * time.Second
 
 	StateMachineImpl.RegisterState()
 	for _, element := range StateMachineImpl.StateList {
@@ -679,18 +681,27 @@ type Combat struct {
 	StateTemplate
 	ChanCrash chan struct{}
 	ChanStop  chan struct{}
+	TimeStart time.Time
 }
 
 func (c *Combat) enter() {
-	c.SM.SendActionById(c.SM.Winner, BattleDto.NewAction(BattleDto.Combat, BattleDto.Query, NewStateWaitTime(global.CombatWaitTime)))
-	c.SM.SendActionById(c.SM.Loser, BattleDto.NewAction(BattleDto.Combat, BattleDto.Notify, NewStateWaitTime(global.CombatWaitTime)))
-	c.ChanStop, c.ChanCrash = Util.CreateTimer(global.CombatWaitTime, c.CombatEnd)
+	c.TimeStart = time.Now()
+	NeedWait := c.SM.CombatTime
+	c.SM.SendActionById(c.SM.Winner, BattleDto.NewAction(BattleDto.Combat, BattleDto.Query, NewStateWaitTime(NeedWait)))
+	c.SM.SendActionById(c.SM.Loser, BattleDto.NewAction(BattleDto.Combat, BattleDto.Notify, NewStateWaitTime(NeedWait)))
+	c.ChanStop, c.ChanCrash = Util.CreateTimer(NeedWait, c.CombatEnd)
 }
 func (c *Combat) CombatEnd() {
-
+	println("CombatEnd 跳转到结算技能牌")
 }
 
-func (c *Combat) exit() {}
+func (c *Combat) exit() {
+	TimeEnd := time.Now()
+	c.SM.CombatTime -= TimeEnd.Sub(c.TimeStart)
+	if c.SM.CombatTime < 0 {
+		c.SM.CombatTime = 0
+	}
+}
 func (c *Combat) process(GoCtx context.Context) {
 	handleAction := func(id int, action BattleDto.Action, ResponseChan chan<- BattleDto.Action) bool {
 		if id == c.SM.Loser {
@@ -743,7 +754,10 @@ func (s *SkillCardCalc) enter() {
 
 	go s.SM.finish("SelectSkillCard")
 }
-func (s *SkillCardCalc) exit()                         {}
+func (s *SkillCardCalc) exit() { //这里其实主要可以初始化下一个循环的参数
+	s.SM.CombatTime = global.CombatWaitTime * time.Second //这很重要，每次循环重新初始化一下战斗倒计时
+
+}
 func (s *SkillCardCalc) process(GoCtx context.Context) {}
 
 //endregion
@@ -754,7 +768,10 @@ type CardCalc struct {
 	StateTemplate
 }
 
-func (s *CardCalc) enter()                        {}
+func (s *CardCalc) enter() {
+	test := <-s.SM.CombatDataChan
+	fmt.Println(test)
+}
 func (s *CardCalc) exit()                         {}
 func (s *CardCalc) process(GoCtx context.Context) {}
 func (s *CardCalc) SpecialInit()                  {}
