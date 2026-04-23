@@ -1,10 +1,11 @@
 package global
 
 const (
-	TokenExpiredTime = 30
-	MatchLoopTime    = 500 //ms
-	MatchTimeRadio   = 2
-	MatchMaxWaitTime = 18.0
+	TokenExpiredTime  = 30
+	MatchLoopTime     = 500 //ms
+	MatchTimeRadio    = 2
+	MatchMaxWaitTime  = 18.0
+	WsInterceptorTime = 350 //ms
 )
 
 var Isdebug string = "debug"

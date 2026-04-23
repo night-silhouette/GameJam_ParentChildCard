@@ -25,6 +25,7 @@ const (
 	BattleEffectStackOverflow
 	BattleCardCategoryError
 	BattleCardNotFound
+	BattleNotInYourRound
 )
 
 var StatusMsg = map[ResponseStatusCode]string{
@@ -49,4 +50,5 @@ var StatusMsg = map[ResponseStatusCode]string{
 	BattleEffectStackOverflow:     "卡牌效果结算堆栈溢出",
 	BattleCardCategoryError:       "卡牌种类有误",
 	BattleCardNotFound:            "此牌没有被找到",
+	BattleNotInYourRound:          "此时不在你的回合",
 }

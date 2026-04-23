@@ -34,6 +34,7 @@ func (s *StateMachine) RegisterState() {
 		"Judge":               &Judge{},
 		"Combat":              &Combat{},
 		"SkillCardCalc":       &SkillCardCalc{},
+		"CardCalc":            &CardCalc{},
 	}
 	for key, element := range s.StateList {
 		element.SetName(key)
@@ -90,8 +91,9 @@ type StateMachine struct {
 	cancelFunc   context.CancelFunc
 
 	//stateData
-	Winner int
-	Loser  int
+	Winner         int
+	Loser          int
+	CombatDataChan chan BattleData.CombatDto
 }
 
 type StateWaitTime struct {
@@ -189,6 +191,7 @@ func NewStateMachine(c *Ctx, id1 int, id2 int, Nt *NotifyManager, ParentNodeCtx 
 	StateMachineImpl.Nt = Nt //Nt的注入
 	StateMachineImpl.CardListCopy = c.CardPool
 	StateMachineImpl.StateStack = make([]State, 0)
+	StateMachineImpl.CombatDataChan = make(chan BattleData.CombatDto, 1)
 
 	StateMachineImpl.RegisterState()
 	for _, element := range StateMachineImpl.StateList {
@@ -285,7 +288,7 @@ func (s *ShuffleDeal) enter() {
 
 		s.SM.SendActionById(s.Id1, BattleDto.NewAction(BattleDto.StartBattle, BattleDto.Notify, ""))
 		s.SM.SendActionById(s.Id2, BattleDto.NewAction(BattleDto.StartBattle, BattleDto.Notify, ""))
-		s.SM.finish("SelectSkillCard")
+		go s.SM.finish("SelectSkillCard")
 		s.SM.Mutex.Unlock()
 	}) //定时开始战斗
 }
@@ -455,7 +458,7 @@ func (s *SelectSkillCard) SelectEnd() {
 	//defer s.Mutex.Unlock() //先不用上锁，毕竟没有race操作
 	s.SM.SendActionById(s.Id1, BattleDto.NewAction(BattleDto.DeployCard, BattleDto.Finish, "技能牌全部选择完毕"))
 	s.SM.SendActionById(s.Id2, BattleDto.NewAction(BattleDto.DeployCard, BattleDto.Finish, "技能牌全部选择完毕"))
-	s.SM.finish("Judge")
+	go s.SM.finish("Judge")
 
 }
 
@@ -517,7 +520,7 @@ func (s *SelectSkillCard) process(GoCtx context.Context) {
 				}
 
 			} else {
-				s.SM.SendActionById(id, BattleDto.NewErrAction(global.BattleInvalidTiming))
+				s.SM.SendActionById(id, BattleDto.NewErrAction(global.BattleCardCategoryError))
 			}
 			return true
 		}
@@ -627,9 +630,9 @@ func (J *Judge) process(GoCtx context.Context) {
 		J.Mutex.Lock()
 		if J.WaitAnimationPlay && action.ActionCode == BattleDto.AnimationPlayEnd && action.Predicates == BattleDto.Notify {
 			if !J.IsTie {
-				J.SM.finish("Combat")
+				go J.SM.finish("Combat")
 			} else {
-				J.SM.finish("Judge")
+				go J.SM.finish("Judge")
 			}
 			return true
 		}
@@ -674,18 +677,48 @@ func (J *Judge) process(GoCtx context.Context) {
 
 type Combat struct {
 	StateTemplate
+	ChanCrash chan struct{}
+	ChanStop  chan struct{}
 }
 
 func (c *Combat) enter() {
 	c.SM.SendActionById(c.SM.Winner, BattleDto.NewAction(BattleDto.Combat, BattleDto.Query, NewStateWaitTime(global.CombatWaitTime)))
 	c.SM.SendActionById(c.SM.Loser, BattleDto.NewAction(BattleDto.Combat, BattleDto.Notify, NewStateWaitTime(global.CombatWaitTime)))
+	c.ChanStop, c.ChanCrash = Util.CreateTimer(global.CombatWaitTime, c.CombatEnd)
+}
+func (c *Combat) CombatEnd() {
 
 }
+
 func (c *Combat) exit() {}
 func (c *Combat) process(GoCtx context.Context) {
 	handleAction := func(id int, action BattleDto.Action, ResponseChan chan<- BattleDto.Action) bool {
+		if id == c.SM.Loser {
+			c.SM.SendActionById(id, BattleDto.NewErrAction(global.BattleNotInYourRound))
+			return true
+		}
 
 		if action.ActionCode == BattleDto.Combat && action.Predicates == BattleDto.Result {
+			c.SM.Mutex.Lock()
+			var data BattleData.CombatDto
+			err := mapstructure.Decode(action.ActionData, &data)
+			if err != nil {
+				fmt.Println(err)
+				c.SM.SendActionById(id, BattleDto.NewErrAction(global.ResponseInvalidReqParams))
+				return true
+			}
+			if data.Where == BattleData.SkillCard {
+				c.SM.SendActionById(id, BattleDto.NewErrAction(global.BattleCardCategoryError))
+				return true
+			}
+			if !c.c.CheckCardByWhere(id, data.Where) {
+				c.SM.SendActionById(id, BattleDto.NewErrAction(global.BattleCardNotFound))
+				return true
+			}
+			c.SM.CombatDataChan <- data
+			c.SM.Mutex.Unlock()
+			go c.SM.finish("CardCalc")
+			return true
 
 		}
 		return false
@@ -708,9 +741,22 @@ func (s *SkillCardCalc) enter() {
 		s.c.PlayerDataMap[s.Id2].SkillCardBT.(CardAbstract.SkillCard).PlayMagic()
 	}
 
-	s.SM.finish("SelectSkillCard")
+	go s.SM.finish("SelectSkillCard")
 }
 func (s *SkillCardCalc) exit()                         {}
 func (s *SkillCardCalc) process(GoCtx context.Context) {}
+
+//endregion
+
+//region State:CardCalc
+
+type CardCalc struct {
+	StateTemplate
+}
+
+func (s *CardCalc) enter()                        {}
+func (s *CardCalc) exit()                         {}
+func (s *CardCalc) process(GoCtx context.Context) {}
+func (s *CardCalc) SpecialInit()                  {}
 
 //endregion

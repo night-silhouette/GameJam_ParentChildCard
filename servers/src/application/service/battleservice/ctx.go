@@ -259,7 +259,21 @@ func (c *Ctx) RandomSelectCard(id int) BattleData.Where { //这个是个不安�
 	return -1
 }
 
-func (c *Ctx) CheckCard(id int) bool {
+func (c *Ctx) CheckCardByWhere(id int, where BattleData.Where) bool {
+	playerData := c.PlayerDataMap[id]
+	if where == BattleData.SkillCard && playerData.SkillCardBT == nil {
+		return false
+	}
+	if where == BattleData.ParentCard && playerData.ParentCardBT == nil {
+		return false
+	}
+	if where == BattleData.ChildCard && playerData.ChildCardBT == nil {
+		return false
+	}
+	return true
+}
+
+func (c *Ctx) CheckCard(id int) bool { //检查是否有角色牌出战
 	playerData := c.PlayerDataMap[id]
 	flag := false //没有牌
 	if playerData.ParentCardBT != nil {

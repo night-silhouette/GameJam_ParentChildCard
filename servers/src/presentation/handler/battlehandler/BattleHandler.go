@@ -27,12 +27,14 @@ type BattleHandler interface {
 	DebugBattleContainer() gin.HandlerFunc
 }
 type BattleHandlerImpl struct {
-	s       battleservice.BattleService
-	writeMu sync.Mutex
+	s           battleservice.BattleService
+	writeMu     sync.Mutex
+	Interceptor *Util.RequestInterceptor
 }
 
 func (u *BattleHandlerImpl) Set_service(svc service.Service) {
 	u.s = svc.(battleservice.BattleService)
+	u.Interceptor = Util.NewInterceptor(global.WsInterceptorTime * time.Millisecond)
 }
 
 func (u *BattleHandlerImpl) DebugGetMachData() gin.HandlerFunc {
@@ -146,6 +148,10 @@ func (u *BattleHandlerImpl) ListenResquest(conn *websocket.Conn, id int, goctx c
 			playerC = playerChan.AcceptChan
 		default:
 		}
+		if !u.Interceptor.ShouldBlock(p) {
+			fmt.Println("被拦截啦")
+			continue
+		}
 
 		decoder := json.NewDecoder(bytes.NewReader(p))
 		decoder.DisallowUnknownFields() // 开启严苛模式
@@ -156,6 +162,7 @@ func (u *BattleHandlerImpl) ListenResquest(conn *websocket.Conn, id int, goctx c
 			response.WsFailWithErr(conn, global.ResponseInvalidReqParams, err)
 			continue
 		}
+
 		//action解析完成
 		if action.ActionCode == BattleDto.CancelMatch {
 			battleservice.MatchSignals.Delete(id)
