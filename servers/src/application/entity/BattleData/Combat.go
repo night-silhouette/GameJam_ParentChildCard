@@ -2,13 +2,13 @@ package BattleData
 
 type CombatDto struct {
 	Behavior Behavior `json:"behavior" mapstructure:"behavior"`
-	Target   Where    `json:"target" mapstructure:"target"`
+	Where    Where    `json:"where" mapstructure:"where"`
 }
 
-func NewCombatDto(behavior Behavior, target Where) *CombatDto {
+func NewCombatDto(behavior Behavior, Where Where) *CombatDto {
 	res := CombatDto{}
 	res.Behavior = behavior
-	res.Target = target
+	res.Where = Where
 	return &res
 }
 
