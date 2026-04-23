@@ -27,6 +27,12 @@ func NewBattle(UserA int, UserB int) *Battle {
 	ctx := NewCtx(UserA, UserB, CardListImpl.Copy(), BattleContext)
 	Nt := NewNotifyManager(UserA, UserB, 32) //初始化bufferSize
 	SM := NewStateMachine(ctx, UserA, UserB, Nt, BattleContext)
+	go func() {
+		select {
+		case <-BattleContext.Done():
+			BC.RemoveBattle(id)
+		}
+	}()
 	return &Battle{BattleID: id, SM: SM, Ctx: ctx, Nt: Nt, Context: BattleContext, Cancel: cancel}
 }
 
@@ -56,6 +62,8 @@ func InitBattleContainer() {
 	BC = BattleContainer{}
 	BC.Data = make(map[int]*Battle)
 	BC.UserToBTID = make(map[int]int)
+	battleIDCounter = 1
+
 }
 
 func (bc *BattleContainer) AddBattle(id1 int, id2 int) int { //启动接口
@@ -74,6 +82,15 @@ func (bc *BattleContainer) GetBattleByUserID(id int) *Battle {
 	bc.mu.RLock()
 	defer bc.mu.RUnlock()
 	BTID := bc.UserToBTID[id]
+	if BTID == 0 {
+		return nil
+	}
 	BT := bc.Data[BTID]
 	return BT
+}
+func (bc *BattleContainer) RemoveBattle(BattleId int) {
+	bc.mu.Lock()
+	defer bc.mu.Unlock()
+	delete(bc.Data, BattleId)
+	delete(bc.UserToBTID, BattleId)
 }

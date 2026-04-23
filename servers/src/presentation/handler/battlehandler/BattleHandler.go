@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"pcc_card/Util"
 	"pcc_card/application/service"
 	"pcc_card/application/service/battleservice"
 	"pcc_card/global"
@@ -88,23 +89,46 @@ func (u *BattleHandlerImpl) BattleWs() gin.HandlerFunc {
 			fmt.Println("升级失败:", err)
 			return
 		}
+		id := c.GetInt("id")
 		goctx, cancel := context.WithCancel(c.Request.Context())
-		defer cancel()
-		defer conn.Close()
+		defer func() {
+			u.writeMu.Lock()
+			response.WsSuccess(conn, BattleDto.NewAction(BattleDto.OverBattle, BattleDto.Notify, ""))
+			u.writeMu.Unlock()
+			Util.CreateTimer(time.Second*2, func() {
+				cancel()
+				conn.Close() //两秒之后再断，这样前端可以收到死掉的信息
+			})
+			if battleservice.BC.GetBattleByUserID(id) == nil {
+				return
+			}
+			battleservice.BC.GetBattleByUserID(id).Cancel()
+
+		}()
+
 		//升级逻辑完成
 
-		id := c.GetInt("id")
 		transformAddMatchWithThis := make(chan battleservice.PlayerChannel, 2)
 		go u.AddMatch(c, conn, goctx, transformAddMatchWithThis)
 		go u.ListenResquest(conn, id, goctx, transformAddMatchWithThis, cancel)
 
-		playerChan := <-transformAddMatchWithThis
 		var OverGameChan chan bool = make(chan bool, 1)
-		go u.ListenResponse(conn, id, playerChan.ResponseChan, goctx, OverGameChan)
-		ret, _ := <-OverGameChan
-		if ret {
+		select {
+		case <-goctx.Done():
 			return
+		case playerChan := <-transformAddMatchWithThis:
+			go u.ListenResponse(conn, id, playerChan.ResponseChan, goctx, OverGameChan)
 		}
+
+		select { //阻塞，不让handler直接结束
+		case <-goctx.Done():
+			return
+		case ret, _ := <-OverGameChan:
+			if ret {
+				return
+			}
+		}
+
 	}
 
 }
