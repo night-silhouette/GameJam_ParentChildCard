@@ -20,7 +20,6 @@ type State interface {
 	exit()
 	Init(id1 int, id2 int, c *Ctx, Nt *NotifyManager, SM *StateMachine, sub State)
 	process(GoCtx context.Context)
-	AddTaskCount()
 	SetName(name string)
 	GetName() string
 	SpecialInit()
@@ -215,13 +214,12 @@ func NewStateMachine(c *Ctx, id1 int, id2 int, Nt *NotifyManager, ParentNodeCtx 
 //#region StateTemplate
 
 type StateTemplate struct {
-	name      string
-	Id1       int
-	Id2       int
-	c         *Ctx
-	Nt        *NotifyManager
-	SM        *StateMachine
-	TaskCount int
+	name string
+	Id1  int
+	Id2  int
+	c    *Ctx
+	Nt   *NotifyManager
+	SM   *StateMachine
 }
 
 func (s *StateTemplate) Init(id1 int, id2 int, c *Ctx, Nt *NotifyManager, SM *StateMachine, sub State) {
@@ -230,12 +228,10 @@ func (s *StateTemplate) Init(id1 int, id2 int, c *Ctx, Nt *NotifyManager, SM *St
 	s.c = c
 	s.Nt = Nt
 	s.SM = SM
-	s.TaskCount = 0
 	sub.SpecialInit()
 }
 func (s *StateTemplate) SpecialInit() {}
 func (s *StateTemplate) exit() {
-	s.TaskCount = 0
 }
 
 func (s *StateTemplate) process(GoCtx context.Context) {
@@ -244,12 +240,6 @@ func (s *StateTemplate) process(GoCtx context.Context) {
 		return false
 	}
 	s.SM.AcceptAction(GoCtx, handleAction)
-}
-
-func (s *StateTemplate) AddTaskCount() {
-	s.SM.Mutex.Lock()
-	defer s.SM.Mutex.Unlock()
-	s.TaskCount++
 }
 
 func (s *StateTemplate) SetName(name string) {
@@ -567,14 +557,12 @@ func JudgeWin(Jd1 int, Jd2 int) int { //输出Jd1是否win
 
 func (J *Judge) EndJudge() {
 	J.Mutex.Lock()
-	
 	defer J.Mutex.Unlock()
 	for Key, value := range J.TaskMap {
 		if value == 3 {
 			J.TaskMap[Key] = Util.RandomRange(0, 2)
 		}
 	}
-
 	J.SM.SendActionById(J.Id1, BattleDto.NewAction(BattleDto.Judge, BattleDto.Finish, NewJudgeRes(J.TaskMap[J.Id1], J.TaskMap[J.Id2], JudgeWin(J.TaskMap[J.Id1], J.TaskMap[J.Id2]))))
 	J.SM.SendActionById(J.Id2, BattleDto.NewAction(BattleDto.Judge, BattleDto.Finish, NewJudgeRes(J.TaskMap[J.Id2], J.TaskMap[J.Id1], JudgeWin(J.TaskMap[J.Id2], J.TaskMap[J.Id1]))))
 
@@ -629,18 +617,20 @@ func NewJudgeRes(self int, opponent int, IsWin int) *JudgeRes {
 
 func (J *Judge) process(GoCtx context.Context) {
 	handleAction := func(id int, action BattleDto.Action, ResponseChan chan<- BattleDto.Action) bool {
-		fmt.Println(10)
+
 		J.Mutex.Lock()
-		fmt.Println(20)
+
 		if J.WaitAnimationPlay && action.ActionCode == BattleDto.AnimationPlayEnd && action.Predicates == BattleDto.Notify {
 			if !J.IsTie {
 				go J.SM.finish("Combat")
 			} else {
 				go J.SM.finish("Judge")
 			}
+			J.Mutex.Unlock()
 			return true
 		}
 		J.Mutex.Unlock()
+
 		if action.ActionCode == BattleDto.Judge && action.Predicates == BattleDto.Result {
 			J.Mutex.Lock()
 			var data JudgeData
@@ -665,6 +655,7 @@ func (J *Judge) process(GoCtx context.Context) {
 				}
 			}
 			J.Mutex.Unlock()
+
 			if flag { //双方都已经选好了
 				J.ChanStop <- struct{}{}
 			}

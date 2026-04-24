@@ -27,14 +27,12 @@ type BattleHandler interface {
 	DebugBattleContainer() gin.HandlerFunc
 }
 type BattleHandlerImpl struct {
-	s           battleservice.BattleService
-	writeMu     sync.Mutex
-	Interceptor *Util.RequestInterceptor
+	s       battleservice.BattleService
+	writeMu sync.Mutex
 }
 
 func (u *BattleHandlerImpl) Set_service(svc service.Service) {
 	u.s = svc.(battleservice.BattleService)
-	u.Interceptor = Util.NewInterceptor(global.WsInterceptorTime * time.Millisecond)
 }
 
 func (u *BattleHandlerImpl) DebugGetMachData() gin.HandlerFunc {
@@ -137,6 +135,7 @@ func (u *BattleHandlerImpl) BattleWs() gin.HandlerFunc {
 
 func (u *BattleHandlerImpl) ListenResquest(conn *websocket.Conn, id int, goctx context.Context, trans chan battleservice.PlayerChannel, cancelFunc context.CancelFunc) {
 	var playerC chan BattleDto.Action
+	Interceptor := Util.NewInterceptor(global.WsInterceptorTime * time.Millisecond)
 	for {
 		_, p, err := conn.ReadMessage()
 		if err != nil {
@@ -148,7 +147,7 @@ func (u *BattleHandlerImpl) ListenResquest(conn *websocket.Conn, id int, goctx c
 			playerC = playerChan.AcceptChan
 		default:
 		}
-		if u.Interceptor.ShouldBlock(p) {
+		if Interceptor.ShouldBlock(p) {
 			fmt.Println("被拦截啦")
 			continue
 		}
