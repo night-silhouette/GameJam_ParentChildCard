@@ -77,8 +77,9 @@ func (s *StateMachine) SharedProcess(id int, action BattleDto.Action, ResponseCh
 //#region StateMachine
 
 type StateMachine struct {
-	Mutex         sync.RWMutex
-	ParentNodeCtx context.Context
+	StateChangeMtx sync.Mutex
+	Mutex          sync.RWMutex
+	ParentNodeCtx  context.Context
 
 	Id1          int
 	Id2          int
@@ -156,20 +157,18 @@ func (s *StateMachine) SendActionById(id int, action BattleDto.Action) {
 }
 
 func (s *StateMachine) finish(NextState string) {
-	s.Mutex.Lock()
-	defer s.Mutex.Unlock()
+	s.StateChangeMtx.Lock()
+	defer s.StateChangeMtx.Unlock()
 	NextStateObj, _ := s.StateList[NextState]
 
-	//if s.CurrentState == NextStateObj {
-	//	//s.CurrentState.AddTaskCount()
-	//	return
-	//} 相同状态或许，重新切换感觉是对的
 	if s.cancelFunc != nil {
 		s.cancelFunc()
 	}
 	if s.CurrentState != nil {
 		s.CurrentState.exit()
+		fmt.Print(s.CurrentState.GetName() + "->")
 	}
+
 	if NextState != "" {
 		s.CurrentState = NextStateObj
 		s.CurrentState.enter()
@@ -177,6 +176,7 @@ func (s *StateMachine) finish(NextState string) {
 		var GoCtx context.Context
 		GoCtx, s.cancelFunc = context.WithCancel(s.ParentNodeCtx) //stateMachine死掉，你也得死
 		go s.CurrentState.process(GoCtx)
+		fmt.Print(s.CurrentState.GetName() + "\n")
 
 	}
 }
@@ -567,6 +567,7 @@ func JudgeWin(Jd1 int, Jd2 int) int { //输出Jd1是否win
 
 func (J *Judge) EndJudge() {
 	J.Mutex.Lock()
+	
 	defer J.Mutex.Unlock()
 	for Key, value := range J.TaskMap {
 		if value == 3 {
@@ -628,8 +629,9 @@ func NewJudgeRes(self int, opponent int, IsWin int) *JudgeRes {
 
 func (J *Judge) process(GoCtx context.Context) {
 	handleAction := func(id int, action BattleDto.Action, ResponseChan chan<- BattleDto.Action) bool {
-
+		fmt.Println(10)
 		J.Mutex.Lock()
+		fmt.Println(20)
 		if J.WaitAnimationPlay && action.ActionCode == BattleDto.AnimationPlayEnd && action.Predicates == BattleDto.Notify {
 			if !J.IsTie {
 				go J.SM.finish("Combat")
