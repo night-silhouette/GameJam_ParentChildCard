@@ -1,0 +1,30 @@
+[gd_scene load_steps=3 format=3 uid="uid://dgypaa2kn1i0o"]
+
+[ext_resource type="PackedScene" uid="uid://dx67q76jhqn1l" path="res://game_ui/battle/子卡详细.tscn" id="1_8wvkc"]
+
+[sub_resource type="GDScript" id="GDScript_fd4t8"]
+script/source = "# DropZone.gd
+extends Area2D
+
+@onready var background_highlight = $\"子卡详细\" # 你的托底视觉节点
+
+func _ready():
+	background_highlight.hide()
+
+# 提供一个公共函数供卡牌调用，进行条件判定
+func is_valid_drop(card_data) -> bool:
+	# 在这里写你的条件判定，比如卡牌类型、点数等
+	# 假设判定条件是卡牌的 predicate 类型必须是 QUERY
+	if card_data.predicate_type == 2: # 2 代表 QUERY
+		return true
+	return false
+
+# 显示/隐藏托底视觉
+func show_feedback(show: bool):
+	background_highlight.visible = show
+"
+
+[node name="子牌" type="Area2D"]
+script = SubResource("GDScript_fd4t8")
+
+[node name="子卡详细" parent="." instance=ExtResource("1_8wvkc")]

@@ -123,5 +123,5 @@ theme_override_constants/h_separation = 24
 theme_override_constants/v_separation = 108
 columns = 5
 
-[connection signal="button_down" from="切换/右切换" to="切换" method="_on_右切换_button_down"]
-[connection signal="button_down" from="切换/左切换" to="切换" method="_on_左切换_button_down"]
+[connection signal="button_down" from="切换/右切换" to="." method="_on_右切换_button_down"]
+[connection signal="button_down" from="切换/左切换" to="." method="_on_左切换_button_down"]

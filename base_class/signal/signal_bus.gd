@@ -80,14 +80,29 @@ signal battle_started
 signal battle_over
 
 # 匹配
+
 signal match_canceled
-signal match_success
+##进入战斗开始信号
+signal match_success(t)
 
 # =========================
 # 卡牌数据
 # =========================
 signal self_cards_updated(cards)
 signal opponent_cards_updated(cards)
+
+#判定
+##判定回合开始信号
+signal judge_start(t)
+signal judge_finish
+
+#法术牌
+signal  magic_card_start(t)
+#战斗牌
+
+##判定回合开始信号. 动画开始时间暂停
+signal combat_start_success(t);
+signal combat_start_fail(t);
 
 # =========================
 # 请求（发给WS）
@@ -96,7 +111,8 @@ signal request_cancel_match
 signal request_get_self_cards
 signal request_get_opponent_cards
 signal request_over_battle
-signal request_deploy_card
+signal request_deploy_magic_card(card_id,card_temp_id)
+signal request_judge(judge_data)
 
 # 调试
 signal request_debug_time

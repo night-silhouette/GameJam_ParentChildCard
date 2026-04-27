@@ -3,7 +3,7 @@ extends Node
 
 func _ready():
 	SignalBus.raw_ws_responded.connect(_handle_ws_data)
-
+	
 func _handle_ws_data(code: int, data: Variant, msg: String):
 	if code != 0 or data == null: return
 	if data is String: data = JSON.parse_string(data)
@@ -12,7 +12,7 @@ func _handle_ws_data(code: int, data: Variant, msg: String):
 	var action_data = data.get("action_data", null)
 	var predicate = int(data.get("predicates", 0)) 
 	
-	print("[WS 接收] -> ", predicate, "：", NetDef.get_action_name(action_code))
+	print("[WS 接收] -> ", NetDef.get_predicate_name(predicate), "：", NetDef.get_action_name(action_code))
 	
 	_dispatch(action_code, action_data, predicate)
 
@@ -32,7 +32,7 @@ func _dispatch(action_code: int, action_data: Variant, predicate: int):
 					
 		NetDef.Action.START_BATTLE:
 			if predicate == NetDef.Predicate.NOTIFY:
-				SignalBus.battle_started.emit()
+				SignalBus.battle_started.emit(action_code)
 				
 		NetDef.Action.DEPLOY_CARD:
 			if predicate == NetDef.Predicate.NOTIFY:
@@ -42,14 +42,31 @@ func _dispatch(action_code: int, action_data: Variant, predicate: int):
 					var card_id = action_data.get("card_id", "")
 					var pos = action_data.get("position", Vector2.ZERO)
 					SignalBus.enemy_card_deployed.emit(card_id, pos)
-					
+			if predicate == NetDef.Predicate.QUERY:
+				var t = action_data.state_wait_time;
+				var where = action_data.where;
+				match where:
+					2:
+						SignalBus.magic_card_start.emit(t);
+				
 		NetDef.Action.CANCEL_MATCH:
 			if predicate == NetDef.Predicate.RESULT:
 				SignalBus.match_canceled.emit()
 		NetDef.Action.MATCH_SUCCESS:
 			if predicate == NetDef.Predicate.NOTIFY:
 				SignalBus.match_success.emit();
-				
+		NetDef.Action.JUDGE:
+			if predicate == NetDef.Predicate.QUERY:
+				var t = action_data.state_wait_time;
+				SignalBus.judge_start.emit(t);
+			if predicate == NetDef.Predicate.FINISH:
+				SignalBus.judge_finish.emit(action_data);
+		NetDef.Action.COMBAT:
+			var t = action_data.state_wait_time;
+			if predicate == NetDef.Predicate.QUERY:
+				SignalBus.combat_start_success.emit(t);
+			if predicate == NetDef.Predicate.NOTIFY:
+				SignalBus.combat_start_fail.emit(t);
 		_:
 			# 未处理的 action
 			push_warning("未处理的下发动作 -> ", NetDef.get_action_name(action_code))

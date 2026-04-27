@@ -1,9 +1,16 @@
-[gd_scene load_steps=5 format=3 uid="uid://dngn8v87puqiy"]
+[gd_scene load_steps=8 format=3 uid="uid://dngn8v87puqiy"]
 
 [ext_resource type="Texture2D" uid="uid://sb5rd3551f8n" path="res://素材/使用素材/战斗内/桌面/信息框 -母牌.png" id="1_b7cwm"]
 [ext_resource type="PackedScene" uid="uid://b1k8uu41o35rw" path="res://game_ui/battle/说明按钮.tscn" id="1_kvn7f"]
 [ext_resource type="Texture2D" uid="uid://8o0dnf3ax4mg" path="res://素材/使用素材/战斗内/桌面/说明/板.png" id="3_a4ah5"]
 [ext_resource type="Script" uid="uid://cv1dky3kp3m2m" path="res://game_ui/battle/说明框.gd" id="4_bd56b"]
+[ext_resource type="LabelSettings" uid="uid://ik6wcfsli47v" path="res://game_ui/数值.tres" id="5_mam3a"]
+[ext_resource type="FontFile" uid="uid://bj1pdtvpfop4a" path="res://素材/使用素材/YaoSuiXinShouXieTi-2.ttf" id="6_v2cvm"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_4y83e"]
+font = ExtResource("6_v2cvm")
+font_size = 24
+font_color = Color(0, 0, 0, 1)
 
 [node name="母卡详细" type="Control"]
 layout_mode = 3
@@ -28,12 +35,39 @@ offset_bottom = 421.0
 scale = Vector2(0.3250097, 0.3250097)
 
 [node name="说明框" type="TextureRect" parent="."]
-visible = false
 layout_mode = 0
-offset_left = 336.0
-offset_top = 232.0
-offset_right = 1329.0
-offset_bottom = 1023.0
-scale = Vector2(0.2086424, 0.2086424)
+offset_left = 320.0
+offset_top = 208.0
+offset_right = 1313.0
+offset_bottom = 999.0
+scale = Vector2(0.25228426, 0.2832998)
 texture = ExtResource("3_a4ah5")
 script = ExtResource("4_bd56b")
+
+[node name="hp" type="Label" parent="."]
+layout_direction = 2
+layout_mode = 0
+offset_left = 286.0
+offset_top = 80.0
+offset_right = 326.0
+offset_bottom = 177.0
+scale = Vector2(1, 1.007)
+label_settings = ExtResource("5_mam3a")
+
+[node name="damage" type="Label" parent="."]
+layout_mode = 0
+offset_left = 287.0
+offset_top = 136.0
+offset_right = 327.0
+offset_bottom = 183.0
+scale = Vector2(1, 1.007)
+label_settings = ExtResource("5_mam3a")
+
+[node name="详细" type="Label" parent="."]
+layout_mode = 0
+offset_left = 424.0
+offset_top = 224.0
+offset_right = 544.0
+offset_bottom = 416.0
+label_settings = SubResource("LabelSettings_4y83e")
+autowrap_mode = 3

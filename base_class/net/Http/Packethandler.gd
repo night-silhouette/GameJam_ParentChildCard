@@ -84,7 +84,6 @@ func _handle_raw_api_data(api_name: String, method: int, code: int, data: Varian
 		
 		"/v1/time/":
 			if method == HTTPClient.METHOD_GET:
-				
 				SignalBus.get_time_success.emit(data);
 		"/v1/debug/time/":
 			if method == HTTPClient.METHOD_GET:

@@ -1,5 +1,5 @@
 extends Node
-
+signal show_card;
 ## 导出变量
 @export var card_scene: PackedScene = preload("res://base_class/card/card.tscn")
 @export var spawn_container: Control
@@ -33,7 +33,7 @@ func _self_cards_updated(data):
 		card_list = _init_cards(data);
 	else :
 		_update_cards(data);
-		
+	show_card.emit();
 	
 func _init_cards(cards: Array) :
 	var result: Array = []

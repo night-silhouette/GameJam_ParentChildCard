@@ -42,9 +42,7 @@ func return_card(card):
 	if card.get_parent():
 		card.get_parent().remove_child(card)
 	
-	card.visible = false
-	card.net_ID = null;
-	
+
 	if not card.is_inside_tree():
 		add_child(card)
 	_pool.append(card)

@@ -1,6 +1,6 @@
 # NetDef.gd (建议作为独立脚本或 Autoload)
-extends RefCounted
-class_name NetDef
+extends Node
+
 
 enum Predicate {
 	EMPTY = 0,
@@ -43,3 +43,9 @@ const ACTION_NAME = {
 # 辅助函数：快速获取名字打印日志
 static func get_action_name(code: int) -> String:
 	return ACTION_NAME.get(code, "未知动作(Code:%d)" % code)
+	
+func get_predicate_name(value: int) -> String:
+	# 检查索引是否在有效范围内
+	if value >= 0 and value < Predicate.size():
+		return Predicate.keys()[value]
+	return "Unknown"
