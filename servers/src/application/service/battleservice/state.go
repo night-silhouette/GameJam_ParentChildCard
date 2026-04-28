@@ -460,8 +460,8 @@ func (s *SelectSkillCard) enter() {
 	s.ChanCrash = chanCrash
 	s.ChanStop = chanStop
 
-	s.SM.SendActionById(s.Id1, BattleDto.NewAction(BattleDto.DeployCard, BattleDto.Query, BattleData.SelectCard{Where: BattleData.SkillCard}))
-	s.SM.SendActionById(s.Id2, BattleDto.NewAction(BattleDto.DeployCard, BattleDto.Query, BattleData.SelectCard{Where: BattleData.SkillCard}))
+	s.SM.SendActionById(s.Id1, BattleDto.NewAction(BattleDto.DeployCard, BattleDto.Query, map[string]any{"state_wait_time": Util.SendTime(time.Second * global.SelectSkillCardTime), "where": BattleData.SkillCard}))
+	s.SM.SendActionById(s.Id2, BattleDto.NewAction(BattleDto.DeployCard, BattleDto.Query, map[string]any{"state_wait_time": Util.SendTime(time.Second * global.SelectSkillCardTime), "where": BattleData.SkillCard}))
 
 }
 func (s *SelectSkillCard) exit() {
@@ -490,6 +490,14 @@ func (s *SelectSkillCard) process(GoCtx context.Context) {
 			if data.Where == BattleData.SkillCard {
 
 				cardTempId := data.CardTempId
+				if cardTempId == -1 {
+					s.TaskMap[id] = true
+					s.SM.SendActionById(id, BattleDto.NewAction(BattleDto.DeployCard, BattleDto.Succeed, "技能牌选择成功"))
+					if s.TaskMap[s.Id1] && s.TaskMap[s.Id2] { //都上牌了
+						s.ChanStop <- struct{}{}
+					}
+					return true
+				}
 
 				if card, ok := s.c.PlayerDataMap[id].CardInHand[cardTempId]; ok { //手牌里有不有
 					if _, ok := card.(CardAbstract.SkillCard); ok { //上的是不是skillcard
@@ -502,6 +510,7 @@ func (s *SelectSkillCard) process(GoCtx context.Context) {
 
 							s.ChanStop <- struct{}{}
 						}
+						return true
 					} else {
 						s.SM.SendActionById(id, BattleDto.NewErrAction(global.BattleCardCategoryError))
 						return true
@@ -711,11 +720,11 @@ func (c *Combat) process(GoCtx context.Context) {
 				c.SM.SendActionById(id, BattleDto.NewErrAction(global.ResponseInvalidReqParams))
 				return true
 			}
-			if data.Where == BattleData.SkillCard {
+			if data.SelfWhere == BattleData.SkillCard {
 				c.SM.SendActionById(id, BattleDto.NewErrAction(global.BattleCardCategoryError))
 				return true
 			}
-			if !c.c.CheckCardByWhere(id, data.Where) {
+			if !c.c.CheckCardByWhere(id, data.SelfWhere) {
 				c.SM.SendActionById(id, BattleDto.NewErrAction(global.BattleCardNotFound))
 				return true
 			}
@@ -762,8 +771,14 @@ type CardCalc struct {
 }
 
 func (s *CardCalc) enter() {
-	test := <-s.SM.CombatDataChan
-	fmt.Println(test)
+	data := <-s.SM.CombatDataChan
+
+	if data.Behavior == BattleData.Attack {
+		s.c.GetCardBt(s.SM.Winner, data.SelfWhere).(CardAbstract.Character).Attack()
+	} else if data.Behavior == BattleData.Skill {
+		s.c.GetCardBt(s.SM.Winner, data.SelfWhere).(CardAbstract.Character).Skill()
+	}
+
 }
 func (s *CardCalc) exit()                         {}
 func (s *CardCalc) process(GoCtx context.Context) {}

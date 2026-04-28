@@ -302,3 +302,18 @@ func (c *Ctx) SetCardBt(id int, card CardAbstract.Card) {
 	delete(playerData.CardInHand, card.GetTempId())
 
 }
+
+func (c *Ctx) GetCardBt(id int, where BattleData.Where) CardAbstract.Card {
+	playerData := c.PlayerDataMap[id]
+
+	if where == BattleData.SkillCard {
+		return playerData.SkillCardBT
+	}
+	if where == BattleData.ParentCard {
+		return playerData.ParentCardBT
+	}
+	if where == BattleData.ChildCard {
+		return playerData.ChildCardBT
+	}
+	return nil
+}
