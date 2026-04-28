@@ -25,3 +25,7 @@ func (c *Card17) Clone() CardAbstract.Card {
 	newCard := *c
 	return &newCard
 }
+
+func (c *Card17) Skill() {
+
+}
