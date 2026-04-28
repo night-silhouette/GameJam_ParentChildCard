@@ -2,6 +2,7 @@ package CardAbstract
 
 import (
 	"pcc_card/application/entity/BattleData"
+	"pcc_card/application/entity/Effect"
 	"pcc_card/application/entity/protocolCardWithCtx"
 )
 
@@ -10,8 +11,8 @@ type Card interface {
 	SetInfo(info map[string]any)
 	GetInfo() map[string]any
 	Clone() Card
-	GetStateCodeChan() chan protocolCardWithCtx.Effect
-	SetStateCodeChan(chan protocolCardWithCtx.Effect)
+	GetStateCodeChan() chan Effect.Effect
+	SetStateCodeChan(chan Effect.Effect)
 	GetTempId() int
 	SetTempId(id int)
 	GetOwnerId() int

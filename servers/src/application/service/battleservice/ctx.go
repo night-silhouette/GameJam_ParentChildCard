@@ -5,7 +5,7 @@ import (
 	"log"
 	"pcc_card/application/entity/BattleData"
 	"pcc_card/application/entity/Card/CardAbstract"
-	"pcc_card/application/entity/protocolCardWithCtx"
+	"pcc_card/application/entity/Effect"
 	"pcc_card/global"
 	"pcc_card/presentation/handler/battlehandler/BattleDto"
 )
@@ -38,7 +38,7 @@ func NewCtx(idA int, idB int, CardPool *[]CardAbstract.Card, ParentContext conte
 
 //__________________________________________EffectsStack______________________________________________
 
-func (c *Ctx) StackSettle(action BattleDto.Action) {
+func (c *Ctx) StackSettle(action BattleDto.Action) { //执行函数
 
 	select {
 	case firstEffect := <-c.CardObserver.Collector:
@@ -85,7 +85,7 @@ func (O *CardObserver) DrainCollector() {
 
 type MetaCardState struct {
 	CardId int
-	Effect protocolCardWithCtx.Effect
+	Effect Effect.Effect
 }
 
 func NewCardObserver(ParentContext context.Context, ctx *Ctx) *CardObserver {
@@ -98,7 +98,7 @@ func NewCardObserver(ParentContext context.Context, ctx *Ctx) *CardObserver {
 	for _, card := range CardPool {
 
 		go func(card CardAbstract.Card) { //给每一张卡开一个哨兵
-			var CardChan <-chan protocolCardWithCtx.Effect
+			var CardChan <-chan Effect.Effect
 			CardChan = card.GetStateCodeChan()
 			for {
 				select {
@@ -231,10 +231,15 @@ func (c *Ctx) GetBtCardInfo(id int) BattleData.BtCardInfo {
 			BtCardInfo.Opponent.ParentCardBt = GetDtoDefault(value.ParentCardBT)
 		}
 	}
+
 	return BtCardInfo
 }
 
 //__________________________________________对card提供对接口______________________________________________
+
+func (c *Ctx) ProtoColPush(e Effect.Effect) {
+	c.EffectsStack.Push(e)
+}
 
 //__________________________________________对卡牌数据的操作算法______________________________________________
 

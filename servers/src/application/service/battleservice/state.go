@@ -772,7 +772,6 @@ type CardCalc struct {
 
 func (s *CardCalc) enter() {
 	data := <-s.SM.CombatDataChan
-
 	if data.Behavior == BattleData.Attack {
 		s.c.GetCardBt(s.SM.Winner, data.SelfWhere).(CardAbstract.Character).Attack()
 	} else if data.Behavior == BattleData.Skill {

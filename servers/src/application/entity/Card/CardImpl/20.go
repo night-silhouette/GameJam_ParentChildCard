@@ -1,5 +1,8 @@
 package CardImpl
 
+import "pcc_card/application/entity/BattleData"
+
+
 import "pcc_card/application/entity/Card/CardAbstract"
 
 
@@ -11,7 +14,7 @@ func NewCard20() *Card20 {
 	return &Card20{}
 }
 
-func (c *Card20) Attack() {
+func (c *Card20) Attack(w BattleData.Where) {
 
 }
 func (c *Card20) Hurt() {

@@ -1,4 +1,4 @@
-package protocolCardWithCtx
+package Effect
 
 type Effect interface {
 	Execute()
