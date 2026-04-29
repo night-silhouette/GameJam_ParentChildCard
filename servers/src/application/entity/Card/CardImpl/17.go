@@ -1,8 +1,5 @@
 package CardImpl
 
-import "pcc_card/application/entity/BattleData"
-
-
 import "pcc_card/application/entity/Card/CardAbstract"
 
 
@@ -14,10 +11,10 @@ func NewCard17() *Card17 {
 	return &Card17{}
 }
 
-func (c *Card17) Attack(w BattleData.Where) {
+func (c *Card17) Attack(tempId int) {
 
 }
-func (c *Card17) Hurt() {
+func (c *Card17) Hurt(tempId int) {
 }
 
 func (c *Card17) GetID() int {
@@ -29,6 +26,6 @@ func (c *Card17) Clone() CardAbstract.Card {
 	return &newCard
 }
 
-func (c *Card17) Skill() {
+func (c *Card17) Skill(tempId int) {
 
 }

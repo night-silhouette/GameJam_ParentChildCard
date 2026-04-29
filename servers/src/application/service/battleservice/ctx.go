@@ -19,7 +19,7 @@ type Ctx struct {
 	CardObserver   *CardObserver
 	PlayerDataMap  map[int]*PlayerData
 	CtxStateNotify *CtxStateNotify
-	CardPool       *[]CardAbstract.Card
+	CardPool       *[]CardAbstract.Card //和手牌数组里的是同一份对象，都是从总体复制出来的
 }
 
 func NewCtx(idA int, idB int, CardPool *[]CardAbstract.Card, ParentContext context.Context) *Ctx {
@@ -241,7 +241,24 @@ func (c *Ctx) ProtoColPush(e Effect.Effect) {
 	c.EffectsStack.Push(e)
 }
 
+func (c *Ctx) ProtoColSetCardBtHp(UserId int, tempId int, NowHp float64) { //对象血量设置接口
+	if NowHp < 0 {
+		NowHp = 0
+	}
+	c.GetCardInHardByCardTempId(UserId, tempId).SetHpNow(NowHp)
+}
+
 //__________________________________________对卡牌数据的操作算法______________________________________________
+
+func (c *Ctx) GetCardInHardByCardTempId(UserId int, CardTempId int) CardAbstract.Card {
+	player := c.PlayerDataMap[UserId]
+	for _, card := range player.CardInHand {
+		if card.GetTempId() == CardTempId {
+			return card
+		}
+	}
+	return nil
+}
 
 func (c *Ctx) RandomSelectCard(id int) BattleData.Where { //这个是个不安全方法，就是你要保证他是一定还有牌可以上的（就是，没死掉的）
 	playerData := c.PlayerDataMap[id]
@@ -264,6 +281,7 @@ func (c *Ctx) RandomSelectCard(id int) BattleData.Where { //这个是个不安�
 	return -1
 }
 
+// CheckCardByWhere 判断这个地方是否有牌
 func (c *Ctx) CheckCardByWhere(id int, where BattleData.Where) bool {
 	playerData := c.PlayerDataMap[id]
 	if where == BattleData.SkillCard && playerData.SkillCardBT == nil {
