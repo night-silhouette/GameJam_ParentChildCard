@@ -7,13 +7,13 @@ type Attack struct {
 	AtkValue     float64
 }
 
-func NewAttack(UserId int, SendTempId int, TargetTempId int, AtkValue float64) Attack {
+func NewAttack(UserId int, SendTempId int, TargetTempId int, AtkValue float64) *Attack {
 	res := Attack{}
 	res.UserId = UserId
 	res.SendTempId = SendTempId
 	res.TargetTempId = TargetTempId
 	res.AtkValue = AtkValue
-	return res
+	return &res
 }
 
 func (A *Attack) Execute(pc ProtocolCardWithCtx) {
@@ -31,11 +31,11 @@ func (A *Hurt) Execute(pc ProtocolCardWithCtx) {
 	pc.ProtoColReduceCardBtHp(A.SendTempId, A.UserId, A.TargetTempId, A.AtkValue)
 }
 
-func NewHurt(UserId int, SendTempId int, TargetTempId int, AtkValue float64) Hurt {
+func NewHurt(UserId int, SendTempId int, TargetTempId int, AtkValue float64) *Hurt {
 	res := Hurt{}
 	res.UserId = UserId
 	res.SendTempId = SendTempId
 	res.TargetTempId = TargetTempId
 	res.AtkValue = AtkValue
-	return res
+	return &res
 }

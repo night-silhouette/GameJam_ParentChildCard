@@ -2,19 +2,13 @@ package CardImpl
 
 import "pcc_card/application/entity/Card/CardAbstract"
 
-
 type Card13 struct {
 	BaseCard
+	CharacterBaseCard
 }
 
 func NewCard13() *Card13 {
 	return &Card13{}
-}
-
-func (c *Card13) Attack(tempId int) {
-
-}
-func (c *Card13) Hurt(tempId int, HurtHp float64) {
 }
 
 func (c *Card13) GetID() int {
@@ -26,10 +20,3 @@ func (c *Card13) Clone() CardAbstract.Card {
 	return &newCard
 }
 
-func (c *Card13) Skill(tempId int) {
-
-}
-
-func (c *Card13) Death(tempId int) {
-
-}
