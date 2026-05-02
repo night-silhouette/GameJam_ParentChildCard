@@ -14,7 +14,7 @@ func NewCard08() *Card08 {
 func (c *Card08) Attack(tempId int) {
 
 }
-func (c *Card08) Hurt(tempId int) {
+func (c *Card08) Hurt(tempId int, HurtHp int) {
 }
 
 func (c *Card08) GetID() int {
@@ -27,5 +27,9 @@ func (c *Card08) Clone() CardAbstract.Card {
 }
 
 func (c *Card08) Skill(tempId int) {
+
+}
+
+func (c *Card08) Death(tempId int) {
 
 }

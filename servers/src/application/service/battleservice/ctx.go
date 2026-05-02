@@ -241,11 +241,48 @@ func (c *Ctx) ProtoColPush(e protocol.Effect) {
 	c.EffectsStack.Push(e)
 }
 
-func (c *Ctx) ProtoColSetCardBtHp(UserId int, tempId int, NowHp float64) { //对象血量设置接口
-	if NowHp < 0 {
-		NowHp = 0
+func (c *Ctx) ProtoColReduceCardBtHp(SendTempId int, UserId int, TargetTempId int, ReduceHp float64) { //最后的底层方法
+	var card CardAbstract.Character
+	var ok bool
+	if card, ok = c.GetCardInHardByCardTempId(UserId, TargetTempId).(CardAbstract.Character); !ok {
+		return
 	}
-	c.GetCardInHardByCardTempId(UserId, tempId).SetHpNow(NowHp)
+	NowHp := card.GetHpNow()
+	if NowHp-ReduceHp <= 0 {
+		card.SetHpNow(0)
+		card.Death(SendTempId)
+		return
+	}
+	card.SetHpNow(NowHp - ReduceHp)
+}
+func (c *Ctx) ProtoColHealCardBt(UserId int, TargetTempId int, HealHp float64) {
+	var card CardAbstract.Character
+	var ok bool
+	if card, ok = c.GetCardInHardByCardTempId(UserId, TargetTempId).(CardAbstract.Character); !ok {
+		return
+	}
+	NowHp := card.GetHpNow()
+	MaxHp := card.GetInfo()["hp"].(float64)
+	if NowHp >= MaxHp {
+		return
+	}
+
+	if NowHp+HealHp > MaxHp {
+		card.SetHpNow(MaxHp)
+		return
+	}
+	card.SetHpNow(NowHp + HealHp)
+}
+func (c *Ctx) ProtoColSetDamageCardBt(UserId int, TargetTempId int, NewDamage float64) {
+	var card CardAbstract.Character
+	var ok bool
+	if card, ok = c.GetCardInHardByCardTempId(UserId, TargetTempId).(CardAbstract.Character); !ok {
+		return
+	}
+	if NewDamage < 0 {
+		NewDamage = 0
+	}
+	card.SetAtkNow(NewDamage)
 }
 
 //__________________________________________对卡牌数据的操作算法______________________________________________
