@@ -24,6 +24,7 @@ const (
 	MatchSuccess
 	AnimationPlayEnd
 	Combat
+	CardCalc
 )
 
 var ActionName = map[ActionCode]string{
@@ -38,6 +39,7 @@ var ActionName = map[ActionCode]string{
 	MatchSuccess:          "匹配成功",
 	AnimationPlayEnd:      "动画结束",
 	Combat:                "执行战斗行动",
+	CardCalc:              "卡牌效果结算",
 }
 
 type Predicates int

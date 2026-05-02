@@ -4,7 +4,7 @@ import (
 	"context"
 	"pcc_card/application/entity/Card/CardAbstract"
 	"pcc_card/application/entity/Card/CardImpl"
-	"pcc_card/application/entity/Effect"
+	"pcc_card/application/entity/protocol"
 )
 
 type CardList struct {
@@ -79,7 +79,7 @@ func (c *CardList) init(s BattleService) {
 	for _, e := range c.data {
 		info := s.GetCardInfoByID(context.Background(), e.GetID())
 		e.SetInfo(info)
-		e.SetStateCodeChan(make(chan Effect.Effect))
+		e.SetStateCodeChan(make(chan protocol.Effect))
 
 		if val, ok := info["hp"]; ok && val != nil {
 			e.SetHpNow(info["hp"].(float64))

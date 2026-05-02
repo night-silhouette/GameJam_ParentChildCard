@@ -2,24 +2,23 @@ package CardImpl
 
 import (
 	_ "embed"
-	"pcc_card/application/entity/Effect"
-	"pcc_card/application/entity/protocolCardWithCtx"
+	"pcc_card/application/entity/protocol"
 )
 
 type BaseCard struct {
 	ID            int            `json:"id"`
 	Info          map[string]any `json:"-"`
-	StateCodeChan chan Effect.Effect
+	StateCodeChan chan protocol.Effect
 
 	//动态变量
-	BtCtx   protocolCardWithCtx.ProtocolCardWithCtx
+	BtCtx   protocol.ProtocolCardWithCtx
 	HpNow   float64
 	AtkNow  float64
 	TempId  int
 	OwnerId int
 }
 
-func (c *BaseCard) SetBtCtx(btCtx protocolCardWithCtx.ProtocolCardWithCtx) {
+func (c *BaseCard) SetBtCtx(btCtx protocol.ProtocolCardWithCtx) {
 	c.BtCtx = btCtx
 }
 
@@ -61,9 +60,9 @@ func (c *BaseCard) GetInfo() map[string]any {
 	return c.Info
 }
 
-func (c *BaseCard) GetStateCodeChan() chan Effect.Effect {
+func (c *BaseCard) GetStateCodeChan() chan protocol.Effect {
 	return c.StateCodeChan
 }
-func (c *BaseCard) SetStateCodeChan(ch chan Effect.Effect) {
+func (c *BaseCard) SetStateCodeChan(ch chan protocol.Effect) {
 	c.StateCodeChan = ch
 }

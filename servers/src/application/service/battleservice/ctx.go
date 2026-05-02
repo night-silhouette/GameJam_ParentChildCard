@@ -5,7 +5,7 @@ import (
 	"log"
 	"pcc_card/application/entity/BattleData"
 	"pcc_card/application/entity/Card/CardAbstract"
-	"pcc_card/application/entity/Effect"
+	"pcc_card/application/entity/protocol"
 	"pcc_card/global"
 	"pcc_card/presentation/handler/battlehandler/BattleDto"
 )
@@ -59,7 +59,7 @@ func (c *Ctx) resolveAllChains(action BattleDto.Action) {
 			break
 		}
 		effect := c.EffectsStack.Pop()
-		effect.Execute()
+		effect.Execute(c)
 	}
 }
 
@@ -85,7 +85,7 @@ func (O *CardObserver) DrainCollector() {
 
 type MetaCardState struct {
 	CardId int
-	Effect Effect.Effect
+	Effect protocol.Effect
 }
 
 func NewCardObserver(ParentContext context.Context, ctx *Ctx) *CardObserver {
@@ -98,7 +98,7 @@ func NewCardObserver(ParentContext context.Context, ctx *Ctx) *CardObserver {
 	for _, card := range CardPool {
 
 		go func(card CardAbstract.Card) { //给每一张卡开一个哨兵
-			var CardChan <-chan Effect.Effect
+			var CardChan <-chan protocol.Effect
 			CardChan = card.GetStateCodeChan()
 			for {
 				select {
@@ -237,7 +237,7 @@ func (c *Ctx) GetBtCardInfo(id int) BattleData.BtCardInfo {
 
 //__________________________________________对card提供对接口______________________________________________
 
-func (c *Ctx) ProtoColPush(e Effect.Effect) {
+func (c *Ctx) ProtoColPush(e protocol.Effect) {
 	c.EffectsStack.Push(e)
 }
 

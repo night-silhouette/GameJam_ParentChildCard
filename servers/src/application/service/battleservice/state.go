@@ -838,7 +838,6 @@ type SkillCardCalc struct {
 }
 
 func (s *SkillCardCalc) enter() {
-	fmt.Println("enter SkillCardCalc")
 	if s.c.PlayerDataMap[s.Id1].SkillCardBT != nil {
 		s.c.PlayerDataMap[s.Id1].SkillCardBT.(CardAbstract.SkillCard).PlayMagic() //触发法术，然后，在法术这个函数里面，用和ctx的协议，把通知前端的action传出来
 	}
@@ -874,9 +873,10 @@ CalcLoop:
 			if data.Behavior == BattleData.Attack {
 				s.c.GetCardBt(s.SM.Winner, data.SelfWhere).(CardAbstract.Character).Attack(opponentCardId)
 				fmt.Println("attack")
+				s.c.StackSettle(BattleDto.NewAction(BattleDto.CardCalc, BattleDto.Finish, "")) //执行效果堆栈
 			} else if data.Behavior == BattleData.Skill {
 				s.c.GetCardBt(s.SM.Winner, data.SelfWhere).(CardAbstract.Character).Skill(opponentCardId)
-				fmt.Println("skill")
+				s.c.StackSettle(BattleDto.NewAction(BattleDto.CardCalc, BattleDto.Finish, ""))
 			}
 		default:
 			break CalcLoop

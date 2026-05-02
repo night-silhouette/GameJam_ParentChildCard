@@ -1,20 +1,20 @@
 package battleservice
 
 import (
-	"pcc_card/application/entity/Effect"
+	"pcc_card/application/entity/protocol"
 )
 
-type EffectStack []Effect.Effect
+type EffectStack []protocol.Effect
 
 func NewEffectStack() *EffectStack {
 	return &EffectStack{}
 }
 
-func (s *EffectStack) Push(e Effect.Effect) {
+func (s *EffectStack) Push(e protocol.Effect) {
 	*s = append(*s, e)
 }
 
-func (s *EffectStack) Pop() Effect.Effect {
+func (s *EffectStack) Pop() protocol.Effect {
 	if len(*s) == 0 {
 		return nil
 	}

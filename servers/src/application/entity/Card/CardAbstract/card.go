@@ -2,8 +2,7 @@ package CardAbstract
 
 import (
 	"pcc_card/application/entity/BattleData"
-	"pcc_card/application/entity/Effect"
-	"pcc_card/application/entity/protocolCardWithCtx"
+	"pcc_card/application/entity/protocol"
 )
 
 type Card interface {
@@ -11,8 +10,8 @@ type Card interface {
 	SetInfo(info map[string]any)
 	GetInfo() map[string]any
 	Clone() Card
-	GetStateCodeChan() chan Effect.Effect
-	SetStateCodeChan(chan Effect.Effect)
+	GetStateCodeChan() chan protocol.Effect
+	SetStateCodeChan(chan protocol.Effect)
 	GetTempId() int
 	SetTempId(id int)
 	GetOwnerId() int
@@ -21,7 +20,7 @@ type Card interface {
 	SetHpNow(hpNow float64)
 	GetAtkNow() float64
 	SetAtkNow(atkNow float64)
-	SetBtCtx(btCtx protocolCardWithCtx.ProtocolCardWithCtx)
+	SetBtCtx(btCtx protocol.ProtocolCardWithCtx)
 }
 
 func GetCardDto(c Card) BattleData.CardDto {
