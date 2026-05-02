@@ -14,7 +14,7 @@ func NewCard26() *Card26 {
 func (c *Card26) Attack(tempId int) {
 
 }
-func (c *Card26) Hurt(tempId int, HurtHp int) {
+func (c *Card26) Hurt(tempId int, HurtHp float64) {
 }
 
 func (c *Card26) GetID() int {

@@ -241,12 +241,22 @@ func (c *Ctx) ProtoColPush(e protocol.Effect) {
 	c.EffectsStack.Push(e)
 }
 
+func (c *Ctx) ProtoColCardBtAttack(SendTempId int, UserId int, TargetTempId int, AtkHp float64) {
+	var card CardAbstract.Character
+	var ok bool
+	if card, ok = c.GetCardInHardByCardTempId(UserId, TargetTempId).(CardAbstract.Character); !ok {
+		return
+	}
+	card.Hurt(SendTempId, AtkHp)
+}
+
 func (c *Ctx) ProtoColReduceCardBtHp(SendTempId int, UserId int, TargetTempId int, ReduceHp float64) { //最后的底层方法
 	var card CardAbstract.Character
 	var ok bool
 	if card, ok = c.GetCardInHardByCardTempId(UserId, TargetTempId).(CardAbstract.Character); !ok {
 		return
 	}
+
 	NowHp := card.GetHpNow()
 	if NowHp-ReduceHp <= 0 {
 		card.SetHpNow(0)
