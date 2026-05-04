@@ -5,7 +5,6 @@ import (
 )
 
 type Card06 struct {
-	BaseCard
 	CharacterBaseCard
 }
 

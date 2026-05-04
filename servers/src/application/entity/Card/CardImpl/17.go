@@ -3,7 +3,6 @@ package CardImpl
 import "pcc_card/application/entity/Card/CardAbstract"
 
 type Card17 struct {
-	BaseCard
 	CharacterBaseCard
 }
 

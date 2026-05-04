@@ -2,12 +2,14 @@ package battleservice
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"pcc_card/application/entity/BattleData"
 	"pcc_card/application/entity/Card/CardAbstract"
 	"pcc_card/application/entity/protocol"
 	"pcc_card/global"
 	"pcc_card/presentation/handler/battlehandler/BattleDto"
+	"runtime"
 )
 
 type Ctx struct {
@@ -48,18 +50,30 @@ func (c *Ctx) StackSettle(action BattleDto.Action) { //执行函数
 }
 
 func (c *Ctx) resolveAllChains(action BattleDto.Action) {
+	emptyCount := 0
 	for {
 		c.CardObserver.DrainCollector()
 
 		if c.EffectsStack.IsEmpty() {
-
-			c.StateMachine.SendActionById(c.StateMachine.Id2, action)
-			c.StateMachine.SendActionById(c.StateMachine.Id1, action)
-
-			break
+			// 如果栈空了，不急着退出，先尝试让出执行权
+			runtime.Gosched()
+			c.CardObserver.DrainCollector()
+			if c.EffectsStack.IsEmpty() {
+				emptyCount++
+				if emptyCount < 3 { // 连续三次检查都是空的，才真的算结束
+					continue
+				}
+				// 真正的出口
+				c.StateMachine.SendActionById(c.StateMachine.Id2, action)
+				c.StateMachine.SendActionById(c.StateMachine.Id1, action)
+				break
+			}
 		}
+		emptyCount = 0 // 只要处理了效果，计数器清零
+
 		effect := c.EffectsStack.Pop()
 		effect.Execute(c)
+		fmt.Println("执行")
 	}
 }
 
@@ -237,14 +251,17 @@ func (c *Ctx) GetBtCardInfo(id int) BattleData.BtCardInfo {
 
 //__________________________________________对card提供对接口______________________________________________
 
-func (c *Ctx) ProtoColPush(e protocol.Effect) {
-	c.EffectsStack.Push(e)
+func (c *Ctx) Notify(AnimationDto BattleData.AnimationDto) {
+	c.StateMachine.SendActionById(c.StateMachine.Id2, BattleDto.NewAction(BattleDto.CardCalc, BattleDto.Notify, AnimationDto))
+	c.StateMachine.SendActionById(c.StateMachine.Id1, BattleDto.NewAction(BattleDto.CardCalc, BattleDto.Notify, AnimationDto))
 }
 
 func (c *Ctx) ProtoColCardBtAttack(SendTempId int, UserId int, TargetTempId int, AtkHp float64) {
 	var card CardAbstract.Character
 	var ok bool
-	if card, ok = c.GetCardInHardByCardTempId(UserId, TargetTempId).(CardAbstract.Character); !ok {
+
+	if card, ok = c.FindCard(TargetTempId).(CardAbstract.Character); !ok {
+		fmt.Println("转化失败bug")
 		return
 	}
 	card.Hurt(SendTempId, AtkHp)
@@ -253,7 +270,8 @@ func (c *Ctx) ProtoColCardBtAttack(SendTempId int, UserId int, TargetTempId int,
 func (c *Ctx) ProtoColReduceCardBtHp(SendTempId int, UserId int, TargetTempId int, ReduceHp float64) { //最后的底层方法
 	var card CardAbstract.Character
 	var ok bool
-	if card, ok = c.GetCardInHardByCardTempId(UserId, TargetTempId).(CardAbstract.Character); !ok {
+	if card, ok = c.FindCard(TargetTempId).(CardAbstract.Character); !ok {
+		fmt.Println("转化失败bug")
 		return
 	}
 
@@ -264,11 +282,13 @@ func (c *Ctx) ProtoColReduceCardBtHp(SendTempId int, UserId int, TargetTempId in
 		return
 	}
 	card.SetHpNow(NowHp - ReduceHp)
+
 }
 func (c *Ctx) ProtoColHealCardBt(UserId int, TargetTempId int, HealHp float64) {
 	var card CardAbstract.Character
 	var ok bool
-	if card, ok = c.GetCardInHardByCardTempId(UserId, TargetTempId).(CardAbstract.Character); !ok {
+	if card, ok = c.FindCard(TargetTempId).(CardAbstract.Character); !ok {
+		fmt.Println("转化失败bug")
 		return
 	}
 	NowHp := card.GetHpNow()
@@ -286,7 +306,8 @@ func (c *Ctx) ProtoColHealCardBt(UserId int, TargetTempId int, HealHp float64) {
 func (c *Ctx) ProtoColSetDamageCardBt(UserId int, TargetTempId int, NewDamage float64) {
 	var card CardAbstract.Character
 	var ok bool
-	if card, ok = c.GetCardInHardByCardTempId(UserId, TargetTempId).(CardAbstract.Character); !ok {
+	if card, ok = c.FindCard(TargetTempId).(CardAbstract.Character); !ok {
+		fmt.Println("转化失败bug")
 		return
 	}
 	if NewDamage < 0 {
@@ -296,6 +317,50 @@ func (c *Ctx) ProtoColSetDamageCardBt(UserId int, TargetTempId int, NewDamage fl
 }
 
 //__________________________________________对卡牌数据的操作算法______________________________________________
+
+func (c *Ctx) FindCard(tempId int) CardAbstract.Card {
+	var card CardAbstract.Card
+	res := c.GetCardInCardBtByCardTempId(c.StateMachine.Id1, tempId)
+	if res != nil {
+		card = res
+	}
+	res = c.GetCardInCardBtByCardTempId(c.StateMachine.Id2, tempId)
+	if res != nil {
+		card = res
+	}
+	res = c.GetCardInHardByCardTempId(c.StateMachine.Id1, tempId)
+	if res != nil {
+		card = res
+	}
+	res = c.GetCardInHardByCardTempId(c.StateMachine.Id2, tempId)
+	if res != nil {
+		card = res
+	}
+	return card
+}
+
+func (c *Ctx) GetOpponentId(selfId int) int {
+	res := c.StateMachine.Id1
+	if res == selfId {
+		res = c.StateMachine.Id2
+	}
+	return res
+}
+
+func (c *Ctx) GetCardInCardBtByCardTempId(UserId int, TargetTempId int) CardAbstract.Card {
+	player := c.PlayerDataMap[UserId]
+	if player.ParentCardBT != nil {
+		if player.ParentCardBT.GetTempId() == TargetTempId {
+			return player.ParentCardBT
+		}
+	}
+	if player.ChildCardBT != nil {
+		if player.ChildCardBT.GetTempId() == TargetTempId {
+			return player.ChildCardBT
+		}
+	}
+	return nil
+}
 
 func (c *Ctx) GetCardInHardByCardTempId(UserId int, CardTempId int) CardAbstract.Card {
 	player := c.PlayerDataMap[UserId]

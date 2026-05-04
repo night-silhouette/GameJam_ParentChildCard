@@ -25,6 +25,7 @@ const (
 	AnimationPlayEnd
 	Combat
 	CardCalc
+	Debug
 )
 
 var ActionName = map[ActionCode]string{
@@ -40,6 +41,7 @@ var ActionName = map[ActionCode]string{
 	AnimationPlayEnd:      "动画结束",
 	Combat:                "执行战斗行动",
 	CardCalc:              "卡牌效果结算",
+	Debug:                 "测试",
 }
 
 type Predicates int

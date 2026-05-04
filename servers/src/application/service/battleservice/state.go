@@ -70,6 +70,16 @@ func (s *StateMachine) SharedProcess(id int, action BattleDto.Action, ResponseCh
 		ResponseChan <- BattleDto.NewAction(BattleDto.GetBtCardInfo, BattleDto.Result, res)
 		return true
 	}
+	if action.ActionCode == BattleDto.Debug {
+		s.Mutex.Lock()
+		if action.ActionData == "currentState" {
+			s.SendActionById(id, BattleDto.NewAction(BattleDto.Debug, BattleDto.Result, s.CurrentState.GetName()))
+			s.Mutex.Unlock()
+			return true
+		}
+
+	}
+
 	return false
 }
 
@@ -208,7 +218,7 @@ func (s *StateMachine) finish(NextState string) {
 
 		var GoCtx context.Context
 		GoCtx, s.cancelFunc = context.WithCancel(s.ParentNodeCtx) //stateMachine死掉，你也得死
-		go s.CurrentState.process(GoCtx)
+		go s.CurrentState.process(GoCtx)                          //监听
 		fmt.Print(s.CurrentState.GetName() + "\n")
 
 	}
@@ -302,6 +312,10 @@ func (s *ShuffleDeal) process(GoCtx context.Context) {
 			}
 			if data.Where != BattleData.SkillCard {
 				cardTempId := data.CardTempId
+				if s.c.CheckCardByWhere(id, data.Where) { //判定这个上牌的位置是不是有牌了
+					s.SM.SendActionById(id, BattleDto.NewErrAction(global.BattleHasCard))
+					return true
+				}
 				if card, ok := s.c.PlayerDataMap[id].CardInHand[cardTempId]; ok { //手牌里有不有
 					if _, ok := card.(CardAbstract.SkillCard); !ok {
 						s.c.SetCardBt(id, card)
@@ -748,12 +762,21 @@ func (c *Combat) exit() {
 }
 func (c *Combat) process(GoCtx context.Context) {
 	handleAction := func(id int, action BattleDto.Action, ResponseChan chan<- BattleDto.Action) bool {
-		if id == c.SM.Loser {
-			c.SM.SendActionById(id, BattleDto.NewErrAction(global.BattleNotInYourRound))
+
+		if action.ActionCode == BattleDto.Combat && action.Predicates == BattleDto.Finish {
+
+			if id == c.SM.Loser {
+				c.SM.SendActionById(id, BattleDto.NewErrAction(global.BattleNotInYourRound))
+				return true
+			}
+			c.ChanStop <- struct{}{}
 			return true
 		}
-
 		if action.ActionCode == BattleDto.Combat && action.Predicates == BattleDto.Result {
+			if id == c.SM.Loser {
+				c.SM.SendActionById(id, BattleDto.NewErrAction(global.BattleNotInYourRound))
+				return true
+			}
 			c.SM.Mutex.Lock()
 			var data BattleData.CombatDto
 			err := mapstructure.Decode(action.ActionData, &data)
@@ -800,6 +823,10 @@ func (c *Combat) process(GoCtx context.Context) {
 
 		}
 		if action.ActionCode == BattleDto.DeployCard && action.Predicates == BattleDto.Result {
+			if id == c.SM.Loser {
+				c.SM.SendActionById(id, BattleDto.NewErrAction(global.BattleNotInYourRound))
+				return true
+			}
 			var data BattleData.SelectCard
 			err := mapstructure.Decode(action.ActionData, &data)
 			if err != nil {
@@ -809,6 +836,11 @@ func (c *Combat) process(GoCtx context.Context) {
 			}
 			if data.Where != BattleData.SkillCard {
 				cardTempId := data.CardTempId
+				if c.c.CheckCardByWhere(id, data.Where) { //判定这个上牌的位置是不是有牌了
+					c.SM.SendActionById(id, BattleDto.NewErrAction(global.BattleHasCard))
+					return true
+				}
+
 				if card, ok := c.c.PlayerDataMap[id].CardInHand[cardTempId]; ok { //手牌里有不有
 					if _, ok := card.(CardAbstract.SkillCard); !ok {
 						c.c.SetCardBt(id, card)
@@ -831,6 +863,62 @@ func (c *Combat) process(GoCtx context.Context) {
 }
 
 //endregion
+
+//region State:CardCalc
+
+type CardCalc struct {
+	StateTemplate
+}
+
+func (s *CardCalc) enter() {
+	s.SM.Mutex.Lock()
+	defer s.SM.Mutex.Unlock()
+CalcLoop:
+	for {
+
+		select {
+		case data := <-s.SM.CombatDataChan:
+			opponentCardId := s.c.GetCardBt(s.SM.Loser, data.OpponentWhere).GetTempId()
+			if data.Behavior == BattleData.Attack {
+				s.c.GetCardBt(s.SM.Winner, data.SelfWhere).(CardAbstract.Character).Attack(opponentCardId)
+				s.c.StackSettle(BattleDto.NewAction(BattleDto.CardCalc, BattleDto.Finish, "")) //执行效果堆栈
+			} else if data.Behavior == BattleData.Skill {
+				s.c.GetCardBt(s.SM.Winner, data.SelfWhere).(CardAbstract.Character).Skill(opponentCardId)
+				s.c.StackSettle(BattleDto.NewAction(BattleDto.CardCalc, BattleDto.Finish, ""))
+			}
+		default:
+			break CalcLoop
+		}
+
+	}
+
+}
+func (s *CardCalc) exit() {}
+func (s *CardCalc) process(GoCtx context.Context) {
+
+	handleAction := func(id int, action BattleDto.Action, ResponseChan chan<- BattleDto.Action) bool {
+		if action.ActionCode == BattleDto.AnimationPlayEnd && action.Predicates == BattleDto.Notify {
+
+			s.SM.Mutex.Lock()
+			if s.SM.CombatTime == 0 {
+				go s.SM.finish("SkillCardCalc")
+				s.SM.Mutex.Unlock()
+				return true
+			} else {
+				go s.SM.finish("Combat")
+				s.SM.Mutex.Unlock()
+				return true
+			}
+		}
+		return false
+	}
+	s.SM.AcceptAction(GoCtx, handleAction)
+}
+
+func (s *CardCalc) SpecialInit() {}
+
+//endregion
+
 //region State:SkillCardCalc
 
 type SkillCardCalc struct {
@@ -853,47 +941,11 @@ func (s *SkillCardCalc) exit() { //这里其实主要可以初始化下一个循
 	s.SM.ChildAct = false
 
 }
-func (s *SkillCardCalc) process(GoCtx context.Context) {}
-
-//endregion
-
-//region State:CardCalc
-
-type CardCalc struct {
-	StateTemplate
-}
-
-func (s *CardCalc) enter() {
-CalcLoop:
-	for {
-
-		select {
-		case data := <-s.SM.CombatDataChan:
-			opponentCardId := s.c.GetCardBt(s.SM.Winner, data.OpponentWhere).GetTempId()
-			if data.Behavior == BattleData.Attack {
-				s.c.GetCardBt(s.SM.Winner, data.SelfWhere).(CardAbstract.Character).Attack(opponentCardId)
-				fmt.Println("attack")
-				s.c.StackSettle(BattleDto.NewAction(BattleDto.CardCalc, BattleDto.Finish, "")) //执行效果堆栈
-			} else if data.Behavior == BattleData.Skill {
-				s.c.GetCardBt(s.SM.Winner, data.SelfWhere).(CardAbstract.Character).Skill(opponentCardId)
-				s.c.StackSettle(BattleDto.NewAction(BattleDto.CardCalc, BattleDto.Finish, ""))
-			}
-		default:
-			break CalcLoop
-		}
-
+func (s *SkillCardCalc) process(GoCtx context.Context) {
+	handleAction := func(id int, action BattleDto.Action, ResponseChan chan<- BattleDto.Action) bool {
+		return false
 	}
-	if s.SM.CombatTime == 0 {
-		go s.SM.finish("SkillCardCalc")
-		return
-	} else {
-		go s.SM.finish("Combat")
-		return
-	}
-
+	s.SM.AcceptAction(GoCtx, handleAction)
 }
-func (s *CardCalc) exit()                         {}
-func (s *CardCalc) process(GoCtx context.Context) {}
-func (s *CardCalc) SpecialInit()                  {}
 
 //endregion
