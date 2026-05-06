@@ -13,7 +13,7 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-var VU int = 9
+var VU int = 1
 
 var BaseUrl string = "http://127.0.0.1:10086/"
 var globalClient = &http.Client{
@@ -57,6 +57,16 @@ func Resquest(url string, method string, payload []byte, result any) {
 
 	json.NewDecoder(res.Body).Decode(result)
 
+}
+
+func v1_friendships_post(token string) {
+	res := NewResult("")
+	param := NewPayLoad(map[string]string{
+		"id": "14",
+	})
+	Resquest(fmt.Sprintf("v1/friendships/?token=%s", token), http.MethodPost, param, res)
+
+	fmt.Println(res)
 }
 
 func Resgister(userID int, Res chan<- any) {
@@ -138,11 +148,12 @@ func main() {
 	}()
 
 	var Wswg sync.WaitGroup
-	for v := range PlayerChan {
+	for t := range PlayerChan {
 		Wswg.Add(1)
 		go func() {
 			defer Wswg.Done()
-			connectWS(v.(string))
+			//v1_friendships_post(t.(string))
+			connectWS(t.(string))
 		}()
 
 	}

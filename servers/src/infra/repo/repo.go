@@ -1,6 +1,7 @@
 package repo
 
 import (
+	"context"
 	"database/sql"
 	"reflect"
 
@@ -9,6 +10,7 @@ import (
 
 type Repo interface {
 	Set_db(db *sql.DB, rd *redis.Client)
+	Get_db() *sql.DB
 }
 
 func New_repo[T Repo](db *sql.DB, rd *redis.Client) T {
@@ -17,4 +19,13 @@ func New_repo[T Repo](db *sql.DB, rd *redis.Client) T {
 	repo := newVal.Interface().(T)
 	repo.Set_db(db, rd)
 	return repo
+}
+
+type SQLQueryer interface {
+	Exec(query string, args ...any) (sql.Result, error)
+	Query(query string, args ...any) (*sql.Rows, error)
+	QueryRow(query string, args ...any) *sql.Row
+	ExecContext(ctx context.Context, query string, args ...any) (sql.Result, error)
+	QueryContext(ctx context.Context, query string, args ...any) (*sql.Rows, error)
+	QueryRowContext(ctx context.Context, query string, args ...any) *sql.Row
 }

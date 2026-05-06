@@ -50,7 +50,7 @@ res{
 
 1.GetSelfCardInHard和GetOpponentCardInHard的ActData都是一个数组，然后里面是card对象
 card对象是{
-    Id     int     `json:"id"`
+    Id     int     `json:"Id"`
     Hp     float64 `json:"hp"`
     Damage float64 `json:"damage"`
     BuffId int     `json:"buff_id"`

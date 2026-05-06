@@ -2,6 +2,7 @@ package battleservice
 
 import "pcc_card/presentation/handler/battlehandler/BattleDto"
 
+// NotifyManager 这个是对handler通讯的
 type NotifyManager struct {
 	ChanMap map[int]PlayerChannel // userid为键
 }

@@ -9,21 +9,31 @@ import (
 var battleIDCounter int64
 
 type Battle struct {
-	mu                     sync.RWMutex //房间锁
-	BattleID               int
-	SM                     *StateMachine
-	Ctx                    *Ctx
-	Nt                     *NotifyManager
-	StateMachineCancelFunc context.CancelFunc
+	mu sync.RWMutex //房间锁
+
+	Context context.Context //生命周期总控制
+	Cancel  context.CancelFunc
+
+	BattleID int
+	SM       *StateMachine
+	Ctx      *Ctx
+	Nt       *NotifyManager
 }
 
 func NewBattle(UserA int, UserB int) *Battle {
+	rootContext := context.Background()
+	BattleContext, cancel := context.WithCancel(rootContext)
 	id := int(atomic.AddInt64(&battleIDCounter, 1))
-	ctx := NewCtx(UserA, UserB)
+	ctx := NewCtx(UserA, UserB, CardListImpl.Copy(), BattleContext)
 	Nt := NewNotifyManager(UserA, UserB, 32) //初始化bufferSize
-	SM, StateMachineCancelFunc := NewStateMachine(ctx, UserA, UserB, Nt)
-
-	return &Battle{BattleID: id, SM: SM, Ctx: ctx, Nt: Nt, StateMachineCancelFunc: StateMachineCancelFunc}
+	SM := NewStateMachine(ctx, UserA, UserB, Nt, BattleContext)
+	go func() {
+		select {
+		case <-BattleContext.Done():
+			BC.RemoveBattle(id)
+		}
+	}()
+	return &Battle{BattleID: id, SM: SM, Ctx: ctx, Nt: Nt, Context: BattleContext, Cancel: cancel}
 }
 
 func (b *Battle) GetPlayerChanByUserID(id int) PlayerChannel {
@@ -52,6 +62,8 @@ func InitBattleContainer() {
 	BC = BattleContainer{}
 	BC.Data = make(map[int]*Battle)
 	BC.UserToBTID = make(map[int]int)
+	battleIDCounter = 1
+
 }
 
 func (bc *BattleContainer) AddBattle(id1 int, id2 int) int { //启动接口
@@ -70,6 +82,15 @@ func (bc *BattleContainer) GetBattleByUserID(id int) *Battle {
 	bc.mu.RLock()
 	defer bc.mu.RUnlock()
 	BTID := bc.UserToBTID[id]
+	if BTID == 0 {
+		return nil
+	}
 	BT := bc.Data[BTID]
 	return BT
+}
+func (bc *BattleContainer) RemoveBattle(BattleId int) {
+	bc.mu.Lock()
+	defer bc.mu.Unlock()
+	delete(bc.Data, BattleId)
+	delete(bc.UserToBTID, BattleId)
 }

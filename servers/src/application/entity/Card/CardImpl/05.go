@@ -2,7 +2,6 @@ package CardImpl
 
 import "pcc_card/application/entity/Card/CardAbstract"
 
-
 type Card05 struct {
 	BaseCard
 }
@@ -19,3 +18,5 @@ func (c *Card05) Clone() CardAbstract.Card {
 	newCard := *c
 	return &newCard
 }
+
+func (c *Card05) PlayMagic() {}
