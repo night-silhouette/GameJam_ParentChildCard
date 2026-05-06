@@ -168,6 +168,17 @@ func (s *StateMachine) StatePop() { //切换到，上一次压栈的状态
 	s.StateStack = s.StateStack[:lastIndex]
 }
 
+// DataDecode 返回值是绑定是否成功
+func (s *StateMachine) DataDecode(action BattleDto.Action, data any, id int) bool {
+	err := mapstructure.Decode(action.ActionData, &data)
+	if err != nil {
+		fmt.Println(err)
+		s.SendActionById(id, BattleDto.NewErrAction(global.ResponseInvalidReqParams))
+		return false
+	}
+	return true
+}
+
 func (s *StateMachine) AcceptAction(goCtx context.Context, handleAction func(id int, action BattleDto.Action, ResponseChan chan<- BattleDto.Action) bool) {
 	for {
 		select {
@@ -175,15 +186,20 @@ func (s *StateMachine) AcceptAction(goCtx context.Context, handleAction func(id 
 
 			return
 		case action := <-s.Nt.ChanMap[s.Id1].AcceptChan:
+			if s.c.InterruptListenFunc(s.Id1, action, s.Nt.ChanMap[s.Id1].ResponseChan) {
+				continue
+			}
 			if handleAction(s.Id1, action, s.Nt.ChanMap[s.Id1].ResponseChan) {
 				continue
 			}
-
 			if s.SharedProcess(s.Id1, action, s.Nt.ChanMap[s.Id1].ResponseChan) {
 				continue
 			}
 			s.SendActionById(s.Id1, BattleDto.NewErrAction(global.BattleInvalidTiming))
 		case action := <-s.Nt.ChanMap[s.Id2].AcceptChan:
+			if s.c.InterruptListenFunc(s.Id2, action, s.Nt.ChanMap[s.Id2].ResponseChan) {
+				continue
+			}
 			if handleAction(s.Id2, action, s.Nt.ChanMap[s.Id2].ResponseChan) {
 				continue
 			}
@@ -868,16 +884,23 @@ func (c *Combat) process(GoCtx context.Context) {
 
 type CardCalc struct {
 	StateTemplate
+	HasBehavior bool
+}
+
+func (s *CardCalc) SpecialInit() {
+
 }
 
 func (s *CardCalc) enter() {
 	s.SM.Mutex.Lock()
 	defer s.SM.Mutex.Unlock()
+	s.HasBehavior = false
 CalcLoop:
 	for {
 
 		select {
 		case data := <-s.SM.CombatDataChan:
+			s.HasBehavior = true
 			opponentCardId := s.c.GetCardBt(s.SM.Loser, data.OpponentWhere).GetTempId()
 			if data.Behavior == BattleData.Attack {
 				s.c.GetCardBt(s.SM.Winner, data.SelfWhere).(CardAbstract.Character).Attack(opponentCardId)
@@ -891,13 +914,20 @@ CalcLoop:
 		}
 
 	}
+	if !s.HasBehavior {
+		if s.SM.CombatTime == 0 {
+			go s.SM.finish("SkillCardCalc")
+		} else {
+			go s.SM.finish("Combat")
+		}
+	}
 
 }
 func (s *CardCalc) exit() {}
 func (s *CardCalc) process(GoCtx context.Context) {
 
 	handleAction := func(id int, action BattleDto.Action, ResponseChan chan<- BattleDto.Action) bool {
-		if action.ActionCode == BattleDto.AnimationPlayEnd && action.Predicates == BattleDto.Notify {
+		if action.ActionCode == BattleDto.AnimationPlayEnd && action.Predicates == BattleDto.Notify && s.HasBehavior {
 
 			s.SM.Mutex.Lock()
 			if s.SM.CombatTime == 0 {
@@ -914,8 +944,6 @@ func (s *CardCalc) process(GoCtx context.Context) {
 	}
 	s.SM.AcceptAction(GoCtx, handleAction)
 }
-
-func (s *CardCalc) SpecialInit() {}
 
 //endregion
 

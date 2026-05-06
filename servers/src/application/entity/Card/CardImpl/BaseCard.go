@@ -9,7 +9,6 @@ type BaseCard struct {
 	ID            int            `json:"id"`
 	Info          map[string]any `json:"-"`
 	StateCodeChan chan protocol.Effect
-
 	//动态变量
 	BtCtx   protocol.ProtocolCardWithCtx
 	HpNow   float64

@@ -27,6 +27,7 @@ const (
 	BattleCardNotFound
 	BattleNotInYourRound
 	BattleHasCard
+	BattleCardNumErr
 )
 
 var StatusMsg = map[ResponseStatusCode]string{
@@ -53,4 +54,5 @@ var StatusMsg = map[ResponseStatusCode]string{
 	BattleCardNotFound:            "此牌没有被找到",
 	BattleNotInYourRound:          "此时不在你的回合",
 	BattleHasCard:                 "此位置有牌了",
+	BattleCardNumErr:              "卡牌数量有误",
 }

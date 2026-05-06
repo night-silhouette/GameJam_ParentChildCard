@@ -9,4 +9,5 @@ type ProtocolCardWithCtx interface {
 	ProtoColHealCardBt(UserId int, TargetTempId int, HealHp float64)                       //设置了不可以恢复到上限
 	ProtoColSetDamageCardBt(UserId int, TargetTempId int, NewDamage float64)
 	ProtoColCardBtAttack(SendTempId int, UserId int, TargetTempId int, AtkHp float64)
+	ProtoColInterrupt(UserId int, InterruptDto BattleData.InterruptDto, res chan []int)
 }

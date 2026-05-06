@@ -26,6 +26,7 @@ const (
 	Combat
 	CardCalc
 	Debug
+	Interrupt
 )
 
 var ActionName = map[ActionCode]string{
@@ -42,6 +43,7 @@ var ActionName = map[ActionCode]string{
 	Combat:                "执行战斗行动",
 	CardCalc:              "卡牌效果结算",
 	Debug:                 "测试",
+	Interrupt:             "中断选牌",
 }
 
 type Predicates int
