@@ -112,6 +112,8 @@ signal request_get_self_cards
 signal request_get_opponent_cards
 signal request_over_battle
 signal request_deploy_magic_card(card_id,card_temp_id)
+signal request_deploy_parent_card(card_id,card_temp_id)
+signal request_deploy_child_card(card_id,card_temp_id)
 signal request_judge(judge_data)
 
 # 调试

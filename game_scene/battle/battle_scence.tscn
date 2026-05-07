@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://c85a1ra55sbk0"]
+[gd_scene load_steps=12 format=3 uid="uid://c85a1ra55sbk0"]
 
 [ext_resource type="Script" uid="uid://dw1q80ff6ue4v" path="res://game_scene/battle/battle_scence.gd" id="1_51ed8"]
 [ext_resource type="Texture2D" uid="uid://dng874p0igvq" path="res://素材/使用素材/战斗内/转换.png" id="1_chjg7"]
@@ -11,8 +11,6 @@
 [ext_resource type="PackedScene" uid="uid://c21g6pu7bxtii" path="res://game_scene/battle/法术抽取.tscn" id="5_8qm6s"]
 [ext_resource type="Script" uid="uid://cy15d728nlkst" path="res://base_class/manage/card_manager.gd" id="9_oo4tg"]
 [ext_resource type="Script" uid="uid://bqs27ao7omrns" path="res://game_scene/battle/state_machine.gd" id="11_ile2j"]
-
-[sub_resource type="Theme" id="Theme_275nv"]
 
 [node name="battle_scence" type="Node"]
 script = ExtResource("1_51ed8")
@@ -56,7 +54,7 @@ object_pool = NodePath("../object_pool")
 card_manager = NodePath("../card_manager")
 metadata/_edit_lock_ = true
 
-[node name="法术抽取" parent="." instance=ExtResource("5_8qm6s")]
+[node name="法术放置" parent="." instance=ExtResource("5_8qm6s")]
 offset_left = 808.0
 offset_top = 408.0
 offset_right = 1151.0001
@@ -93,11 +91,6 @@ grow_horizontal = 1
 grow_vertical = 1
 rotation = 1.5707964
 scale = Vector2(0.19120544, 0.19120544)
-
-[node name="Button" type="Button" parent="."]
-offset_right = 8.0
-offset_bottom = 8.0
-theme = SubResource("Theme_275nv")
 
 [node name="card_manager" type="Node" parent="."]
 script = ExtResource("9_oo4tg")

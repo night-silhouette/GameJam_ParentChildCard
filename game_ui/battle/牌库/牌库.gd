@@ -2,6 +2,7 @@ extends Control
 @export var object_pool : Node;
 @export var card_vector: GridContainer;
 @export var card_manager: Node;
+@export var animation_player : AnimationPlayer
 # Called when the node enters the scene tree for the first time.
 var cards: Array   # 你的全部牌
 var page_size: int = 10
@@ -11,7 +12,7 @@ func _ready() -> void:
 	card_manager.show_card.connect(refresh_ui)
 	
 func refresh_ui():
-	cards = card_manager.card_list;
+	cards = get_cards_by_zone(0)
 	var page_cards = get_current_page()
 
 	# 先清空原有卡牌节点
@@ -28,6 +29,13 @@ func refresh_ui():
 func get_current_page() -> Array:
 	var end_index = min(start_index + page_size, cards.size())
 	return cards.slice(start_index, end_index)
+
+func get_cards_by_zone(zone: int) -> Array:
+	var result = []
+	for c in card_manager.card_list:
+		if c.zone == zone:
+			result.append(c)
+	return result
 	
 func next_page():
 	if start_index + page_size < cards.size():
@@ -40,6 +48,7 @@ func prev_page():
 func _on_右切换_button_down() -> void:
 	next_page();
 	refresh_ui();
+	
 
 
 func _on_左切换_button_down() -> void:

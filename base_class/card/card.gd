@@ -1,14 +1,17 @@
 extends Control
 
+var zones: Array[Control]   # 所有可进入区域
 @onready var display: TextureRect = $"卡牌纹理"
 var temp_id ;
 var hp ;
 var damage  ;
 var buff_id ;
+var zone ;
+
 var dragging = false
 var click_offset = Vector2.ZERO
 var original_position = Vector2.ZERO
-
+var current_zone: Control = null
 
 func _ready():
 	original_position = global_position
@@ -49,8 +52,31 @@ func _process(_delta):
 	if dragging:
 		# 更新位置：当前鼠标全局位置减去初始点击偏移
 		global_position = get_global_mouse_position() - click_offset
+		check_zone();
+		
+func check_zone():
+	var center = get_global_rect().get_center()
+	current_zone = null
+
+	for z in zones:
+		if z.get_global_rect().has_point(center):
+			current_zone = z
+			return
 func _on_card_dropped():
-	pass;
+	if current_zone:
+		zone = current_zone.name   # 或者你自己定义
+		_snap_to_zone(current_zone)
+	else:
+		_back()
+
+func _snap_to_zone(target: Control):
+	var tween = create_tween()
+	tween.tween_property(
+		self,
+		"global_position",
+		target.global_position,
+		0.2
+	).set_trans(Tween.TRANS_QUART).set_ease(Tween.EASE_OUT)
 func _back():
 
 	var tween = create_tween()
