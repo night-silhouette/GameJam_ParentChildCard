@@ -27,6 +27,7 @@ const (
 	CardCalc
 	Debug
 	Interrupt
+	GetDisCard
 )
 
 var ActionName = map[ActionCode]string{
@@ -44,6 +45,7 @@ var ActionName = map[ActionCode]string{
 	CardCalc:              "卡牌效果结算",
 	Debug:                 "测试",
 	Interrupt:             "中断选牌",
+	GetDisCard:            "查看弃牌堆",
 }
 
 type Predicates int

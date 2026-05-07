@@ -44,18 +44,14 @@ func (s *StateMachine) SharedProcess(id int, action BattleDto.Action, ResponseCh
 		s.Mutex.Lock()
 		res := s.c.GetCardInHard(id)
 		s.Mutex.Unlock()
-
 		ResponseChan <- BattleDto.NewAction(BattleDto.GetSelfCardInHard, BattleDto.Result, res.Self)
-
 		return true
 	}
 	if action.ActionCode == BattleDto.GetOpponentCardInHard && action.Predicates == BattleDto.Query { //获取对方手牌
 		s.Mutex.Lock()
 		res := s.c.GetCardInHard(id)
 		s.Mutex.Unlock()
-
 		ResponseChan <- BattleDto.NewAction(BattleDto.GetOpponentCardInHard, BattleDto.Result, res.Opponent)
-
 		return true
 	}
 	if action.ActionCode == BattleDto.OverBattle && action.Predicates == BattleDto.Notify { //结束战斗
@@ -66,7 +62,6 @@ func (s *StateMachine) SharedProcess(id int, action BattleDto.Action, ResponseCh
 		s.Mutex.Lock()
 		res := s.c.GetBtCardInfo(id)
 		s.Mutex.Unlock()
-
 		ResponseChan <- BattleDto.NewAction(BattleDto.GetBtCardInfo, BattleDto.Result, res)
 		return true
 	}
@@ -77,7 +72,12 @@ func (s *StateMachine) SharedProcess(id int, action BattleDto.Action, ResponseCh
 			s.Mutex.Unlock()
 			return true
 		}
-
+		s.Mutex.Unlock()
+	}
+	if action.ActionCode == BattleDto.GetDisCard && action.Predicates == BattleDto.Query { //查看弃牌堆
+		res := s.c.GetDisCardDto()
+		s.SendActionById(id, BattleDto.NewAction(BattleDto.GetDisCard, BattleDto.Result, res))
+		return true
 	}
 
 	return false

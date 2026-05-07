@@ -1,5 +1,10 @@
 package protocol
 
+import (
+	"pcc_card/application/entity/BattleData"
+	"time"
+)
+
 type Attack struct {
 	UserId       int
 	SendTempId   int
@@ -20,6 +25,8 @@ func (A *Attack) Execute(pc ProtocolCardWithCtx) {
 	pc.ProtoColCardBtAttack(A.SendTempId, A.UserId, A.TargetTempId, A.AtkValue)
 }
 
+//-----------------------------------------------------------------------------------------------------------------------------------------
+
 type Hurt struct {
 	UserId       int
 	SendTempId   int
@@ -38,4 +45,19 @@ func NewHurt(UserId int, SendTempId int, TargetTempId int, AtkValue float64) *Hu
 	res.TargetTempId = TargetTempId
 	res.AtkValue = AtkValue
 	return &res
+}
+
+//-----------------------------------------------------------------------------------------------------------------------------------------
+
+type Interrupt struct {
+	UserId     int
+	Time       time.Duration
+	TempIdList []int
+	SelectNum  int
+	Res        chan []int
+}
+
+func (I *Interrupt) Execute(pc ProtocolCardWithCtx) {
+	dto := BattleData.NewInterruptDto(I.Time, I.TempIdList, I.SelectNum)
+	pc.ProtoColInterrupt(I.UserId, dto, I.Res)
 }
