@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://diwsy4ebydgfx"]
+[gd_scene load_steps=4 format=3 uid="uid://diwsy4ebydgfx"]
 
 [ext_resource type="Script" uid="uid://ddj8qfcb6lpsk" path="res://base_class/card/card.gd" id="1_xdlnp"]
 [ext_resource type="Texture2D" uid="uid://dje375wa2ans7" path="res://素材/使用素材/卡牌/基础卡牌重置素材/卡牌.png" id="2_8a1n0"]
+[ext_resource type="PackedScene" uid="uid://dx67q76jhqn1l" path="res://game_ui/battle/子卡详细.tscn" id="3_nmbyv"]
 
 [node name="Control" type="Control"]
 custom_minimum_size = Vector2(329, 570)
@@ -17,10 +18,19 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_right = 29.0
-offset_bottom = 51.0
+offset_left = -5.702759
+offset_top = 11.405502
+offset_right = 23.297241
+offset_bottom = 62.405518
 grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("2_8a1n0")
 expand_mode = 1
 stretch_mode = 5
+
+[node name="子卡详细" parent="." instance=ExtResource("3_nmbyv")]
+layout_mode = 0
+offset_left = 1106.3342
+offset_top = 604.49194
+offset_right = 1106.3342
+offset_bottom = 604.49194

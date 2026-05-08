@@ -38,3 +38,18 @@ const ACTION = {
 	ANIMATION_END = 10,
 	COMBAT = 11,
 }
+const ZONE_CARD = {
+	DECK_ZONE = 1,               # 牌堆
+	
+	DISCARD_ZONE = 2,       # 弃牌堆
+	
+	PARENT_BATTLE_ZONE = 3,   # 母牌战斗区
+	CHILD_BATTLE_ZONE = 4,    # 子牌战斗区
+	SPELL_ZONE = 5,         # 法术牌区
+	
+	DRAGGING = 6,           # 拖动中
+	
+	ENEMY_PARENT_ZONE = 7,    # 敌方母牌战斗区
+	ENEMY_CHILD_ZONE = 8,     # 敌方子牌区
+	ENEMY_SPELL_ZONE = 9    # 敌方法术牌区
+}

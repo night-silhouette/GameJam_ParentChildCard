@@ -25,11 +25,18 @@ func _dispatch(action_code: int, action_data: Variant, predicate: int):
 			if predicate == NetDef.Predicate.RESULT:
 				# 在这里你可以自由地做中间处理，比如数据转换、校验
 				if action_data is Array:
-					SignalBus.self_cards_updated.emit(action_data)
+					SignalBus.self_inhand_updated.emit(action_data)
 					
 				else:
 					push_error("GET_SELF_CARDS 返回格式错误，期望 Array")
 					
+		NetDef.Action.GET_BT_INFO:
+			if predicate == NetDef.Predicate.RESULT:
+				var self_data = action_data.get("self");
+				var opp_data = action_data.get("opponent");
+				SignalBus.bt_selfinfo_updated.emit(self_data);
+				SignalBus.bt_oppinfo_updated.emit(opp_data);
+		
 		NetDef.Action.START_BATTLE:
 			if predicate == NetDef.Predicate.NOTIFY:
 				SignalBus.battle_started.emit(action_code)
@@ -47,8 +54,7 @@ func _dispatch(action_code: int, action_data: Variant, predicate: int):
 				var where = action_data.where;
 				match where:
 					2:
-						SignalBus.magic_card_start.emit(t);
-				
+						SignalBus.magic_card_start.emit(t)				
 		NetDef.Action.CANCEL_MATCH:
 			if predicate == NetDef.Predicate.RESULT:
 				SignalBus.match_canceled.emit()

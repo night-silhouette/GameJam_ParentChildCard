@@ -9,10 +9,10 @@ var page_size: int = 10
 var start_index: int = 0
 
 func _ready() -> void:
+	
 	card_manager.show_card.connect(refresh_ui)
 	
 func refresh_ui():
-	cards = get_cards_by_zone(0)
 	var page_cards = get_current_page()
 
 	# 先清空原有卡牌节点
@@ -30,12 +30,7 @@ func get_current_page() -> Array:
 	var end_index = min(start_index + page_size, cards.size())
 	return cards.slice(start_index, end_index)
 
-func get_cards_by_zone(zone: int) -> Array:
-	var result = []
-	for c in card_manager.card_list:
-		if c.zone == zone:
-			result.append(c)
-	return result
+
 	
 func next_page():
 	if start_index + page_size < cards.size():

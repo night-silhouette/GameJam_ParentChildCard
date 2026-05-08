@@ -88,8 +88,10 @@ signal match_success(t)
 # =========================
 # 卡牌数据
 # =========================
-signal self_cards_updated(cards)
-signal opponent_cards_updated(cards)
+signal self_inhand_updated(cards)
+signal oppent_inhand_updated(cards)
+signal bt_selfinfo_updated(cards)
+signal bt_oppinfo_updated(cards)
 
 #判定
 ##判定回合开始信号
@@ -108,14 +110,14 @@ signal combat_start_fail(t);
 # 请求（发给WS）
 # =========================
 signal request_cancel_match
-signal request_get_self_cards
-signal request_get_opponent_cards
+signal request_get_self_cards_inhand
+signal request_get_opponent_cards_inhand
 signal request_over_battle
 signal request_deploy_magic_card(card_id,card_temp_id)
 signal request_deploy_parent_card(card_id,card_temp_id)
 signal request_deploy_child_card(card_id,card_temp_id)
 signal request_judge(judge_data)
-
+signal request_get_combat_cards
 # 调试
 signal request_debug_time
 signal request_debug_matchpool

@@ -1,7 +1,6 @@
 # NetDef.gd (建议作为独立脚本或 Autoload)
 extends Node
 
-
 enum Predicate {
 	EMPTY = 0,
 	NOTIFY = 1,
@@ -24,6 +23,10 @@ enum Action {
 	MATCH_SUCCESS = 9,
 	ANIMATION_END = 10,
 	COMBAT = 11,
+	CardCalc = 12,
+	Debug = 13 ,                
+	Interrupt = 14,           
+	GetDisCard = 15 ,           
 }
 
 const ACTION_NAME = {
@@ -37,7 +40,11 @@ const ACTION_NAME = {
 	Action.JUDGE: "战斗回合判断",
 	Action.MATCH_SUCCESS: "匹配成功",
 	Action.ANIMATION_END: "动画结束",
-	Action.COMBAT: "执行战斗行动"
+	Action.COMBAT: "执行战斗行动",
+	Action.CardCalc:"卡牌效果结算",
+	Action.Debug:"测试",
+	Action.Interrupt:"中断选牌",
+	Action.GetDisCard:"查看弃牌堆",
 }
 
 # 辅助函数：快速获取名字打印日志
