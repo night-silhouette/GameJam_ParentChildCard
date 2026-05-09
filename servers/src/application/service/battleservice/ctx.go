@@ -10,7 +10,6 @@ import (
 	"pcc_card/application/entity/protocol"
 	"pcc_card/global"
 	"pcc_card/presentation/handler/battlehandler/BattleDto"
-	"runtime"
 )
 
 type Ctx struct {
@@ -40,7 +39,7 @@ func NewCtx(idA int, idB int, CardPool *[]CardAbstract.Card, ParentContext conte
 	c.PlayerDataMap[idA] = NewPlayerData(idA)
 	c.PlayerDataMap[idB] = NewPlayerData(idB)
 	c.CtxStateNotify = NewCtxStateNotify()
-	c.CardObserver = NewCardObserver(ParentContext, c)
+	//c.CardObserver = NewCardObserver(ParentContext, c)//弃用哨兵模式
 	c.NeedInterrupt = false
 	c.InterruptListenFunc = func(id int, action BattleDto.Action, ResponseChan chan<- BattleDto.Action) bool { return false }
 	c.DisCardPool = Util.NewSafeContainer[CardAbstract.Card](ParentContext, 8)
@@ -50,42 +49,28 @@ func NewCtx(idA int, idB int, CardPool *[]CardAbstract.Card, ParentContext conte
 //__________________________________________EffectsStack______________________________________________
 
 func (c *Ctx) StackSettle(action BattleDto.Action) { //执行函数
-
-	select {
-	case firstEffect := <-c.CardObserver.Collector:
-		c.EffectsStack.Push(firstEffect.Effect)
-		c.resolveAllChains(action)
-	}
+	c.resolveAllChains(action)
 }
 
 func (c *Ctx) resolveAllChains(action BattleDto.Action) {
-	emptyCount := 0
 	for {
 		if c.NeedInterrupt {
 			<-c.InterruptChan
 		}
 
-		c.CardObserver.DrainCollector()
 		if c.EffectsStack.IsEmpty() {
-			// 如果栈空了，不急着退出，先尝试让出执行权
-			runtime.Gosched()
-			c.CardObserver.DrainCollector()
-			if c.EffectsStack.IsEmpty() {
-				emptyCount++
-				if emptyCount < 3 { // 连续三次检查都是空的，才真的算结束
-					continue
-				}
-				// 真正的出口
-				c.StateMachine.SendActionById(c.StateMachine.Id2, action)
-				c.StateMachine.SendActionById(c.StateMachine.Id1, action)
-				break
-			}
+			// 出口
+			c.StateMachine.SendActionById(c.StateMachine.Id2, action)
+			c.StateMachine.SendActionById(c.StateMachine.Id1, action)
+			break
+
 		}
-		emptyCount = 0 // 只要处理了效果，计数器清零
 
 		effect := c.EffectsStack.Pop()
 		effect.Execute(c)
-		fmt.Println("执行")
+		fmt.Print(effect)
+		fmt.Println("执行了")
+
 	}
 }
 
@@ -263,6 +248,10 @@ func (c *Ctx) GetBtCardInfo(id int) BattleData.BtCardInfo {
 
 //todo
 //region protocol
+
+func (c *Ctx) ProtoColPush(e protocol.Effect) {
+	c.EffectsStack.Push(e)
+}
 
 func (c *Ctx) ProtoColMoveDisCardPool(UserId int, TempId int) {
 	c.MoveDisCardPool(UserId, TempId)

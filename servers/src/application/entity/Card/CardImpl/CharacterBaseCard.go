@@ -1,6 +1,7 @@
 package CardImpl
 
 import (
+	"fmt"
 	"pcc_card/application/entity/BattleData"
 	"pcc_card/application/entity/protocol"
 	"pcc_card/global"
@@ -28,30 +29,33 @@ func (c CharacterBaseCard) Skill(TargetId int) {
 func (c CharacterBaseCard) Death(AttackId int) {
 	c.Notify(BattleData.AnDeath)
 	var SelectCharacterCard *[]int
+	c.DisCard(SelectCharacterCard) //反向压入
 	c.Interrupt(SelectCharacterCard, global.SelectCharacterTime*time.Second, c.BtCtx.ProtoColGetCharacterCard(c.OwnerId), 1)
-	c.DisCard(SelectCharacterCard)
+
 }
 
 //---------二次分装---------
 
 func (c CharacterBaseCard) EffectAttack(targetTempId int, AtkHp float64) {
-	c.StateCodeChan <- protocol.NewAttack(c.OwnerId, c.TempId, targetTempId, AtkHp)
+	c.BtCtx.ProtoColPush(protocol.NewAttack(c.OwnerId, c.TempId, targetTempId, AtkHp))
 }
 func (c CharacterBaseCard) EffectHurt(AttackId int, AtkHp float64) {
-	c.StateCodeChan <- protocol.NewHurt(c.OwnerId, AttackId, c.TempId, AtkHp)
+	c.BtCtx.ProtoColPush(protocol.NewHurt(c.OwnerId, AttackId, c.TempId, AtkHp))
 }
 func (c CharacterBaseCard) Notify(Beh BattleData.AnimationBehavior) {
+	fmt.Print(Beh)
+	fmt.Println("卡牌执行了")
 	c.BtCtx.Notify(BattleData.MewAnimationDto(c.ID, c.TempId, Beh, c.BtCtx.GetBtCardInfo(c.OwnerId)))
 }
 func (c CharacterBaseCard) Interrupt(res *[]int, time time.Duration, TempIdList []int, SelectNum int) { //res一定要塞到effect函数里处理
 	resChan := make(chan []int)
-	c.StateCodeChan <- &protocol.Interrupt{
+	c.BtCtx.ProtoColPush(&protocol.Interrupt{
 		UserId:     c.OwnerId,
 		Time:       time,
 		TempIdList: TempIdList,
 		SelectNum:  SelectNum,
 		Res:        resChan,
-	}
+	})
 	go func() {
 		val := <-resChan
 		*res = val
@@ -59,5 +63,5 @@ func (c CharacterBaseCard) Interrupt(res *[]int, time time.Duration, TempIdList 
 }
 
 func (c CharacterBaseCard) DisCard(TempIdList *[]int) {
-	c.StateCodeChan <- protocol.NewDisCard(c.OwnerId, TempIdList)
+	c.BtCtx.ProtoColPush(protocol.NewDisCard(c.OwnerId, TempIdList))
 }
