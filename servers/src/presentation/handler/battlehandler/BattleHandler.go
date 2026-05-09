@@ -158,7 +158,9 @@ func (u *BattleHandlerImpl) ListenResquest(conn *websocket.Conn, id int, goctx c
 		var action BattleDto.Action
 		err = decoder.Decode(&action)
 		if err != nil {
+			u.writeMu.Lock()
 			response.WsFailWithErr(conn, global.ResponseInvalidReqParams, err)
+			u.writeMu.Unlock()
 			continue
 		}
 

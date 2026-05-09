@@ -29,10 +29,10 @@ func (c CharacterBaseCard) Death(AttackId int) {
 	c.Notify(BattleData.AnDeath)
 	var SelectCharacterCard *[]int
 	c.Interrupt(SelectCharacterCard, global.SelectCharacterTime*time.Second, c.BtCtx.ProtoColGetCharacterCard(c.OwnerId), 1)
-
+	c.DisCard(SelectCharacterCard)
 }
 
-//         ----二次分装----
+//---------二次分装---------
 
 func (c CharacterBaseCard) EffectAttack(targetTempId int, AtkHp float64) {
 	c.StateCodeChan <- protocol.NewAttack(c.OwnerId, c.TempId, targetTempId, AtkHp)
@@ -41,7 +41,7 @@ func (c CharacterBaseCard) EffectHurt(AttackId int, AtkHp float64) {
 	c.StateCodeChan <- protocol.NewHurt(c.OwnerId, AttackId, c.TempId, AtkHp)
 }
 func (c CharacterBaseCard) Notify(Beh BattleData.AnimationBehavior) {
-	c.BtCtx.Notify(BattleData.MewAnimationDto(c.ID, c.TempId, Beh))
+	c.BtCtx.Notify(BattleData.MewAnimationDto(c.ID, c.TempId, Beh, c.BtCtx.GetBtCardInfo(c.OwnerId)))
 }
 func (c CharacterBaseCard) Interrupt(res *[]int, time time.Duration, TempIdList []int, SelectNum int) { //res一定要塞到effect函数里处理
 	resChan := make(chan []int)
@@ -56,4 +56,8 @@ func (c CharacterBaseCard) Interrupt(res *[]int, time time.Duration, TempIdList 
 		val := <-resChan
 		*res = val
 	}()
+}
+
+func (c CharacterBaseCard) DisCard(TempIdList *[]int) {
+	c.StateCodeChan <- protocol.NewDisCard(c.OwnerId, TempIdList)
 }

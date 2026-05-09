@@ -264,6 +264,10 @@ func (c *Ctx) GetBtCardInfo(id int) BattleData.BtCardInfo {
 //todo
 //region protocol
 
+func (c *Ctx) ProtoColMoveDisCardPool(UserId int, TempId int) {
+	c.MoveDisCardPool(UserId, TempId)
+}
+
 func (c *Ctx) ProtoColSetCardBt(UserId int, TempId int) {
 	card := c.GetCardInHardByCardTempId(UserId, TempId)
 	c.SetCardBt(UserId, card)
@@ -369,6 +373,7 @@ func (c *Ctx) ProtoColSetDamageCardBt(UserId int, TargetTempId int, NewDamage fl
 
 //endregion
 
+//todo
 //region 对卡牌数据的操作算法
 
 // FindCard 这是一个总和方法,他会在两个人的手牌和出战斗牌里根据tempId找牌
@@ -387,6 +392,19 @@ func (c *Ctx) FindCard(tempId int) CardAbstract.Card {
 		card = res
 	}
 	res = c.GetCardInHardByCardTempId(c.StateMachine.Id2, tempId)
+	if res != nil {
+		card = res
+	}
+	return card
+}
+
+func (c *Ctx) FindCardForUserId(UserId int, tempId int) CardAbstract.Card {
+	var card CardAbstract.Card
+	res := c.GetCardInCardBtByCardTempId(UserId, tempId)
+	if res != nil {
+		card = res
+	}
+	res = c.GetCardInHardByCardTempId(UserId, tempId)
 	if res != nil {
 		card = res
 	}
@@ -413,6 +431,12 @@ func (c *Ctx) GetCardInCardBtByCardTempId(UserId int, TargetTempId int) CardAbst
 			return player.ChildCardBT
 		}
 	}
+	if player.SkillCardBT != nil {
+		if player.SkillCardBT.GetTempId() == TargetTempId {
+			return player.SkillCardBT
+		}
+	}
+
 	return nil
 }
 
@@ -532,6 +556,66 @@ func (c *Ctx) GetCharacterCardinCardInHand(UserId int) []int {
 		}
 	}
 	return TempIdList
+}
+
+// GetWhereByTempId 根据tempId 返回where，找不到返回-1
+func (c *Ctx) GetWhereByTempId(UserId int, tempId int) BattleData.Where {
+	player := c.PlayerDataMap[UserId]
+	if player.ParentCardBT.GetTempId() == tempId {
+		return BattleData.ParentCard
+	}
+	if player.ChildCardBT.GetTempId() == tempId {
+		return BattleData.ChildCard
+	}
+	if player.SkillCardBT.GetTempId() == tempId {
+		return BattleData.SkillCard
+	}
+	return -1
+}
+
+// DeleteCardBtByWhere 根据where删除bt
+func (c *Ctx) DeleteCardBtByWhere(UserId int, where BattleData.Where) {
+	player := c.PlayerDataMap[UserId]
+	if where == BattleData.SkillCard {
+		player.ParentCardBT = nil
+		return
+	}
+	if where == BattleData.ParentCard {
+		player.ParentCardBT = nil
+		return
+	}
+	if where == BattleData.ChildCard {
+		player.ChildCardBT = nil
+		return
+	}
+}
+
+// MoveCardBtToDisCardPool 把bt上的卡删掉，并且移动到discardpool
+func (c *Ctx) MoveCardBtToDisCardPool(UserId int, tempId int) {
+	var where BattleData.Where
+	if where = c.GetWhereByTempId(UserId, tempId); where == -1 {
+		return
+	}
+	card := c.GetCardInCardBtByCardTempId(UserId, tempId)
+	c.DeleteCardBtByWhere(UserId, where)
+	c.DisCardPool.Push(card)
+}
+
+func (c *Ctx) MoveDisCardPool(UserId int, tempId int) {
+	player := c.PlayerDataMap[UserId]
+	var where BattleData.Where
+	if where = c.GetWhereByTempId(UserId, tempId); where != -1 {
+		card := c.GetCardInCardBtByCardTempId(UserId, tempId)
+		c.DeleteCardBtByWhere(UserId, where)
+		c.DisCardPool.Push(card)
+		return
+	} else {
+		card := c.GetCardInCardBtByCardTempId(UserId, tempId)
+		delete(player.CardInHand, tempId)
+		c.DisCardPool.Push(card)
+		return
+	}
+
 }
 
 //endregion

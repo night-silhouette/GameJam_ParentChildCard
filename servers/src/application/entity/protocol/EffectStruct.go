@@ -61,3 +61,23 @@ func (I *Interrupt) Execute(pc ProtocolCardWithCtx) {
 	dto := BattleData.NewInterruptDto(I.Time, I.TempIdList, I.SelectNum)
 	pc.ProtoColInterrupt(I.UserId, dto, I.Res)
 }
+
+//----------------------------------------------------
+
+type DisCard struct {
+	UserId     int
+	TempIdList *[]int
+}
+
+func (D *DisCard) Execute(pc ProtocolCardWithCtx) {
+	for _, tempId := range *D.TempIdList {
+		pc.ProtoColMoveDisCardPool(D.UserId, tempId)
+	}
+}
+
+func NewDisCard(UserId int, TempIdList *[]int) *DisCard {
+	res := DisCard{}
+	res.UserId = UserId
+	res.TempIdList = TempIdList
+	return &res
+}

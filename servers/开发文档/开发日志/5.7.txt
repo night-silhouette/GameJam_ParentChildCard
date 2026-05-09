@@ -1,0 +1,3 @@
+记得
+这种a,b,c有着不同标签的情况一定要用字典，而不是用不同的属性
+现在的parentcardbt和childcardbt太蠢了
