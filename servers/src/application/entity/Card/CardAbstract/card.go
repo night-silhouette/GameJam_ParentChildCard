@@ -21,6 +21,7 @@ type Card interface {
 	GetAtkNow() float64
 	SetAtkNow(atkNow float64)
 	SetBtCtx(btCtx protocol.ProtocolCardWithCtx)
+	ReInitialize()
 }
 
 func GetCardDto(c Card) BattleData.CardDto {

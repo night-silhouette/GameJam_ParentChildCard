@@ -18,6 +18,7 @@ import (
 type State interface {
 	enter()
 	exit()
+	main()
 	Init(id1 int, id2 int, c *Ctx, Nt *NotifyManager, SM *StateMachine, sub State)
 	process(GoCtx context.Context)
 	SetName(name string)
@@ -168,11 +169,28 @@ func (s *StateMachine) StatePop() { //切换到，上一次压栈的状态
 	s.StateStack = s.StateStack[:lastIndex]
 }
 
-// DataDecode 返回值是绑定是否成功
+// DataDecode 返回值是绑定是否成功,data是数据的指针
 func (s *StateMachine) DataDecode(action BattleDto.Action, data any, id int) bool {
-	err := mapstructure.Decode(action.ActionData, &data)
+	config := &mapstructure.DecoderConfig{
+		// 开启弱类型转换，处理 float64 -> int 以及 []interface{} -> []int
+		WeaklyTypedInput: true,
+		// 目标结构体指针
+		Result: data,
+		// 显式指定使用 mapstructure 标签
+		TagName: "mapstructure",
+	}
+
+	// 2. 初始化解码器
+	decoder, err := mapstructure.NewDecoder(config)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Printf("Fatal: failed to create decoder: %v\n", err)
+		return false
+	}
+
+	// 3. 执行解码
+	err = decoder.Decode(action.ActionData)
+	if err != nil {
+		fmt.Printf("Decode Error: %v | ActionData: %+v\n", err, action.ActionData)
 		s.SendActionById(id, BattleDto.NewErrAction(global.ResponseInvalidReqParams))
 		return false
 	}
@@ -230,13 +248,14 @@ func (s *StateMachine) finish(NextState string) {
 
 	if NextState != "" {
 		s.CurrentState = NextStateObj
+		fmt.Print(s.CurrentState.GetName() + "\n")
 		s.CurrentState.enter()
 
 		var GoCtx context.Context
 		GoCtx, s.cancelFunc = context.WithCancel(s.ParentNodeCtx) //stateMachine死掉，你也得死
 		go s.CurrentState.process(GoCtx)                          //监听
-		fmt.Print(s.CurrentState.GetName() + "\n")
 
+		s.CurrentState.main()
 	}
 }
 
@@ -250,6 +269,10 @@ type StateTemplate struct {
 	c    *Ctx
 	Nt   *NotifyManager
 	SM   *StateMachine
+}
+
+func (s *StateTemplate) main() {
+
 }
 
 func (s *StateTemplate) Init(id1 int, id2 int, c *Ctx, Nt *NotifyManager, SM *StateMachine, sub State) {
@@ -885,6 +908,7 @@ func (c *Combat) process(GoCtx context.Context) {
 type CardCalc struct {
 	StateTemplate
 	HasBehavior bool
+	HaveDone    bool
 }
 
 func (s *CardCalc) SpecialInit() {
@@ -894,7 +918,11 @@ func (s *CardCalc) SpecialInit() {
 func (s *CardCalc) enter() {
 	s.SM.Mutex.Lock()
 	defer s.SM.Mutex.Unlock()
+	s.HaveDone = false
 	s.HasBehavior = false
+}
+
+func (s *CardCalc) main() {
 CalcLoop:
 	for {
 
@@ -914,6 +942,7 @@ CalcLoop:
 		}
 
 	}
+	s.HaveDone = true
 	if !s.HasBehavior {
 		if s.SM.CombatTime == 0 {
 			go s.SM.finish("SkillCardCalc")
@@ -921,13 +950,13 @@ CalcLoop:
 			go s.SM.finish("Combat")
 		}
 	}
-
 }
+
 func (s *CardCalc) exit() {}
 func (s *CardCalc) process(GoCtx context.Context) {
-
+	fmt.Println("进入cardcal的process了")
 	handleAction := func(id int, action BattleDto.Action, ResponseChan chan<- BattleDto.Action) bool {
-		if action.ActionCode == BattleDto.AnimationPlayEnd && action.Predicates == BattleDto.Notify && s.HasBehavior {
+		if action.ActionCode == BattleDto.AnimationPlayEnd && action.Predicates == BattleDto.Notify && s.HasBehavior && s.HaveDone {
 
 			s.SM.Mutex.Lock()
 			if s.SM.CombatTime == 0 {
@@ -939,7 +968,9 @@ func (s *CardCalc) process(GoCtx context.Context) {
 				s.SM.Mutex.Unlock()
 				return true
 			}
+
 		}
+
 		return false
 	}
 	s.SM.AcceptAction(GoCtx, handleAction)

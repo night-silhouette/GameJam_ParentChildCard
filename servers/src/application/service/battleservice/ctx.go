@@ -262,9 +262,17 @@ func (c *Ctx) ProtoColSetCardBt(UserId int, TempId int) {
 	c.SetCardBt(UserId, card)
 }
 
-func (c *Ctx) Notify(AnimationDto BattleData.AnimationDto) {
-	c.StateMachine.SendActionById(c.StateMachine.Id2, BattleDto.NewAction(BattleDto.CardCalc, BattleDto.Notify, AnimationDto))
-	c.StateMachine.SendActionById(c.StateMachine.Id1, BattleDto.NewAction(BattleDto.CardCalc, BattleDto.Notify, AnimationDto))
+// Notify 传-1，表全部
+func (c *Ctx) Notify(AnimationDto BattleData.AnimationDto, UserId int) {
+	if UserId == -1 {
+		c.StateMachine.SendActionById(c.StateMachine.Id2, BattleDto.NewAction(BattleDto.CardCalc, BattleDto.Notify, AnimationDto))
+		c.StateMachine.SendActionById(c.StateMachine.Id1, BattleDto.NewAction(BattleDto.CardCalc, BattleDto.Notify, AnimationDto))
+		return
+	} else {
+		c.StateMachine.SendActionById(UserId, BattleDto.NewAction(BattleDto.CardCalc, BattleDto.Notify, AnimationDto))
+		return
+	}
+
 }
 
 func (c *Ctx) ProtoColInterrupt(UserId int, InterruptDto *BattleData.InterruptDto, res chan []int) {
@@ -272,12 +280,16 @@ func (c *Ctx) ProtoColInterrupt(UserId int, InterruptDto *BattleData.InterruptDt
 	c.StateMachine.SendActionById(UserId, BattleDto.NewAction(BattleDto.Interrupt, BattleDto.Query, InterruptDto))
 	c.StateMachine.SendActionById(c.GetOpponentId(UserId), BattleDto.NewAction(BattleDto.Interrupt, BattleDto.Notify, InterruptDto))
 	c.InterruptListenFunc = func(id int, action BattleDto.Action, ResponseChan chan<- BattleDto.Action) bool {
+
 		if action.ActionCode == BattleDto.Interrupt && action.Predicates == BattleDto.Result && id == UserId {
 			var data BattleData.InterruptSelect
-			if !c.StateMachine.DataDecode(action, data, id) {
+			fmt.Println(action.ActionData)
+			if !c.StateMachine.DataDecode(action, &data, id) {
 				return true
 			}
+
 			if len(data.TempIdList) != InterruptDto.SelectNum {
+				fmt.Println(len(data.TempIdList))
 				c.StateMachine.SendActionById(id, BattleDto.NewErrAction(global.BattleCardNumErr))
 				return true
 			}
@@ -596,11 +608,15 @@ func (c *Ctx) MoveDisCardPool(UserId int, tempId int) {
 	if where = c.GetWhereByTempId(UserId, tempId); where != -1 {
 		card := c.GetCardInCardBtByCardTempId(UserId, tempId)
 		c.DeleteCardBtByWhere(UserId, where)
+		card.SetOwnerId(-1)
+		card.ReInitialize()
 		c.DisCardPool.Push(card)
 		return
 	} else {
 		card := c.GetCardInCardBtByCardTempId(UserId, tempId)
 		delete(player.CardInHand, tempId)
+		card.SetOwnerId(-1)
+		card.ReInitialize()
 		c.DisCardPool.Push(card)
 		return
 	}

@@ -81,3 +81,23 @@ func NewDisCard(UserId int, TempIdList *[]int) *DisCard {
 	res.TempIdList = TempIdList
 	return &res
 }
+
+//----------------------------------------------------
+
+type SetCardBt struct {
+	TempIdList *[]int
+	UserId     int
+}
+
+func (S *SetCardBt) Execute(pc ProtocolCardWithCtx) {
+	tempId := (*S.TempIdList)[0]
+	pc.ProtoColSetCardBt(S.UserId, tempId)
+}
+
+// NewSetCardBt 只上数组里的一张
+func NewSetCardBt(UserId int, TempIdList *[]int) *SetCardBt {
+	res := SetCardBt{}
+	res.UserId = UserId
+	res.TempIdList = TempIdList
+	return &res
+}

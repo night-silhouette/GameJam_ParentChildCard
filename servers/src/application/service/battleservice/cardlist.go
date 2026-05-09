@@ -87,5 +87,9 @@ func (c *CardList) init(s BattleService) {
 		if val, ok := info["damage"]; ok && val != nil {
 			e.SetAtkNow(info["damage"].(float64))
 		}
+		if e.GetID() == 15 {
+			e.SetHpNow(3)
+		}
 	}
+
 }

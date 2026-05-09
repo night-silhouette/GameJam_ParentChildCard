@@ -3,7 +3,8 @@ package protocol
 import "pcc_card/application/entity/BattleData"
 
 type ProtocolCardWithCtx interface {
-	Notify(AnimationDto BattleData.AnimationDto)
+	// Notify 传-1，表全部
+	Notify(AnimationDto BattleData.AnimationDto, UserId int)
 	ProtoColPush(e Effect)
 
 	// ProtoColGetCharacterCard 获取所有手中的角色牌

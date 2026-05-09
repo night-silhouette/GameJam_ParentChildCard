@@ -13,12 +13,12 @@ type CharacterBaseCard struct {
 }
 
 func (c CharacterBaseCard) Attack(TargetId int) {
-	c.Notify(BattleData.AnAttack)
-	c.EffectAttack(TargetId, c.AtkNow)
+	c.Notify(BattleData.AnAttack, -1)
+	c.EffectAttack(TargetId, 10*c.AtkNow)
 }
 
 func (c CharacterBaseCard) Hurt(AttackId int, HurtHp float64) {
-	c.Notify(BattleData.AnHurt)
+	c.Notify(BattleData.AnHurt, -1)
 	c.EffectHurt(AttackId, HurtHp)
 }
 
@@ -27,13 +27,14 @@ func (c CharacterBaseCard) Skill(TargetId int) {
 }
 
 func (c CharacterBaseCard) Death(AttackId int) {
-	c.Notify(BattleData.AnDeath)
+	c.Notify(BattleData.AnDeath, -1)
 	var SelectCharacterCard *[]int
-	c.DisCard(SelectCharacterCard) //反向压入
+	c.SetCardBt(SelectCharacterCard)
+	c.DisCard(&[]int{c.GetTempId()}) //反向压入
 	c.Interrupt(SelectCharacterCard, global.SelectCharacterTime*time.Second, c.BtCtx.ProtoColGetCharacterCard(c.OwnerId), 1)
-
 }
 
+//todo
 //---------二次分装---------
 
 func (c CharacterBaseCard) EffectAttack(targetTempId int, AtkHp float64) {
@@ -42,10 +43,10 @@ func (c CharacterBaseCard) EffectAttack(targetTempId int, AtkHp float64) {
 func (c CharacterBaseCard) EffectHurt(AttackId int, AtkHp float64) {
 	c.BtCtx.ProtoColPush(protocol.NewHurt(c.OwnerId, AttackId, c.TempId, AtkHp))
 }
-func (c CharacterBaseCard) Notify(Beh BattleData.AnimationBehavior) {
+func (c CharacterBaseCard) Notify(Beh BattleData.AnimationBehavior, UserID int) {
 	fmt.Print(Beh)
 	fmt.Println("卡牌执行了")
-	c.BtCtx.Notify(BattleData.MewAnimationDto(c.ID, c.TempId, Beh, c.BtCtx.GetBtCardInfo(c.OwnerId)))
+	c.BtCtx.Notify(BattleData.MewAnimationDto(c.GetID(), c.TempId, Beh, c.BtCtx.GetBtCardInfo(c.OwnerId)), UserID)
 }
 func (c CharacterBaseCard) Interrupt(res *[]int, time time.Duration, TempIdList []int, SelectNum int) { //res一定要塞到effect函数里处理
 	resChan := make(chan []int)
@@ -64,4 +65,8 @@ func (c CharacterBaseCard) Interrupt(res *[]int, time time.Duration, TempIdList 
 
 func (c CharacterBaseCard) DisCard(TempIdList *[]int) {
 	c.BtCtx.ProtoColPush(protocol.NewDisCard(c.OwnerId, TempIdList))
+}
+
+func (c CharacterBaseCard) SetCardBt(TempIdList *[]int) {
+	c.BtCtx.ProtoColPush(protocol.NewSetCardBt(c.OwnerId, TempIdList))
 }

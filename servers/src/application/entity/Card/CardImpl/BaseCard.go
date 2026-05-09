@@ -65,3 +65,15 @@ func (c *BaseCard) GetStateCodeChan() chan protocol.Effect {
 func (c *BaseCard) SetStateCodeChan(ch chan protocol.Effect) {
 	c.StateCodeChan = ch
 }
+
+func (c *BaseCard) ReInitialize() {
+	if val, ok := c.Info["hp"]; ok && val != nil {
+		c.SetHpNow(c.Info["hp"].(float64))
+	}
+	if val, ok := c.Info["damage"]; ok && val != nil {
+		c.SetAtkNow(c.Info["damage"].(float64))
+	}
+	if c.ID == 15 {
+		c.SetHpNow(3)
+	}
+}
