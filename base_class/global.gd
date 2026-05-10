@@ -47,7 +47,7 @@ const ZONE_CARD = {
 	CHILD_BATTLE_ZONE = 4,    # 子牌战斗区
 	SPELL_ZONE = 5,         # 法术牌区
 	
-	DRAGGING = 6,           # 拖动中
+	WANDER_ZONE = 6,
 	
 	ENEMY_PARENT_ZONE = 7,    # 敌方母牌战斗区
 	ENEMY_CHILD_ZONE = 8,     # 敌方子牌区

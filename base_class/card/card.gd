@@ -11,6 +11,8 @@ var dragging = false
 var click_offset = Vector2.ZERO
 var original_position = Vector2.ZERO
 
+signal request_drag(temp_id);
+
 
 func _ready():
 	original_position = global_position
@@ -23,7 +25,7 @@ func update_card_data(base_res) -> void:
 	buff_id = base_res.buff_id;
 func update():
 	pass;
-	
+
 func free_card():
 	display.texture = null;
 	hp = null;

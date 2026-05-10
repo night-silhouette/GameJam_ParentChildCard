@@ -47,7 +47,6 @@ func _bt_selfinfo_updated(data):
 	_update_cards(bt_parent,Global.ZONE_CARD.PARENT_BATTLE_ZONE)
 	_update_cards(bt_child,Global.ZONE_CARD.CHILD_BATTLE_ZONE)
 
-	
 func find_card_by_key(cards: Array, target_dict: Dictionary, key_to_match = "temp_id") -> Dictionary:
 	if target_dict == null:
 		return {}
@@ -63,6 +62,7 @@ func find_card_by_key(cards: Array, target_dict: Dictionary, key_to_match = "tem
 			return card
 			
 	return {}
+
 func _update_cards(data: Array, ZONE):
 	# 1. 数据清洗：过滤掉无效的空位（id 为 -1 或数据为空）
 	card_list = card_list.filter(func(card): return card != null)
@@ -81,7 +81,6 @@ func _update_cards(data: Array, ZONE):
 	# 3. 区域清理：处理【删除】
 	_cleanup_zone(ZONE, active_temp_ids)
 
-
 ## 内部解耦函数：同步单条卡牌数据
 func _sync_card_data(new_data: Dictionary, zone):
 	var existing_card :Dictionary = find_card_by_key(card_list, new_data, "temp_id")
@@ -98,8 +97,7 @@ func _sync_card_data(new_data: Dictionary, zone):
 		var new_card_dict = _init_single_card(new_data, zone)
 		if new_card_dict != null:
 			card_list.append(new_card_dict)
-
-
+	
 ## 内部解耦函数：清理指定区域中已不存在的卡牌
 func _cleanup_zone(zone, active_ids: Array):
 	for i in range(card_list.size() - 1, -1, -1):
@@ -110,6 +108,7 @@ func _cleanup_zone(zone, active_ids: Array):
 				card_list.remove_at(i)		
 
 func _init_single_card(card_data: Dictionary, zone) -> Dictionary:
+	
 	# 防止空数据
 	if card_data == null:
 		return {}
@@ -129,4 +128,41 @@ func _init_single_card(card_data: Dictionary, zone) -> Dictionary:
 	new_card["zone"] = zone
 
 	return new_card
-# 修改后的 _init_cards 变得非常简洁
+	
+##获取一个区域内的所有卡牌。
+func get_cards_by_zone(zone) -> Array:
+	var result: Array = []
+
+	for card in card_list:
+		# 防止 null
+		if card == null:
+			continue
+
+		# 区域匹配
+		if card.get("zone") == zone:
+			result.append(card)
+
+	return result
+	
+## 修改指定卡牌的区域。
+func _change_card_zone(temp_id, new_zone) -> bool:
+
+	for card in card_list:
+
+		# 防止 null
+		if card == null:
+			continue
+
+		# 找到目标卡
+		if card.get("temp_id") == temp_id:
+
+			# 修改 zone
+			card["zone"] = new_zone
+
+			return true
+
+	# 没找到
+	return false
+#游荡对象需要记录原先的zone，但是数据库中的zone应该改变。返回时根据游荡对象的zone去改变
+func remove_card_from_view(card_data):
+	pass
