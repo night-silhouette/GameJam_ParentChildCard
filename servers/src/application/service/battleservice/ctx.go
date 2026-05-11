@@ -10,6 +10,9 @@ import (
 	"pcc_card/application/entity/protocol"
 	"pcc_card/global"
 	"pcc_card/presentation/handler/battlehandler/BattleDto"
+	"sync"
+	"sync/atomic"
+	"time"
 )
 
 type Ctx struct {
@@ -24,9 +27,9 @@ type Ctx struct {
 	CardPool       *[]CardAbstract.Card //和手牌数组里的是同一份对象，都是从总体复制出来的
 	DisCardPool    *Util.SafeContainer[CardAbstract.Card]
 
-	NeedInterrupt       bool
+	NeedInterrupt       atomic.Bool
 	InterruptChan       chan struct{}
-	InterruptListenFunc func(id int, action BattleDto.Action, ResponseChan chan<- BattleDto.Action) bool
+	InterruptListenFunc atomic.Value //func(id int, action BattleDto.Action, ResponseChan chan<- BattleDto.Action) bool
 }
 
 func NewCtx(idA int, idB int, CardPool *[]CardAbstract.Card, ParentContext context.Context) *Ctx {
@@ -40,13 +43,16 @@ func NewCtx(idA int, idB int, CardPool *[]CardAbstract.Card, ParentContext conte
 	c.PlayerDataMap[idB] = NewPlayerData(idB)
 	c.CtxStateNotify = NewCtxStateNotify()
 	//c.CardObserver = NewCardObserver(ParentContext, c)//弃用哨兵模式
-	c.NeedInterrupt = false
-	c.InterruptListenFunc = func(id int, action BattleDto.Action, ResponseChan chan<- BattleDto.Action) bool { return false }
+	c.NeedInterrupt.Store(false)
+	c.InterruptListenFunc.Store(func(id int, action BattleDto.Action, ResponseChan chan<- BattleDto.Action) bool { return false })
 	c.DisCardPool = Util.NewSafeContainer[CardAbstract.Card](ParentContext, 8)
+	c.InterruptChan = make(chan struct{}, 1)
 	return c
 }
 
 //__________________________________________EffectsStack______________________________________________
+
+//todo
 
 func (c *Ctx) StackSettle(action BattleDto.Action) { //执行函数
 	c.resolveAllChains(action)
@@ -54,8 +60,9 @@ func (c *Ctx) StackSettle(action BattleDto.Action) { //执行函数
 
 func (c *Ctx) resolveAllChains(action BattleDto.Action) {
 	for {
-		if c.NeedInterrupt {
+		if c.NeedInterrupt.Load() {
 			<-c.InterruptChan
+			fmt.Println("中断停止了")
 		}
 
 		if c.EffectsStack.IsEmpty() {
@@ -275,21 +282,38 @@ func (c *Ctx) Notify(AnimationDto BattleData.AnimationDto, UserId int) {
 
 }
 
-func (c *Ctx) ProtoColInterrupt(UserId int, InterruptDto *BattleData.InterruptDto, res chan []int) {
-	c.NeedInterrupt = true
+func (c *Ctx) ProtoColInterrupt(UserId int, InterruptDto *BattleData.InterruptDto, res chan []int, InterruptWaitTime time.Duration) {
+	c.NeedInterrupt.Store(true)
 	c.StateMachine.SendActionById(UserId, BattleDto.NewAction(BattleDto.Interrupt, BattleDto.Query, InterruptDto))
 	c.StateMachine.SendActionById(c.GetOpponentId(UserId), BattleDto.NewAction(BattleDto.Interrupt, BattleDto.Notify, InterruptDto))
-	c.InterruptListenFunc = func(id int, action BattleDto.Action, ResponseChan chan<- BattleDto.Action) bool {
+	var data BattleData.InterruptSelect
+	var dataMutex sync.Mutex
+	var DataIsOK atomic.Bool
+	DataIsOK.Store(false)
+
+	TimeEnding := func() {    //结束回调
+		if !DataIsOK.Load() { //随机取
+			dataMutex.Lock()
+			data.TempIdList = Util.GetRandomElements(InterruptDto.TempIdList, InterruptDto.SelectNum)
+			dataMutex.Unlock()
+		}
+		c.StateMachine.SendActionById(UserId, BattleDto.NewAction(BattleDto.Interrupt, BattleDto.Succeed, map[string][]int{"temp_id_list": data.TempIdList}))
+		res <- data.TempIdList
+		c.NeedInterrupt.Store(false)
+		c.InterruptListenFunc.Store(func(id int, action BattleDto.Action, ResponseChan chan<- BattleDto.Action) bool { return false })
+	}
+	StopChan, _ := Util.CreateTimer(InterruptWaitTime, TimeEnding) //定时
+	c.InterruptListenFunc.Store(func(id int, action BattleDto.Action, ResponseChan chan<- BattleDto.Action) bool {
 
 		if action.ActionCode == BattleDto.Interrupt && action.Predicates == BattleDto.Result && id == UserId {
-			var data BattleData.InterruptSelect
+			dataMutex.Lock()
+			defer dataMutex.Unlock()
 			fmt.Println(action.ActionData)
 			if !c.StateMachine.DataDecode(action, &data, id) {
 				return true
 			}
 
 			if len(data.TempIdList) != InterruptDto.SelectNum {
-				fmt.Println(len(data.TempIdList))
 				c.StateMachine.SendActionById(id, BattleDto.NewErrAction(global.BattleCardNumErr))
 				return true
 			}
@@ -297,14 +321,12 @@ func (c *Ctx) ProtoColInterrupt(UserId int, InterruptDto *BattleData.InterruptDt
 				c.StateMachine.SendActionById(id, BattleDto.NewErrAction(global.BattleCardNotFound))
 				return true
 			}
-			res <- data.TempIdList
-			c.NeedInterrupt = false
-			c.InterruptListenFunc = func(id int, action BattleDto.Action, ResponseChan chan<- BattleDto.Action) bool { return false }
-			c.InterruptChan <- struct{}{}
+			DataIsOK.Store(true)
+			StopChan <- struct{}{}
 			return true
 		}
 		return false
-	}
+	})
 }
 
 func (c *Ctx) ProtoColCardBtAttack(SendTempId int, UserId int, TargetTempId int, AtkHp float64) {
@@ -316,6 +338,10 @@ func (c *Ctx) ProtoColCardBtAttack(SendTempId int, UserId int, TargetTempId int,
 		return
 	}
 	card.Hurt(SendTempId, AtkHp)
+}
+
+func (c *Ctx) ProtoColCancelInterrupt() {
+	c.InterruptChan <- struct{}{}
 }
 
 func (c *Ctx) ProtoColReduceCardBtHp(SendTempId int, UserId int, TargetTempId int, ReduceHp float64) { //最后的底层方法

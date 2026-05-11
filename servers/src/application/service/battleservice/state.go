@@ -10,6 +10,7 @@ import (
 	"pcc_card/global"
 	"pcc_card/presentation/handler/battlehandler/BattleDto"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/mitchellh/mapstructure"
@@ -204,7 +205,9 @@ func (s *StateMachine) AcceptAction(goCtx context.Context, handleAction func(id 
 
 			return
 		case action := <-s.Nt.ChanMap[s.Id1].AcceptChan:
-			if s.c.InterruptListenFunc(s.Id1, action, s.Nt.ChanMap[s.Id1].ResponseChan) {
+			InterruptListenFunc := s.c.InterruptListenFunc.Load().(func(id int, action BattleDto.Action, ResponseChan chan<- BattleDto.Action) bool)
+
+			if InterruptListenFunc(s.Id1, action, s.Nt.ChanMap[s.Id1].ResponseChan) {
 				continue
 			}
 			if handleAction(s.Id1, action, s.Nt.ChanMap[s.Id1].ResponseChan) {
@@ -215,7 +218,9 @@ func (s *StateMachine) AcceptAction(goCtx context.Context, handleAction func(id 
 			}
 			s.SendActionById(s.Id1, BattleDto.NewErrAction(global.BattleInvalidTiming))
 		case action := <-s.Nt.ChanMap[s.Id2].AcceptChan:
-			if s.c.InterruptListenFunc(s.Id2, action, s.Nt.ChanMap[s.Id2].ResponseChan) {
+			InterruptListenFunc := s.c.InterruptListenFunc.Load().(func(id int, action BattleDto.Action, ResponseChan chan<- BattleDto.Action) bool)
+
+			if InterruptListenFunc(s.Id2, action, s.Nt.ChanMap[s.Id2].ResponseChan) {
 				continue
 			}
 			if handleAction(s.Id2, action, s.Nt.ChanMap[s.Id2].ResponseChan) {
@@ -908,7 +913,7 @@ func (c *Combat) process(GoCtx context.Context) {
 type CardCalc struct {
 	StateTemplate
 	HasBehavior bool
-	HaveDone    bool
+	HaveDone    atomic.Bool
 }
 
 func (s *CardCalc) SpecialInit() {
@@ -918,7 +923,7 @@ func (s *CardCalc) SpecialInit() {
 func (s *CardCalc) enter() {
 	s.SM.Mutex.Lock()
 	defer s.SM.Mutex.Unlock()
-	s.HaveDone = false
+	s.HaveDone.Store(false)
 	s.HasBehavior = false
 }
 
@@ -942,7 +947,7 @@ CalcLoop:
 		}
 
 	}
-	s.HaveDone = true
+	s.HaveDone.Store(true)
 	if !s.HasBehavior {
 		if s.SM.CombatTime == 0 {
 			go s.SM.finish("SkillCardCalc")
@@ -956,7 +961,7 @@ func (s *CardCalc) exit() {}
 func (s *CardCalc) process(GoCtx context.Context) {
 	fmt.Println("进入cardcal的process了")
 	handleAction := func(id int, action BattleDto.Action, ResponseChan chan<- BattleDto.Action) bool {
-		if action.ActionCode == BattleDto.AnimationPlayEnd && action.Predicates == BattleDto.Notify && s.HasBehavior && s.HaveDone {
+		if action.ActionCode == BattleDto.AnimationPlayEnd && action.Predicates == BattleDto.Notify && s.HasBehavior && s.HaveDone.Load() {
 
 			s.SM.Mutex.Lock()
 			if s.SM.CombatTime == 0 {

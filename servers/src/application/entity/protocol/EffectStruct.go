@@ -59,7 +59,7 @@ type Interrupt struct {
 
 func (I *Interrupt) Execute(pc ProtocolCardWithCtx) {
 	dto := BattleData.NewInterruptDto(I.Time, I.TempIdList, I.SelectNum)
-	pc.ProtoColInterrupt(I.UserId, dto, I.Res)
+	pc.ProtoColInterrupt(I.UserId, dto, I.Res, I.Time)
 }
 
 //----------------------------------------------------
@@ -72,6 +72,8 @@ type DisCard struct {
 func (D *DisCard) Execute(pc ProtocolCardWithCtx) {
 	for _, tempId := range *D.TempIdList {
 		pc.ProtoColMoveDisCardPool(D.UserId, tempId)
+		pc.Notify(BattleData.NewAnimationDto(tempId, BattleData.AnDisCard, pc.GetBtCardInfo(D.UserId)), D.UserId)
+
 	}
 }
 
@@ -92,6 +94,7 @@ type SetCardBt struct {
 func (S *SetCardBt) Execute(pc ProtocolCardWithCtx) {
 	tempId := (*S.TempIdList)[0]
 	pc.ProtoColSetCardBt(S.UserId, tempId)
+
 }
 
 // NewSetCardBt 只上数组里的一张
@@ -99,5 +102,6 @@ func NewSetCardBt(UserId int, TempIdList *[]int) *SetCardBt {
 	res := SetCardBt{}
 	res.UserId = UserId
 	res.TempIdList = TempIdList
+
 	return &res
 }

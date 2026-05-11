@@ -7,7 +7,9 @@ type Card14 struct {
 }
 
 func NewCard14() *Card14 {
-	return &Card14{}
+	res := &Card14{}
+    res.CharacterBaseCard.Card=res
+    return res
 }
 
 func (c *Card14) GetID() int {

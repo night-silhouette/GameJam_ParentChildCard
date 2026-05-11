@@ -3,6 +3,7 @@ package CardImpl
 import (
 	"fmt"
 	"pcc_card/application/entity/BattleData"
+	"pcc_card/application/entity/Card/CardAbstract"
 	"pcc_card/application/entity/protocol"
 	"pcc_card/global"
 	"time"
@@ -10,11 +11,12 @@ import (
 
 type CharacterBaseCard struct {
 	BaseCard
+	Card CardAbstract.Card
 }
 
 func (c CharacterBaseCard) Attack(TargetId int) {
 	c.Notify(BattleData.AnAttack, -1)
-	c.EffectAttack(TargetId, 10*c.AtkNow)
+	c.EffectAttack(TargetId, c.AtkNow)
 }
 
 func (c CharacterBaseCard) Hurt(AttackId int, HurtHp float64) {
@@ -28,10 +30,10 @@ func (c CharacterBaseCard) Skill(TargetId int) {
 
 func (c CharacterBaseCard) Death(AttackId int) {
 	c.Notify(BattleData.AnDeath, -1)
-	var SelectCharacterCard *[]int
-	c.SetCardBt(SelectCharacterCard)
+	SelectCharacterCard := make([]int, 0)
+	c.SetCardBt(&SelectCharacterCard)
 	c.DisCard(&[]int{c.GetTempId()}) //反向压入
-	c.Interrupt(SelectCharacterCard, global.SelectCharacterTime*time.Second, c.BtCtx.ProtoColGetCharacterCard(c.OwnerId), 1)
+	c.Interrupt(&SelectCharacterCard, global.SelectCharacterTime*time.Second, c.BtCtx.ProtoColGetCharacterCard(c.OwnerId), 1)
 }
 
 //todo
@@ -46,7 +48,7 @@ func (c CharacterBaseCard) EffectHurt(AttackId int, AtkHp float64) {
 func (c CharacterBaseCard) Notify(Beh BattleData.AnimationBehavior, UserID int) {
 	fmt.Print(Beh)
 	fmt.Println("卡牌执行了")
-	c.BtCtx.Notify(BattleData.MewAnimationDto(c.GetID(), c.TempId, Beh, c.BtCtx.GetBtCardInfo(c.OwnerId)), UserID)
+	c.BtCtx.Notify(BattleData.NewAnimationDto(c.TempId, Beh, c.BtCtx.GetBtCardInfo(c.OwnerId)), UserID)
 }
 func (c CharacterBaseCard) Interrupt(res *[]int, time time.Duration, TempIdList []int, SelectNum int) { //res一定要塞到effect函数里处理
 	resChan := make(chan []int)
@@ -60,6 +62,7 @@ func (c CharacterBaseCard) Interrupt(res *[]int, time time.Duration, TempIdList 
 	go func() {
 		val := <-resChan
 		*res = val
+		c.BtCtx.ProtoColCancelInterrupt()
 	}()
 }
 
