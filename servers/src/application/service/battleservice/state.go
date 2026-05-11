@@ -727,6 +727,11 @@ func (J *Judge) process(GoCtx context.Context) {
 				J.Mutex.Unlock()
 				return true
 			}
+			if J.TaskMap[id] != 3 {
+				J.SM.SendActionById(id, BattleDto.NewErrAction(global.ResponseRepeatRequest))
+				J.Mutex.Unlock()
+				return true
+			}
 			J.TaskMap[id] = Jd
 			J.SM.SendActionById(id, BattleDto.NewAction(BattleDto.Judge, BattleDto.Succeed, "")) //单方选好了，存储进去了
 
