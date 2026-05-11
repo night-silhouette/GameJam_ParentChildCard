@@ -117,8 +117,8 @@
 | :---: | :---: | :---: | :---: | :---: |
 |CardCalc|服务器->客户端|Finish|空|一系列卡牌效果结算的结束标识|
 |CardCalc|服务器->客户端|Notify|[AnimationDto](#animationdto)||
-|Interrupt|服务器->客户端|Notify|InterruptDto|发起中断，选完牌或者时间到了，就会恢复卡牌结算|
-|Interrupt|服务器->客户端|Result|
+|Interrupt|服务器->客户端|Notify|[InterruptDto](#interruptdto)|发起中断(死亡，技能都有可能)，选完牌或者时间到了，就会恢复卡牌结算|
+|Interrupt|服务器->客户端|Result|temp_id_list|从上一条Dto里的数组的tempid里选|
 |Interrupt|服务器->客户端|Succeed||不管是时间到了，系统选的还是自己选的，都会有这条,系统选的话，可以根据返回的数组，告知用户随机了什么|
 
 ---
@@ -237,6 +237,14 @@
 |temp_id|int||
 |animation_behavior|[AnimationBehavior](#animationbehavior)||
 |bt_card_info|[BtCardInfo](#btcardinfo)||
+---
+
+### InterruptDto
+|字段名|类型|注解|
+| :---: | :---: | :---: |
+|state_wait_time|int64||
+|temp_id_list|[]int||
+|select_num|int|选几个|
 ---
 
 ### AnimationBehavior
