@@ -165,7 +165,7 @@ func (u *BattleHandlerImpl) ListenResquest(conn *websocket.Conn, id int, goctx c
 		}
 
 		//action解析完成
-		if action.ActionCode == BattleDto.CancelMatch {
+		if action.ActionCode == BattleDto.CancelMatch && action.Predicates == BattleDto.Notify {
 			battleservice.MatchSignals.Delete(id)
 			battleservice.MatchPool.Delete(id)
 			response.WsSuccess(conn, "取消成功")

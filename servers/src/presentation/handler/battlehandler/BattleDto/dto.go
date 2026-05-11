@@ -28,9 +28,11 @@ const (
 	Debug
 	Interrupt
 	GetDisCard
+	SkillCardCalc
 )
 
 var ActionName = map[ActionCode]string{
+	Fault:                 "错误",
 	CancelMatch:           "取消匹配",
 	GetSelfCardInHard:     "获取自己的卡牌信息",
 	GetOpponentCardInHard: "获取对手的卡牌信息",
@@ -46,6 +48,7 @@ var ActionName = map[ActionCode]string{
 	Debug:                 "测试",
 	Interrupt:             "中断选牌",
 	GetDisCard:            "查看弃牌堆",
+	SkillCardCalc:         "法术牌计算",
 }
 
 type Predicates int

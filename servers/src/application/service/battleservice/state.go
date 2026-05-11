@@ -29,13 +29,12 @@ type State interface {
 
 func (s *StateMachine) RegisterState() {
 	s.StateList = map[string]State{
-		"ShuffleDeal":         &ShuffleDeal{},
-		"SelectCharacterCard": &SelectCharacterCard{},
-		"SelectSkillCard":     &SelectSkillCard{},
-		"Judge":               &Judge{},
-		"Combat":              &Combat{},
-		"SkillCardCalc":       &SkillCardCalc{},
-		"CardCalc":            &CardCalc{},
+		"ShuffleDeal":     &ShuffleDeal{},
+		"SelectSkillCard": &SelectSkillCard{},
+		"Judge":           &Judge{},
+		"Combat":          &Combat{},
+		"SkillCardCalc":   &SkillCardCalc{},
+		"CardCalc":        &CardCalc{},
 	}
 	for key, element := range s.StateList {
 		element.SetName(key)
@@ -445,50 +444,7 @@ func (s *ShuffleDeal) exit() {
 }
 
 //#endregion
-//#region State:SelectCharacterCard
 
-type SelectCharacterCard struct {
-	StateTemplate
-	ChanCrash chan struct{}
-	ChanStop  chan struct{}
-}
-
-func (s *SelectCharacterCard) SpecialInit() {
-	s.ChanCrash = make(chan struct{})
-	s.ChanStop = make(chan struct{})
-}
-
-func (s *SelectCharacterCard) enter() {
-
-}
-
-func (s *SelectCharacterCard) exit() {
-	s.StateTemplate.exit()
-}
-
-func (s *SelectCharacterCard) process(GoCtx context.Context) {
-
-	handleAction := func(id int, action BattleDto.Action, ResponseChan chan<- BattleDto.Action) bool {
-
-		if action.ActionCode == BattleDto.DeployCard && action.Predicates == BattleDto.Result {
-			var data BattleData.SelectCard //解析actionData
-			err := mapstructure.Decode(action.ActionData, &data)
-			if err != nil {
-				fmt.Println(err)
-				s.SM.SendActionById(id, BattleDto.NewErrAction(global.ResponseInvalidReqParams))
-				return true
-			}
-			if data.Where == BattleData.SkillCard {
-
-			}
-		}
-		return false
-	}
-	s.SM.AcceptAction(GoCtx, handleAction)
-
-}
-
-//#endregion
 //#region State:SelectSkillCard
 
 type SelectSkillCard struct {
@@ -995,14 +951,10 @@ type SkillCardCalc struct {
 }
 
 func (s *SkillCardCalc) enter() {
-	if s.c.PlayerDataMap[s.Id1].SkillCardBT != nil {
-		s.c.PlayerDataMap[s.Id1].SkillCardBT.(CardAbstract.SkillCard).PlayMagic() //触发法术，然后，在法术这个函数里面，用和ctx的协议，把通知前端的action传出来
-	}
-	if s.c.PlayerDataMap[s.Id2].SkillCardBT != nil {
-		s.c.PlayerDataMap[s.Id2].SkillCardBT.(CardAbstract.SkillCard).PlayMagic()
-	}
 
-	go s.SM.finish("SelectSkillCard")
+	s.SM.SendActionById(s.Id1, BattleDto.NewAction(BattleDto.SkillCardCalc, BattleDto.Notify, ""))
+	s.SM.SendActionById(s.Id2, BattleDto.NewAction(BattleDto.SkillCardCalc, BattleDto.Notify, ""))
+
 }
 func (s *SkillCardCalc) exit() { //这里其实主要可以初始化下一个循环的参数
 	s.SM.CombatTime = global.CombatWaitTime * time.Second //这很重要，每次循环重新初始化一下战斗倒计时
@@ -1015,6 +967,18 @@ func (s *SkillCardCalc) process(GoCtx context.Context) {
 		return false
 	}
 	s.SM.AcceptAction(GoCtx, handleAction)
+}
+func (s *SkillCardCalc) main() {
+	if s.c.PlayerDataMap[s.SM.Winner].SkillCardBT != nil {
+		s.c.PlayerDataMap[s.SM.Winner].SkillCardBT.(CardAbstract.SkillCard).PlayMagic() //触发法术，然后，在法术这个函数里面，用和ctx的协议，把通知前端的action传出来
+		s.c.StackSettle(BattleDto.NewAction(BattleDto.CardCalc, BattleDto.Finish, ""))  //执行效果堆栈
+	}
+	if s.c.PlayerDataMap[s.SM.Loser].SkillCardBT != nil {
+		s.c.PlayerDataMap[s.SM.Loser].SkillCardBT.(CardAbstract.SkillCard).PlayMagic()
+		s.c.StackSettle(BattleDto.NewAction(BattleDto.CardCalc, BattleDto.Finish, "")) //执行效果堆栈
+	}
+
+	go s.SM.finish("SelectSkillCard") //暂时直接转
 }
 
 //endregion
