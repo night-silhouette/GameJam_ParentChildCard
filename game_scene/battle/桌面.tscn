@@ -1,0 +1,36 @@
+[gd_scene load_steps=4 format=3 uid="uid://drj8312i1aoi6"]
+
+[ext_resource type="Texture2D" uid="uid://bxbpcw7rdnhhj" path="res://素材/使用素材/战斗内/桌面/说明/桌面.png" id="1_m77db"]
+[ext_resource type="PackedScene" uid="uid://k0qlnd2phxbe" path="res://game_scene/battle/检验区.tscn" id="2_yp7nw"]
+[ext_resource type="PackedScene" uid="uid://pqdo6c02mtaj" path="res://game_scene/battle/卡牌区.tscn" id="3_yp7nw"]
+
+[node name="桌面" type="TextureRect"]
+offset_right = 2171.0
+offset_bottom = 1279.0
+scale = Vector2(0.2659713, 0.2584372)
+texture = ExtResource("1_m77db")
+metadata/_edit_lock_ = true
+
+[node name="母牌_检验区" parent="." instance=ExtResource("2_yp7nw")]
+position = Vector2(661.7255, 1037.0024)
+scale = Vector2(5.6142387, 3.2513204)
+
+[node name="子牌_检验区" parent="." instance=ExtResource("2_yp7nw")]
+position = Vector2(1473.8433, 1037.0024)
+scale = Vector2(5.6142387, 3.2513204)
+
+[node name="母牌" parent="." instance=ExtResource("3_yp7nw")]
+layout_mode = 1
+offset_left = 383.50012
+offset_top = 866.74835
+offset_right = 383.5005
+offset_bottom = 866.7483
+scale = Vector2(0.25676793, 0.26203623)
+
+[node name="子牌" parent="." instance=ExtResource("3_yp7nw")]
+layout_mode = 1
+offset_left = 1188.0983
+offset_top = 874.4872
+offset_right = 1188.0986
+offset_bottom = 874.4873
+scale = Vector2(0.25676793, 0.26203623)

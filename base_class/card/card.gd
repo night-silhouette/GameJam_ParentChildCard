@@ -5,7 +5,7 @@ var temp_id ;
 var hp ;
 var damage  ;
 var buff_id ;
-var current_zone ;
+var zone ;
 
 var dragging = false
 var click_offset = Vector2.ZERO

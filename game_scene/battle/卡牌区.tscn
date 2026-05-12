@@ -1,0 +1,20 @@
+[gd_scene load_steps=2 format=3 uid="uid://pqdo6c02mtaj"]
+
+[ext_resource type="Script" uid="uid://fh8c4wbq0ysk" path="res://game_scene/battle/卡牌区.gd" id="1_6qios"]
+
+[node name="卡牌区" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_6qios")
+
+[node name="card_vector" type="GridContainer" parent="."]
+layout_mode = 1
+offset_right = 2089.3506
+offset_bottom = 1440.4712
+scale = Vector2(0.5527062, 0.4482529)
+theme_override_constants/h_separation = 24
+theme_override_constants/v_separation = 108

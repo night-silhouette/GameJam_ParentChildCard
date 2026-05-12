@@ -1,16 +1,17 @@
-[gd_scene load_steps=12 format=3 uid="uid://c85a1ra55sbk0"]
+[gd_scene load_steps=13 format=3 uid="uid://c85a1ra55sbk0"]
 
 [ext_resource type="Script" uid="uid://dw1q80ff6ue4v" path="res://game_scene/battle/battle_scence.gd" id="1_51ed8"]
 [ext_resource type="Texture2D" uid="uid://dng874p0igvq" path="res://素材/使用素材/战斗内/转换.png" id="1_chjg7"]
-[ext_resource type="Texture2D" uid="uid://bxbpcw7rdnhhj" path="res://素材/使用素材/战斗内/桌面/说明/桌面.png" id="2_330rk"]
 [ext_resource type="Texture2D" uid="uid://b46o5twbahh3c" path="res://素材/使用素材/战斗内/桌面/状态栏/状态栏.png" id="2_o4khw"]
 [ext_resource type="PackedScene" uid="uid://ghdb3fyl2y4m" path="res://game_ui/battle/牌库/牌库.tscn" id="3_8qm6s"]
 [ext_resource type="Texture2D" uid="uid://cc1wnd0t8ijw" path="res://素材/使用素材/战斗内/桌面/状态栏/滑轮.png" id="3_330rk"]
 [ext_resource type="PackedScene" uid="uid://lr0vlyrlvftn" path="res://game_scene/battle/进度条.tscn" id="4_330rk"]
 [ext_resource type="Script" uid="uid://ctldl5kprxqch" path="res://game_ui/battle/object_pool.gd" id="4_cqcp3"]
-[ext_resource type="PackedScene" uid="uid://c21g6pu7bxtii" path="res://game_scene/battle/法术抽取.tscn" id="5_8qm6s"]
 [ext_resource type="Script" uid="uid://cy15d728nlkst" path="res://base_class/manage/card_manager.gd" id="9_oo4tg"]
 [ext_resource type="Script" uid="uid://bqs27ao7omrns" path="res://game_scene/battle/state_machine.gd" id="11_ile2j"]
+[ext_resource type="PackedScene" uid="uid://chfbecbd2f45c" path="res://game_scene/battle/法术放置.tscn" id="11_ro313"]
+[ext_resource type="PackedScene" uid="uid://drj8312i1aoi6" path="res://game_scene/battle/桌面.tscn" id="12_3krv3"]
+[ext_resource type="PackedScene" uid="uid://d2ji4k252p7g6" path="res://game_scene/battle/freecard.tscn" id="12_ro313"]
 
 [node name="battle_scence" type="Node"]
 script = ExtResource("1_51ed8")
@@ -32,18 +33,6 @@ texture = ExtResource("1_chjg7")
 expand_mode = 1
 metadata/_edit_lock_ = true
 
-[node name="桌面" type="TextureRect" parent="."]
-offset_left = 472.0
-offset_top = 56.000004
-offset_right = 2643.0
-offset_bottom = 1335.0
-scale = Vector2(0.26808316, 0.2604892)
-texture = ExtResource("2_330rk")
-metadata/_edit_lock_ = true
-
-[node name="object_pool" type="Node" parent="."]
-script = ExtResource("4_cqcp3")
-
 [node name="牌库" parent="." node_paths=PackedStringArray("object_pool", "card_manager") instance=ExtResource("3_8qm6s")]
 offset_left = 112.0
 offset_top = 384.0
@@ -54,13 +43,15 @@ object_pool = NodePath("../object_pool")
 card_manager = NodePath("../card_manager")
 metadata/_edit_lock_ = true
 
-[node name="法术放置" parent="." instance=ExtResource("5_8qm6s")]
-offset_left = 808.0
-offset_top = 408.0
-offset_right = 1151.0001
-offset_bottom = 973.0
-scale = Vector2(0.22960912, 0.22720617)
-metadata/_edit_lock_ = true
+[node name="法术放置" parent="." instance=ExtResource("11_ro313")]
+offset_left = 911.99994
+offset_right = 1255.0
+
+[node name="桌面" parent="." instance=ExtResource("12_3krv3")]
+offset_left = 490.00006
+offset_top = 48.0
+offset_right = 2661.0
+offset_bottom = 1327.0
 
 [node name="状态栏" type="TextureRect" parent="."]
 offset_left = 32.0
@@ -91,9 +82,16 @@ grow_horizontal = 1
 grow_vertical = 1
 rotation = 1.5707964
 scale = Vector2(0.19120544, 0.19120544)
+metadata/_edit_lock_ = true
+
+[node name="object_pool" type="Node" parent="."]
+script = ExtResource("4_cqcp3")
 
 [node name="card_manager" type="Node" parent="."]
 script = ExtResource("9_oo4tg")
 
 [node name="State_machine" type="Node" parent="."]
 script = ExtResource("11_ile2j")
+
+[node name="freecard" parent="." instance=ExtResource("12_ro313")]
+position = Vector2(718, 411)

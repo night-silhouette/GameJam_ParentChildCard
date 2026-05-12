@@ -1,9 +1,0 @@
-[gd_scene format=3 uid="uid://crqqdf42vlony"]
-
-[node name="上母牌区" type="Control"]
-custom_minimum_size = Vector2(329, 570)
-layout_mode = 3
-anchors_preset = 0
-offset_right = 300.0
-offset_bottom = 519.0
-scale = Vector2(0.17535387, 0.17535387)

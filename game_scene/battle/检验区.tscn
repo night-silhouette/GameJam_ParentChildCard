@@ -1,0 +1,14 @@
+[gd_scene load_steps=3 format=3 uid="uid://k0qlnd2phxbe"]
+
+[ext_resource type="Script" uid="uid://c5tk5v8h5icyb" path="res://检验区.gd" id="1_e7f02"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_e7f02"]
+
+[node name="检验区" type="Area2D"]
+script = ExtResource("1_e7f02")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+scale = Vector2(4.9883404, 4.9883404)
+shape = SubResource("RectangleShape2D_e7f02")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
