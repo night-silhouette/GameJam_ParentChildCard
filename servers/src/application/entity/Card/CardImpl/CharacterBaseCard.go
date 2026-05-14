@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"pcc_card/application/entity/BattleData"
 	"pcc_card/application/entity/Card/CardAbstract"
+	"pcc_card/application/entity/CardMeta"
 	"pcc_card/application/entity/protocol"
 	"pcc_card/global"
 	"time"
@@ -34,6 +35,17 @@ func (c CharacterBaseCard) Death(AttackId int) {
 	c.SetCardBt(&SelectCharacterCard)
 	c.DisCard(&[]int{c.GetTempId()}) //反向压入
 	c.Interrupt(&SelectCharacterCard, global.SelectCharacterTime*time.Second, c.BtCtx.ProtoColGetCharacterCard(c.OwnerId), 1)
+}
+func (c CharacterBaseCard) BtCry() {
+
+}
+func (c CharacterBaseCard) BuffSettle() {
+	for _, buff := range c.BuffList {
+		buff.BuffExecute(&CardMeta.CardInfo{
+			CardTempId: c.TempId,
+			OwnerId:    c.OwnerId,
+		}, c.ControlSignalMap, c.Dec)
+	}
 }
 
 //todo
@@ -72,4 +84,8 @@ func (c CharacterBaseCard) DisCard(TempIdList *[]int) {
 
 func (c CharacterBaseCard) SetCardBt(TempIdList *[]int) {
 	c.BtCtx.ProtoColPush(protocol.NewSetCardBt(c.OwnerId, TempIdList))
+}
+
+func (c CharacterBaseCard) GiveBuff(TempId int, b protocol.Buff) {
+	c.BtCtx.ProtoColPush(protocol.NewGiveBuff(TempId, b, &c.BuffList))
 }

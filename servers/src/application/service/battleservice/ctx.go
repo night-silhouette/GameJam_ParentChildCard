@@ -230,8 +230,8 @@ func (c *Ctx) GetBtCardInfo(id int) BattleData.BtCardInfo {
 	GetDtoDefault := func(card CardAbstract.Card) BattleData.CardDto {
 		if card == nil {
 			res := BattleData.CardDto{}
-			res.BuffId = -1
 			res.Id = -1
+			res.BuffDtoList = make([]BattleData.BuffDto, 0)
 			return res
 		}
 		return CardAbstract.GetCardDto(card)
@@ -291,7 +291,7 @@ func (c *Ctx) ProtoColInterrupt(UserId int, InterruptDto *BattleData.InterruptDt
 	var DataIsOK atomic.Bool
 	DataIsOK.Store(false)
 
-	TimeEnding := func() { //结束回调
+	TimeEnding := func() {    //结束回调
 		if !DataIsOK.Load() { //随机取
 			dataMutex.Lock()
 			data.TempIdList = Util.GetRandomElements(InterruptDto.TempIdList, InterruptDto.SelectNum)

@@ -873,7 +873,7 @@ func (c *Combat) process(GoCtx context.Context) {
 
 type CardCalc struct {
 	StateTemplate
-	HasBehavior bool
+	HasBehavior atomic.Bool
 	HaveDone    atomic.Bool
 }
 
@@ -885,7 +885,7 @@ func (s *CardCalc) enter() {
 	s.SM.Mutex.Lock()
 	defer s.SM.Mutex.Unlock()
 	s.HaveDone.Store(false)
-	s.HasBehavior = false
+	s.HasBehavior.Store(false)
 }
 
 func (s *CardCalc) main() {
@@ -894,7 +894,7 @@ CalcLoop:
 
 		select {
 		case data := <-s.SM.CombatDataChan:
-			s.HasBehavior = true
+			s.HasBehavior.Store(true)
 			opponentCardId := s.c.GetCardBt(s.SM.Loser, data.OpponentWhere).GetTempId()
 			if data.Behavior == BattleData.Attack {
 				s.c.GetCardBt(s.SM.Winner, data.SelfWhere).(CardAbstract.Character).Attack(opponentCardId)
@@ -909,7 +909,7 @@ CalcLoop:
 
 	}
 	s.HaveDone.Store(true)
-	if !s.HasBehavior {
+	if !s.HasBehavior.Load() {
 		if s.SM.CombatTime == 0 {
 			go s.SM.finish("SkillCardCalc")
 		} else {
@@ -922,7 +922,7 @@ func (s *CardCalc) exit() {}
 func (s *CardCalc) process(GoCtx context.Context) {
 	fmt.Println("进入cardcal的process了")
 	handleAction := func(id int, action BattleDto.Action, ResponseChan chan<- BattleDto.Action) bool {
-		if action.ActionCode == BattleDto.AnimationPlayEnd && action.Predicates == BattleDto.Notify && s.HasBehavior && s.HaveDone.Load() {
+		if action.ActionCode == BattleDto.AnimationPlayEnd && action.Predicates == BattleDto.Notify && s.HasBehavior.Load() && s.HaveDone.Load() {
 
 			s.SM.Mutex.Lock()
 			if s.SM.CombatTime == 0 {

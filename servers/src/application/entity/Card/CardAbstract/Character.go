@@ -2,6 +2,8 @@ package CardAbstract
 
 type Character interface {
 	Card
+	BtCry()
+	BuffSettle()
 	Attack(TargetId int)
 	Hurt(AttackTempId int, HurtHp float64) //id是谁打的他
 	Skill(TargetId int)

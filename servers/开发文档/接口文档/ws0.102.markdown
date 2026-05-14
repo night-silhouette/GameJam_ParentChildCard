@@ -1,9 +1,7 @@
 
-# 0.101版本号接口文档
-    这个部署的版本流程全部通了，但是没有技能
-    这markdown都给你链接好了，字段，定义点进去查看。action_code映射表给你当目录用的，点击就可以索引到action_code相关的解释
-    只写了成功请求的情况，各种请求失败的报错没有详细写出
-    StatusCode在最后
+# 0.102版本号接口文档
+	更新日志:
+	
 
 ## 一.action_code映射表
 |action_code|action_name|value|注解|

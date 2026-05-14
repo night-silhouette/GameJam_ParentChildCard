@@ -5,9 +5,9 @@ package BattleData
 //以后这里就放要返回前端的元数据
 
 type CardDto struct {
-	Id     int     `json:"id"`
-	Hp     float64 `json:"hp"`
-	Damage float64 `json:"damage"`
-	BuffId int     `json:"buff_id"`
-	TempId int     `json:"temp_id"`
+	Id          int       `json:"id"`
+	Hp          float64   `json:"hp"`
+	Damage      float64   `json:"damage"`
+	BuffDtoList []BuffDto `json:"buff_list"`
+	TempId      int       `json:"temp_id"`
 }

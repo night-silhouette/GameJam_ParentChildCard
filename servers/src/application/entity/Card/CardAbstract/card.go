@@ -2,6 +2,7 @@ package CardAbstract
 
 import (
 	"pcc_card/application/entity/BattleData"
+	"pcc_card/application/entity/CardMeta"
 	"pcc_card/application/entity/protocol"
 )
 
@@ -22,6 +23,12 @@ type Card interface {
 	SetAtkNow(atkNow float64)
 	SetBtCtx(btCtx protocol.ProtocolCardWithCtx)
 	ReInitialize()
+	GetBuffList() []protocol.Buff
+	AppendBuff(b protocol.Buff)
+	InitBuffList()
+	SetDec(Dec *CardMeta.Decorator)
+	GetDec() *CardMeta.Decorator
+	InitControlSignalMap()
 }
 
 func GetCardDto(c Card) BattleData.CardDto {
@@ -30,5 +37,10 @@ func GetCardDto(c Card) BattleData.CardDto {
 	res.TempId = c.GetTempId()
 	res.Hp = c.GetHpNow()
 	res.Damage = c.GetAtkNow()
+	BuffDtoList := make([]BattleData.BuffDto, 0, 8)
+	for _, buff := range c.GetBuffList() {
+		BuffDtoList = append(BuffDtoList, buff.GetBuffDto())
+	}
+	res.BuffDtoList = BuffDtoList
 	return res
 }

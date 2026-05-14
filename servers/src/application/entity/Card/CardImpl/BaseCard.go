@@ -2,6 +2,7 @@ package CardImpl
 
 import (
 	_ "embed"
+	"pcc_card/application/entity/CardMeta"
 	"pcc_card/application/entity/protocol"
 )
 
@@ -10,11 +11,14 @@ type BaseCard struct {
 	Info          map[string]any `json:"-"`
 	StateCodeChan chan protocol.Effect
 	//动态变量
-	BtCtx   protocol.ProtocolCardWithCtx
-	HpNow   float64
-	AtkNow  float64
-	TempId  int
-	OwnerId int
+	BtCtx            protocol.ProtocolCardWithCtx
+	HpNow            float64
+	AtkNow           float64
+	TempId           int
+	OwnerId          int
+	BuffList         []protocol.Buff
+	Dec              *CardMeta.Decorator
+	ControlSignalMap map[string]CardMeta.ControlSignal
 }
 
 func (c *BaseCard) SetBtCtx(btCtx protocol.ProtocolCardWithCtx) {
@@ -76,4 +80,27 @@ func (c *BaseCard) ReInitialize() {
 	if c.ID == 15 {
 		c.SetHpNow(3)
 	}
+}
+
+func (c *BaseCard) GetBuffList() []protocol.Buff {
+	return c.BuffList
+}
+
+func (c *BaseCard) AppendBuff(b protocol.Buff) {
+	c.BuffList = append(c.BuffList, b)
+}
+func (c *BaseCard) InitBuffList() {
+	c.BuffList = make([]protocol.Buff, 0, 8)
+}
+
+func (c *BaseCard) SetDec(Dec *CardMeta.Decorator) {
+	c.Dec = Dec
+}
+
+func (c *BaseCard) GetDec() *CardMeta.Decorator {
+	return c.Dec
+}
+func (c *BaseCard) InitControlSignalMap() {
+	c.ControlSignalMap = make(map[string]CardMeta.ControlSignal)
+
 }

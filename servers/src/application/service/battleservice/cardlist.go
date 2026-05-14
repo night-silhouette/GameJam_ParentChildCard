@@ -4,6 +4,7 @@ import (
 	"context"
 	"pcc_card/application/entity/Card/CardAbstract"
 	"pcc_card/application/entity/Card/CardImpl"
+	"pcc_card/application/entity/CardMeta"
 	"pcc_card/application/entity/protocol"
 )
 
@@ -77,6 +78,7 @@ func (c *CardList) init(s BattleService) {
 		CardImpl.NewCard44(),
 	}
 	for _, e := range c.data {
+		e.InitBuffList()
 		info := s.GetCardInfoByID(context.Background(), e.GetID())
 		e.SetInfo(info)
 		e.SetStateCodeChan(make(chan protocol.Effect))
@@ -90,6 +92,8 @@ func (c *CardList) init(s BattleService) {
 		if e.GetID() == 15 {
 			e.SetHpNow(3)
 		}
+		e.SetDec(CardMeta.NewDecorator())
+		e.InitControlSignalMap()
 	}
 
 }
