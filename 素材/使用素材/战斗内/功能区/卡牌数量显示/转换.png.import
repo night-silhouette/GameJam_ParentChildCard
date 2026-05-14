@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ivigl72imvsl"
-path="res://.godot/imported/转换.png-e0e16698ddf0071e008b5d69413194bb.ctex"
+path="res://.godot/imported/转换.png-7a9e682af2b1f077f159165da6babc42.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://素材/使用素材/战斗内/卡牌数量显示/转换.png"
-dest_files=["res://.godot/imported/转换.png-e0e16698ddf0071e008b5d69413194bb.ctex"]
+source_file="res://素材/使用素材/战斗内/功能区/卡牌数量显示/转换.png"
+dest_files=["res://.godot/imported/转换.png-7a9e682af2b1f077f159165da6babc42.ctex"]
 
 [params]
 

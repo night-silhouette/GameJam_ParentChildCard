@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://meoyk6eohvrx"
-path="res://.godot/imported/6.png-c63e94df189d826291f420859f9c9515.ctex"
+path="res://.godot/imported/6.png-cf8748195d65db49b4b6affb169d361a.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://素材/使用素材/战斗内/手部/右/摊手/6.png"
-dest_files=["res://.godot/imported/6.png-c63e94df189d826291f420859f9c9515.ctex"]
+source_file="res://素材/使用素材/战斗内/功能区/手部/右/摊手/6.png"
+dest_files=["res://.godot/imported/6.png-cf8748195d65db49b4b6affb169d361a.ctex"]
 
 [params]
 

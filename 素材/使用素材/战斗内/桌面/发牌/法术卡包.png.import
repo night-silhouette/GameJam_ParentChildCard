@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cigtwikl3u5fu"
-path="res://.godot/imported/法术卡包.png-fbff3e62fdba8ad50dba93d19abfc720.ctex"
+path="res://.godot/imported/法术卡包.png-3764dc9ead334106f0dcf26898bb358c.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://素材/使用素材/战斗内/发牌/法术卡包.png"
-dest_files=["res://.godot/imported/法术卡包.png-fbff3e62fdba8ad50dba93d19abfc720.ctex"]
+source_file="res://素材/使用素材/战斗内/桌面/发牌/法术卡包.png"
+dest_files=["res://.godot/imported/法术卡包.png-3764dc9ead334106f0dcf26898bb358c.ctex"]
 
 [params]
 

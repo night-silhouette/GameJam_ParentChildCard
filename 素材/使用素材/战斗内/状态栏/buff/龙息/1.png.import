@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://du3tmpkhyssx2"
-path="res://.godot/imported/1.png-5aedc591298cfc3dd7590376a2d0b391.ctex"
+path="res://.godot/imported/1.png-b1e017178c584d549258958695d9faab.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://素材/使用素材/战斗内/buff/龙息/1.png"
-dest_files=["res://.godot/imported/1.png-5aedc591298cfc3dd7590376a2d0b391.ctex"]
+source_file="res://素材/使用素材/战斗内/状态栏/buff/龙息/1.png"
+dest_files=["res://.godot/imported/1.png-b1e017178c584d549258958695d9faab.ctex"]
 
 [params]
 

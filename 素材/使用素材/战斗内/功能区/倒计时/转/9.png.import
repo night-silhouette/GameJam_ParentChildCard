@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cvv1rrp6wdn02"
-path="res://.godot/imported/9.png-fd9b46e64f62a3c5b71fed9fb06a4698.ctex"
+path="res://.godot/imported/9.png-c571090ddd5451d6f09fbe1c654785f5.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://素材/使用素材/战斗内/倒计时/转/9.png"
-dest_files=["res://.godot/imported/9.png-fd9b46e64f62a3c5b71fed9fb06a4698.ctex"]
+source_file="res://素材/使用素材/战斗内/功能区/倒计时/转/9.png"
+dest_files=["res://.godot/imported/9.png-c571090ddd5451d6f09fbe1c654785f5.ctex"]
 
 [params]
 

@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bfy7pe347cpyp"
-path="res://.godot/imported/11.png-1aa2779c1de07894c0b039ff90c4a898.ctex"
+path="res://.godot/imported/11.png-aeaab5edda2063ae1e4a6ea6e50ec494.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://素材/使用素材/战斗内/buff/巨化/11.png"
-dest_files=["res://.godot/imported/11.png-1aa2779c1de07894c0b039ff90c4a898.ctex"]
+source_file="res://素材/使用素材/战斗内/状态栏/buff/巨化/11.png"
+dest_files=["res://.godot/imported/11.png-aeaab5edda2063ae1e4a6ea6e50ec494.ctex"]
 
 [params]
 

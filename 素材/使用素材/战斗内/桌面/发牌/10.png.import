@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dk3qee51xppg6"
-path="res://.godot/imported/10.png-88b6ac00f555dd713b941a29a837b9f8.ctex"
+path="res://.godot/imported/10.png-3676011a58ef2c0b4e3412cc44b90846.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://素材/使用素材/战斗内/发牌/10.png"
-dest_files=["res://.godot/imported/10.png-88b6ac00f555dd713b941a29a837b9f8.ctex"]
+source_file="res://素材/使用素材/战斗内/桌面/发牌/10.png"
+dest_files=["res://.godot/imported/10.png-3676011a58ef2c0b4e3412cc44b90846.ctex"]
 
 [params]
 

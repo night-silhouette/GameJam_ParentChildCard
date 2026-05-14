@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cc1wnd0t8ijw"
-path="res://.godot/imported/滑轮.png-b5b6de21d702b6aaa7072435daa9a2a2.ctex"
+path="res://.godot/imported/滑轮.png-9894aabb62c6fc6770f526915a4cab1c.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://素材/使用素材/战斗内/桌面/状态栏/滑轮.png"
-dest_files=["res://.godot/imported/滑轮.png-b5b6de21d702b6aaa7072435daa9a2a2.ctex"]
+source_file="res://素材/使用素材/战斗内/状态栏/滑轮.png"
+dest_files=["res://.godot/imported/滑轮.png-9894aabb62c6fc6770f526915a4cab1c.ctex"]
 
 [params]
 

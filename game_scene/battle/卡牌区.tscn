@@ -1,8 +1,8 @@
 [gd_scene load_steps=2 format=3 uid="uid://pqdo6c02mtaj"]
 
-[ext_resource type="Script" uid="uid://fh8c4wbq0ysk" path="res://game_scene/battle/卡牌区.gd" id="1_6qios"]
+[ext_resource type="Script" uid="uid://ba8umq7x1lrrl" path="res://game_scene/battle/卡牌区.gd" id="1_6qios"]
 
-[node name="卡牌区" type="Control"]
+[node name="卡牌区" type="Control" node_paths=PackedStringArray("card_vector")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -10,6 +10,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_6qios")
+card_vector = NodePath("card_vector")
 
 [node name="card_vector" type="GridContainer" parent="."]
 layout_mode = 1

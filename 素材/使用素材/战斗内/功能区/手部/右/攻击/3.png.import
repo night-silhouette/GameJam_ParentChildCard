@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c4ijkf7kyypti"
-path="res://.godot/imported/3.png-d7cf9968b6bcfc054db9e443c6b1de66.ctex"
+path="res://.godot/imported/3.png-2abb66b27b19378125146a6761717735.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://素材/使用素材/战斗内/手部/右/攻击/3.png"
-dest_files=["res://.godot/imported/3.png-d7cf9968b6bcfc054db9e443c6b1de66.ctex"]
+source_file="res://素材/使用素材/战斗内/功能区/手部/右/攻击/3.png"
+dest_files=["res://.godot/imported/3.png-2abb66b27b19378125146a6761717735.ctex"]
 
 [params]
 

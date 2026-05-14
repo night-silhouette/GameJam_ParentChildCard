@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://devh1hr4vwm3e"
-path="res://.godot/imported/5.png-2867327110ea9b32a4f80d1798efdd48.ctex"
+path="res://.godot/imported/5.png-68d03b879e8b6d08a04d82d0cb9b91d4.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://素材/使用素材/战斗内/壳/战斗卡壳/5.png"
-dest_files=["res://.godot/imported/5.png-2867327110ea9b32a4f80d1798efdd48.ctex"]
+source_file="res://素材/使用素材/战斗内/桌面/壳/战斗卡壳/5.png"
+dest_files=["res://.godot/imported/5.png-68d03b879e8b6d08a04d82d0cb9b91d4.ctex"]
 
 [params]
 

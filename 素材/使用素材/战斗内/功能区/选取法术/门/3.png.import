@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cll385k6svnlb"
-path="res://.godot/imported/3.png-d1561090e0196f0e769ee51acbdd1922.ctex"
+path="res://.godot/imported/3.png-fba4a4486e035f68ebcbc7e161f22fa5.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://素材/使用素材/战斗内/桌面/选取法术/门/3.png"
-dest_files=["res://.godot/imported/3.png-d1561090e0196f0e769ee51acbdd1922.ctex"]
+source_file="res://素材/使用素材/战斗内/功能区/选取法术/门/3.png"
+dest_files=["res://.godot/imported/3.png-fba4a4486e035f68ebcbc7e161f22fa5.ctex"]
 
 [params]
 

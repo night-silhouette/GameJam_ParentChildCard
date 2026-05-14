@@ -1,19 +1,24 @@
-[gd_scene load_steps=3 format=3 uid="uid://d2ji4k252p7g6"]
+[gd_scene load_steps=4 format=3 uid="uid://d2ji4k252p7g6"]
 
 [ext_resource type="PackedScene" uid="uid://diwsy4ebydgfx" path="res://base_class/card/card.tscn" id="1_ltpsv"]
+[ext_resource type="Script" uid="uid://cilc21j3xhiem" path="res://game_scene/battle/freecard.gd" id="1_uqdmw"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_uqdmw"]
 size = Vector2(50.847984, 73.36117)
 
-[node name="freecard" type="Node2D"]
+[node name="freecard" type="Node2D" node_paths=PackedStringArray("card", "area")]
+script = ExtResource("1_uqdmw")
+card = NodePath("Control")
+area = NodePath("Control/Area2D")
 
 [node name="Control" parent="." instance=ExtResource("1_ltpsv")]
 offset_right = 329.0
 offset_bottom = 570.0
 
-[node name="Area2D" type="Area2D" parent="."]
+[node name="Area2D" type="Area2D" parent="Control"]
+scale = Vector2(5.702754, 5.702754)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Control/Area2D"]
 position = Vector2(29.4207, 49.530083)
 rotation = -3.1415925
 scale = Vector2(1.1634407, 1.3759302)

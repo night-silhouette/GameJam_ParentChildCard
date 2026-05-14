@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://da7xcfg5m6n57"
-path="res://.godot/imported/6.png-ce5e6b6fc7da8097c57247ffb3c27c05.ctex"
+path="res://.godot/imported/6.png-35993292b701c8adfa02ac0d336dc319.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://素材/使用素材/战斗内/旗帜/6.png"
-dest_files=["res://.godot/imported/6.png-ce5e6b6fc7da8097c57247ffb3c27c05.ctex"]
+source_file="res://素材/使用素材/战斗内/桌面/旗帜/6.png"
+dest_files=["res://.godot/imported/6.png-35993292b701c8adfa02ac0d336dc319.ctex"]
 
 [params]
 

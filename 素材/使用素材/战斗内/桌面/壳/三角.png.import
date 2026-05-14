@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://k6gr5uib136n"
-path="res://.godot/imported/三角.png-13bd2092f44d7ec09286c128f63ffcd9.ctex"
+path="res://.godot/imported/三角.png-ba90604f928430533c3459f77d9d2c89.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://素材/使用素材/战斗内/壳/三角.png"
-dest_files=["res://.godot/imported/三角.png-13bd2092f44d7ec09286c128f63ffcd9.ctex"]
+source_file="res://素材/使用素材/战斗内/桌面/壳/三角.png"
+dest_files=["res://.godot/imported/三角.png-ba90604f928430533c3459f77d9d2c89.ctex"]
 
 [params]
 

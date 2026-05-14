@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c2tqyqwnlek2v"
-path="res://.godot/imported/框.png-3c0f17ca1f9350b295b24b14265e5949.ctex"
+path="res://.godot/imported/框.png-f8aefa4e5ea475d4c831177fad6efc77.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://素材/使用素材/战斗内/桌面/选取法术/框.png"
-dest_files=["res://.godot/imported/框.png-3c0f17ca1f9350b295b24b14265e5949.ctex"]
+source_file="res://素材/使用素材/战斗内/功能区/选取法术/框.png"
+dest_files=["res://.godot/imported/框.png-f8aefa4e5ea475d4c831177fad6efc77.ctex"]
 
 [params]
 

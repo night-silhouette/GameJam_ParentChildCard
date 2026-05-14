@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c17a5rynmala4"
-path="res://.godot/imported/5.png-9158ad7aaa688e9dfaeecfe60e55225f.ctex"
+path="res://.godot/imported/5.png-c954fd7fac7fa8467873fc40e472cb7d.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://素材/使用素材/战斗内/手部/左/技能/5.png"
-dest_files=["res://.godot/imported/5.png-9158ad7aaa688e9dfaeecfe60e55225f.ctex"]
+source_file="res://素材/使用素材/战斗内/功能区/手部/左/技能/5.png"
+dest_files=["res://.godot/imported/5.png-c954fd7fac7fa8467873fc40e472cb7d.ctex"]
 
 [params]
 

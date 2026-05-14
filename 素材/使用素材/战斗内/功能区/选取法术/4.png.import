@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dfw01g7tm1vpk"
-path="res://.godot/imported/4.png-de4a6b3dda2612563e2e2556d35d9ab7.ctex"
+path="res://.godot/imported/4.png-b3fd4007c08e34e10f4eb97f8e2f8e9f.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://素材/使用素材/战斗内/桌面/选取法术/4.png"
-dest_files=["res://.godot/imported/4.png-de4a6b3dda2612563e2e2556d35d9ab7.ctex"]
+source_file="res://素材/使用素材/战斗内/功能区/选取法术/4.png"
+dest_files=["res://.godot/imported/4.png-b3fd4007c08e34e10f4eb97f8e2f8e9f.ctex"]
 
 [params]
 

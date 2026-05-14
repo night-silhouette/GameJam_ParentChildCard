@@ -2,9 +2,9 @@
 
 [ext_resource type="Script" uid="uid://dw1q80ff6ue4v" path="res://game_scene/battle/battle_scence.gd" id="1_51ed8"]
 [ext_resource type="Texture2D" uid="uid://dng874p0igvq" path="res://素材/使用素材/战斗内/转换.png" id="1_chjg7"]
-[ext_resource type="Texture2D" uid="uid://b46o5twbahh3c" path="res://素材/使用素材/战斗内/桌面/状态栏/状态栏.png" id="2_o4khw"]
+[ext_resource type="Texture2D" uid="uid://b46o5twbahh3c" path="res://素材/使用素材/战斗内/状态栏/状态栏.png" id="2_o4khw"]
 [ext_resource type="PackedScene" uid="uid://ghdb3fyl2y4m" path="res://game_ui/battle/牌库/牌库.tscn" id="3_8qm6s"]
-[ext_resource type="Texture2D" uid="uid://cc1wnd0t8ijw" path="res://素材/使用素材/战斗内/桌面/状态栏/滑轮.png" id="3_330rk"]
+[ext_resource type="Texture2D" uid="uid://cc1wnd0t8ijw" path="res://素材/使用素材/战斗内/状态栏/滑轮.png" id="3_330rk"]
 [ext_resource type="PackedScene" uid="uid://lr0vlyrlvftn" path="res://game_scene/battle/进度条.tscn" id="4_330rk"]
 [ext_resource type="Script" uid="uid://ctldl5kprxqch" path="res://game_ui/battle/object_pool.gd" id="4_cqcp3"]
 [ext_resource type="Script" uid="uid://cy15d728nlkst" path="res://base_class/manage/card_manager.gd" id="9_oo4tg"]
@@ -43,15 +43,19 @@ object_pool = NodePath("../object_pool")
 card_manager = NodePath("../card_manager")
 metadata/_edit_lock_ = true
 
-[node name="法术放置" parent="." instance=ExtResource("11_ro313")]
+[node name="法术放置" parent="." node_paths=PackedStringArray("object_pool", "card_manager") instance=ExtResource("11_ro313")]
 offset_left = 911.99994
 offset_right = 1255.0
+object_pool = NodePath("../object_pool")
+card_manager = NodePath("../card_manager")
 
-[node name="桌面" parent="." instance=ExtResource("12_3krv3")]
+[node name="桌面" parent="." node_paths=PackedStringArray("object_pool", "card_manager") instance=ExtResource("12_3krv3")]
 offset_left = 490.00006
 offset_top = 48.0
 offset_right = 2661.0
 offset_bottom = 1327.0
+object_pool = NodePath("../object_pool")
+card_manager = NodePath("../card_manager")
 
 [node name="状态栏" type="TextureRect" parent="."]
 offset_left = 32.0
@@ -93,5 +97,6 @@ script = ExtResource("9_oo4tg")
 [node name="State_machine" type="Node" parent="."]
 script = ExtResource("11_ile2j")
 
-[node name="freecard" parent="." instance=ExtResource("12_ro313")]
-position = Vector2(718, 411)
+[node name="freecard" parent="." node_paths=PackedStringArray("card_manager") instance=ExtResource("12_ro313")]
+position = Vector2(762, 456)
+card_manager = NodePath("../card_manager")

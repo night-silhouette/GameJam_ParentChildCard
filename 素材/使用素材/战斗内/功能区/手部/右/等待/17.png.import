@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dh8k8gmdj7jwg"
-path="res://.godot/imported/17.png-558d39df17a0d7338218ad8958baabe6.ctex"
+path="res://.godot/imported/17.png-37e11e6251e40874a9440cf87c3320a9.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://素材/使用素材/战斗内/手部/右/等待/17.png"
-dest_files=["res://.godot/imported/17.png-558d39df17a0d7338218ad8958baabe6.ctex"]
+source_file="res://素材/使用素材/战斗内/功能区/手部/右/等待/17.png"
+dest_files=["res://.godot/imported/17.png-37e11e6251e40874a9440cf87c3320a9.ctex"]
 
 [params]
 

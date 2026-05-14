@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://nffqo0g84n7d"
-path="res://.godot/imported/10.png-1c48f30cb7629db5253338da2f7aaea2.ctex"
+path="res://.godot/imported/10.png-a08526256480745a49db451fa5940c8b.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://素材/使用素材/战斗内/战斗卡行动动画/战斗卡技能/10.png"
-dest_files=["res://.godot/imported/10.png-1c48f30cb7629db5253338da2f7aaea2.ctex"]
+source_file="res://素材/使用素材/战斗内/功能区/战斗卡行动动画/战斗卡技能/10.png"
+dest_files=["res://.godot/imported/10.png-a08526256480745a49db451fa5940c8b.ctex"]
 
 [params]
 

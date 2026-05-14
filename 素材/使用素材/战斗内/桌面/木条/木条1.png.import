@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://kjbafocrqogj"
-path="res://.godot/imported/木条1.png-0b4bb402178992b357c804d253b76cc4.ctex"
+path="res://.godot/imported/木条1.png-3373eb44df40605642d23dc82f9b0f31.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://素材/使用素材/战斗内/木条/木条1.png"
-dest_files=["res://.godot/imported/木条1.png-0b4bb402178992b357c804d253b76cc4.ctex"]
+source_file="res://素材/使用素材/战斗内/桌面/木条/木条1.png"
+dest_files=["res://.godot/imported/木条1.png-3373eb44df40605642d23dc82f9b0f31.ctex"]
 
 [params]
 
