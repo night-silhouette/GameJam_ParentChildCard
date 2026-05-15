@@ -7,7 +7,6 @@
 size = Vector2(50.847984, 73.36117)
 
 [node name="freecard" type="Node2D" node_paths=PackedStringArray("card", "area")]
-position = Vector2(0, 1)
 script = ExtResource("1_uqdmw")
 card = NodePath("Control")
 area = NodePath("Control/Area2D")

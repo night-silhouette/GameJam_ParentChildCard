@@ -1,9 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://br1x5mk6aygd1"]
 
 [ext_resource type="Script" uid="uid://4v8tok7f28mb" path="res://game_scene/main/start_scence.gd" id="1_7wheh"]
-
-[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_xsusc"]
-load_path = "res://.godot/imported/封面.png-ef712d216671d17ae5c56da27676fe55.ctex"
+[ext_resource type="Texture2D" uid="uid://og5ksxk6vidt" path="res://素材/使用素材/战斗外/游戏登陆第一个加载版面/加载动画海报1.png" id="2_1otit"]
 
 [node name="启动页面" type="Node2D"]
 script = ExtResource("1_7wheh")
@@ -12,7 +10,7 @@ set_time = 3
 [node name="TextureRect" type="TextureRect" parent="."]
 offset_right = 1152.0
 offset_bottom = 648.0
-texture = SubResource("CompressedTexture2D_xsusc")
+texture = ExtResource("2_1otit")
 expand_mode = 1
 metadata/_edit_lock_ = true
 

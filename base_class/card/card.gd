@@ -7,11 +7,11 @@ var damage  ;
 var buff_id ;
 var zone ;
 
+
 var dragging = false
 var click_offset = Vector2.ZERO
 var original_position = Vector2.ZERO
 
-signal request_drag(temp_id);
 
 
 func _ready():
@@ -32,3 +32,13 @@ func free_card():
 	damage = null;
 	temp_id = null;
 	buff_id = null;
+func _gui_input(event):
+
+	# 鼠标左键
+	if event is InputEventMouseButton:
+
+		if event.button_index == MOUSE_BUTTON_LEFT:
+
+			# 按下
+			if event.pressed:
+				SignalBus.enter_freecard.emit(temp_id,zone);

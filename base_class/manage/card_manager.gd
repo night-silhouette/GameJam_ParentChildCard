@@ -6,14 +6,23 @@ extends Node
 
 signal UI_date_update
 signal change_card_zone(temp_id, new_zone)
-signal free_card_enter(zone);
+
+var free_card_nextzone = null;
+var free_card_prevzone = null;
+
 var card_list :Array = [];#这里的card只掌握数据，不拥有任何的实体
 func _ready() -> void:
+	#WS
 	SignalBus.self_inhand_updated.connect(_self_inhand_updated)
 	SignalBus.bt_oppinfo_updated.connect(_bt_oppinfo_updated)
 	SignalBus.bt_selfinfo_updated.connect(_bt_selfinfo_updated)
 	change_card_zone.connect(_change_card_zone)
-	free_card_enter.connect(_free_card_enter)
+	
+	#game
+	SignalBus.enter_freecard.connect(_enter_freecard)
+	SignalBus.exit_freecard.connect(_exit_freecard)
+	SignalBus.detected_area.connect(_detected_area)
+	SignalBus.exit_area.connect(_exit_area)
 ## 核心功能：通过 ID 生成resoure
 func querry_resoure_by_id(card_id: int) -> Resource:
 	# 1. 格式化路径，%03d 会将 1 转换为 001，将 12 转换为 012
@@ -157,8 +166,7 @@ func _change_card_zone(temp_id, new_zone) -> bool:
 
 		# 找到目标卡
 		if card.get("temp_id") == temp_id:
-
-			# 修改 zone
+		
 			card["zone"] = new_zone
 			
 			UI_date_update.emit()
@@ -169,9 +177,29 @@ func _change_card_zone(temp_id, new_zone) -> bool:
 #游荡对象需要记录原先的zone，但是数据库中的zone应该改变。返回时根据游荡对象的zone去改变
 func remove_card_from_view(card_data):
 	pass
-func _free_card_enter(zone):
-	var free_cards = get_cards_by_zone(Global.ZONE_CARD.FREE_ZONE)	
-	for free_card in free_cards :
-		free_card.zone = zone;
-	UI_date_update.emit();
+func select_card_by_key(value,key_to_match):
+	for card in card_list:
+		if card.key_to_match == value:
+			return card;
+	return {};
 		
+func _enter_freecard(temp_id,zone):
+	free_card_prevzone = zone;
+	_change_card_zone(temp_id,Global.ZONE_CARD.FREE_ZONE);
+func _exit_freecard(temp_id,zone):
+	var icard = select_card_by_key(temp_id,"temp_id")
+	if free_card_nextzone == null:
+		_change_card_zone(temp_id,free_card_prevzone);
+	elif icard["is_combat_card"] == false and free_card_nextzone == Global.ZONE_CARD.SPELL_ZONE:
+		_change_card_zone(temp_id,free_card_nextzone)
+	elif icard["is_combat_card"] == true and icard["is_sub_card"] == false and free_card_nextzone == Global.ZONE_CARD.PARENT_BATTLE_ZONE:
+		_change_card_zone(temp_id,free_card_nextzone)
+	elif icard["is_combat_card"] == true and icard["is_sub_card"] == true and free_card_nextzone == Global.ZONE_CARD.CHILD_BATTLE_ZONE:
+		_change_card_zone(temp_id,free_card_nextzone)	
+	else :
+		_change_card_zone(temp_id,free_card_prevzone)
+	
+func _detected_area(zone):
+	free_card_nextzone = zone;
+func _exit_area():
+	free_card_nextzone = null;

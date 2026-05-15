@@ -1,6 +1,6 @@
 [gd_scene load_steps=19 format=3 uid="uid://cfsmqjjmevec7"]
 
-[ext_resource type="Texture2D" uid="uid://beyfmncxthool" path="res://素材/使用素材/战斗外/游戏模式选择与匹配/硬币/硬币.png" id="1_sv2rj"]
+[ext_resource type="Texture2D" uid="uid://dxw7ko3phbw0j" path="res://素材/使用素材/战斗外/游戏模式选择与匹配/硬币/图.png" id="1_sv2rj"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_3xxct"]
 atlas = ExtResource("1_sv2rj")
@@ -24,47 +24,47 @@ region = Rect2(1096, 0, 274, 266)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ske81"]
 atlas = ExtResource("1_sv2rj")
-region = Rect2(1370, 0, 274, 266)
+region = Rect2(0, 266, 274, 266)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_his11"]
 atlas = ExtResource("1_sv2rj")
-region = Rect2(1644, 0, 274, 266)
+region = Rect2(274, 266, 274, 266)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_j25vs"]
 atlas = ExtResource("1_sv2rj")
-region = Rect2(1918, 0, 274, 266)
+region = Rect2(548, 266, 274, 266)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_6r4eq"]
 atlas = ExtResource("1_sv2rj")
-region = Rect2(0, 266, 274, 266)
+region = Rect2(822, 266, 274, 266)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_0u3cs"]
 atlas = ExtResource("1_sv2rj")
-region = Rect2(274, 266, 274, 266)
+region = Rect2(1096, 266, 274, 266)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_yil8j"]
 atlas = ExtResource("1_sv2rj")
-region = Rect2(548, 266, 274, 266)
+region = Rect2(0, 532, 274, 266)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_2mpbl"]
 atlas = ExtResource("1_sv2rj")
-region = Rect2(822, 266, 274, 266)
+region = Rect2(274, 532, 274, 266)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_e12y1"]
 atlas = ExtResource("1_sv2rj")
-region = Rect2(1096, 266, 274, 266)
+region = Rect2(548, 532, 274, 266)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_qtab2"]
 atlas = ExtResource("1_sv2rj")
-region = Rect2(1370, 266, 274, 266)
+region = Rect2(822, 532, 274, 266)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_5lvtj"]
 atlas = ExtResource("1_sv2rj")
-region = Rect2(1644, 266, 274, 266)
+region = Rect2(1096, 532, 274, 266)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_gomm0"]
 atlas = ExtResource("1_sv2rj")
-region = Rect2(1918, 266, 274, 266)
+region = Rect2(0, 798, 274, 266)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_sv2rj"]
 animations = [{
@@ -118,11 +118,11 @@ animations = [{
 "texture": SubResource("AtlasTexture_gomm0")
 }],
 "loop": true,
-"name": &"硬币旋转",
+"name": &"coin",
 "speed": 10.0
 }]
 
 [node name="coin" type="AnimatedSprite2D"]
 sprite_frames = SubResource("SpriteFrames_sv2rj")
-animation = &"硬币旋转"
-frame_progress = 0.6132423
+animation = &"coin"
+frame_progress = 0.060532104

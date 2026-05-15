@@ -124,10 +124,6 @@ texture_hover = ExtResource("6_31yhv")
 visible = false
 layout_mode = 0
 
-[node name="coin" parent="." instance=ExtResource("9_p44tl")]
-visible = false
-position = Vector2(576, 320)
-
 [node name="Button" type="Button" parent="."]
 visible = false
 layout_mode = 0
@@ -144,6 +140,11 @@ script = ExtResource("8_ikupr")
 position = Vector2(1096, 103.99999)
 scale = Vector2(0.19546409, 0.19546409)
 texture = ExtResource("11_jisbt")
+
+[node name="coin" parent="." instance=ExtResource("9_p44tl")]
+visible = false
+position = Vector2(579, 284)
+scale = Vector2(0.7349091, 0.7349091)
 
 [connection signal="button_down" from="空格" to="cheese" method="animationplayer"]
 [connection signal="button_down" from="Button" to="Button" method="_on_button_down"]

@@ -122,3 +122,11 @@ signal request_get_combat_cards
 signal request_debug_time
 signal request_debug_matchpool
 #endregion
+
+
+#region card
+signal enter_freecard(temp_id,zone)
+signal exit_freecard(temp_id,zone)
+signal detected_area(zone)
+signal exit_area
+#endregion

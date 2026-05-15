@@ -98,5 +98,5 @@ script = ExtResource("9_oo4tg")
 script = ExtResource("11_ile2j")
 
 [node name="freecard" parent="." node_paths=PackedStringArray("card_manager") instance=ExtResource("12_ro313")]
-position = Vector2(762, 456)
+position = Vector2(724, 414)
 card_manager = NodePath("../card_manager")

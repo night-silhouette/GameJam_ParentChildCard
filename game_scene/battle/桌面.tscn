@@ -3,14 +3,16 @@
 [ext_resource type="Texture2D" uid="uid://bxbpcw7rdnhhj" path="res://素材/使用素材/战斗内/桌面/说明/桌面.png" id="1_m77db"]
 [ext_resource type="Script" uid="uid://cdupj53tbybnx" path="res://game_scene/battle/桌面.gd" id="2_kwvrx"]
 [ext_resource type="PackedScene" uid="uid://k0qlnd2phxbe" path="res://game_scene/battle/检验区.tscn" id="2_yp7nw"]
-[ext_resource type="PackedScene" uid="uid://pqdo6c02mtaj" path="res://game_scene/battle/卡牌区.tscn" id="3_yp7nw"]
+[ext_resource type="PackedScene" uid="uid://diwsy4ebydgfx" path="res://base_class/card/card.tscn" id="4_kwvrx"]
 
-[node name="桌面" type="TextureRect"]
+[node name="桌面" type="TextureRect" node_paths=PackedStringArray("cards_ui")]
 offset_right = 2171.0
 offset_bottom = 1279.0
 scale = Vector2(0.2659713, 0.2584372)
 texture = ExtResource("1_m77db")
 script = ExtResource("2_kwvrx")
+cards_ui = [NodePath("parent_card"), NodePath("child_card"), NodePath("op_parent"), NodePath("op_child")]
+zones = Array[int]([3, 4, 7, 8])
 metadata/_edit_lock_ = true
 
 [node name="母牌_检验区" parent="." instance=ExtResource("2_yp7nw")]
@@ -23,38 +25,36 @@ position = Vector2(1473.8433, 1037.0024)
 scale = Vector2(5.6142387, 3.2513204)
 zone = 4
 
-[node name="母牌" parent="." instance=ExtResource("3_yp7nw")]
-layout_mode = 1
-offset_left = 383.50012
-offset_top = 866.74835
-offset_right = 383.5005
-offset_bottom = 866.7483
-scale = Vector2(0.25676793, 0.26203623)
-zone = 3
+[node name="parent_card" parent="." instance=ExtResource("4_kwvrx")]
+layout_mode = 0
+offset_left = 383.50003
+offset_top = 866.7483
+offset_right = 712.5
+offset_bottom = 1436.7483
+scale = Vector2(0.6111597, 0.6111597)
 
-[node name="敌方母牌" parent="." instance=ExtResource("3_yp7nw")]
-layout_mode = 1
-offset_left = 1195.6179
-offset_top = 30.9553
-offset_right = 1195.6184
-offset_bottom = 30.955322
-scale = Vector2(0.25676793, 0.26203623)
-zone = 7
+[node name="child_card" parent="." instance=ExtResource("4_kwvrx")]
+layout_mode = 0
+offset_left = 1176.8188
+offset_top = 862.8789
+offset_right = 1505.8188
+offset_bottom = 1432.8789
+scale = Vector2(0.6111597, 0.6111597)
 
-[node name="子牌" parent="." instance=ExtResource("3_yp7nw")]
-layout_mode = 1
-offset_left = 1188.0983
-offset_top = 874.4872
-offset_right = 1188.0986
-offset_bottom = 874.4873
-scale = Vector2(0.25676793, 0.26203623)
-zone = 4
+[node name="op_parent" parent="." instance=ExtResource("4_kwvrx")]
+layout_mode = 0
+offset_left = 594.0491
+offset_top = 355.98593
+offset_right = 923.0491
+offset_bottom = 925.98596
+rotation = 3.1415927
+scale = Vector2(0.6111597, 0.6111597)
 
-[node name="敌方子牌" parent="." instance=ExtResource("3_yp7nw")]
-layout_mode = 1
-offset_left = 398.5393
-offset_top = 23.21643
-offset_right = 398.5398
-offset_bottom = 23.216553
-scale = Vector2(0.25676793, 0.26203623)
-zone = 8
+[node name="op_child" parent="." instance=ExtResource("4_kwvrx")]
+layout_mode = 0
+offset_left = 1402.407
+offset_top = 371.46356
+offset_right = 1731.407
+offset_bottom = 941.46356
+rotation = 3.1415927
+scale = Vector2(0.6111597, 0.6111597)
