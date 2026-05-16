@@ -1,0 +1,64 @@
+[gd_scene load_steps=7 format=3 uid="uid://bg48e8qade5ll"]
+
+[ext_resource type="Texture2D" uid="uid://bra5u7smhbanq" path="res://素材/使用素材/战斗内/桌面/信息框  -子牌.png" id="1_8t7r2"]
+[ext_resource type="Script" uid="uid://dtjh32kuq2vf1" path="res://game_scene/battle/hover显示.gd" id="1_mevhq"]
+[ext_resource type="LabelSettings" uid="uid://ik6wcfsli47v" path="res://game_ui/数值.tres" id="5_membc"]
+[ext_resource type="FontFile" uid="uid://bj1pdtvpfop4a" path="res://素材/使用素材/YaoSuiXinShouXieTi-2.ttf" id="6_0acmd"]
+[ext_resource type="PackedScene" uid="uid://diwsy4ebydgfx" path="res://base_class/card/card.tscn" id="7_63lvv"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_udkdb"]
+font = ExtResource("6_0acmd")
+font_color = Color(0, 0, 0, 1)
+
+[node name="hover显示" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 717.0
+offset_top = 409.99997
+offset_right = 717.0
+offset_bottom = 409.99997
+scale = Vector2(0.45288333, 0.45288333)
+script = ExtResource("1_mevhq")
+
+[node name="信息框" type="TextureRect" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+texture = ExtResource("1_8t7r2")
+
+[node name="hp" type="Label" parent="."]
+layout_direction = 2
+layout_mode = 0
+offset_left = 286.0
+offset_top = 80.0
+offset_right = 326.0
+offset_bottom = 177.0
+scale = Vector2(1, 1.007)
+label_settings = ExtResource("5_membc")
+
+[node name="damage" type="Label" parent="."]
+layout_mode = 0
+offset_left = 287.0
+offset_top = 136.0
+offset_right = 327.0
+offset_bottom = 183.0
+scale = Vector2(1, 1.007)
+label_settings = ExtResource("5_membc")
+
+[node name="详细" type="Label" parent="."]
+layout_mode = 0
+offset_left = 404.0776
+offset_top = 19.872734
+offset_right = 524.0776
+offset_bottom = 211.87274
+scale = Vector2(1.2763497, 1.255454)
+label_settings = SubResource("LabelSettings_udkdb")
+autowrap_mode = 3
+
+[node name="Control" parent="." instance=ExtResource("7_63lvv")]
+layout_mode = 0
+offset_left = 28.704964
+offset_top = 17.66466
+offset_right = 357.70496
+offset_bottom = 587.6647
+scale = Vector2(0.4633435, 0.4633435)

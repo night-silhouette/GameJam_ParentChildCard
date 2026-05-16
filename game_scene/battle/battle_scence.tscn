@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://c85a1ra55sbk0"]
+[gd_scene load_steps=15 format=3 uid="uid://c85a1ra55sbk0"]
 
 [ext_resource type="Script" uid="uid://dw1q80ff6ue4v" path="res://game_scene/battle/battle_scence.gd" id="1_51ed8"]
 [ext_resource type="Texture2D" uid="uid://dng874p0igvq" path="res://素材/使用素材/战斗内/转换.png" id="1_chjg7"]
@@ -12,6 +12,8 @@
 [ext_resource type="PackedScene" uid="uid://chfbecbd2f45c" path="res://game_scene/battle/法术放置.tscn" id="11_ro313"]
 [ext_resource type="PackedScene" uid="uid://drj8312i1aoi6" path="res://game_scene/battle/桌面.tscn" id="12_3krv3"]
 [ext_resource type="PackedScene" uid="uid://d2ji4k252p7g6" path="res://game_scene/battle/freecard.tscn" id="12_ro313"]
+[ext_resource type="PackedScene" uid="uid://cf218n73yp1t0" path="res://game_scene/battle/万能按钮.tscn" id="13_3krv3"]
+[ext_resource type="PackedScene" uid="uid://bg48e8qade5ll" path="res://game_scene/battle/hover显示.tscn" id="14_kriff"]
 
 [node name="battle_scence" type="Node"]
 script = ExtResource("1_51ed8")
@@ -43,18 +45,18 @@ object_pool = NodePath("../object_pool")
 card_manager = NodePath("../card_manager")
 metadata/_edit_lock_ = true
 
-[node name="法术放置" parent="." node_paths=PackedStringArray("object_pool", "card_manager") instance=ExtResource("11_ro313")]
-offset_left = 911.99994
-offset_right = 1255.0
-object_pool = NodePath("../object_pool")
-card_manager = NodePath("../card_manager")
-
-[node name="桌面" parent="." node_paths=PackedStringArray("object_pool", "card_manager") instance=ExtResource("12_3krv3")]
+[node name="桌面" parent="." node_paths=PackedStringArray("card_manager") instance=ExtResource("12_3krv3")]
 offset_left = 490.00006
 offset_top = 48.0
 offset_right = 2661.0
 offset_bottom = 1327.0
-object_pool = NodePath("../object_pool")
+card_manager = NodePath("../card_manager")
+
+[node name="法术放置" parent="." node_paths=PackedStringArray("card_manager") instance=ExtResource("11_ro313")]
+offset_left = 983.99994
+offset_top = 218.99998
+offset_right = 1327.0
+offset_bottom = 784.0
 card_manager = NodePath("../card_manager")
 
 [node name="状态栏" type="TextureRect" parent="."]
@@ -88,6 +90,13 @@ rotation = 1.5707964
 scale = Vector2(0.19120544, 0.19120544)
 metadata/_edit_lock_ = true
 
+[node name="万能按钮" parent="." instance=ExtResource("13_3krv3")]
+offset_left = 979.0
+offset_top = 528.00006
+offset_right = 2128.0
+offset_bottom = 1605.0
+scale = Vector2(0.085008465, 0.085008465)
+
 [node name="object_pool" type="Node" parent="."]
 script = ExtResource("4_cqcp3")
 
@@ -98,5 +107,16 @@ script = ExtResource("9_oo4tg")
 script = ExtResource("11_ile2j")
 
 [node name="freecard" parent="." node_paths=PackedStringArray("card_manager") instance=ExtResource("12_ro313")]
-position = Vector2(724, 414)
+offset_left = -1083.0
+offset_top = -639.0
+offset_right = -1083.0
+offset_bottom = -639.0
+card_manager = NodePath("../card_manager")
+
+[node name="hover显示" parent="." node_paths=PackedStringArray("card_manager") instance=ExtResource("14_kriff")]
+offset_left = 124.00001
+offset_top = 162.00002
+offset_right = 124.00001
+offset_bottom = 162.00002
+scale = Vector2(0.6947887, 0.6947887)
 card_manager = NodePath("../card_manager")

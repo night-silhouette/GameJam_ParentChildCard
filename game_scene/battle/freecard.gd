@@ -1,6 +1,5 @@
 extends Node
 @export var card_manager: Node
-@export var page_size: int = 1
 @export var zone : int
 @export var card : Control
 @export var area : Area2D
@@ -60,11 +59,23 @@ func _activate():
 	area.monitoring = true
 	area.monitorable = true
 
-func _gui_input(event):
-	# 鼠标左键
-	if event is InputEventMouseButton:
-		if event.button_index == MOUSE_BUTTON_LEFT:
-			# 按下
-			if !event.pressed:
-				is_drag = false
-				SignalBus.exit_freecard.emit(card.temp_id,card.prev_zone)
+func _input(event: InputEvent) -> void:
+	# 如果当前根本没有在拖拽，或者卡牌实例不存在，直接无视全局输入
+	if not is_drag or not card: 
+		return
+		
+	# 只要在拖拽状态下，无条件监听鼠标左键放开
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
+		if not event.pressed: # 鼠标松开了
+			
+			# 在清空状态前，先把需要发送的数据存下来，防止下一步失效
+			var temp_id_to_send = card.temp_id
+			
+			# 1. 立即重置拖拽状态，防止信号延迟导致二次触发
+			is_drag = false 
+			
+			# 2. 发送信号给后端/网络层
+			SignalBus.exit_freecard.emit(temp_id_to_send)
+			
+			# 3. 拦截事件，防止这个松开事件穿透影响到地下的其他按钮
+			get_viewport().set_input_as_handled()

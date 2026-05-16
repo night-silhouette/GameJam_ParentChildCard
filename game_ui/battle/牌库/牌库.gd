@@ -12,7 +12,7 @@ var start_index: int = 0
 func _ready() -> void:
 	# 监听数据层的变化，任何 Zone 的变动都会通过这里反映到 UI
 	card_manager.change_card_zone.connect(refresh_ui)
-	
+	card_manager.UI_date_update.connect(refresh_ui)
 	# 1. 初始化预填充
 	for i in range(page_size):
 		var child = object_pool.get_card()
@@ -36,7 +36,7 @@ func _update_view():
 	for i in range(ui_nodes.size()):
 		var child = ui_nodes[i]
 		if i < page_cards.size():
-			child.update_card(page_cards[i])
+			child.update_card_data(page_cards[i])
 			child.show()
 			# 确保卡牌视觉状态正常（比如之前被拖拽时可能变透明了，这里重置一下）
 			child.modulate.a = 1.0 

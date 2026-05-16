@@ -1,11 +1,13 @@
-[gd_scene load_steps=5 format=3 uid="uid://drj8312i1aoi6"]
+[gd_scene load_steps=7 format=3 uid="uid://drj8312i1aoi6"]
 
 [ext_resource type="Texture2D" uid="uid://bxbpcw7rdnhhj" path="res://素材/使用素材/战斗内/桌面/说明/桌面.png" id="1_m77db"]
 [ext_resource type="Script" uid="uid://cdupj53tbybnx" path="res://game_scene/battle/桌面.gd" id="2_kwvrx"]
 [ext_resource type="PackedScene" uid="uid://k0qlnd2phxbe" path="res://game_scene/battle/检验区.tscn" id="2_yp7nw"]
 [ext_resource type="PackedScene" uid="uid://diwsy4ebydgfx" path="res://base_class/card/card.tscn" id="4_kwvrx"]
+[ext_resource type="PackedScene" uid="uid://dx67q76jhqn1l" path="res://game_ui/battle/子卡详细.tscn" id="4_vq28s"]
+[ext_resource type="PackedScene" uid="uid://dngn8v87puqiy" path="res://game_ui/battle/母卡详细.tscn" id="5_nqrhk"]
 
-[node name="桌面" type="TextureRect" node_paths=PackedStringArray("cards_ui")]
+[node name="桌面" type="TextureRect" node_paths=PackedStringArray("cards_ui", "data_UI")]
 offset_right = 2171.0
 offset_bottom = 1279.0
 scale = Vector2(0.2659713, 0.2584372)
@@ -13,17 +15,50 @@ texture = ExtResource("1_m77db")
 script = ExtResource("2_kwvrx")
 cards_ui = [NodePath("parent_card"), NodePath("child_card"), NodePath("op_parent"), NodePath("op_child")]
 zones = Array[int]([3, 4, 7, 8])
+data_UI = [NodePath("parent_card2"), NodePath("child_card1"), NodePath("op_parent2"), NodePath("op_child1")]
 metadata/_edit_lock_ = true
 
 [node name="母牌_检验区" parent="." instance=ExtResource("2_yp7nw")]
-position = Vector2(661.7255, 1037.0024)
-scale = Vector2(5.6142387, 3.2513204)
+position = Vector2(654.20593, 851.2707)
+scale = Vector2(8.238132, 6.9926343)
 zone = 3
 
 [node name="子牌_检验区" parent="." instance=ExtResource("2_yp7nw")]
-position = Vector2(1473.8433, 1037.0024)
-scale = Vector2(5.6142387, 3.2513204)
+position = Vector2(1466.3236, 828.0542)
+scale = Vector2(6.8849497, 8.270023)
 zone = 4
+
+[node name="child_card1" parent="." instance=ExtResource("4_vq28s")]
+layout_mode = 0
+offset_left = 1150.5001
+offset_top = 839.6625
+offset_right = 1150.5001
+offset_bottom = 839.6625
+scale = Vector2(1.3282063, 1.3282063)
+
+[node name="op_child1" parent="." instance=ExtResource("4_vq28s")]
+layout_mode = 0
+offset_left = 1176.8186
+offset_top = 19.34706
+offset_right = 1176.8186
+offset_bottom = 19.34706
+scale = Vector2(1.1850284, 1.1850284)
+
+[node name="parent_card2" parent="." instance=ExtResource("5_nqrhk")]
+layout_mode = 1
+offset_left = 342.14215
+offset_top = 839.66235
+offset_right = 342.1421
+offset_bottom = 839.6626
+scale = Vector2(1.3169863, 1.3169863)
+
+[node name="op_parent2" parent="." instance=ExtResource("5_nqrhk")]
+layout_mode = 1
+offset_left = 375.98044
+offset_top = 7.738825
+offset_right = 375.98044
+offset_bottom = 7.738886
+scale = Vector2(1.2202342, 1.2202342)
 
 [node name="parent_card" parent="." instance=ExtResource("4_kwvrx")]
 layout_mode = 0

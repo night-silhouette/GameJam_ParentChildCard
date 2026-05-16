@@ -126,7 +126,9 @@ signal request_debug_matchpool
 
 #region card
 signal enter_freecard(temp_id,zone)
-signal exit_freecard(temp_id,zone)
+signal exit_freecard(temp_id)
 signal detected_area(zone)
-signal exit_area
+signal exit_area(zone)
+signal enter_hover(temp_id)
+signal exit_hover(temp_id)
 #endregion

@@ -6,13 +6,16 @@
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_uqdmw"]
 size = Vector2(50.847984, 73.36117)
 
-[node name="freecard" type="Node2D" node_paths=PackedStringArray("card", "area")]
-position = Vector2(0, 1)
+[node name="freecard" type="Control" node_paths=PackedStringArray("card", "area")]
+layout_mode = 3
+anchors_preset = 0
 script = ExtResource("1_uqdmw")
+zone = 6
 card = NodePath("Control")
 area = NodePath("Control/Area2D")
 
 [node name="Control" parent="." instance=ExtResource("1_ltpsv")]
+layout_mode = 0
 offset_right = 329.0
 offset_bottom = 570.0
 

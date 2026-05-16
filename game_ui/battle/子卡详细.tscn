@@ -1,6 +1,7 @@
-[gd_scene load_steps=8 format=3 uid="uid://dx67q76jhqn1l"]
+[gd_scene load_steps=9 format=3 uid="uid://dx67q76jhqn1l"]
 
 [ext_resource type="Texture2D" uid="uid://bra5u7smhbanq" path="res://素材/使用素材/战斗内/桌面/信息框  -子牌.png" id="1_1b027"]
+[ext_resource type="Script" uid="uid://cu0f46aom8hsk" path="res://game_ui/battle/详细.gd" id="1_udkdb"]
 [ext_resource type="PackedScene" uid="uid://b1k8uu41o35rw" path="res://game_ui/battle/说明按钮.tscn" id="2_sccq4"]
 [ext_resource type="Texture2D" uid="uid://8o0dnf3ax4mg" path="res://素材/使用素材/战斗内/桌面/说明/板.png" id="3_mupjk"]
 [ext_resource type="Script" uid="uid://cv1dky3kp3m2m" path="res://game_ui/battle/说明框.gd" id="4_udkdb"]
@@ -15,6 +16,9 @@ font_color = Color(0, 0, 0, 1)
 [node name="子卡详细" type="Control"]
 layout_mode = 3
 anchors_preset = 0
+scale = Vector2(0.709247, 0.709247)
+mouse_filter = 1
+script = ExtResource("1_udkdb")
 
 [node name="信息框" type="TextureRect" parent="."]
 layout_mode = 0
@@ -31,6 +35,7 @@ offset_bottom = 421.0
 scale = Vector2(0.3250097, 0.3250097)
 
 [node name="说明框" type="TextureRect" parent="."]
+visible = false
 layout_mode = 0
 offset_left = 320.0
 offset_top = 208.0
@@ -60,6 +65,7 @@ scale = Vector2(1, 1.007)
 label_settings = ExtResource("5_mupjk")
 
 [node name="详细" type="Label" parent="."]
+visible = false
 layout_mode = 0
 offset_left = 424.0
 offset_top = 224.0
