@@ -3,7 +3,7 @@ extends Node
 @export var card_scene: PackedScene = preload("res://base_class/card/card.tscn")
 @export var spawn_container: Control
 @export_dir var base_path: String = "res://game_data/card/" # 资源存放的基础路径
-
+@export var state_machine : Node;
 signal UI_date_update
 signal change_card_zone(temp_id, new_zone)
 
@@ -234,17 +234,35 @@ func _exit_freecard(temp_id):
 	if free_card_nextzone == null:
 		_change_card_zone(temp_id,free_card_prevzone);
 	elif icard["is_combat_card"] == false and free_card_nextzone == Global.ZONE_CARD.SPELL_ZONE:
-		for i in get_cards_by_zone(free_card_nextzone):
-			i["zone"] = Global.ZONE_CARD.DECK_ZONE;
+		match state_machine.current_state:
+			state_machine.GameState.USE_MAGIC_CARD:
+				for i in get_cards_by_zone(free_card_nextzone):
+					i["zone"] = Global.ZONE_CARD.DECK_ZONE;
+			
 		_change_card_zone(temp_id,free_card_nextzone)
 	elif icard["is_combat_card"] == true and icard["is_sub_card"] == false and free_card_nextzone == Global.ZONE_CARD.PARENT_BATTLE_ZONE:
-		for i in get_cards_by_zone(free_card_nextzone):
-			i["zone"] = Global.ZONE_CARD.DECK_ZONE;
-		_change_card_zone(temp_id,free_card_nextzone)
+		match state_machine.current_state:
+			state_machine.GameState.USE_COMBAT_CARD:
+				if state_machine.is_win == 1:
+					for i in get_cards_by_zone(free_card_nextzone):
+						i["zone"] = Global.ZONE_CARD.DECK_ZONE;
+					_change_card_zone(temp_id,free_card_nextzone)
+			state_machine.GameState.INIT_STATE:
+				for i in get_cards_by_zone(free_card_nextzone):
+					i["zone"] = Global.ZONE_CARD.DECK_ZONE;
+				_change_card_zone(temp_id,free_card_nextzone)
+				
 	elif icard["is_combat_card"] == true and icard["is_sub_card"] == true and free_card_nextzone == Global.ZONE_CARD.CHILD_BATTLE_ZONE:
-		for i in get_cards_by_zone(free_card_nextzone):
-			i["zone"] = Global.ZONE_CARD.DECK_ZONE;
-		_change_card_zone(temp_id,free_card_nextzone)	
+		match state_machine.current_state:
+			state_machine.GameState.USE_COMBAT_CARD:
+				for i in get_cards_by_zone(free_card_nextzone):
+					i["zone"] = Global.ZONE_CARD.DECK_ZONE;
+				_change_card_zone(temp_id,free_card_nextzone)
+			state_machine.GameState.INIT_STATE:
+				for i in get_cards_by_zone(free_card_nextzone):
+					i["zone"] = Global.ZONE_CARD.DECK_ZONE;
+				_change_card_zone(temp_id,free_card_nextzone)
+				
 	elif free_card_nextzone == Global.ZONE_CARD.DECK_ZONE :
 		_change_card_zone(temp_id,free_card_nextzone)	
 	else :

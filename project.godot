@@ -32,6 +32,7 @@ BattleWs="*res://base_class/net/WS/BattleWS.gd"
 BattleRequestManager="*res://base_class/net/WS/Battle_RequestManager.gd"
 BattleResponseManager="*res://base_class/net/WS/Battle_ResponseManager.gd"
 TokenManager="*res://base_class/net/token_manager.gd"
+TimeOffset="*res://base_class/net/time_offset.tscn"
 
 [display]
 

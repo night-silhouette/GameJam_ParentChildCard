@@ -12,7 +12,7 @@ func _handle_ws_data(code: int, data: Variant, msg: String):
 	var action_data = data.get("action_data", null)
 	var predicate = int(data.get("predicates", 0)) 
 	
-	print("[WS 接收] -> ", NetDef.get_predicate_name(predicate), "：", NetDef.get_action_name(action_code))
+	print("[WS 接收] -> ", NetDef.get_predicate_name(predicate), "：",action_code)
 	
 	_dispatch(action_code, action_data, predicate)
 
@@ -26,7 +26,6 @@ func _dispatch(action_code: int, action_data: Variant, predicate: int):
 				# 在这里你可以自由地做中间处理，比如数据转换、校验
 				if action_data is Array:
 					SignalBus.self_inhand_updated.emit(action_data)
-					print(action_data);
 					
 				else:
 					push_error("GET_SELF_CARDS 返回格式错误，期望 Array")
@@ -44,8 +43,6 @@ func _dispatch(action_code: int, action_data: Variant, predicate: int):
 				
 		NetDef.Action.DEPLOY_CARD:
 			if predicate == NetDef.Predicate.NOTIFY:
-				# 假设部署卡牌时，action_data 是一个包含 ID 和位置的字典
-				# 你可以在这里做进一步解析后再散发
 				if action_data is Dictionary:
 					var card_id = action_data.get("card_id", "")
 					var pos = action_data.get("position", Vector2.ZERO)
@@ -55,25 +52,33 @@ func _dispatch(action_code: int, action_data: Variant, predicate: int):
 				var where = action_data.where;
 				match where:
 					2:
-						SignalBus.magic_card_start.emit(t)				
+						SignalBus.magic_card_start.emit(t)
+			if predicate == NetDef.Predicate.SUCCEED:
+				SignalBus.deploy_magic_success.emit();
+			if predicate	 == NetDef.Predicate.FINISH:
+				SignalBus.magic_card_finish.emit();
+						
 		NetDef.Action.CANCEL_MATCH:
 			if predicate == NetDef.Predicate.RESULT:
 				SignalBus.match_canceled.emit()
 		NetDef.Action.MATCH_SUCCESS:
 			if predicate == NetDef.Predicate.NOTIFY:
-				SignalBus.match_success.emit();
+				var t = action_data.state_wait_time;
+				SignalBus.match_success.emit(t);
 		NetDef.Action.JUDGE:
 			if predicate == NetDef.Predicate.QUERY:
 				var t = action_data.state_wait_time;
 				SignalBus.judge_start.emit(t);
 			if predicate == NetDef.Predicate.FINISH:
 				SignalBus.judge_finish.emit(action_data);
+			if predicate == NetDef.Predicate.SUCCEED:
+				SignalBus.judge_put.emit()
 		NetDef.Action.COMBAT:
 			var t = action_data.state_wait_time;
 			if predicate == NetDef.Predicate.QUERY:
-				SignalBus.combat_start_success.emit(t);
+				SignalBus.combat_start_success.emit(t,1);
 			if predicate == NetDef.Predicate.NOTIFY:
-				SignalBus.combat_start_fail.emit(t);
+				SignalBus.combat_start_success.emit(t,0);
 		_:
 			# 未处理的 action
 			push_warning("未处理的下发动作 -> ", NetDef.get_action_name(action_code))

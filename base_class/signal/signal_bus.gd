@@ -97,14 +97,17 @@ signal bt_oppinfo_updated(cards)
 ##判定回合开始信号
 signal judge_start(t)
 signal judge_finish
+signal judge_put
 
 #法术牌
 signal  magic_card_start(t)
+signal  deploy_magic_success
+signal  magic_card_finish
 #战斗牌
 
 ##判定回合开始信号. 动画开始时间暂停
-signal combat_start_success(t);
-signal combat_start_fail(t);
+signal combat_start_success(t,is_win);
+
 
 # =========================
 # 请求（发给WS）
@@ -118,6 +121,9 @@ signal request_deploy_parent_card(card_id,card_temp_id)
 signal request_deploy_child_card(card_id,card_temp_id)
 signal request_judge(judge_data)
 signal request_get_combat_cards
+signal request_end_animation
+signal request_combat_finish
+signal request_combat_movement(behavoir,self_where,opponent_where)
 # 调试
 signal request_debug_time
 signal request_debug_matchpool
@@ -131,4 +137,5 @@ signal detected_area(zone)
 signal exit_area(zone)
 signal enter_hover(temp_id)
 signal exit_hover(temp_id)
+signal finishTurn
 #endregion

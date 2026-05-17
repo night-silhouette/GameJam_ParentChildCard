@@ -14,7 +14,7 @@ func save_token(new_token: String):
 	token = new_token
 
 	if not Global.token_save:
-		print("调试模式：Token 仅存内存")
+
 		return
 
 	var data = {
@@ -25,7 +25,7 @@ func save_token(new_token: String):
 	file.store_string(JSON.stringify(data))
 	file.close()
 
-	#print("Token saved")
+	##print("Token saved")
 
 
 # =========================
@@ -33,34 +33,36 @@ func save_token(new_token: String):
 # =========================
 func load_token():
 	if not Global.token_save:
-		print("调试模式：不从本地读取 Token")
+
 		return
 
 	if not FileAccess.file_exists(SAVE_PATH):
-		print("错误：本地根本没有这个文件")
+
 		return
 
 	var file = FileAccess.open(SAVE_PATH, FileAccess.READ)
 	if not file:
-		print("错误：无法打开文件，错误码：", FileAccess.get_open_error())
+		#print("错误：无法打开文件，错误码：", FileAccess.get_open_error())
 		return
 
 	var text = file.get_as_text()
 	file.close()
 
 	if text.is_empty():
-		print("错误：文件存在，但内容是空的！")
+		#print("错误：文件存在，但内容是空的！")
 		return
 
 	var data = JSON.parse_string(text)
 
 	if data == null:
-		print("错误：JSON 解析失败，文本内容可能损坏：", text)	
+		pass;
+		#print("错误：JSON 解析失败，文本内容可能损坏：", text)	
 	elif typeof(data) != TYPE_DICTIONARY:
-		print("错误：解析成功但不是字典，实际类型是：", typeof(data))
+		pass;
+		#print("错误：解析成功但不是字典，实际类型是：", typeof(data))
 	else:
 		token = data.get("token", "")
-		#print("成功加载 Token")
+		##print("成功加载 Token")
 
 
 # =========================
@@ -77,10 +79,10 @@ func clear_token():
 	token = ""
 
 	if not Global.token_save:
-		print("调试模式：只清除内存 Token")
+		#print("调试模式：只清除内存 Token")
 		return
 
 	if FileAccess.file_exists(SAVE_PATH):
 		DirAccess.remove_absolute(SAVE_PATH)
 
-	print("Token cleared")
+	#print("Token cleared")

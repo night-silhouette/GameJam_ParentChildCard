@@ -11,6 +11,8 @@ func _ready():
 	SignalBus.request_deploy_parent_card.connect(_request_deploy_parent_card)
 	SignalBus.request_deploy_child_card.connect(_request_deploy_child_card)
 	SignalBus.request_get_combat_cards.connect(_request_get_combat_cards)
+	SignalBus.request_end_animation.connect(_request_end_animation)
+	SignalBus.request_combat_movement.connect(_request_combat_movement)
 # -----------------
 # 具体的请求处理函数 (可以在这里封装不同结构的 action_data)
 # -----------------
@@ -31,6 +33,10 @@ func _request_get_self_cards_inhand():
 	_send_to_server(NetDef.Action.GET_SELF_CARDS, NetDef.Predicate.QUERY, null)
 func _request_get_combat_cards():
 	_send_to_server(NetDef.Action.GET_BT_INFO,NetDef.Predicate.QUERY,null);
+func _request_end_animation():
+	
+	_send_to_server(NetDef.Action.ANIMATION_END,NetDef.Predicate.NOTIFY,null);	
+	
 # 带参数的特殊请求：这就是为什么不能用字典循环绑定的原因
 func _on_deploy_card(where,card_id,card_temp_id):
 	print("[WS 发送] 部署卡牌: ", card_id)
@@ -41,14 +47,21 @@ func _on_deploy_card(where,card_id,card_temp_id):
 		"card_id": card_id,
 		"card_temp_id": card_temp_id
 	}
-	_send_to_server(NetDef.Action.DEPLOY_CARD, NetDef.Predicate.QUERY, action_data)
-	
+	_send_to_server(NetDef.Action.DEPLOY_CARD, NetDef.Predicate.QUERY, action_data)	
 func _request_judge(judge_data):
 	var action_data = {
 		"judge_data" = judge_data
 	}
 	_send_to_server(NetDef.Action.JUDGE, NetDef.Predicate.RESULT, action_data)
-
+	
+func _request_combat_movement(behavoir,self_where,opponent_where):
+	var action_data = {
+		"behavoir" = behavoir,
+		"self_where" = self_where,
+		"opponent_where" = opponent_where
+	}
+	_send_to_server(NetDef.Action.COMBAT,NetDef.Predicate.RESULT,action_data)
+	
 func _send_to_server(action_code: int, predicate: int, action_data: Variant):
 	# 调用你实际的 WebSocket 发送函数
 	BattleWs.send_action(action_code,action_data,predicate)

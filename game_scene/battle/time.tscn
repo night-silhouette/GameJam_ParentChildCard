@@ -1,0 +1,21 @@
+[gd_scene load_steps=3 format=3 uid="uid://cqmay6c2lkrk7"]
+
+[ext_resource type="Script" uid="uid://brkssc6va1rux" path="res://game_scene/battle/time.gd" id="1_ijopr"]
+[ext_resource type="LabelSettings" uid="uid://ik6wcfsli47v" path="res://game_ui/数值.tres" id="2_hojwj"]
+
+[node name="time" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("1_ijopr")
+
+[node name="Timer" type="Timer" parent="."]
+autostart = true
+ignore_time_scale = true
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 25.0
+text = "hh"
+label_settings = ExtResource("2_hojwj")
+metadata/_edit_use_anchors_ = true

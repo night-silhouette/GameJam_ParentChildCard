@@ -15,7 +15,7 @@ func _ready():
 func _handle_raw_api_data(api_name: String, method: int, code: int, data: Variant, msg: String):
 # 登录和token
 	if code != 0 :
-		print("code = ",code,NetError.get_message(code));
+		#print("code = ",code,NetError.get_message(code));
 		return
 		
 	match api_name:
@@ -39,11 +39,11 @@ func _handle_raw_api_data(api_name: String, method: int, code: int, data: Varian
 				if code == 0:
 					
 					SignalBus.token_validated_success.emit()
-					#print("token成功")
+					##print("token成功")
 				else:
 					current_token = ""
 					SignalBus.network_disconnected.emit()
-					#print("toke过期 " + NetError.error_message[code]);
+					##print("toke过期 " + NetError.error_message[code]);
 
 	# -------------------------------------
 	# 2. 用户信息相关 (/v1/user)
@@ -69,17 +69,17 @@ func _handle_raw_api_data(api_name: String, method: int, code: int, data: Varian
 		"/v1/mail/":
 			if method == HTTPClient.METHOD_POST:
 				SignalBus.send_mail_success.emit();
-				#print("send-successs")
+				##print("send-successs")
 			if method == HTTPClient.METHOD_GET:
 				SignalBus.get_mail_success.emit();
-				#print(data)
+				##print(data)
 			if method == HTTPClient.METHOD_DELETE:
 				SignalBus.delete_mail_success.emit();
-				#print("delet_success")
+				##print("delet_success")
 				
 		"/v1/mail/status/":
 			if method == HTTPClient.METHOD_GET:
-				#print(data);
+				##print(data);
 				SignalBus.get_mail_numberN_success.emit();
 		
 		"/v1/time/":
@@ -88,7 +88,8 @@ func _handle_raw_api_data(api_name: String, method: int, code: int, data: Varian
 		"/v1/debug/time/":
 			if method == HTTPClient.METHOD_GET:
 				SignalBus.get_time_debug.emit(data);
-				#print(data);
+				##print(data);
 		"/v1/debug/match_pool/":
 			if method == HTTPClient.METHOD_GET:
-				print(data);
+				pass;
+				#print(data);

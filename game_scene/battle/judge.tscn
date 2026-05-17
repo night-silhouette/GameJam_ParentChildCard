@@ -1,0 +1,42 @@
+[gd_scene load_steps=6 format=3 uid="uid://bdiipd0anxspc"]
+
+[ext_resource type="Script" uid="uid://ctj4xfih6m8dy" path="res://game_scene/battle/judge.gd" id="1_jd4vg"]
+[ext_resource type="Texture2D" uid="uid://b46shojf52tgq" path="res://素材/使用素材/战斗内/判定/1.png" id="2_k5qlo"]
+[ext_resource type="Texture2D" uid="uid://pu7jg52o37qj" path="res://素材/使用素材/战斗内/判定/3.png" id="4_ju23d"]
+[ext_resource type="Texture2D" uid="uid://dy6ly0ef45ur6" path="res://素材/使用素材/战斗内/判定/2.png" id="6_mjwwl"]
+
+[sub_resource type="ButtonGroup" id="ButtonGroup_xq164"]
+
+[node name="judge" type="HBoxContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = 665.0
+offset_bottom = 390.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.6122466, 0.62323314)
+size_flags_horizontal = 8
+script = ExtResource("1_jd4vg")
+
+[node name="剪刀" type="TextureButton" parent="."]
+layout_mode = 2
+toggle_mode = true
+button_group = SubResource("ButtonGroup_xq164")
+texture_normal = ExtResource("2_k5qlo")
+texture_pressed = ExtResource("2_k5qlo")
+stretch_mode = 3
+
+[node name="包袱" type="TextureButton" parent="."]
+layout_mode = 2
+toggle_mode = true
+button_group = SubResource("ButtonGroup_xq164")
+texture_normal = ExtResource("4_ju23d")
+texture_pressed = ExtResource("4_ju23d")
+
+[node name="石头" type="TextureButton" parent="."]
+layout_mode = 2
+toggle_mode = true
+button_group = SubResource("ButtonGroup_xq164")
+texture_normal = ExtResource("6_mjwwl")
+texture_pressed = ExtResource("6_mjwwl")

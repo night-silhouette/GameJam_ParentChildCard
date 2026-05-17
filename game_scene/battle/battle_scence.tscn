@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://c85a1ra55sbk0"]
+[gd_scene load_steps=20 format=3 uid="uid://c85a1ra55sbk0"]
 
 [ext_resource type="Script" uid="uid://dw1q80ff6ue4v" path="res://game_scene/battle/battle_scence.gd" id="1_51ed8"]
 [ext_resource type="Texture2D" uid="uid://dng874p0igvq" path="res://素材/使用素材/战斗内/转换.png" id="1_chjg7"]
@@ -7,13 +7,18 @@
 [ext_resource type="Texture2D" uid="uid://cc1wnd0t8ijw" path="res://素材/使用素材/战斗内/状态栏/滑轮.png" id="3_330rk"]
 [ext_resource type="PackedScene" uid="uid://lr0vlyrlvftn" path="res://game_scene/battle/进度条.tscn" id="4_330rk"]
 [ext_resource type="Script" uid="uid://ctldl5kprxqch" path="res://game_ui/battle/object_pool.gd" id="4_cqcp3"]
+[ext_resource type="PackedScene" uid="uid://bdiipd0anxspc" path="res://game_scene/battle/judge.tscn" id="9_kfivi"]
 [ext_resource type="Script" uid="uid://cy15d728nlkst" path="res://base_class/manage/card_manager.gd" id="9_oo4tg"]
+[ext_resource type="Script" uid="uid://nh4u5p1dmxgy" path="res://game_scene/battle/万能按钮.gd" id="10_qjvm6"]
 [ext_resource type="Script" uid="uid://bqs27ao7omrns" path="res://game_scene/battle/state_machine.gd" id="11_ile2j"]
 [ext_resource type="PackedScene" uid="uid://chfbecbd2f45c" path="res://game_scene/battle/法术放置.tscn" id="11_ro313"]
 [ext_resource type="PackedScene" uid="uid://drj8312i1aoi6" path="res://game_scene/battle/桌面.tscn" id="12_3krv3"]
 [ext_resource type="PackedScene" uid="uid://d2ji4k252p7g6" path="res://game_scene/battle/freecard.tscn" id="12_ro313"]
 [ext_resource type="PackedScene" uid="uid://cf218n73yp1t0" path="res://game_scene/battle/万能按钮.tscn" id="13_3krv3"]
 [ext_resource type="PackedScene" uid="uid://bg48e8qade5ll" path="res://game_scene/battle/hover显示.tscn" id="14_kriff"]
+[ext_resource type="PackedScene" uid="uid://cqmay6c2lkrk7" path="res://game_scene/battle/time.tscn" id="16_ijq1m"]
+[ext_resource type="PackedScene" uid="uid://1su868ejv50g" path="res://game_scene/battle/input_blocker.tscn" id="17_fpned"]
+[ext_resource type="PackedScene" uid="uid://bda2rak4wq7xg" path="res://game_scene/battle/jugde_bt.tscn" id="19_ka56j"]
 
 [node name="battle_scence" type="Node"]
 script = ExtResource("1_51ed8")
@@ -90,12 +95,20 @@ rotation = 1.5707964
 scale = Vector2(0.19120544, 0.19120544)
 metadata/_edit_lock_ = true
 
+[node name="judge" parent="." instance=ExtResource("9_kfivi")]
+offset_left = 731.0
+offset_top = 386.0
+offset_right = 1396.0
+offset_bottom = 776.0
+scale = Vector2(0.16567583, 0.16864884)
+
 [node name="万能按钮" parent="." instance=ExtResource("13_3krv3")]
-offset_left = 979.0
-offset_top = 528.00006
-offset_right = 2128.0
-offset_bottom = 1605.0
+offset_left = 1048.0
+offset_top = 561.0
+offset_right = 2197.0
+offset_bottom = 1638.0
 scale = Vector2(0.085008465, 0.085008465)
+script = ExtResource("10_qjvm6")
 
 [node name="object_pool" type="Node" parent="."]
 script = ExtResource("4_cqcp3")
@@ -103,8 +116,15 @@ script = ExtResource("4_cqcp3")
 [node name="card_manager" type="Node" parent="."]
 script = ExtResource("9_oo4tg")
 
-[node name="State_machine" type="Node" parent="."]
+[node name="State_machine" type="Node" parent="." node_paths=PackedStringArray("card_manager", "time", "all_block", "combat_block", "spell_block", "judge", "jugde_bt")]
 script = ExtResource("11_ile2j")
+card_manager = NodePath("../card_manager")
+time = NodePath("../time")
+all_block = NodePath("../全局block")
+combat_block = NodePath("../战斗牌block")
+spell_block = NodePath("../法术牌block")
+judge = NodePath("../judge")
+jugde_bt = NodePath("../jugde_bt")
 
 [node name="freecard" parent="." node_paths=PackedStringArray("card_manager") instance=ExtResource("12_ro313")]
 offset_left = -1083.0
@@ -114,9 +134,42 @@ offset_bottom = -639.0
 card_manager = NodePath("../card_manager")
 
 [node name="hover显示" parent="." node_paths=PackedStringArray("card_manager") instance=ExtResource("14_kriff")]
+visible = false
 offset_left = 124.00001
 offset_top = 162.00002
 offset_right = 124.00001
 offset_bottom = 162.00002
 scale = Vector2(0.6947887, 0.6947887)
 card_manager = NodePath("../card_manager")
+
+[node name="time" parent="." instance=ExtResource("16_ijq1m")]
+offset_left = 74.00012
+offset_top = 43.00003
+offset_right = 74.00012
+offset_bottom = 43.00003
+scale = Vector2(0.99035823, 0.99035823)
+
+[node name="全局block" parent="." instance=ExtResource("17_fpned")]
+
+[node name="战斗牌block" parent="." instance=ExtResource("17_fpned")]
+offset_left = 542.0
+offset_top = 160.0
+offset_right = 541.9999
+offset_bottom = 160.0
+scale = Vector2(0.37009183, 0.31403273)
+
+[node name="法术牌block" parent="." instance=ExtResource("17_fpned")]
+offset_left = 978.99994
+offset_top = 214.0
+offset_right = 979.0
+offset_bottom = 214.0
+scale = Vector2(0.071112126, 0.23111227)
+
+[node name="jugde_bt" parent="." instance=ExtResource("19_ka56j")]
+offset_left = 166.99998
+offset_top = 188.0
+offset_right = 167.0
+offset_bottom = 188.0
+scale = Vector2(0.13922173, 0.13922173)
+
+[connection signal="button_down" from="万能按钮" to="State_machine" method="_on_万能按钮_button_down"]

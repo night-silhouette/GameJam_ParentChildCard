@@ -26,7 +26,8 @@ enum Action {
 	CardCalc = 12,
 	Debug = 13 ,                
 	Interrupt = 14,           
-	GetDisCard = 15 ,           
+	GetDisCard = 15 , 
+	SkillCardCalc = 16         
 }
 
 const ACTION_NAME = {
@@ -45,6 +46,7 @@ const ACTION_NAME = {
 	Action.Debug:"测试",
 	Action.Interrupt:"中断选牌",
 	Action.GetDisCard:"查看弃牌堆",
+	Action.SkillCardCalc:"法术牌的计算"
 }
 
 # 辅助函数：快速获取名字打印日志
