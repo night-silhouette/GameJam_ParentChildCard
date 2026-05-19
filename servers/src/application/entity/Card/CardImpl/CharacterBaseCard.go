@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"pcc_card/application/entity/BattleData"
 	"pcc_card/application/entity/Card/CardAbstract"
-	"pcc_card/application/entity/CardMeta"
 	"pcc_card/application/entity/protocol"
 	"pcc_card/global"
 	"time"
@@ -17,6 +16,7 @@ type CharacterBaseCard struct {
 
 func (c CharacterBaseCard) Attack(TargetId int) {
 	c.Notify(BattleData.AnAttack, -1)
+
 	c.EffectAttack(TargetId, c.AtkNow)
 }
 
@@ -39,13 +39,8 @@ func (c CharacterBaseCard) Death(AttackId int) {
 func (c CharacterBaseCard) BtCry() {
 
 }
-func (c CharacterBaseCard) BuffSettle() {
-	for _, buff := range c.BuffList {
-		buff.BuffExecute(&CardMeta.CardInfo{
-			CardTempId: c.TempId,
-			OwnerId:    c.OwnerId,
-		}, c.ControlSignalMap, c.Dec)
-	}
+func (c CharacterBaseCard) RoundEnd() {
+
 }
 
 //todo

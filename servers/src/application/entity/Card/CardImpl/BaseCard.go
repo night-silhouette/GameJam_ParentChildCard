@@ -102,5 +102,4 @@ func (c *BaseCard) GetDec() *CardMeta.Decorator {
 }
 func (c *BaseCard) InitControlSignalMap() {
 	c.ControlSignalMap = make(map[string]CardMeta.ControlSignal)
-
 }

@@ -888,6 +888,35 @@ func (s *CardCalc) enter() {
 	s.HasBehavior.Store(false)
 }
 
+func (s *CardCalc) CalcBtCry() { //光环的效果
+	WinParCard := s.c.PlayerDataMap[s.SM.Winner].GetBt(BattleData.ParentCard)
+	LoserParCard := s.c.PlayerDataMap[s.SM.Loser].GetBt(BattleData.ParentCard)
+	WinChiCard := s.c.PlayerDataMap[s.SM.Winner].GetBt(BattleData.ChildCard)
+	LoserChiCard := s.c.PlayerDataMap[s.SM.Loser].GetBt(BattleData.ChildCard)
+	Extc := func(ExtcCard CardAbstract.Card) {
+		if ExtcCard != nil {
+			ExtcCard.(CardAbstract.Character).BtCry()
+		}
+	}
+	Extc(WinParCard) //按顺序执行四个多战吼
+	Extc(LoserParCard)
+	Extc(WinChiCard)
+	Extc(LoserChiCard)
+}
+
+func (s *CardCalc) Calc(data BattleData.CombatDto) {
+	opponentCardId := s.c.GetCardBt(s.SM.Loser, data.OpponentWhere).GetTempId()
+	if data.Behavior == BattleData.Attack { //执行前端传过来的行为
+		s.c.GetCardBt(s.SM.Winner, data.SelfWhere).(CardAbstract.Character).Attack(opponentCardId)
+	} else if data.Behavior == BattleData.Skill {
+		s.c.GetCardBt(s.SM.Winner, data.SelfWhere).(CardAbstract.Character).Skill(opponentCardId)
+	}
+
+	s.c.StackSettle() //执行效果堆栈
+	s.SM.SendActionById(s.SM.Id2, BattleDto.NewAction(BattleDto.CardCalc, BattleDto.Finish, ""))
+	s.SM.SendActionById(s.SM.Id1, BattleDto.NewAction(BattleDto.CardCalc, BattleDto.Finish, ""))
+}
+
 func (s *CardCalc) main() {
 CalcLoop:
 	for {
@@ -895,14 +924,8 @@ CalcLoop:
 		select {
 		case data := <-s.SM.CombatDataChan:
 			s.HasBehavior.Store(true)
-			opponentCardId := s.c.GetCardBt(s.SM.Loser, data.OpponentWhere).GetTempId()
-			if data.Behavior == BattleData.Attack {
-				s.c.GetCardBt(s.SM.Winner, data.SelfWhere).(CardAbstract.Character).Attack(opponentCardId)
-				s.c.StackSettle(BattleDto.NewAction(BattleDto.CardCalc, BattleDto.Finish, "")) //执行效果堆栈
-			} else if data.Behavior == BattleData.Skill {
-				s.c.GetCardBt(s.SM.Winner, data.SelfWhere).(CardAbstract.Character).Skill(opponentCardId)
-				s.c.StackSettle(BattleDto.NewAction(BattleDto.CardCalc, BattleDto.Finish, ""))
-			}
+			s.Calc(data)
+
 		default:
 			break CalcLoop
 		}
@@ -971,11 +994,15 @@ func (s *SkillCardCalc) process(GoCtx context.Context) {
 func (s *SkillCardCalc) main() {
 	if s.c.PlayerDataMap[s.SM.Winner].SkillCardBT != nil {
 		s.c.PlayerDataMap[s.SM.Winner].SkillCardBT.(CardAbstract.SkillCard).PlayMagic() //触发法术，然后，在法术这个函数里面，用和ctx的协议，把通知前端的action传出来
-		s.c.StackSettle(BattleDto.NewAction(BattleDto.CardCalc, BattleDto.Finish, ""))  //执行效果堆栈
+		s.c.StackSettle()                                                               //执行效果堆栈
+		s.SM.SendActionById(s.SM.Id2, BattleDto.NewAction(BattleDto.CardCalc, BattleDto.Finish, ""))
+		s.SM.SendActionById(s.SM.Id1, BattleDto.NewAction(BattleDto.CardCalc, BattleDto.Finish, ""))
 	}
 	if s.c.PlayerDataMap[s.SM.Loser].SkillCardBT != nil {
 		s.c.PlayerDataMap[s.SM.Loser].SkillCardBT.(CardAbstract.SkillCard).PlayMagic()
-		s.c.StackSettle(BattleDto.NewAction(BattleDto.CardCalc, BattleDto.Finish, "")) //执行效果堆栈
+		s.c.StackSettle() //执行效果堆栈
+		s.SM.SendActionById(s.SM.Id2, BattleDto.NewAction(BattleDto.CardCalc, BattleDto.Finish, ""))
+		s.SM.SendActionById(s.SM.Id1, BattleDto.NewAction(BattleDto.CardCalc, BattleDto.Finish, ""))
 	}
 
 	go s.SM.finish("SelectSkillCard") //暂时直接转

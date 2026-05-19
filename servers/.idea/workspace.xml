@@ -6,16 +6,13 @@
   <component name="ChangeListManager">
     <list default="true" id="760cea56-5efb-4b56-8acc-717cb714ebef" name="更改" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/application/entity/BattleData/CardDto.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/entity/BattleData/CardDto.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/application/entity/Card/CardAbstract/Character.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/entity/Card/CardAbstract/Character.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/application/entity/Card/CardAbstract/card.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/entity/Card/CardAbstract/card.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/application/entity/Card/CardImpl/BaseCard.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/entity/Card/CardImpl/BaseCard.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/application/entity/Card/CardImpl/CharacterBaseCard.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/entity/Card/CardImpl/CharacterBaseCard.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/application/entity/protocol/EffectStruct.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/entity/protocol/EffectStruct.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/application/service/battleservice/cardlist.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/service/battleservice/cardlist.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/entity/protocol/Buff.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/entity/protocol/Buff.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/entity/protocol/BuffStruct.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/entity/protocol/BuffStruct.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/application/service/battleservice/ctx.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/service/battleservice/ctx.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/application/service/battleservice/state.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/service/battleservice/state.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/开发文档/接口文档/ws0.101.markdown" beforeDir="false" afterPath="$PROJECT_DIR$/开发文档/接口文档/ws0.101.markdown" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -114,7 +111,7 @@
         <entry key="GoApplicationRunConfiguration">
           <value>
             <map>
-              <entry key="go build main.go -race -gcflags=&quot;-l&quot;" value="FAILED" />
+              <entry key="go build main.go -race -gcflags=&quot;-l&quot;" value="STOPPED" />
             </map>
           </value>
         </entry>

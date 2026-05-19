@@ -26,6 +26,10 @@ func (b *Giant) BuffExecute(info *CardMeta.CardInfo, signalMap map[string]CardMe
 
 }
 
+func (b *Giant) RoundEnd() {
+
+}
+
 func NewGiant(Stacks int) *Giant {
 	res := &Giant{}
 	res.Stacks = Stacks

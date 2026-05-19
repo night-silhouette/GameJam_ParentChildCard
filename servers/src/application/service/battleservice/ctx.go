@@ -54,11 +54,11 @@ func NewCtx(idA int, idB int, CardPool *[]CardAbstract.Card, ParentContext conte
 
 //todo
 
-func (c *Ctx) StackSettle(action BattleDto.Action) { //执行函数
-	c.resolveAllChains(action)
+func (c *Ctx) StackSettle() { //执行函数
+	c.resolveAllChains()
 }
 
-func (c *Ctx) resolveAllChains(action BattleDto.Action) {
+func (c *Ctx) resolveAllChains() {
 	for {
 		if c.NeedInterrupt.Load() {
 			<-c.InterruptChan
@@ -67,8 +67,7 @@ func (c *Ctx) resolveAllChains(action BattleDto.Action) {
 
 		if c.EffectsStack.IsEmpty() {
 			// 出口
-			c.StateMachine.SendActionById(c.StateMachine.Id2, action)
-			c.StateMachine.SendActionById(c.StateMachine.Id1, action)
+
 			break
 
 		}
@@ -191,6 +190,19 @@ type PlayerData struct {
 	ParentCardBT CardAbstract.Card
 	ChildCardBT  CardAbstract.Card
 	SkillCardBT  CardAbstract.Card
+}
+
+func (c *PlayerData) GetBt(where BattleData.Where) CardAbstract.Card {
+	switch where {
+	case BattleData.SkillCard:
+		return c.SkillCardBT
+	case BattleData.ChildCard:
+		return c.ChildCardBT
+	case BattleData.ParentCard:
+		return c.ParentCardBT
+	default:
+		return nil
+	}
 }
 
 func NewPlayerData(ID int) *PlayerData {
