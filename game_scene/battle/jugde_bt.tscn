@@ -1,48 +1,31 @@
-[gd_scene load_steps=6 format=3 uid="uid://bda2rak4wq7xg"]
+[gd_scene load_steps=5 format=3 uid="uid://bda2rak4wq7xg"]
 
 [ext_resource type="Texture2D" uid="uid://b46shojf52tgq" path="res://素材/使用素材/战斗内/判定/1.png" id="1_2yvta"]
 [ext_resource type="Script" uid="uid://0k2gpfeb1uls" path="res://game_scene/battle/jugde_bt.gd" id="1_bgyew"]
 [ext_resource type="Texture2D" uid="uid://dy6ly0ef45ur6" path="res://素材/使用素材/战斗内/判定/2.png" id="2_bgyew"]
 [ext_resource type="Texture2D" uid="uid://pu7jg52o37qj" path="res://素材/使用素材/战斗内/判定/3.png" id="3_laxko"]
 
-[sub_resource type="LabelSettings" id="LabelSettings_laxko"]
-font_size = 64
-font_color = Color(1, 0.67058825, 1, 1)
-
 [node name="jugde_bt" type="Control"]
 layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+anchors_preset = 0
 script = ExtResource("1_bgyew")
 texture_state_0 = ExtResource("1_2yvta")
 texture_state_1 = ExtResource("3_laxko")
 texture_state_2 = ExtResource("2_bgyew")
 
 [node name="TextureRect" type="TextureRect" parent="."]
-layout_mode = 0
-offset_left = -2.0
-offset_top = 272.0
-offset_right = 601.0
-offset_bottom = 1310.0
+layout_mode = 1
+offset_left = 8.0
+offset_top = 233.0
+offset_right = 611.0
+offset_bottom = 1271.0
 texture = ExtResource("1_2yvta")
 
 [node name="TextureRect2" type="TextureRect" parent="."]
-layout_mode = 0
-offset_left = 1452.0
-offset_top = 213.0
-offset_right = 2055.0
-offset_bottom = 1251.0
+layout_mode = 1
+offset_left = 1378.0
+offset_top = -9.0
+offset_right = 1981.0
+offset_bottom = 1029.0
 rotation = 3.1415927
 texture = ExtResource("2_bgyew")
-
-[node name="Label" type="Label" parent="."]
-layout_mode = 0
-offset_left = -452.0
-offset_top = -570.0
-offset_right = -272.0
-offset_bottom = -506.0
-scale = Vector2(19.060982, 19.060982)
-label_settings = SubResource("LabelSettings_laxko")

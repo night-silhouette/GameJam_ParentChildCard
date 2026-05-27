@@ -9,7 +9,7 @@ var countdown_time : int = 10
 @onready var timer = $Timer
 @onready var label = $Label
 
-func _ready():
+func _ready():	
 	# 确保 Timer 初始不要自动运行，完全由我们用代码精确控制
 	timer.wait_time = 1.0
 	timer.one_shot = false

@@ -63,6 +63,7 @@ func _exit_state(old_state: GameState) -> void:
 		
 		GameState.USE_COMBAT_CARD:
 			spell_block.allow_input()
+			combat_block.allow_input()
 			
 		GameState.JUDGEMENT:
 			Global.fake_death(judge)
@@ -81,6 +82,8 @@ func _enter_state(new_state: GameState) -> void:
 			print("进入魔法卡使用状态")
 		GameState.USE_COMBAT_CARD:
 			spell_block.block_input()
+			if(is_win):
+				combat_block.block_input();
 			SignalBus.request_combat_finish.emit();
 			print("进入战斗卡使用状态")
 		GameState.JUDGEMENT:
@@ -95,16 +98,16 @@ func _on_match_success(t) -> void:
 	change_state(GameState.INIT_STATE)
 	
 func _on_magic_card_start(t) -> void:
-	time.countdown_time = TimeOffset.get_remaining_seconds(t);
+	time.start_countdown(TimeOffset.get_remaining_seconds(t));
 	change_state(GameState.USE_MAGIC_CARD)
 	
 func _on_combat_start_success(t,dis_win) -> void:
-	time.countdown_time = TimeOffset.get_remaining_seconds(t);
+	time.start_countdown(TimeOffset.get_remaining_seconds(t));
 	is_win = int(dis_win);
 	change_state(GameState.USE_COMBAT_CARD)
 	
 func _judge_start(t) -> void:
-	time.countdown_time = TimeOffset.get_remaining_seconds(t);
+	time.start_countdown(TimeOffset.get_remaining_seconds(t));
 	change_state(GameState.JUDGEMENT) 
 
 func _on_万能按钮_button_down() -> void:

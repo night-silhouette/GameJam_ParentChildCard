@@ -49,7 +49,8 @@ func _dispatch(action_code: int, action_data: Variant, predicate: int):
 					SignalBus.enemy_card_deployed.emit(card_id, pos)
 			if predicate == NetDef.Predicate.QUERY:
 				var t = action_data.state_wait_time;
-				var where = action_data.where;
+				var where = int(action_data.where);
+				print(where)
 				match where:
 					2:
 						SignalBus.magic_card_start.emit(t)
@@ -75,7 +76,7 @@ func _dispatch(action_code: int, action_data: Variant, predicate: int):
 				SignalBus.judge_put.emit()
 		NetDef.Action.COMBAT:
 			var t = action_data.state_wait_time;
-			if predicate == NetDef.Predicate.QUERY:
+			if predicate == NetDef.Predicate.QUERY:	
 				SignalBus.combat_start_success.emit(t,1);
 			if predicate == NetDef.Predicate.NOTIFY:
 				SignalBus.combat_start_success.emit(t,0);

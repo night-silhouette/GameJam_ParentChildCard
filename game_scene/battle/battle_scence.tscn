@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://c85a1ra55sbk0"]
+[gd_scene load_steps=22 format=3 uid="uid://c85a1ra55sbk0"]
 
 [ext_resource type="Script" uid="uid://dw1q80ff6ue4v" path="res://game_scene/battle/battle_scence.gd" id="1_51ed8"]
 [ext_resource type="Texture2D" uid="uid://dng874p0igvq" path="res://素材/使用素材/战斗内/转换.png" id="1_chjg7"]
@@ -19,6 +19,11 @@
 [ext_resource type="PackedScene" uid="uid://cqmay6c2lkrk7" path="res://game_scene/battle/time.tscn" id="16_ijq1m"]
 [ext_resource type="PackedScene" uid="uid://1su868ejv50g" path="res://game_scene/battle/input_blocker.tscn" id="17_fpned"]
 [ext_resource type="PackedScene" uid="uid://bda2rak4wq7xg" path="res://game_scene/battle/jugde_bt.tscn" id="19_ka56j"]
+[ext_resource type="FontFile" uid="uid://bj1pdtvpfop4a" path="res://素材/使用素材/YaoSuiXinShouXieTi-2.ttf" id="20_xnxs8"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_0v75n"]
+font = ExtResource("20_xnxs8")
+font_size = 48
 
 [node name="battle_scence" type="Node"]
 script = ExtResource("1_51ed8")
@@ -113,8 +118,9 @@ script = ExtResource("10_qjvm6")
 [node name="object_pool" type="Node" parent="."]
 script = ExtResource("4_cqcp3")
 
-[node name="card_manager" type="Node" parent="."]
+[node name="card_manager" type="Node" parent="." node_paths=PackedStringArray("state_machine")]
 script = ExtResource("9_oo4tg")
+state_machine = NodePath("../State_machine")
 
 [node name="State_machine" type="Node" parent="." node_paths=PackedStringArray("card_manager", "time", "all_block", "combat_block", "spell_block", "judge", "jugde_bt")]
 script = ExtResource("11_ile2j")
@@ -127,10 +133,10 @@ judge = NodePath("../judge")
 jugde_bt = NodePath("../jugde_bt")
 
 [node name="freecard" parent="." node_paths=PackedStringArray("card_manager") instance=ExtResource("12_ro313")]
-offset_left = -1083.0
-offset_top = -639.0
-offset_right = -1083.0
-offset_bottom = -639.0
+offset_left = 1232.0
+offset_top = 121.0
+offset_right = 1232.0
+offset_bottom = 121.0
 card_manager = NodePath("../card_manager")
 
 [node name="hover显示" parent="." node_paths=PackedStringArray("card_manager") instance=ExtResource("14_kriff")]
@@ -150,6 +156,10 @@ offset_bottom = 43.00003
 scale = Vector2(0.99035823, 0.99035823)
 
 [node name="全局block" parent="." instance=ExtResource("17_fpned")]
+offset_left = -19.0
+offset_top = 29.0
+offset_right = -19.0
+offset_bottom = 29.0
 
 [node name="战斗牌block" parent="." instance=ExtResource("17_fpned")]
 offset_left = 542.0
@@ -166,10 +176,20 @@ offset_bottom = 214.0
 scale = Vector2(0.071112126, 0.23111227)
 
 [node name="jugde_bt" parent="." instance=ExtResource("19_ka56j")]
-offset_left = 166.99998
-offset_top = 188.0
-offset_right = 167.0
-offset_bottom = 188.0
+offset_left = 190.0
+offset_top = 194.99998
+offset_right = 190.0
+offset_bottom = 195.0
 scale = Vector2(0.13922173, 0.13922173)
+
+[node name="Label" type="Label" parent="."]
+visible = false
+offset_left = 329.0
+offset_top = 130.0
+offset_right = 407.0
+offset_bottom = 179.0
+scale = Vector2(5.8344803, 5.8344803)
+text = "wini"
+label_settings = SubResource("LabelSettings_0v75n")
 
 [connection signal="button_down" from="万能按钮" to="State_machine" method="_on_万能按钮_button_down"]

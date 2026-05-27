@@ -75,7 +75,6 @@ func fake_death(target_node: Node) -> void:
 	# 4. 强行关闭碰撞体（防止假死物体还能挡住网络弹道或卡牌拖拽判定）
 	_set_all_collisions(target_node, false)
 	
-	print("【假死系统】节点已被成功断气: ", target_node.name)
 
 
 ## 接口 2：把节点从假死中【救活】
@@ -97,7 +96,6 @@ func revive(target_node: Node) -> void:
 	# 4. 最后一步：接回逻辑心跳。强制恢复和父节点一样的处理模式（通常是 INHERIT 恢复正常）
 	target_node.process_mode = Node.PROCESS_MODE_INHERIT
 	
-	print("【假死系统】精神焕发！节点已被救活: ", target_node.name)
 
 
 ## 辅助函数：递归开启/关闭节点下所有的物理碰撞体（如果有的话）
