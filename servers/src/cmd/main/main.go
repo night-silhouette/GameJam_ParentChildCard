@@ -58,6 +58,5 @@ func Battle(DB *sql.DB, RD *redis.Client) {
 	battleservice.InitBattleContainer()
 	battleservice.InitCardList(BattleService)
 	route.RegisterBattleWS(BattleHandler)
-	route.RegisterBagStuffRoutes(BattleHandler)
 
 }

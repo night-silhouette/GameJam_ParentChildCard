@@ -33,10 +33,25 @@ type User_handler interface {
 	ChangeFriendshipsRequest() gin.HandlerFunc
 	TimeSync() gin.HandlerFunc
 	TimeDebug() gin.HandlerFunc
+	GoldGet() gin.HandlerFunc
+
+	DebugGiveCardByCardId() gin.HandlerFunc
+	StarterPack() gin.HandlerFunc
+	BagGet() gin.HandlerFunc
 }
 
 type User_handler_impl struct {
 	s UserService.User_service
+}
+
+func (u *User_handler_impl) GoldGet() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		res, err := u.s.GetUserGold(c.Request.Context(), c.GetInt("id"))
+		if err != global.ResponseSuccess {
+			response.Fail(c, err)
+		}
+		response.Success(c, res)
+	}
 }
 
 func (u *User_handler_impl) Set_service(svc service.Service) {
@@ -230,5 +245,47 @@ func (u *User_handler_impl) UserVagueSearch() gin.HandlerFunc {
 			return
 		}
 		response.Success(c, uList)
+	}
+}
+func (u *User_handler_impl) BagGet() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		res, err := u.s.GetBags(c.Request.Context(), c.GetInt("id"))
+		if err != global.ResponseSuccess {
+			response.Fail(c, err)
+			return
+		}
+		response.Success(c, res)
+	}
+}
+
+func (u *User_handler_impl) StarterPack() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		err := u.s.GiveInitCardBag(c.Request.Context(), c.GetInt("id"))
+		if err != global.ResponseSuccess {
+			response.Fail(c, err)
+			return
+		}
+		response.Success(c, "给了")
+	}
+}
+
+type DebugGiveCardByCardIdDto struct {
+	CardId int `json:"card_id"`
+}
+
+func (u *User_handler_impl) DebugGiveCardByCardId() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var req DebugGiveCardByCardIdDto
+		UserId := c.GetInt("id")
+		if err := c.ShouldBindQuery(&req); err != nil {
+			response.Fail(c, global.ResponseInvalidReqParams)
+			return
+		}
+		err := u.s.GiveCardByCardId(c.Request.Context(), UserId, req.CardId)
+		if err != global.ResponseSuccess {
+			response.Fail(c, err)
+			return
+		}
+		response.Success(c, "增加成功")
 	}
 }

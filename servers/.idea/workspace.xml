@@ -6,13 +6,31 @@
   <component name="ChangeListManager">
     <list default="true" id="760cea56-5efb-4b56-8acc-717cb714ebef" name="更改" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/entity/Card/CardImpl/1003.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/entity/Card/CardImpl/1004.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/entity/Card/CardImpl/1005.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/entity/Card/CardImpl/1006.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/entity/Card/CardImpl/1007.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/entity/Card/CardImpl/1008.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/entity/Card/CardImpl/2001.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/entity/Card/CardImpl/2002.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/entity/Card/CardImpl/2003.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/entity/Card/CardImpl/2004.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/entity/Card/CardImpl/2005.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/entity/Card/CardImpl/3001.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/entity/Card/CardImpl/3002.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/entity/Card/CardImpl/3003.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/entity/Card/CardImpl/3004.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/entity/Card/CardImpl/3005.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/service/UserService/user_service.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/service/UserService/user_service.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/application/service/battleservice/BattleService.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/service/battleservice/BattleService.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/application/service/battleservice/ctx.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/service/battleservice/ctx.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/cmd/main/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/cmd/main/main.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/global/StatusCode.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/global/StatusCode.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/global/setting.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/global/setting.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/infra/repo/battlerepo/BattleRepo.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/infra/repo/battlerepo/BattleRepo.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/infra/repo/userrepo/user_repo.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/infra/repo/userrepo/user_repo.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/presentation/handler/battlehandler/BattleHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/presentation/handler/battlehandler/BattleHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/presentation/handler/userhandler/userhandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/presentation/handler/userhandler/userhandler.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/presentation/route/route.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/presentation/route/route.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />

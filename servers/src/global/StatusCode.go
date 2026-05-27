@@ -21,6 +21,7 @@ const (
 	ResponseUnknownError
 	ResponseTokenHasUpdate
 	ResponseBagsUnknownError
+	ResponseGoldNotEnough
 
 	BattleInvalidTiming
 	BattleEffectStackOverflow
