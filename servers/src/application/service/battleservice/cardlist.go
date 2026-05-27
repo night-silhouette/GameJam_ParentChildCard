@@ -83,15 +83,13 @@ func (c *CardList) init(s BattleService) {
 		e.SetInfo(info)
 		e.SetStateCodeChan(make(chan protocol.Effect))
 
-		if val, ok := info["hp"]; ok && val != nil {
-			e.SetHpNow(info["hp"].(float64))
+		if val, ok := info["initHp"]; ok && val != nil {
+			e.SetHpNow(info["initHp"].(float64))
 		}
 		if val, ok := info["damage"]; ok && val != nil {
 			e.SetAtkNow(info["damage"].(float64))
 		}
-		if e.GetID() == 15 {
-			e.SetHpNow(3)
-		}
+		
 		e.SetDec(CardMeta.NewDecorator())
 		e.InitControlSignalMap()
 	}
