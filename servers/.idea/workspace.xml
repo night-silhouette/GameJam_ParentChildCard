@@ -5,8 +5,56 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="760cea56-5efb-4b56-8acc-717cb714ebef" name="更改" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/entity/Card/CardImpl/00.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/entity/Card/CardImpl/01.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/entity/Card/CardImpl/02.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/entity/Card/CardImpl/03.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/entity/Card/CardImpl/04.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/entity/Card/CardImpl/05.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/entity/Card/CardImpl/06.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/entity/Card/CardImpl/07.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/entity/Card/CardImpl/08.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/entity/Card/CardImpl/09.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/entity/Card/CardImpl/10.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/entity/Card/CardImpl/11.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/entity/Card/CardImpl/12.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/entity/Card/CardImpl/13.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/entity/Card/CardImpl/14.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/entity/Card/CardImpl/15.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/entity/Card/CardImpl/16.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/entity/Card/CardImpl/17.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/entity/Card/CardImpl/18.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/entity/Card/CardImpl/19.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/entity/Card/CardImpl/20.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/entity/Card/CardImpl/21.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/entity/Card/CardImpl/22.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/entity/Card/CardImpl/23.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/entity/Card/CardImpl/24.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/entity/Card/CardImpl/25.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/entity/Card/CardImpl/26.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/entity/Card/CardImpl/27.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/entity/Card/CardImpl/28.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/entity/Card/CardImpl/29.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/entity/Card/CardImpl/30.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/entity/Card/CardImpl/31.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/entity/Card/CardImpl/32.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/entity/Card/CardImpl/33.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/entity/Card/CardImpl/34.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/entity/Card/CardImpl/35.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/entity/Card/CardImpl/36.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/entity/Card/CardImpl/37.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/entity/Card/CardImpl/38.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/entity/Card/CardImpl/39.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/entity/Card/CardImpl/40.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/entity/Card/CardImpl/41.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/entity/Card/CardImpl/42.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/entity/Card/CardImpl/43.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/entity/Card/CardImpl/44.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/service/battleservice/cardlist.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/service/battleservice/cardlist.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/application/service/battleservice/ctx.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/service/battleservice/ctx.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/infra/repo/battlerepo/BattleRepo.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/infra/repo/battlerepo/BattleRepo.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/service/battleservice/state.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/service/battleservice/state.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/global/setting.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/global/setting.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

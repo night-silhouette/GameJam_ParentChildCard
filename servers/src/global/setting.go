@@ -12,7 +12,7 @@ var Isdebug string = "debug"
 
 // 游戏参数
 const (
-	InitCardNum = 11 //s
+	InitCardNum = 4
 
 	BattleWaitTime      = 15 //s
 	SelectCharacterTime = 10 //s

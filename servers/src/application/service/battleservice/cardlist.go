@@ -14,70 +14,60 @@ type CardList struct {
 
 var CardListImpl CardList
 
+func (Cd *CardList) GetCardImpl(CardId int) CardAbstract.Card {
+	for _, el := range CardListImpl.data {
+		if el.GetID() == CardId {
+			res := el.Clone()
+			return res
+		}
+	}
+	return nil
+}
+
 // InitCardList 对外接口
 func InitCardList(s BattleService) {
 	CardListImpl = CardList{}
 	CardListImpl.init(s)
+
 }
 
-func (c *CardList) Copy() *[]CardAbstract.Card {
+func (Cd *CardList) Copy() *[]CardAbstract.Card {
 	var newList []CardAbstract.Card
-	newList = make([]CardAbstract.Card, len(c.data))
-	for i := 0; i < len(c.data); i++ {
-		newList[i] = c.data[i].Clone()
+	newList = make([]CardAbstract.Card, len(Cd.data))
+	for i := 0; i < len(Cd.data); i++ {
+		newList[i] = Cd.data[i].Clone()
 	}
 	return &newList
 }
 
-func (c *CardList) init(s BattleService) {
-	c.data = []CardAbstract.Card{
-		CardImpl.NewCard00(),
-		CardImpl.NewCard01(),
-		CardImpl.NewCard02(),
-		CardImpl.NewCard03(),
-		CardImpl.NewCard04(),
-		CardImpl.NewCard05(),
-		CardImpl.NewCard06(),
-		CardImpl.NewCard07(),
-		CardImpl.NewCard08(),
-		CardImpl.NewCard09(),
-		CardImpl.NewCard10(),
-		CardImpl.NewCard11(),
-		CardImpl.NewCard12(),
-		CardImpl.NewCard13(),
-		CardImpl.NewCard14(),
-		CardImpl.NewCard15(),
-		CardImpl.NewCard16(),
-		CardImpl.NewCard17(),
-		CardImpl.NewCard18(),
-		CardImpl.NewCard19(),
-		CardImpl.NewCard20(),
-		CardImpl.NewCard21(),
-		CardImpl.NewCard22(),
-		CardImpl.NewCard23(),
-		CardImpl.NewCard24(),
-		CardImpl.NewCard25(),
-		CardImpl.NewCard26(),
-		CardImpl.NewCard27(),
-		CardImpl.NewCard28(),
-		CardImpl.NewCard29(),
-		CardImpl.NewCard30(),
-		CardImpl.NewCard31(),
-		CardImpl.NewCard32(),
-		CardImpl.NewCard33(),
-		CardImpl.NewCard34(),
-		CardImpl.NewCard35(),
-		CardImpl.NewCard36(),
-		CardImpl.NewCard37(),
-		CardImpl.NewCard38(),
-		CardImpl.NewCard39(),
-		CardImpl.NewCard40(),
-		CardImpl.NewCard41(),
-		CardImpl.NewCard42(),
-		CardImpl.NewCard43(),
-		CardImpl.NewCard44(),
+func (Cd *CardList) init(s BattleService) {
+	Cd.data = []CardAbstract.Card{
+		CardImpl.NewCard0000(),
+		CardImpl.NewCard0001(),
+		CardImpl.NewCard0002(),
+		CardImpl.NewCard0003(),
+		CardImpl.NewCard0004(),
+		CardImpl.NewCard0005(),
+		CardImpl.NewCard1001(),
+		CardImpl.NewCard1002(),
+		CardImpl.NewCard1003(),
+		CardImpl.NewCard1004(),
+		CardImpl.NewCard1005(),
+		CardImpl.NewCard1006(),
+		CardImpl.NewCard1007(),
+		CardImpl.NewCard1008(),
+		CardImpl.NewCard2001(),
+		CardImpl.NewCard2002(),
+		CardImpl.NewCard2003(),
+		CardImpl.NewCard2004(),
+		CardImpl.NewCard2005(),
+		CardImpl.NewCard3001(),
+		CardImpl.NewCard3002(),
+		CardImpl.NewCard3003(),
+		CardImpl.NewCard3004(),
+		CardImpl.NewCard3005(),
 	}
-	for _, e := range c.data {
+	for _, e := range Cd.data {
 		e.InitBuffList()
 		info := s.GetCardInfoByID(context.Background(), e.GetID())
 		e.SetInfo(info)
@@ -89,7 +79,7 @@ func (c *CardList) init(s BattleService) {
 		if val, ok := info["damage"]; ok && val != nil {
 			e.SetAtkNow(info["damage"].(float64))
 		}
-		
+
 		e.SetDec(CardMeta.NewDecorator())
 		e.InitControlSignalMap()
 	}

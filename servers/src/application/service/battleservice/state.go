@@ -316,6 +316,7 @@ type ShuffleDeal struct {
 
 func (s *ShuffleDeal) enter() {
 	for {
+
 		OK := s.RandomCard()
 		if OK {
 			break
@@ -432,9 +433,9 @@ func (s *ShuffleDeal) RandomCard() bool {
 			}
 		}
 	}
-	if CharacterNumA <= 3 || CharacterNumB <= 3 {
-		return false
-	}
+	//if CharacterNumA <= 1 || CharacterNumB <= 1 {
+	//	return false
+	//}
 	return true
 }
 
