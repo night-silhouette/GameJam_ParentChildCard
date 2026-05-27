@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bbx88mp823y51"
-path="res://.godot/imported/5.png-60b3477e5c334447962b7e3a12af9c32.ctex"
+path="res://.godot/imported/5.png-b5c39adec04a4fbbcf27754656fca99b.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://素材/使用素材/战斗内/商店/商人/吐舌头/5.png"
-dest_files=["res://.godot/imported/5.png-60b3477e5c334447962b7e3a12af9c32.ctex"]
+source_file="res://素材/使用素材/战斗内/桌面/子牌商店与子牌状态显示/商人/吐舌头/5.png"
+dest_files=["res://.godot/imported/5.png-b5c39adec04a4fbbcf27754656fca99b.ctex"]
 
 [params]
 

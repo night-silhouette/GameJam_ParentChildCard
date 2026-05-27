@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="CardResource" load_steps=3 format=3 uid="uid://jb0t5dl14y48"]
+
+[ext_resource type="Texture2D" uid="uid://dje375wa2ans7" path="res://素材/使用素材/卡牌/基础卡牌重置素材/卡牌.png" id="1_3t7oj"]
+[ext_resource type="Script" uid="uid://cik6i25pfmxeg" path="res://base_class/card/card_data.gd" id="2_6n1wh"]
+
+[resource]
+script = ExtResource("2_6n1wh")
+card_texture = ExtResource("1_3t7oj")
+name = "精灵"
+id = 1
+value = 10
+damage = 2
+initial_health = 4
+max_health = 4
+skill_charge = 2
+is_combat_card = true
+skill_description = "主动：指定敌方的某出战卡造成1真实伤害并回复1滴血"

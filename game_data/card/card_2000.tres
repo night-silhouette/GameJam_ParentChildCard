@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="CardResource" load_steps=3 format=3 uid="uid://d27bhac7bf35h"]
+
+[ext_resource type="Texture2D" uid="uid://dje375wa2ans7" path="res://素材/使用素材/卡牌/基础卡牌重置素材/卡牌.png" id="1_63r5y"]
+[ext_resource type="Script" uid="uid://cik6i25pfmxeg" path="res://base_class/card/card_data.gd" id="2_f3gin"]
+
+[resource]
+script = ExtResource("2_f3gin")
+card_texture = ExtResource("1_63r5y")
+name = "苦修"
+id = 2000
+value = 120
+damage = 2
+initial_health = 7
+max_health = 10
+skill_charge = 2
+is_combat_card = true
+is_sub_card = true
+skill_description = "主动: 回复3点生命（不突破上限），并且造成本局游戏此卡回复过生命数值的50%的伤害（向下取整）"
+notes = "召唤条件:  己方收到单次收到大于等于血量6的伤害"
+sub_card_trigger_effect = "改变当前天气为沙暴"

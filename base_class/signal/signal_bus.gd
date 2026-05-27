@@ -25,6 +25,10 @@ signal request_register_user(name: String, password: String)
 signal request_update_user(id: int, name: String, password: String)
 signal request_delete_user_self()
 signal request_delete_user_by_id(id: int)
+signal request_bag_card
+signal request_card_random
+signal request_get_self_gold
+signal request_debug_addcard
 
 # 邮件
 signal request_send_mail(id: int, txt: String)
@@ -32,6 +36,7 @@ signal request_get_mail_numberN()
 signal request_get_mail(page: int)
 signal request_delete_mail(data: Array[int])
 signal request_post_friend_mail()
+
 
 # 时间
 signal request_get_time(time: int)
@@ -50,6 +55,10 @@ signal user_info_fetched(id: int, user_name: String, is_admin: bool)
 
 signal user_registered_success()
 signal user_updated_success()
+signal get_card_random(card_list)
+signal get_card_bag(card_list)
+signal get_self_gold(gold)
+
 
 # 邮件
 signal send_mail_success()

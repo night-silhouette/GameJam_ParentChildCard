@@ -4,3 +4,7 @@
 
 [node name="Node" type="Node"]
 script = ExtResource("1_xx7ij")
+csv_path = "uid://d1hno4bjhoxcs"
+output_dir = "res://game_data/card"
+texture_dir = "res://素材/使用素材/卡牌"
+default_texture_path = "uid://dje375wa2ans7"

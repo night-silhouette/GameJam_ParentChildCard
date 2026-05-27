@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="CardResource" load_steps=3 format=3 uid="uid://bo1xdowbbnss5"]
+
+[ext_resource type="Texture2D" uid="uid://dje375wa2ans7" path="res://素材/使用素材/卡牌/基础卡牌重置素材/卡牌.png" id="1_3mbvb"]
+[ext_resource type="Script" uid="uid://cik6i25pfmxeg" path="res://base_class/card/card_data.gd" id="2_xo3t5"]
+
+[resource]
+script = ExtResource("2_xo3t5")
+card_texture = ExtResource("1_3mbvb")
+name = "钩索"
+id = 3004
+value = 90
+skill_card_use_num = 1
+is_sub_card = true
+skill_description = "使用效果:指定敌方手牌中的战斗牌强制上场,给予这张牌5层禁锢"
+notes = "召唤条件: 连续7回合不上下牌; 禁锢:不能被卸下，除非死亡"
+sub_card_trigger_effect = "己方的出战牌受到4层禁锢"

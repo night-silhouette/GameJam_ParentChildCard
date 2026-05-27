@@ -1,0 +1,61 @@
+[gd_scene load_steps=6 format=3 uid="uid://ccxtlwqyr1co8"]
+
+[ext_resource type="Script" uid="uid://o22ntqwsm4oj" path="res://game_ui/battle/牌库/牌库.gd" id="1_f2m5i"]
+[ext_resource type="Texture2D" uid="uid://dgyqirah3ilvl" path="res://素材/使用素材/战斗内/桌面/卡库栏底版 .png" id="2_7kmlh"]
+[ext_resource type="Script" uid="uid://dt0fvtr10talu" path="res://game_ui/battle/牌库/切换.gd" id="3_1ls02"]
+[ext_resource type="PackedScene" uid="uid://dpfvbx3mhmx8g" path="res://game_ui/battle/牌库/右切换.tscn" id="4_ky64r"]
+[ext_resource type="PackedScene" uid="uid://crktwrkpkruf6" path="res://game_ui/battle/牌库/左切换.tscn" id="5_55y6r"]
+
+[node name="敌方牌库" type="Control" node_paths=PackedStringArray("card_vector")]
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("1_f2m5i")
+card_vector = NodePath("card_vector")
+
+[node name="牌库底板" type="TextureRect" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+texture = ExtResource("2_7kmlh")
+metadata/_edit_lock_ = true
+
+[node name="切换" type="Control" parent="."]
+anchors_preset = 0
+offset_left = 1322.0
+offset_top = 47.0
+offset_right = 1362.0
+offset_bottom = 87.0
+rotation = 1.5707964
+script = ExtResource("3_1ls02")
+
+[node name="右切换" parent="切换" instance=ExtResource("4_ky64r")]
+layout_mode = 0
+offset_left = 680.0
+offset_top = 792.0
+offset_right = 1074.0
+offset_bottom = 1413.0
+scale = Vector2(0.5, 0.5)
+metadata/_edit_lock_ = true
+
+[node name="左切换" parent="切换" instance=ExtResource("5_55y6r")]
+layout_mode = 0
+offset_left = 184.0
+offset_top = 800.0
+offset_right = 578.0
+offset_bottom = 1421.0
+scale = Vector2(0.5, 0.5)
+metadata/_edit_lock_ = true
+
+[node name="card_vector" type="GridContainer" parent="."]
+layout_mode = 0
+offset_left = 540.0
+offset_top = 61.0
+offset_right = 2629.3506
+offset_bottom = 1501.4711
+scale = Vector2(1.407666, 0.71468335)
+theme_override_constants/h_separation = 24
+theme_override_constants/v_separation = 108
+columns = 5
+
+[connection signal="button_down" from="切换/右切换" to="." method="_on_右切换_button_down"]
+[connection signal="button_down" from="切换/左切换" to="." method="_on_左切换_button_down"]

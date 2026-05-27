@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dluiys5xpk5de"
-path="res://.godot/imported/4.png-17b8471b22e5c8d2bcce11dd3fdc12b1.ctex"
+path="res://.godot/imported/4.png-b192e5c1dae7644bd3bcf062f4ca46ea.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://素材/使用素材/战斗内/商店/商人/零件/4.png"
-dest_files=["res://.godot/imported/4.png-17b8471b22e5c8d2bcce11dd3fdc12b1.ctex"]
+source_file="res://素材/使用素材/战斗内/桌面/子牌商店与子牌状态显示/商人/零件/4.png"
+dest_files=["res://.godot/imported/4.png-b192e5c1dae7644bd3bcf062f4ca46ea.ctex"]
 
 [params]
 

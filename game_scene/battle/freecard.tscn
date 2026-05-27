@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://d2ji4k252p7g6"]
 
-[ext_resource type="PackedScene" uid="uid://diwsy4ebydgfx" path="res://base_class/card/card.tscn" id="1_ltpsv"]
+[ext_resource type="PackedScene" uid="uid://diwsy4ebydgfx" path="res://base_class/card/battle_card.tscn" id="1_ltpsv"]
 [ext_resource type="Script" uid="uid://cilc21j3xhiem" path="res://game_scene/battle/freecard.gd" id="1_uqdmw"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_uqdmw"]

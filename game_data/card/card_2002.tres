@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="CardResource" load_steps=3 format=3 uid="uid://nwdmwkehh04m"]
+
+[ext_resource type="Texture2D" uid="uid://dje375wa2ans7" path="res://素材/使用素材/卡牌/基础卡牌重置素材/卡牌.png" id="1_uqdse"]
+[ext_resource type="Script" uid="uid://cik6i25pfmxeg" path="res://base_class/card/card_data.gd" id="2_fqfvw"]
+
+[resource]
+script = ExtResource("2_fqfvw")
+card_texture = ExtResource("1_uqdse")
+name = "拳击手"
+id = 2002
+value = 120
+damage = 2
+initial_health = 6
+max_health = 6
+skill_charge = 2
+is_combat_card = true
+is_sub_card = true
+skill_description = "主动：获得一层蓄能，如果蓄能达到3层，技能不再获得蓄能而是造成20点伤害。达到3层之前每回合都要获得蓄能，否则蓄能层数会清零"
+notes = "召唤条件：连续回合判定失败3回合"
+sub_card_trigger_effect = "获得一点行动点"

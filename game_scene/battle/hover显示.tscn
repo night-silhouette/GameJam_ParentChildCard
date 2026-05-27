@@ -4,7 +4,7 @@
 [ext_resource type="Script" uid="uid://dtjh32kuq2vf1" path="res://game_scene/battle/hover显示.gd" id="1_mevhq"]
 [ext_resource type="LabelSettings" uid="uid://ik6wcfsli47v" path="res://game_ui/数值.tres" id="5_membc"]
 [ext_resource type="FontFile" uid="uid://bj1pdtvpfop4a" path="res://素材/使用素材/YaoSuiXinShouXieTi-2.ttf" id="6_0acmd"]
-[ext_resource type="PackedScene" uid="uid://diwsy4ebydgfx" path="res://base_class/card/card.tscn" id="7_63lvv"]
+[ext_resource type="PackedScene" uid="uid://diwsy4ebydgfx" path="res://base_class/card/battle_card.tscn" id="7_63lvv"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_udkdb"]
 font = ExtResource("6_0acmd")

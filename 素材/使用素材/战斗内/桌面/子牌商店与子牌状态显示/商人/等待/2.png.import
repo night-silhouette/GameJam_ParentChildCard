@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b3scc2e1qij5a"
-path="res://.godot/imported/2.png-8e248d55839d7e44d208808edfbff8c1.ctex"
+path="res://.godot/imported/2.png-bb742c0ba79fd7e4912c10864896b49b.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://素材/使用素材/战斗内/商店/商人/等待/2.png"
-dest_files=["res://.godot/imported/2.png-8e248d55839d7e44d208808edfbff8c1.ctex"]
+source_file="res://素材/使用素材/战斗内/桌面/子牌商店与子牌状态显示/商人/等待/2.png"
+dest_files=["res://.godot/imported/2.png-bb742c0ba79fd7e4912c10864896b49b.ctex"]
 
 [params]
 

@@ -1,0 +1,23 @@
+[gd_scene load_steps=4 format=3 uid="uid://b7jmj76y81h3g"]
+
+[ext_resource type="Texture2D" uid="uid://bdterl2d6fvqo" path="res://素材/使用素材/战斗内/功能区/选取法术/底.png" id="1_p1qws"]
+[ext_resource type="Script" uid="uid://bwn6trwwuecrc" path="res://game_scene/battle/法术放置.gd" id="2_rm0jm"]
+[ext_resource type="PackedScene" uid="uid://diwsy4ebydgfx" path="res://base_class/card/battle_card.tscn" id="3_ly8a1"]
+
+[node name="敌方法术牌" type="TextureRect" node_paths=PackedStringArray("card")]
+offset_left = 214.99988
+offset_top = 130.99997
+offset_right = 557.99994
+offset_bottom = 696.0
+scale = Vector2(0.2502101, 0.27473265)
+texture = ExtResource("1_p1qws")
+script = ExtResource("2_rm0jm")
+card = NodePath("card")
+
+[node name="card" parent="." instance=ExtResource("3_ly8a1")]
+layout_mode = 1
+offset_left = 39.96641
+offset_top = 101.91727
+offset_right = 368.9664
+offset_bottom = 671.91724
+scale = Vector2(0.7311068, 0.6308968)

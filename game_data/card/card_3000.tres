@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="CardResource" load_steps=3 format=3 uid="uid://b5tyll6fys52t"]
+
+[ext_resource type="Texture2D" uid="uid://dje375wa2ans7" path="res://素材/使用素材/卡牌/基础卡牌重置素材/卡牌.png" id="1_ojpt7"]
+[ext_resource type="Script" uid="uid://cik6i25pfmxeg" path="res://base_class/card/card_data.gd" id="2_b68om"]
+
+[resource]
+script = ExtResource("2_b68om")
+card_texture = ExtResource("1_ojpt7")
+name = "亡者复生"
+id = 3000
+value = 90
+skill_card_use_num = 1
+is_sub_card = true
+skill_description = "使用效果：使用时，复活上一次自己死亡的母卡角色卡"
+notes = "召唤条件：击败战斗母牌之后，弃牌堆总牌数为2的倍数。"
+sub_card_trigger_effect = "随机回复我方一张战斗牌2点生命"

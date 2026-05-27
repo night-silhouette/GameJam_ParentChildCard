@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="CardResource" load_steps=3 format=3 uid="uid://dt01kgbmi5gwb"]
+
+[ext_resource type="Texture2D" uid="uid://dje375wa2ans7" path="res://素材/使用素材/卡牌/基础卡牌重置素材/卡牌.png" id="1_ulcjq"]
+[ext_resource type="Script" uid="uid://cik6i25pfmxeg" path="res://base_class/card/card_data.gd" id="2_170yl"]
+
+[resource]
+script = ExtResource("2_170yl")
+card_texture = ExtResource("1_ulcjq")
+name = "暴沙"
+id = 2004
+value = 120
+damage = 3
+initial_health = 4
+max_health = 4
+skill_charge = 2
+is_combat_card = true
+is_sub_card = true
+skill_description = "被动：不受到沙暴伤害影响，在沙暴中攻击附加2。血和血量上限提升2"
+notes = "召唤条件：沙暴持续4回合，给与沙暴造成者。若沙暴被中断，给予中断者"
+sub_card_trigger_effect = "随机回复我方一张战斗牌2点生命"

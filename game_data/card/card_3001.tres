@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="CardResource" load_steps=3 format=3 uid="uid://dyxsnjf5j0jht"]
+
+[ext_resource type="Texture2D" uid="uid://dje375wa2ans7" path="res://素材/使用素材/卡牌/基础卡牌重置素材/卡牌.png" id="1_i7g21"]
+[ext_resource type="Script" uid="uid://cik6i25pfmxeg" path="res://base_class/card/card_data.gd" id="2_eavll"]
+
+[resource]
+script = ExtResource("2_eavll")
+card_texture = ExtResource("1_i7g21")
+name = "巨化药水"
+id = 3001
+value = 90
+skill_card_use_num = 1
+is_sub_card = true
+skill_description = "使用效果：给予指定一张出战的牌3层巨化"
+notes = "召唤条件：期间没有对敌方造成击杀，连续死亡两张角色牌；巨化：血量和血量上限翻倍，每回合掉一层"
+sub_card_trigger_effect = "给场上的双方出战牌2层30%虚弱"

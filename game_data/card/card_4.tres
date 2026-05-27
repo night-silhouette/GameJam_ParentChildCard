@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="CardResource" load_steps=3 format=3 uid="uid://dv8uxx0il76c"]
+
+[ext_resource type="Texture2D" uid="uid://dje375wa2ans7" path="res://素材/使用素材/卡牌/基础卡牌重置素材/卡牌.png" id="1_3jfog"]
+[ext_resource type="Script" uid="uid://cik6i25pfmxeg" path="res://base_class/card/card_data.gd" id="2_1v6ln"]
+
+[resource]
+script = ExtResource("2_1v6ln")
+card_texture = ExtResource("1_3jfog")
+name = "僧侣"
+id = 4
+value = 10
+damage = 2
+initial_health = 4
+max_health = 6
+skill_charge = 2
+is_combat_card = true
+skill_description = "主动：这一回合内所有来源的伤害会变成回复"

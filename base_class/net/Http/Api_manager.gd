@@ -25,6 +25,10 @@ func _ready():
 	SignalBus.request_get_time.connect(_request_get_time)
 	SignalBus.request_debug_time.connect(_request_debug_time);
 	SignalBus.request_debug_matchpool.connect(_request_debug_matchpool)
+	SignalBus.request_bag_card.connect(_request_bag_card)
+	SignalBus.request_card_random.connect(_request_card_random)
+	SignalBus.request_get_self_gold.connect(_request_get_self_gold)
+	SignalBus.request_debug_addcard.connect(_request_debug_addcard)
 # =========================
 # Token
 # =========================
@@ -139,3 +143,18 @@ func _request_debug_time():
 func _request_debug_matchpool():
 	var url="/v1/debug/match_pool/";
 	NetworkClient.call_api(url,HTTPClient.METHOD_GET);
+	
+func _request_bag_card():
+	var url ="/v1/bags/"
+	NetworkClient.call_api(url,HTTPClient.METHOD_GET)
+func _request_card_random():
+	var url="/v1/start_pack/"
+	NetworkClient.call_api(url,HTTPClient.METHOD_GET)
+func _request_get_self_gold():
+	var url = "v1/user/gold/";
+	NetworkClient.call_api(url,HTTPClient.METHOD_GET);
+	
+func _request_debug_addcard():
+	var 	url = "v1/debug/Card/";
+	NetworkClient.call_api(url,HTTPClient.METHOD_GET);
+	

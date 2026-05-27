@@ -1,0 +1,63 @@
+[gd_scene load_steps=4 format=3 uid="uid://dyf2d4fk0iwnw"]
+
+[ext_resource type="Script" uid="uid://dt0fvtr10talu" path="res://game_ui/battle/牌库/切换.gd" id="1_kfbbc"]
+[ext_resource type="PackedScene" uid="uid://dpfvbx3mhmx8g" path="res://game_ui/battle/牌库/右切换.tscn" id="2_vsji4"]
+[ext_resource type="PackedScene" uid="uid://crktwrkpkruf6" path="res://game_ui/battle/牌库/左切换.tscn" id="3_j8an0"]
+
+[node name="bag" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ColorRect" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.6174749, 0.5773903, 0.49538243, 1)
+
+[node name="card_manage" type="Node" parent="."]
+
+[node name="切换" type="Control" parent="."]
+anchors_preset = 0
+offset_left = 205.99998
+offset_top = 219.99998
+offset_right = 245.99998
+offset_bottom = 260.0
+rotation = 1.5707964
+scale = Vector2(0.16495459, 0.16495459)
+script = ExtResource("1_kfbbc")
+
+[node name="右切换" parent="切换" instance=ExtResource("2_vsji4")]
+layout_mode = 0
+offset_left = 680.0
+offset_top = 792.0
+offset_right = 1074.0
+offset_bottom = 1413.0
+scale = Vector2(0.5, 0.5)
+metadata/_edit_lock_ = true
+
+[node name="左切换" parent="切换" instance=ExtResource("3_j8an0")]
+layout_mode = 0
+offset_left = 184.0
+offset_top = 800.0
+offset_right = 578.0
+offset_bottom = 1421.0
+scale = Vector2(0.5, 0.5)
+metadata/_edit_lock_ = true
+
+[node name="card_vector" type="GridContainer" parent="."]
+layout_mode = 0
+offset_left = 132.0
+offset_top = 49.0
+offset_right = 2221.3506
+offset_bottom = 1489.4711
+scale = Vector2(0.45795956, 0.39311677)
+theme_override_constants/h_separation = 24
+theme_override_constants/v_separation = 108
+columns = 5
