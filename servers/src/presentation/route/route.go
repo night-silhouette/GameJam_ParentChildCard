@@ -93,3 +93,10 @@ func RegisterFriendshipsRoutes(h userhandler.User_handler) {
 	R.POST("v1/friendships/", h.CreateFriendship())
 	R.DELETE("v1/friendships/", h.DeleteFriendships())
 }
+
+func RegisterBagStuffRoutes(h battlehandler.BattleHandler) {
+	R.GET("v1/start_pack/", h.StarterPack())
+	R.POST("v1/debug/Card/", h.DebugGiveCardByCardId())
+	R.GET("v1/bags/", h.BagGet())
+
+}

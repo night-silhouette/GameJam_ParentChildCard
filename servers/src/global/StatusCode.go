@@ -20,6 +20,7 @@ const (
 	ResponseRepeatRequest
 	ResponseUnknownError
 	ResponseTokenHasUpdate
+	ResponseBagsUnknownError
 
 	BattleInvalidTiming
 	BattleEffectStackOverflow

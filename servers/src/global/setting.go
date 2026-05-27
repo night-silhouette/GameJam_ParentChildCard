@@ -14,6 +14,11 @@ var Isdebug string = "debug"
 const (
 	InitCardNum = 4
 
+	Lev1Category1Num = 6
+	Lev1Category2Num = 8
+	Lev1Category3Num = 5
+	Lev1Category4Num = 5
+
 	BattleWaitTime      = 15 //s
 	SelectCharacterTime = 10 //s
 	SelectSkillCardTime = 10 //s

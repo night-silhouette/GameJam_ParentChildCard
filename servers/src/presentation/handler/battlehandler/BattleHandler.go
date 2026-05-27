@@ -25,10 +25,57 @@ type BattleHandler interface {
 	BattleWs() gin.HandlerFunc
 	DebugGetMachData() gin.HandlerFunc
 	DebugBattleContainer() gin.HandlerFunc
+
+	DebugGiveCardByCardId() gin.HandlerFunc
+	StarterPack() gin.HandlerFunc
+	BagGet() gin.HandlerFunc
 }
 type BattleHandlerImpl struct {
 	s       battleservice.BattleService
 	writeMu sync.Mutex
+}
+
+func (u *BattleHandlerImpl) BagGet() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		res, err := u.s.GetBags(c.Request.Context(), c.GetInt("id"))
+		if err != global.ResponseSuccess {
+			response.Fail(c, err)
+			return
+		}
+		response.Success(c, res)
+	}
+}
+
+func (u *BattleHandlerImpl) StarterPack() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		err := u.s.GiveInitCardBag(c.Request.Context(), c.GetInt("id"))
+		if err != global.ResponseSuccess {
+			response.Fail(c, err)
+			return
+		}
+		response.Success(c, "给了")
+	}
+}
+
+type DebugGiveCardByCardIdDto struct {
+	CardId int `json:"card_id"`
+}
+
+func (u *BattleHandlerImpl) DebugGiveCardByCardId() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var req DebugGiveCardByCardIdDto
+		UserId := c.GetInt("id")
+		if err := c.ShouldBindQuery(&req); err != nil {
+			response.Fail(c, global.ResponseInvalidReqParams)
+			return
+		}
+		err := u.s.GiveCardByCardId(c.Request.Context(), UserId, req.CardId)
+		if err != global.ResponseSuccess {
+			response.Fail(c, err)
+			return
+		}
+		response.Success(c, "增加成功")
+	}
 }
 
 func (u *BattleHandlerImpl) Set_service(svc service.Service) {
