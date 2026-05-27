@@ -44,6 +44,7 @@ type User_service interface {
 	GetBags(ctx context.Context, UserId int) ([]BattleData.BagStuffDto, global.ResponseStatusCode) //背包渲染
 
 	GetUserGold(ctx context.Context, userId int) (int, global.ResponseStatusCode)
+	SellCard(ctx context.Context, userId int, stuffIdList []int) global.ResponseStatusCode
 }
 
 type User_service_impl struct {
@@ -260,4 +261,31 @@ func (u *User_service_impl) GetBags(ctx context.Context, UserId int) ([]BattleDa
 func (u *User_service_impl) GetUserGold(ctx context.Context, userId int) (int, global.ResponseStatusCode) {
 	err, res := u.repo.GetAssetGold(ctx, u.repo.Get_db(), userId)
 	return res, err
+}
+
+func (u *User_service_impl) SellCard(ctx context.Context, userId int, stuffIdList []int) global.ResponseStatusCode {
+	tx, errDb := u.repo.Get_db().BeginTx(ctx, nil)
+	if errDb != nil {
+		return global.ResponseInternalServersError
+
+	}
+	defer tx.Rollback()
+	for _, stuffId := range stuffIdList {
+		err, temp := u.repo.GetStuffByStuffId(ctx, tx, userId, stuffId)
+		if err != global.ResponseSuccess {
+			return err
+		}
+		price := temp.Price
+		err = u.repo.UpdateAssetGold(ctx, tx, userId, price)
+		if err != global.ResponseSuccess {
+			return err
+		}
+		err = u.repo.DeleteStuff(ctx, tx, userId, stuffId)
+		if err != global.ResponseSuccess {
+			return err
+		}
+	}
+
+	tx.Commit()
+	return global.ResponseSuccess
 }

@@ -38,6 +38,29 @@ type User_handler interface {
 	DebugGiveCardByCardId() gin.HandlerFunc
 	StarterPack() gin.HandlerFunc
 	BagGet() gin.HandlerFunc
+	CardSell() gin.HandlerFunc
+}
+
+type CardSellDto struct {
+	StuffIdList []int `json:"stuff_id_list"`
+}
+
+func (u *User_handler_impl) CardSell() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var req CardSellDto
+		UserId := c.GetInt("id")
+		if err := c.ShouldBindJSON(&req); err != nil {
+			response.Fail(c, global.ResponseInvalidReqParams)
+			return
+		}
+		err := u.s.SellCard(c.Request.Context(), UserId, req.StuffIdList)
+		if err != global.ResponseSuccess {
+			response.Fail(c, err)
+			return
+		}
+		response.Success(c, "卖出去了")
+	}
+
 }
 
 type User_handler_impl struct {

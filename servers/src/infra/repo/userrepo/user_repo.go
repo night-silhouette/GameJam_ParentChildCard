@@ -46,6 +46,8 @@ type User_repo interface {
 	CreateAsset(ctx context.Context, db repo.SQLQueryer, userId int) global.ResponseStatusCode
 	UpdateAssetGold(ctx context.Context, db repo.SQLQueryer, userId int, gold int) global.ResponseStatusCode
 	GetAssetGold(ctx context.Context, db repo.SQLQueryer, userId int) (global.ResponseStatusCode, int)
+	DeleteStuff(ctx context.Context, db repo.SQLQueryer, userId int, stuffId int) global.ResponseStatusCode
+	GetStuffByStuffId(ctx context.Context, db repo.SQLQueryer, userId int, stuffId int) (global.ResponseStatusCode, BattleData.BagStuffDto)
 }
 
 type User_repo_impl struct {
@@ -646,4 +648,49 @@ func (r *User_repo_impl) GetAssetGold(ctx context.Context, db repo.SQLQueryer, u
 
 	// 成功获取，将 int64 转为 int 返回
 	return global.ResponseSuccess, int(gold)
+}
+
+func (r *User_repo_impl) DeleteStuff(ctx context.Context, db repo.SQLQueryer, userId int, stuffId int) global.ResponseStatusCode {
+
+	query := `delete from bags where user_id = $1 and stuff_id = $2`
+
+	result, err := db.ExecContext(ctx, query, userId, stuffId)
+	if err != nil {
+		return global.ResponseInternalServersError
+	}
+
+	// 检查是否有行被删除
+	rows, _ := result.RowsAffected()
+	if rows == 0 {
+		return global.ResponseDataNotFound
+	}
+
+	return global.ResponseSuccess
+}
+
+func (r *User_repo_impl) GetStuffByStuffId(ctx context.Context, db repo.SQLQueryer, userId int, stuffId int) (global.ResponseStatusCode, BattleData.BagStuffDto) {
+	// 定义接收数据的结构体
+	var dto BattleData.BagStuffDto
+
+	// 使用小写 SQL 语句
+	// 务必带上 user_id 条件，确保玩家只能查到自己的东西（防止越权）
+	query := `select stuff_id, card_id, price from bags where user_id = $1 and stuff_id = $2`
+
+	// 执行查询并将结果扫描进 dto
+	err := db.QueryRowContext(ctx, query, userId, stuffId).Scan(
+		&dto.StuffId,
+		&dto.CardId,
+		&dto.Price,
+	)
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			// 没找到该物品
+			return global.ResponseDataNotFound, dto
+		}
+		// 数据库其他错误
+		return global.ResponseInternalServersError, dto
+	}
+
+	return global.ResponseSuccess, dto
 }
