@@ -381,7 +381,7 @@ func (c *Ctx) ProtoColHealCardBt(UserId int, TargetTempId int, HealHp float64) {
 		return
 	}
 	NowHp := card.GetHpNow()
-	MaxHp := card.GetInfo()["hp"].(float64)
+	MaxHp := card.GetInfo()["maxHp"].(float64)
 	if NowHp >= MaxHp {
 		return
 	}

@@ -45,7 +45,6 @@ func (r *BattleRepoImpl) ReadCardByID(ctx context.Context, db repo.SQLQueryer, I
         'category', category
     ) from newcards where id = $1`
 
-	// 下面这部分完全保留你的逻辑，不需要改动
 	data := db.QueryRowContext(ctx, query, ID)
 	err := data.Scan(&info)
 	if err != nil {
@@ -55,5 +54,12 @@ func (r *BattleRepoImpl) ReadCardByID(ctx context.Context, db repo.SQLQueryer, I
 	if err != nil {
 		log.Println(err)
 	}
+	if res["category"] == 1 || res["category"] == 2 {
+		res["is_parent"] = true
+	}
+	if res["category"] == 3 || res["category"] == 4 {
+		res["is_parent"] = false
+	}
+
 	return res
 }
