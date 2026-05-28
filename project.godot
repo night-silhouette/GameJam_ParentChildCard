@@ -33,6 +33,7 @@ BattleRequestManager="*res://base_class/net/WS/Battle_RequestManager.gd"
 BattleResponseManager="*res://base_class/net/WS/Battle_ResponseManager.gd"
 TokenManager="*res://base_class/net/token_manager.gd"
 TimeOffset="*res://base_class/net/time_offset.tscn"
+InventoryManager="*res://base_class/manage/inventory_manager.gd"
 
 [display]
 

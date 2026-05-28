@@ -1,0 +1,22 @@
+[gd_scene load_steps=2 format=3 uid="uid://0rph0i5b2lei"]
+
+[ext_resource type="PackedScene" uid="uid://6drvwctgyu2f" path="res://game_scene/menu/secnce_ui.tscn" id="1_5l4vc"]
+
+[node name="menu_secence" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ColorRect" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="sence_ui" parent="." instance=ExtResource("1_5l4vc")]
+layout_mode = 1

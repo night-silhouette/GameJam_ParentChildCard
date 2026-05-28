@@ -1,7 +1,7 @@
 [gd_scene load_steps=6 format=3 uid="uid://d2g5id28y0yre"]
 
 [ext_resource type="Texture2D" uid="uid://nn0c5tm67pq3" path="res://素材/使用素材/战斗外/游戏初始界面/（大块的奶酪）.png" id="1_m73gy"]
-[ext_resource type="Script" uid="uid://dx3qm1nmglgig" path="res://game_ui/menu/cheese.gd" id="2_m73gy"]
+[ext_resource type="Script" uid="uid://dx3qm1nmglgig" path="res://game_scene/menu/cheese.gd" id="2_m73gy"]
 
 [sub_resource type="Animation" id="Animation_oo6xv"]
 length = 0.001

@@ -1,6 +1,6 @@
 [gd_scene load_steps=8 format=3 uid="uid://pmiymeegg054"]
 
-[ext_resource type="Script" uid="uid://dyd0eh3h6go" path="res://game_ui/menu/边框.gd" id="1_p4upb"]
+[ext_resource type="Script" uid="uid://dyd0eh3h6go" path="res://game_scene/menu/边框.gd" id="1_p4upb"]
 [ext_resource type="Texture2D" uid="uid://bijodda0pudjw" path="res://素材/使用素材/战斗外/游戏初始界面/UI2.png" id="2_o6og4"]
 [ext_resource type="Texture2D" uid="uid://codgrhvpxhwh5" path="res://素材/使用素材/战斗外/游戏初始界面/剑UI .png" id="4_2bjtr"]
 

@@ -5,7 +5,7 @@ var press_case :int = 0;
 
 
 func spawn_piece():
-	var piece = preload("res://game_ui/menu/cheese_piece.tscn").instantiate()
+	var piece = preload("res://game_scene/menu/cheese_piece.tscn").instantiate()
 	
 	# 获取当前节点的全局中心位置
 	var central_position = global_position + (size * scale / 2) 

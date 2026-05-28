@@ -1,0 +1,20 @@
+[gd_scene load_steps=2 format=3 uid="uid://bhfgqoa1s3286"]
+
+[ext_resource type="Texture2D" uid="uid://b0350k12k2v6n" path="res://素材/使用素材/战斗外/游戏模式选择与匹配/硬币/1.png" id="1_epfeu"]
+
+[node name="金币显示" type="TextureRect"]
+offset_left = 9.0
+offset_top = 15.0
+offset_right = 270.0
+offset_bottom = 267.0
+scale = Vector2(0.2707973, 0.2707973)
+texture = ExtResource("1_epfeu")
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 0
+offset_left = 262.1887
+offset_top = 22.156794
+offset_right = 302.1887
+offset_bottom = 47.15679
+scale = Vector2(6.111964, 9.477164)
+horizontal_alignment = 1

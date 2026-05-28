@@ -19,3 +19,7 @@ func _battle_over():
 func _ws_disconnected():
 	animatedSprite2D.visible = false;
 	
+
+
+func _on_笑脸按钮2_button_down() -> void:
+	SignalBus.change_scence.emit("bag")
