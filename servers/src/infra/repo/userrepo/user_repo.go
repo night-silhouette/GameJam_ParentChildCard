@@ -48,6 +48,7 @@ type User_repo interface {
 	GetAssetGold(ctx context.Context, db repo.SQLQueryer, userId int) (global.ResponseStatusCode, int)
 	DeleteStuff(ctx context.Context, db repo.SQLQueryer, userId int, stuffId int) global.ResponseStatusCode
 	GetStuffByStuffId(ctx context.Context, db repo.SQLQueryer, userId int, stuffId int) (global.ResponseStatusCode, BattleData.BagStuffDto)
+	JudgeCardIsParent(ctx context.Context, db repo.SQLQueryer, CardId int) (global.ResponseStatusCode, bool)
 }
 
 type User_repo_impl struct {
@@ -693,4 +694,22 @@ func (r *User_repo_impl) GetStuffByStuffId(ctx context.Context, db repo.SQLQuery
 	}
 
 	return global.ResponseSuccess, dto
+}
+
+func (r *User_repo_impl) JudgeCardIsParent(ctx context.Context, db repo.SQLQueryer, CardId int) (global.ResponseStatusCode, bool) {
+	query := "select category from new_cards where id = $1"
+
+	var category int
+	err := db.QueryRowContext(ctx, query, CardId).Scan(&category)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return global.ResponseDataNotFound, false
+		}
+	}
+	if category == 1 || category == 2 {
+		return global.ResponseSuccess, true
+	} else {
+		return global.ResponseSuccess, false
+	}
+
 }

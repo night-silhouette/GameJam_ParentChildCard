@@ -315,13 +315,13 @@ type ShuffleDeal struct {
 }
 
 func (s *ShuffleDeal) enter() {
-	for {
-
-		OK := s.RandomCard()
-		if OK {
-			break
-		}
-	}
+	//for {
+	//
+	//	OK := s.RandomCard()
+	//	if OK {
+	//		break
+	//	}
+	//}
 	s.SM.SendActionById(s.Id1, BattleDto.NewAction(BattleDto.MatchSuccess, BattleDto.Notify, NewStateWaitTime(global.BattleWaitTime*time.Second))) //通知匹配成功
 	s.SM.SendActionById(s.Id2, BattleDto.NewAction(BattleDto.MatchSuccess, BattleDto.Notify, NewStateWaitTime(global.BattleWaitTime*time.Second)))
 

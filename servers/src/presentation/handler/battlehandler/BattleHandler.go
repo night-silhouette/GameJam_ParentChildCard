@@ -10,6 +10,7 @@ import (
 	"pcc_card/Util"
 	"pcc_card/application/entity/BattleData"
 	"pcc_card/application/service"
+	"pcc_card/application/service/UserService"
 	"pcc_card/application/service/battleservice"
 	"pcc_card/global"
 	"pcc_card/presentation/handler"
@@ -30,6 +31,7 @@ type BattleHandler interface {
 }
 type BattleHandlerImpl struct {
 	s       battleservice.BattleService
+	User_s  UserService.User_service
 	writeMu sync.Mutex
 }
 
@@ -54,7 +56,7 @@ func (u *BattleHandlerImpl) DebugBattleContainer() gin.HandlerFunc {
 func (u *BattleHandlerImpl) AddMatch(c *gin.Context, conn *websocket.Conn, goctx context.Context, res chan battleservice.PlayerChannel, data BattleData.EnterBtData) {
 	id := c.GetInt("id")
 	if !u.s.IsHasID(id) {
-		u.s.AddMatch(id)
+		u.s.AddMatch(id, data)
 		matchSignals := u.s.GetMatchSignals()
 		myChan := make(chan battleservice.MatchResult, 1)
 		matchSignals.Store(id, myChan)
@@ -91,25 +93,10 @@ func (u *BattleHandlerImpl) BattleWs() gin.HandlerFunc {
 			fmt.Println("升级失败:", err)
 			return
 		}
+		//升级逻辑完成
+
 		id := c.GetInt("id")
-		//-------------------对带入的card和gold信息解析---------------------
-		BtData := c.Query("btData")
-		decodedJson, err := url.QueryUnescape(BtData)
-		if err != nil {
-			response.WsFail(conn, global.ResponseInvalidReqParams)
-			return
-		}
-		var data BattleData.EnterBtData
-
-		err = json.Unmarshal([]byte(decodedJson), &data)
-		if err != nil {
-			response.WsFail(conn, global.ResponseInvalidReqParams)
-			return
-		}
-		//-------------------对带入的card和gold信息解析---------------------
-
-		fmt.Println(data)
-
+		//----------------------生命周期管理----------------------
 		goctx, cancel := context.WithCancel(c.Request.Context())
 		defer func() {
 			u.writeMu.Lock()
@@ -125,8 +112,30 @@ func (u *BattleHandlerImpl) BattleWs() gin.HandlerFunc {
 			battleservice.BC.GetBattleByUserID(id).Cancel()
 
 		}()
+		//----------------------生命周期管理----------------------
 
-		//升级逻辑完成
+		//-------------------对带入的card和gold信息解析---------------------
+		BtData := c.Query("btData")
+		decodedJson, err := url.QueryUnescape(BtData)
+		if err != nil {
+			response.WsFail(conn, global.ResponseInvalidReqParams)
+			return
+		}
+		var data BattleData.EnterBtData
+
+		err = json.Unmarshal([]byte(decodedJson), &data)
+		if err != nil {
+			response.WsFail(conn, global.ResponseInvalidReqParams)
+			return
+		}
+		fmt.Println(data)
+		//检验data合法性
+		ok := u.User_s.CheckBtDataIsValid(goctx, id, data.CardList)
+		if ok != global.ResponseSuccess {
+			response.WsFail(conn, ok)
+		}
+		//-------------------对带入的card和gold信息解析---------------------
+		fmt.Println("数据合法")
 
 		transformAddMatchWithThis := make(chan battleservice.PlayerChannel, 2)
 		go u.AddMatch(c, conn, goctx, transformAddMatchWithThis, data)

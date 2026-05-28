@@ -6,15 +6,19 @@ import (
 	"pcc_card/application/entity/Card/CardImpl"
 	"pcc_card/application/entity/CardMeta"
 	"pcc_card/application/entity/protocol"
+	"sync"
 )
 
 type CardList struct {
 	data []CardAbstract.Card
+	Mt   sync.Mutex
 }
 
 var CardListImpl CardList
 
 func (Cd *CardList) GetCardImpl(CardId int) CardAbstract.Card {
+	Cd.Mt.Lock()
+	defer Cd.Mt.Unlock()
 	for _, el := range CardListImpl.data {
 		if el.GetID() == CardId {
 			res := el.Clone()
@@ -57,7 +61,7 @@ func (Cd *CardList) init(s BattleService) {
 		CardImpl.NewCard1005(),
 		CardImpl.NewCard1006(),
 		CardImpl.NewCard1007(),
-		
+
 		CardImpl.NewCard2000(),
 		CardImpl.NewCard2001(),
 		CardImpl.NewCard2002(),
@@ -69,7 +73,6 @@ func (Cd *CardList) init(s BattleService) {
 		CardImpl.NewCard3002(),
 		CardImpl.NewCard3003(),
 		CardImpl.NewCard3004(),
-		
 	}
 	for _, e := range Cd.data {
 		e.InitBuffList()

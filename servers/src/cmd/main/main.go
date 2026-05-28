@@ -32,13 +32,13 @@ func main() {
 	DB := db.ConnectDB()
 	defer DB.Close()
 	route.Init()
-	user(DB, RD)
-	Battle(DB, RD)
+	User_repo, user_service := user(DB, RD)
+	Battle(DB, RD, User_repo, user_service)
 	route.Run()
 
 }
 
-func user(DB *sql.DB, RD *redis.Client) {
+func user(DB *sql.DB, RD *redis.Client) (userrepo.User_repo, UserService.User_service) {
 	user_repo := repo.New_repo[*userrepo.User_repo_impl](DB, RD)
 
 	user_service := service.New_service[*UserService.User_service_impl](user_repo)
@@ -48,13 +48,18 @@ func user(DB *sql.DB, RD *redis.Client) {
 	route.Register_user_routes(user_handler)
 	route.RegisterMailRoute(user_handler)
 	route.RegisterFriendshipsRoutes(user_handler)
+
+	return user_repo, user_service
 }
 
-func Battle(DB *sql.DB, RD *redis.Client) {
+func Battle(DB *sql.DB, RD *redis.Client, User_repo userrepo.User_repo, user_service UserService.User_service) {
 	BattleRepo := repo.New_repo[*battlerepo.BattleRepoImpl](DB, RD)
 	BattleService := service.New_service[*battleservice.BattleServiceImpl](BattleRepo)
+	BattleService.User_repo = User_repo
 	BattleHandler := handler.New_handler[*battlehandler.BattleHandlerImpl](BattleService)
-	battleservice.NewMatchManager()
+	BattleHandler.User_s = user_service
+
+	battleservice.NewMatchManager(User_repo)
 	battleservice.InitBattleContainer()
 	battleservice.InitCardList(BattleService)
 	route.RegisterBattleWS(BattleHandler)

@@ -45,6 +45,7 @@ type User_service interface {
 
 	GetUserGold(ctx context.Context, userId int) (int, global.ResponseStatusCode)
 	SellCard(ctx context.Context, userId int, stuffIdList []int) global.ResponseStatusCode
+	CheckBtDataIsValid(ctx context.Context, userId int, data []BattleData.BagStuffDto) global.ResponseStatusCode
 }
 
 type User_service_impl struct {
@@ -287,5 +288,33 @@ func (u *User_service_impl) SellCard(ctx context.Context, userId int, stuffIdLis
 	}
 
 	tx.Commit()
+	return global.ResponseSuccess
+}
+
+func (u *User_service_impl) CheckBtDataIsValid(ctx context.Context, userId int, data []BattleData.BagStuffDto) global.ResponseStatusCode {
+	if len(data) != 5 {
+		return global.BattleCardNumErr
+	}
+	for _, e := range data {
+		err, _ := u.repo.GetStuffByStuffId(ctx, u.repo.Get_db(), userId, e.StuffId)
+		if err != global.ResponseSuccess {
+			return err
+		}
+	}
+
+	c_num := 0
+	for _, e := range data {
+		err, flag := u.repo.JudgeCardIsParent(ctx, u.repo.Get_db(), e.CardId)
+		if err != global.ResponseSuccess {
+			return err
+		}
+		if !flag {
+			c_num++
+		}
+	}
+	if c_num > 2 {
+		return global.BattleEnterDataInvalid
+	}
+
 	return global.ResponseSuccess
 }

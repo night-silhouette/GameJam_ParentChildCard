@@ -32,15 +32,15 @@ type Ctx struct {
 	InterruptListenFunc atomic.Value //func(id int, action BattleDto.Action, ResponseChan chan<- BattleDto.Action) bool
 }
 
-func NewCtx(idA int, idB int, CardPool *[]CardAbstract.Card, ParentContext context.Context) *Ctx {
+func NewCtx(idA int, idB int, CardPool *[]CardAbstract.Card, ParentContext context.Context, CardList map[int]map[int]CardAbstract.Card) *Ctx {
 	c := &Ctx{}
 	c.EffectsStack = NewEffectStack()
 	c.entityCounter = 1
 	c.ParentContext = ParentContext
 	c.CardPool = CardPool
 	c.PlayerDataMap = make(map[int]*PlayerData, 2)
-	c.PlayerDataMap[idA] = NewPlayerData(idA)
-	c.PlayerDataMap[idB] = NewPlayerData(idB)
+	c.PlayerDataMap[idA] = NewPlayerData(idA, CardList[idA])
+	c.PlayerDataMap[idB] = NewPlayerData(idB, CardList[idB])
 	c.CtxStateNotify = NewCtxStateNotify()
 	//c.CardObserver = NewCardObserver(ParentContext, c)//弃用哨兵模式
 	c.NeedInterrupt.Store(false)
@@ -205,9 +205,9 @@ func (c *PlayerData) GetBt(where BattleData.Where) CardAbstract.Card {
 	}
 }
 
-func NewPlayerData(ID int) *PlayerData {
+func NewPlayerData(ID int, CardInHand map[int]CardAbstract.Card) *PlayerData {
 	p := &PlayerData{}
-	p.CardInHand = make(map[int]CardAbstract.Card)
+	p.CardInHand = CardInHand
 	p.ID = ID
 	return p
 }
@@ -303,7 +303,7 @@ func (c *Ctx) ProtoColInterrupt(UserId int, InterruptDto *BattleData.InterruptDt
 	var DataIsOK atomic.Bool
 	DataIsOK.Store(false)
 
-	TimeEnding := func() {    //结束回调
+	TimeEnding := func() { //结束回调
 		if !DataIsOK.Load() { //随机取
 			dataMutex.Lock()
 			data.TempIdList = Util.GetRandomElements(InterruptDto.TempIdList, InterruptDto.SelectNum)

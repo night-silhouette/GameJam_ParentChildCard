@@ -23,6 +23,7 @@ const (
 	ResponseBagsUnknownError
 	ResponseGoldNotEnough
 
+	BattleEnterDataInvalid
 	BattleInvalidTiming
 	BattleEffectStackOverflow
 	BattleCardCategoryError
@@ -57,4 +58,5 @@ var StatusMsg = map[ResponseStatusCode]string{
 	BattleNotInYourRound:          "此时不在你的回合",
 	BattleHasCard:                 "此位置有牌了",
 	BattleCardNumErr:              "卡牌数量有误",
+	BattleEnterDataInvalid:        "非法入场卡牌",
 }

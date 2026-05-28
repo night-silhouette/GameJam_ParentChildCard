@@ -2,6 +2,7 @@ package battleservice
 
 import (
 	"context"
+	"pcc_card/application/entity/Card/CardAbstract"
 	"sync"
 	"sync/atomic"
 )
@@ -20,11 +21,11 @@ type Battle struct {
 	Nt       *NotifyManager
 }
 
-func NewBattle(UserA int, UserB int) *Battle {
+func NewBattle(UserA int, UserB int, CardList map[int]map[int]CardAbstract.Card) *Battle {
 	rootContext := context.Background()
 	BattleContext, cancel := context.WithCancel(rootContext)
 	id := int(atomic.AddInt64(&battleIDCounter, 1))
-	ctx := NewCtx(UserA, UserB, CardListImpl.Copy(), BattleContext)
+	ctx := NewCtx(UserA, UserB, CardListImpl.Copy(), BattleContext, CardList)
 	Nt := NewNotifyManager(UserA, UserB, 32) //初始化bufferSize
 	SM := NewStateMachine(ctx, UserA, UserB, Nt, BattleContext)
 	go func() {
@@ -66,8 +67,24 @@ func InitBattleContainer() {
 
 }
 
-func (bc *BattleContainer) AddBattle(id1 int, id2 int) int { //启动接口
-	Bt := NewBattle(id1, id2)
+// 传来的卡的id。出来的是充血对象
+func CloneByCardListImpl(cardIdList map[int][]int) map[int]map[int]CardAbstract.Card {
+	res := make(map[int]map[int]CardAbstract.Card)
+	for key, value := range cardIdList {
+		res[key] = make(map[int]CardAbstract.Card)
+		for _, CardId := range value {
+			card := CardListImpl.GetCardImpl(CardId)
+			res[key][card.GetID()] = card
+		}
+
+	}
+	return res
+}
+
+// AddBattle 传来的卡的id。
+func (bc *BattleContainer) AddBattle(id1 int, id2 int, cardIdList map[int][]int) int { //启动接口
+
+	Bt := NewBattle(id1, id2, CloneByCardListImpl(cardIdList))
 	bc.mu.Lock()
 	defer bc.mu.Unlock()
 
