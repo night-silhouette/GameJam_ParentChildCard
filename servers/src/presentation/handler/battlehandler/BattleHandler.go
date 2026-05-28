@@ -6,7 +6,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
 	"pcc_card/Util"
+	"pcc_card/application/entity/BattleData"
 	"pcc_card/application/service"
 	"pcc_card/application/service/battleservice"
 	"pcc_card/global"
@@ -49,7 +51,7 @@ func (u *BattleHandlerImpl) DebugBattleContainer() gin.HandlerFunc {
 	}
 }
 
-func (u *BattleHandlerImpl) AddMatch(c *gin.Context, conn *websocket.Conn, goctx context.Context, res chan battleservice.PlayerChannel) {
+func (u *BattleHandlerImpl) AddMatch(c *gin.Context, conn *websocket.Conn, goctx context.Context, res chan battleservice.PlayerChannel, data BattleData.EnterBtData) {
 	id := c.GetInt("id")
 	if !u.s.IsHasID(id) {
 		u.s.AddMatch(id)
@@ -90,6 +92,24 @@ func (u *BattleHandlerImpl) BattleWs() gin.HandlerFunc {
 			return
 		}
 		id := c.GetInt("id")
+		//-------------------对带入的card和gold信息解析---------------------
+		BtData := c.Query("btData")
+		decodedJson, err := url.QueryUnescape(BtData)
+		if err != nil {
+			response.WsFail(conn, global.ResponseInvalidReqParams)
+			return
+		}
+		var data BattleData.EnterBtData
+
+		err = json.Unmarshal([]byte(decodedJson), &data)
+		if err != nil {
+			response.WsFail(conn, global.ResponseInvalidReqParams)
+			return
+		}
+		//-------------------对带入的card和gold信息解析---------------------
+
+		fmt.Println(data)
+
 		goctx, cancel := context.WithCancel(c.Request.Context())
 		defer func() {
 			u.writeMu.Lock()
@@ -109,7 +129,7 @@ func (u *BattleHandlerImpl) BattleWs() gin.HandlerFunc {
 		//升级逻辑完成
 
 		transformAddMatchWithThis := make(chan battleservice.PlayerChannel, 2)
-		go u.AddMatch(c, conn, goctx, transformAddMatchWithThis)
+		go u.AddMatch(c, conn, goctx, transformAddMatchWithThis, data)
 		go u.ListenResquest(conn, id, goctx, transformAddMatchWithThis, cancel)
 
 		var OverGameChan chan bool = make(chan bool, 1)
