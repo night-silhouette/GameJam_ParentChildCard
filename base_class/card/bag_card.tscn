@@ -1,0 +1,24 @@
+[gd_scene load_steps=3 format=3 uid="uid://cwlnbe14kg5qx"]
+
+[ext_resource type="Texture2D" uid="uid://dje375wa2ans7" path="res://素材/使用素材/卡牌/基础卡牌重置素材/卡牌.png" id="1_mnxpg"]
+[ext_resource type="Script" uid="uid://ch7axvdkd3t8r" path="res://base_class/card/bag_card.gd" id="1_rkg2p"]
+
+[node name="bag_card" type="Control"]
+custom_minimum_size = Vector2(329, 570)
+layout_mode = 3
+anchors_preset = 0
+offset_right = 300.0
+offset_bottom = 519.0
+scale = Vector2(0.17535387, 0.17535387)
+script = ExtResource("1_rkg2p")
+
+[node name="卡牌纹理" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("1_mnxpg")
+expand_mode = 1
+stretch_mode = 5

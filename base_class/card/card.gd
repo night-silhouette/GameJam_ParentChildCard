@@ -1,28 +1,27 @@
 class_name card
 extends Control
 
-@onready var display: TextureRect = $"卡牌纹理"
-var temp_id ;
-var hp ;
-var damage  ;
-var buff_id ;
-var zone ;
-var spell_des ;
+var card_name : String;
+var card_texture
+var id: int = 0
+var level: int = 1
+var value: int = 0
 
-func update_card_data(base_res) -> void:
-	display.texture = base_res.texture
-	if base_res.is_combat_card :
-		hp = base_res.hp;
-		damage = base_res.damage;
-	temp_id = base_res.temp_id;
-	buff_id = base_res.buff_id;
-	zone = base_res.zone;
-	spell_des = base_res.spell_des;
 
-func free_card():
-	display.texture = null;
-	hp = null;
-	damage = null;
-	temp_id = null;
-	buff_id = null;
+var card_damage: int = 0
+var initial_health: int = 0
+var max_health: int = 0
+
+var skill_charge: int = 0
+var skill_card_use_num: int = 0
+
+
+var is_combat_card: bool = false
+var is_sub_card: bool = false
+
+
+var skill_description: String = ""
+var notes: String = ""
+var sub_card_trigger_effect: String = ""
+
 	
