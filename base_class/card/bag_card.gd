@@ -1,22 +1,24 @@
 extends card
 
 # 定义传递给上级的信号
-
-
-# 保留信号（如果上层其他地方不需要，也可以删掉，现在主控直接走本地 lab）
 signal hovered(card_data: Dictionary)
 signal unhovered()
 
 var stuff_id: int
 var price: int
 
+# 💡 新增：用于记录当前卡牌是否被选中 (true 为选中，false 为未选中)
+var is_chosen: bool = false 
+
 @onready var texture_rect: TextureRect = $TextureRect
 @onready var lab: Label = $"详细"
+@onready var ui_name: Label = $name
+@onready var border: ReferenceRect = $Border
 
 # 动画参数配置
-var HOVER_SCALE := Vector2(1.05, 1.05) # 微微放大 1.05 倍
+var HOVER_SCALE := Vector2(1.05, 1.05) 
 var NORMAL_SCALE := Vector2(1.0, 1.0)
-var TWEEN_DURATION := 0.15 # 动画过渡时间（秒）
+var TWEEN_DURATION := 0.15 
 var scale_tween: Tween
 
 func _ready() -> void:
@@ -34,7 +36,7 @@ func setup(data: Dictionary) -> void:
 	id = res.id
 	card_name = res.name
 	card_texture = res.card_texture
-	value = res.value # 卡牌价值
+	value = res.value 
 	is_combat_card = res.is_combat_card
 	is_sub_card = res.is_sub_card
 	
@@ -52,13 +54,20 @@ func setup(data: Dictionary) -> void:
 	if texture_rect and card_texture:
 		texture_rect.texture = card_texture
 		
-	# 2. 初始化缩放中心点（核心：必须设置在中心，否则会往右下角放大）
+	# 💡 核心修改 1：让 ui_name 节点直接显示卡牌的名字
+	if ui_name:
+		ui_name.text = card_name
+		
+	# 2. 初始化缩放中心点
 	pivot_offset = size / 2.0
 	
-	# 3. 初始化 Label 状态：默认隐藏，防止一生成就挂着文字
+	# 3. 初始化 Label 状态
 	if lab:
 		lab.visible = false
-
+		
+	# 💡 核心修改 2：初始化时确保“选中特效”是关闭的
+	is_chosen = false
+	if border: border.visible = false
 
 # 快捷获取当前卡牌类型文本
 func get_type_string() -> String:
@@ -69,16 +78,13 @@ func get_type_string() -> String:
 
 # 3. 监听鼠标悬停与离开事件
 func _mouse_entered() -> void:
-	print("jianting")
-	# 协调1：先放大卡牌
 	_play_scale_tween(HOVER_SCALE)
 	
-	# 协调2：更新并显示本地的 Label
+	# 💡 核心修改 3：将名称信息从详细描述中移除
 	if lab:
-		lab.text = "名称: %s\n类型: %s\n价值: %d" % [card_name, get_type_string(), value]
+		lab.text = "类型: %s\n价值: %d" % [get_type_string(), value]
 		lab.visible = true
 	
-	# 向上层发出的信号（保留，供其他 UI 监听，不用可无视）
 	hovered.emit({
 		"name": card_name,
 		"type": get_type_string(),
@@ -89,10 +95,8 @@ func _mouse_entered() -> void:
 
 
 func _mouse_exited() -> void:
-	# 协调1：卡牌缩回原样
 	_play_scale_tween(NORMAL_SCALE)
 	
-	# 协调2：隐藏本地 Label 并清空文本
 	if lab:
 		lab.visible = false
 		lab.text = ""
@@ -118,6 +122,17 @@ func _gui_input(event: InputEvent) -> void:
 			MOUSE_BUTTON_LEFT:
 				accept_event() 
 				SignalBus.left_clicked.emit(stuff_id)
+			
 			MOUSE_BUTTON_RIGHT:
 				accept_event()
-				SignalBus.right_clicked.emit(stuff_id)
+				
+				# 💡 核心修改 4：切换选中状态并计算 state
+				is_chosen = !is_chosen # 取反：true 变 false，false 变 true
+				var state = 1 if is_chosen else 0
+				
+				# 💡 核心修改 5：触发 _draw() 绘制选中框效果
+				if border:
+					border.visible = is_chosen
+
+				# 发送带有最新状态的信号
+				SignalBus.right_clicked.emit(stuff_id, state)

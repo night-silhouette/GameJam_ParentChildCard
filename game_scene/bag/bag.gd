@@ -5,12 +5,11 @@ extends Control
 func _ready() -> void:
 	SignalBus.request_bag_card.emit();
 	SignalBus.request_get_self_gold.emit()
-	SignalBus.left_clicked.connect(_left_clicked)
-	SignalBus.right_clicked.connect(_right_clicked)
-func _left_clicked():
-	pass;
-	
-func _right_clicked(stuff_id):
-	InventoryManager.move_to_sell_zone(stuff_id)
-	SignalBus.request_bag_card.emit();
-	SignalBus.request_get_self_gold.emit()
+
+
+func _on_返回_button_down() -> void:
+	SignalBus.change_scence.emit("tomenu")
+
+
+func _on_街机按钮_button_down() -> void:
+	SignalBus.request_sell_card.emit(InventoryManager.get_cards_in_zone(Global.ZONE_CARD.SELL_ZONE))

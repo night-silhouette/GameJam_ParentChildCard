@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://dyf2d4fk0iwnw"]
+[gd_scene load_steps=17 format=3 uid="uid://dyf2d4fk0iwnw"]
 
 [ext_resource type="Script" uid="uid://dfwirrt2v83mb" path="res://game_scene/bag/bag.gd" id="1_356oh"]
 [ext_resource type="Script" uid="uid://dt0fvtr10talu" path="res://game_ui/battle/牌库/切换.gd" id="1_kfbbc"]
@@ -12,6 +12,17 @@
 [ext_resource type="Script" uid="uid://1yamgtb4x0hv" path="res://game_scene/bag/debug_addcard.gd" id="10_lub40"]
 [ext_resource type="PackedScene" uid="uid://bhfgqoa1s3286" path="res://game_scene/bag/金币显示.tscn" id="10_slhx8"]
 [ext_resource type="Texture2D" uid="uid://ci7ym6d16j3bs" path="res://素材/使用素材/战斗外/游戏初始界面/UI手（左手）.png" id="12_ir6ui"]
+[ext_resource type="PackedScene" uid="uid://iijoebau858w" path="res://game_scene/街机按钮.tscn" id="13_e8h8r"]
+[ext_resource type="FontFile" uid="uid://bj1pdtvpfop4a" path="res://素材/使用素材/YaoSuiXinShouXieTi-2.ttf" id="14_1ycey"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_dxttr"]
+font = ExtResource("14_1ycey")
+font_size = 66
+font_color = Color(0.76862746, 0.15686275, 0.1764706, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_e8h8r"]
+font_size = 64
+font_color = Color(0.16206557, 0.1620656, 0.16206557, 1)
 
 [node name="bag" type="Control"]
 layout_mode = 3
@@ -76,11 +87,11 @@ columns = 5
 
 [node name="debug" type="TextureButton" parent="."]
 layout_mode = 0
-offset_left = 11.999817
-offset_top = 475.99997
-offset_right = 1160.9998
-offset_bottom = 1553.0
-scale = Vector2(0.10761914, 0.10761914)
+offset_left = 18.0
+offset_top = 437.0
+offset_right = 1167.0
+offset_bottom = 1514.0
+scale = Vector2(0.067104205, 0.067104205)
 texture_normal = ExtResource("7_slhx8")
 texture_pressed = ExtResource("8_lub40")
 texture_hover = ExtResource("9_ir6ui")
@@ -93,7 +104,7 @@ offset_top = 5.0
 offset_right = 1151.0
 offset_bottom = 257.0
 
-[node name="TextureButton" type="TextureButton" parent="."]
+[node name="返回" type="TextureButton" parent="."]
 layout_mode = 0
 offset_left = 143.0
 offset_top = 4.0
@@ -105,4 +116,37 @@ texture_normal = ExtResource("12_ir6ui")
 texture_pressed = ExtResource("12_ir6ui")
 texture_hover = ExtResource("12_ir6ui")
 
+[node name="街机按钮" parent="." instance=ExtResource("13_e8h8r")]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 562.00006
+offset_right = 439.0
+offset_bottom = 889.00006
+scale = Vector2(0.201353, 0.201353)
+
+[node name="Label" type="Label" parent="街机按钮"]
+layout_mode = 0
+offset_left = 29.798462
+offset_top = -178.79077
+offset_right = 185.79846
+offset_bottom = -111.79077
+scale = Vector2(2.6525288, 2.6525288)
+text = "sell !"
+label_settings = SubResource("LabelSettings_dxttr")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="页码" type="Label" parent="."]
+layout_mode = 0
+offset_left = 10.999999
+offset_top = 291.00003
+offset_right = 62.0
+offset_bottom = 355.00003
+scale = Vector2(1.6382527, 0.5439086)
+label_settings = SubResource("LabelSettings_e8h8r")
+horizontal_alignment = 1
+vertical_alignment = 1
+
 [connection signal="button_down" from="debug" to="debug" method="_on_button_down"]
+[connection signal="button_down" from="返回" to="." method="_on_返回_button_down"]
+[connection signal="button_down" from="街机按钮" to="." method="_on_街机按钮_button_down"]

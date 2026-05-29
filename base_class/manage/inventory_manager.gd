@@ -57,6 +57,14 @@ func move_to_sell_zone(stuff_id: int) -> bool:
 			bag_updated.emit() 
 			return true
 	return false
+func move_to_bag_zone(stuff_id: int) -> bool:
+	for item in card_list:
+		if item["stuff_id"] == stuff_id:
+			item["zone"] = Global.ZONE_CARD.BAG_ZONE
+			# 修改了内部字典，手动触发信号更新 UI
+			bag_updated.emit() 
+			return true
+	return false
 
 
 # 静态资源检索器
@@ -95,3 +103,11 @@ func get_all_card_ids_by_filename() -> Array[int]:
 	# 可选：排个序让输出更整齐
 	id_list.sort()
 	return id_list
+
+
+func get_cards_in_zone(target_zone: int) -> Array:
+	var result = []
+	for card in card_list:
+		if card.zone == target_zone:
+			result.append(card)
+	return result

@@ -1,11 +1,17 @@
-[gd_scene load_steps=4 format=3 uid="uid://cwlnbe14kg5qx"]
+[gd_scene load_steps=6 format=3 uid="uid://cwlnbe14kg5qx"]
 
 [ext_resource type="Texture2D" uid="uid://dje375wa2ans7" path="res://素材/使用素材/卡牌/基础卡牌重置素材/卡牌.png" id="1_mnxpg"]
 [ext_resource type="Script" uid="uid://ch7axvdkd3t8r" path="res://base_class/card/bag_card.gd" id="1_rkg2p"]
+[ext_resource type="FontFile" uid="uid://bj1pdtvpfop4a" path="res://素材/使用素材/YaoSuiXinShouXieTi-2.ttf" id="3_nvbpl"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_rkg2p"]
-font_size = 24
+font_size = 36
 font_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_5pqt6"]
+font = ExtResource("3_nvbpl")
+font_size = 55
+font_color = Color(0.3254902, 0.09411765, 0, 1)
 
 [node name="bag_card" type="Control"]
 custom_minimum_size = Vector2(329, 570)
@@ -30,11 +36,33 @@ stretch_mode = 5
 [node name="详细" type="Label" parent="."]
 z_index = 10
 layout_mode = 0
-offset_left = 336.4625
-offset_top = 154.69603
-offset_right = 456.46246
-offset_bottom = 346.69604
-scale = Vector2(2.997942, 2.9488614)
+offset_left = 5.949847
+offset_top = 577.1352
+offset_right = 125.949814
+offset_bottom = 769.1352
+scale = Vector2(2.6429946, 2.6429946)
 label_settings = SubResource("LabelSettings_rkg2p")
 horizontal_alignment = 1
 autowrap_mode = 3
+
+[node name="name" type="Label" parent="."]
+layout_mode = 0
+offset_left = 71.39817
+offset_top = 214.1945
+offset_right = 209.39816
+offset_bottom = 284.19452
+scale = Vector2(1.4425231, 1.4425231)
+label_settings = SubResource("LabelSettings_5pqt6")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Border" type="ReferenceRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+border_color = Color(0.76862746, 0.15686275, 0.1764706, 1)
+border_width = 2.8
+editor_only = false

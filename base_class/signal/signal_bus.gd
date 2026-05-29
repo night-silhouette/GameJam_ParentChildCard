@@ -29,6 +29,7 @@ signal request_bag_card
 signal request_card_random
 signal request_get_self_gold
 signal request_debug_addcard
+signal request_sell_card(card_list:Array)
 
 # 邮件
 signal request_send_mail(id: int, txt: String)
@@ -136,6 +137,7 @@ signal request_combat_movement(behavoir,self_where,opponent_where)
 # 调试
 signal request_debug_time
 signal request_debug_matchpool
+
 #endregion
 
 
@@ -150,4 +152,4 @@ signal finishTurn
 #endregion
 
 signal left_clicked(stuff_id: int)
-signal right_clicked(stuff_id: int)
+signal right_clicked(stuff_id: int,state: int)	
