@@ -1,7 +1,6 @@
-[gd_scene load_steps=3 format=3 uid="uid://lr0vlyrlvftn"]
+[gd_scene load_steps=2 format=3 uid="uid://lr0vlyrlvftn"]
 
 [ext_resource type="Texture2D" uid="uid://p86gmrrc7cda" path="res://素材/使用素材/战斗内/桌面/回合与提示/条.png" id="1_0rpi0"]
-[ext_resource type="Texture2D" uid="uid://cd8k7jb8kxnkm" path="res://素材/使用素材/战斗内/桌面/回合与提示/小节.png" id="2_bqyba"]
 
 [node name="进度条" type="Control"]
 layout_mode = 3
@@ -16,11 +15,3 @@ layout_mode = 0
 offset_right = 1669.0
 offset_bottom = 182.0
 texture = ExtResource("1_0rpi0")
-
-[node name="TextureRect" type="TextureRect" parent="."]
-layout_mode = 0
-offset_left = -40.0
-offset_top = -144.0
-offset_right = 1809.0
-offset_bottom = 318.0
-texture = ExtResource("2_bqyba")

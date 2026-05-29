@@ -9,6 +9,7 @@ offset_left = -384.0
 offset_top = -216.0
 offset_right = 1523.0
 offset_bottom = 1064.0
+rotation = 1.5707964
 texture = ExtResource("1_r5vdw")
 script = ExtResource("2_3ajty")
 metadata/_edit_lock_ = true

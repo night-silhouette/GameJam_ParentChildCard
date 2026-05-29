@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=3 uid="uid://c85a1ra55sbk0"]
+[gd_scene load_steps=25 format=3 uid="uid://c85a1ra55sbk0"]
 
 [ext_resource type="Script" uid="uid://dw1q80ff6ue4v" path="res://game_scene/battle/battle_scence.gd" id="1_51ed8"]
 [ext_resource type="Texture2D" uid="uid://dng874p0igvq" path="res://素材/使用素材/战斗内/转换.png" id="1_chjg7"]
@@ -22,6 +22,7 @@
 [ext_resource type="PackedScene" uid="uid://bda2rak4wq7xg" path="res://game_scene/battle/jugde_bt.tscn" id="19_ka56j"]
 [ext_resource type="FontFile" uid="uid://bj1pdtvpfop4a" path="res://素材/使用素材/YaoSuiXinShouXieTi-2.ttf" id="20_xnxs8"]
 [ext_resource type="PackedScene" uid="uid://b7jmj76y81h3g" path="res://game_scene/battle/敌方法术牌.tscn" id="22_1hcvr"]
+[ext_resource type="Script" uid="uid://by3tvpfm7iyls" path="res://base_class/debug/deug_action.gd" id="23_1hcvr"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_0v75n"]
 font = ExtResource("20_xnxs8")
@@ -204,4 +205,15 @@ offset_top = 91.0
 offset_right = 540.00006
 offset_bottom = 656.0
 
+[node name="debug_action" parent="." instance=ExtResource("13_3krv3")]
+offset_left = 741.0
+offset_top = 540.0
+offset_right = 1890.0
+offset_bottom = 1617.0
+scale = Vector2(0.08971888, 0.08971888)
+
+[node name="debug_action2" type="Node" parent="."]
+script = ExtResource("23_1hcvr")
+
 [connection signal="button_down" from="万能按钮" to="State_machine" method="_on_万能按钮_button_down"]
+[connection signal="button_down" from="debug_action" to="debug_action2" method="_on_debug_action_button_down"]

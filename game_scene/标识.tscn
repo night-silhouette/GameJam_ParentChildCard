@@ -1,0 +1,27 @@
+[gd_scene load_steps=5 format=3 uid="uid://dot3sukqu6su7"]
+
+[ext_resource type="Texture2D" uid="uid://utbx8qwwwe8h" path="res://素材/使用素材/战斗外/卡牌图鉴/图鉴UI系列 箭头.png" id="1_y7cce"]
+[ext_resource type="Script" uid="uid://cj53c1ukvrfyn" path="res://game_scene/标识.gd" id="2_hfima"]
+[ext_resource type="FontFile" uid="uid://bj1pdtvpfop4a" path="res://素材/使用素材/YaoSuiXinShouXieTi-2.ttf" id="3_hxxy3"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_8xuk2"]
+font = ExtResource("3_hxxy3")
+font_size = 48
+font_color = Color(0, 0, 0, 1)
+
+[node name="标识" type="TextureRect"]
+offset_right = 40.0
+offset_bottom = 40.0
+texture = ExtResource("1_y7cce")
+script = ExtResource("2_hfima")
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 0
+offset_left = 183.00002
+offset_top = 87.0
+offset_right = 375.0
+offset_bottom = 136.0
+scale = Vector2(2.8170333, 2.8170333)
+label_settings = SubResource("LabelSettings_8xuk2")
+horizontal_alignment = 1
+vertical_alignment = 1

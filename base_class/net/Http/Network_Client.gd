@@ -35,8 +35,24 @@ func call_api(api_name: String, method: int, body_data: Dictionary = {}, use_tok
 	var err = http.request(final_url, headers, method, body_string)
 	
 	# 防御性编程：如果连门都没出（比如 URL 格式写错了），直接销毁快递员，省得卡在那儿
+
+# 防御性编程
 	if err != OK:
-		push_error("请求发送失败，API: " + api_name)
+		# 1. 打印人类能看懂的错误名字 (比如 ERR_INVALID_PARAMETER)
+		var error_name = error_string(err)
+		print("❌ 请求发送失败，连门都没出去！API: " + api_name)
+		print("❌ 错误原因 (Error Name): ", error_name)
+		print("❌ 错误码 (Error Code): ", err)
+		
+		# 2. 顺便打印当时的参数，肉眼排查
+		print("--- 案发现场参数表 ---")
+		print("URL: ", final_url)
+		print("Method: ", method)
+		print("Body 类型: ", type_string(typeof(body_string)), " | 内容: ", body_string)
+		print("HTTPRequest节点是否在场景树中: ", http.is_inside_tree())
+		print("---------------------")
+		
+		# 销毁节点，防止内存泄漏
 		http.queue_free()
 
 

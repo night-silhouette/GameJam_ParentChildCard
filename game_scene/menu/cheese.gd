@@ -25,8 +25,11 @@ func animationplayer():
 	press_case += 1;
 	
 	if press_case == 3:
-		_animationplayer.play("手柄进入");
-		
+		_animationplayer.play("手柄进入")
+		await _animationplayer.animation_finished
+		$"../游戏开始".visible = true	
+		$"../牌库".visible = true	
+	
 		
 		
 		

@@ -3,6 +3,7 @@ extends Node
 
 # 当数据发生变化时，通知全家老小（比如 UI 刷新）
 signal bag_updated 
+signal gold_updated(value:int)
 
 var card_list: Array = []:
 	set(value):
@@ -12,12 +13,23 @@ var card_list: Array = []:
 		# 发射信号，告诉 UI 层：“数据更新了，你们该干嘛干嘛”
 		bag_updated.emit()
 
+var _gold : int = 0
+
+var gold : int:
+	get:
+		return _gold
+	set(value):
+		_gold = value
+		gold_updated.emit(_gold)
+		
+
 @export_dir var cards_folder_path: String = "res://game_data/card/"
 
 
 func _ready() -> void:
 	# 数据层直接对接网络/系统信号
 	SignalBus.get_card_bag.connect(_get_card_bag)
+	SignalBus.get_self_gold.connect(_get_self_gold)
 
 
 func _get_card_bag(incoming_card_data: Array):
@@ -54,3 +66,32 @@ func _find_card_resource_by_id(target_id: int) -> CardResource:
 		return load(resource_path) as CardResource
 	push_warning("全局数据层：未找到卡牌资源文件: " + resource_path)
 	return null
+	
+func _get_self_gold(data:int):
+	gold = data
+## 读取卡牌文件夹，通过文件名解析并返回所有 card_id 的数组
+func get_all_card_ids_by_filename() -> Array[int]:
+	var id_list: Array[int] = []
+	
+	# 打开目标文件夹
+	var dir = DirAccess.open(cards_folder_path)
+	if dir:
+		dir.list_dir_begin()
+		var file_name = dir.get_next()
+		
+		while file_name != "":
+			# 过滤掉文件夹，只处理 .tres 资源文件，且名字匹配前缀
+			if !dir.current_is_dir() and file_name.ends_with(".tres") and file_name.begins_with("card_"):
+				# 提取数字部分：比如 "card_101.tres" -> "101"
+				var id_str = file_name.trim_prefix("card_").trim_suffix(".tres")
+				if id_str.is_valid_int():
+					id_list.append(id_str.to_int())
+			
+			file_name = dir.get_next()
+		dir.list_dir_end()
+	else:
+		push_error("全局数据层：无法打开卡牌文件夹路径: " + cards_folder_path)
+		
+	# 可选：排个序让输出更整齐
+	id_list.sort()
+	return id_list

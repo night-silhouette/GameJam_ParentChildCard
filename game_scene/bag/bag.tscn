@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://dyf2d4fk0iwnw"]
+[gd_scene load_steps=13 format=3 uid="uid://dyf2d4fk0iwnw"]
 
 [ext_resource type="Script" uid="uid://dfwirrt2v83mb" path="res://game_scene/bag/bag.gd" id="1_356oh"]
 [ext_resource type="Script" uid="uid://dt0fvtr10talu" path="res://game_ui/battle/牌库/切换.gd" id="1_kfbbc"]
@@ -11,6 +11,7 @@
 [ext_resource type="Texture2D" uid="uid://clnkorirdqkta" path="res://素材/使用素材/通用按钮/4.png" id="9_ir6ui"]
 [ext_resource type="Script" uid="uid://1yamgtb4x0hv" path="res://game_scene/bag/debug_addcard.gd" id="10_lub40"]
 [ext_resource type="PackedScene" uid="uid://bhfgqoa1s3286" path="res://game_scene/bag/金币显示.tscn" id="10_slhx8"]
+[ext_resource type="Texture2D" uid="uid://ci7ym6d16j3bs" path="res://素材/使用素材/战斗外/游戏初始界面/UI手（左手）.png" id="12_ir6ui"]
 
 [node name="bag" type="Control"]
 layout_mode = 3
@@ -28,7 +29,6 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.6174749, 0.5773903, 0.49538243, 1)
 
 [node name="card_manage_bag" type="Node" parent="."]
 script = ExtResource("1_vsji4")
@@ -65,10 +65,10 @@ metadata/_edit_lock_ = true
 
 [node name="card_vector" type="GridContainer" parent="."]
 layout_mode = 0
-offset_left = 183.00002
-offset_top = 37.0
-offset_right = 2272.3506
-offset_bottom = 1477.4711
+offset_left = 168.0
+offset_top = 77.0
+offset_right = 2257.3506
+offset_bottom = 1517.4711
 scale = Vector2(0.45795956, 0.39311677)
 theme_override_constants/h_separation = 24
 theme_override_constants/v_separation = 108
@@ -88,9 +88,21 @@ script = ExtResource("10_lub40")
 
 [node name="金币显示" parent="." instance=ExtResource("10_slhx8")]
 layout_mode = 0
-offset_left = 6.0
-offset_top = 12.0
-offset_right = 267.0
-offset_bottom = 264.0
+offset_left = 890.0
+offset_top = 5.0
+offset_right = 1151.0
+offset_bottom = 257.0
+
+[node name="TextureButton" type="TextureButton" parent="."]
+layout_mode = 0
+offset_left = 143.0
+offset_top = 4.0
+offset_right = 784.0
+offset_bottom = 706.0
+rotation = 1.5707964
+scale = Vector2(0.16706024, 0.16706024)
+texture_normal = ExtResource("12_ir6ui")
+texture_pressed = ExtResource("12_ir6ui")
+texture_hover = ExtResource("12_ir6ui")
 
 [connection signal="button_down" from="debug" to="debug" method="_on_button_down"]

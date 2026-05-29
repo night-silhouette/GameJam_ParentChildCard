@@ -151,10 +151,19 @@ func _request_card_random():
 	var url="/v1/start_pack/"
 	NetworkClient.call_api(url,HTTPClient.METHOD_GET)
 func _request_get_self_gold():
-	var url = "v1/user/gold/";
+	var url = "/v1/user/gold/";
 	NetworkClient.call_api(url,HTTPClient.METHOD_GET);
 	
 func _request_debug_addcard():
-	var 	url = "v1/debug/Card/";
-	NetworkClient.call_api(url,HTTPClient.METHOD_GET);
+	var url = "/v1/debug/Card/"
+	var card_list: Array[int] = InventoryManager.get_all_card_ids_by_filename()
 	
+	# 1. 随机拿到 int 类型的 card_id
+	var selected_id: int = card_list.pick_random()
+	
+	var body = {
+		# 2. 显式转换为 float 类型，确保 JSON 序列化后更符合后端的 float64 预期
+		"card_id": selected_id
+	}
+	
+	NetworkClient.call_api(url, HTTPClient.METHOD_POST, body)

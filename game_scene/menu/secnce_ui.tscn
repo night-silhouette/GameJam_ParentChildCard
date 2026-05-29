@@ -1,7 +1,6 @@
-[gd_scene load_steps=16 format=3 uid="uid://6drvwctgyu2f"]
+[gd_scene load_steps=15 format=3 uid="uid://6drvwctgyu2f"]
 
 [ext_resource type="Script" uid="uid://pd6hb6kajcg1" path="res://game_scene/menu/menu_ui.gd" id="1_35ys1"]
-[ext_resource type="Texture2D" uid="uid://cgxvptm58j2v4" path="res://素材/使用素材/战斗外/游戏初始界面/水管.png" id="2_ga8nu"]
 [ext_resource type="PackedScene" uid="uid://pmiymeegg054" path="res://game_scene/menu/边框.tscn" id="3_gloht"]
 [ext_resource type="PackedScene" uid="uid://d2g5id28y0yre" path="res://game_scene/menu/cheese.tscn" id="4_pkm2x"]
 [ext_resource type="PackedScene" uid="uid://wvj1qln41qo6" path="res://game_scene/menu/手柄.tscn" id="5_k3skb"]
@@ -11,7 +10,7 @@
 [ext_resource type="PackedScene" uid="uid://drl0a5cxlyiu6" path="res://game_ui/mask.tscn" id="9_8fkns"]
 [ext_resource type="Script" uid="uid://fu0n2fjolu38" path="res://game_scene/menu/注销.gd" id="10_hqt4n"]
 [ext_resource type="Texture2D" uid="uid://c1wklq6ii6b4v" path="res://素材/使用素材/战斗外/好友/信封/信封效果/1.png" id="11_h14v4"]
-[ext_resource type="PackedScene" uid="uid://cfsmqjjmevec7" path="res://game_scene/menu/coin.tscn" id="12_f7q2t"]
+[ext_resource type="PackedScene" uid="uid://dot3sukqu6su7" path="res://game_scene/标识.tscn" id="11_xwqlt"]
 
 [sub_resource type="Animation" id="Animation_sojaf"]
 length = 0.001
@@ -40,7 +39,7 @@ tracks/0/keys = {
 "times": PackedFloat32Array(-0.033333335, 0.4, 0.43333334, 0.4666667),
 "transitions": PackedFloat32Array(1, 0.21022414, 0.17677675, 1),
 "update": 0,
-"values": [Vector2(-88, 192), Vector2(320, 192), Vector2(295, 192), Vector2(300, 192)]
+"values": [Vector2(-88, 150), Vector2(320, 150), Vector2(295, 150), Vector2(300, 150)]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_ja110"]
@@ -59,15 +58,6 @@ grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("1_35ys1")
 metadata/_edit_lock_ = true
-
-[node name="水管" type="TextureRect" parent="."]
-layout_mode = 0
-offset_top = 63.999996
-offset_right = 869.0
-offset_bottom = 1099.0
-scale = Vector2(0.7532401, 0.44281524)
-mouse_filter = 2
-texture = ExtResource("2_ga8nu")
 
 [node name="边框" parent="." instance=ExtResource("3_gloht")]
 layout_mode = 1
@@ -89,33 +79,32 @@ libraries = {
 }
 
 [node name="cheese" parent="." node_paths=PackedStringArray("_animationplayer") instance=ExtResource("4_pkm2x")]
+visible = false
 layout_mode = 1
-offset_left = 63.999973
-offset_top = -88.0
-offset_right = 1089.0
-offset_bottom = 576.0
-scale = Vector2(0.16128315, 0.15557368)
+offset_left = 538.00006
+offset_top = 47.000034
+offset_right = 1563.0
+offset_bottom = 711.00006
+scale = Vector2(0.09434982, 0.09100981)
 pivot_offset = Vector2(512, 332)
 expand_mode = 0
 _animationplayer = NodePath("../AnimationPlayer")
 
-[node name="手柄" parent="." node_paths=PackedStringArray("animatedSprite2D", "colorRect") instance=ExtResource("5_k3skb")]
+[node name="手柄" parent="." node_paths=PackedStringArray("colorRect") instance=ExtResource("5_k3skb")]
 layout_mode = 0
 offset_left = -112.0
 offset_top = 192.0
-offset_right = 1794.992
+offset_right = 1794.9927
 offset_bottom = 1472.0
-rotation = 1.5707964
 scale = Vector2(0.1854808, 0.1854808)
-animatedSprite2D = NodePath("../coin")
 colorRect = NodePath("../mask")
 
 [node name="空格" type="TextureButton" parent="."]
 layout_mode = 0
-offset_left = 352.0
-offset_top = 536.0
-offset_right = 1034.0
-offset_bottom = 653.0
+offset_left = 383.0
+offset_top = 530.0
+offset_right = 1065.0
+offset_bottom = 647.0
 scale = Vector2(0.6820166, 0.6820166)
 action_mode = 0
 texture_normal = ExtResource("6_5im3p")
@@ -143,10 +132,32 @@ position = Vector2(1096, 103.99999)
 scale = Vector2(0.19546409, 0.19546409)
 texture = ExtResource("11_h14v4")
 
-[node name="coin" parent="." instance=ExtResource("12_f7q2t")]
+[node name="标识" parent="." instance=ExtResource("11_xwqlt")]
+layout_mode = 0
+offset_left = 830.9999
+offset_top = 498.00003
+offset_right = 974.9999
+offset_bottom = 805.0
+rotation = -0.68800443
+scale = Vector2(0.20306756, 0.20185262)
+
+[node name="游戏开始" parent="." instance=ExtResource("11_xwqlt")]
 visible = false
-position = Vector2(579, 284)
-scale = Vector2(0.7349091, 0.7349091)
+layout_mode = 0
+offset_left = 309.0
+offset_top = 187.0
+offset_right = 453.0
+offset_bottom = 494.0
+scale = Vector2(0.30404234, 0.30404234)
+
+[node name="牌库" parent="." instance=ExtResource("11_xwqlt")]
+visible = false
+layout_mode = 0
+offset_left = 311.0
+offset_top = 372.0
+offset_right = 455.0
+offset_bottom = 679.0
+scale = Vector2(0.30404234, 0.30404234)
 
 [connection signal="button_down" from="空格" to="cheese" method="animationplayer"]
 [connection signal="button_down" from="Button" to="Button" method="_on_button_down"]

@@ -96,12 +96,13 @@ func _handle_raw_api_data(api_name: String, method: int, code: int, data: Varian
 		"/v1/bags/":
 			if method == HTTPClient.METHOD_GET:
 				SignalBus.get_card_bag.emit(data);
+				print(data)
 		"/v1/start_pack/":
 			if method == HTTPClient.METHOD_GET:
 				SignalBus.get_card_random.emit(data);
-		"v1/user/gold/":
+		"/v1/user/gold/":
 			if method == HTTPClient.METHOD_GET:
 				SignalBus.get_self_gold.emit(data);
-		"y1/debug/Card/":
-			if method == HTTPClient.METHOD_GET:
-				pass;
+		"/v1/debug/Card/":
+			if method == HTTPClient.METHOD_POST:
+				print("add_success")

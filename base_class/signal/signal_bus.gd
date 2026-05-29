@@ -148,3 +148,6 @@ signal enter_hover(temp_id)
 signal exit_hover(temp_id)
 signal finishTurn
 #endregion
+
+signal left_clicked(stuff_id: int)
+signal right_clicked(stuff_id: int)
