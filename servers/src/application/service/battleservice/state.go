@@ -99,6 +99,8 @@ type StateMachine struct {
 	CardListCopy *[]CardAbstract.Card
 	cancelFunc   context.CancelFunc
 
+	GoldMoreUserId int
+
 	//stateData
 	Winner         int
 	Loser          int
@@ -108,7 +110,7 @@ type StateMachine struct {
 	ParentAct      bool
 }
 
-func NewStateMachine(c *Ctx, id1 int, id2 int, Nt *NotifyManager, ParentNodeCtx context.Context) *StateMachine {
+func NewStateMachine(c *Ctx, id1 int, id2 int, Nt *NotifyManager, ParentNodeCtx context.Context, GoldMoreUserId int) *StateMachine {
 
 	StateMachineImpl := &StateMachine{}
 	c.StateMachine = StateMachineImpl
@@ -123,6 +125,7 @@ func NewStateMachine(c *Ctx, id1 int, id2 int, Nt *NotifyManager, ParentNodeCtx 
 	StateMachineImpl.CombatTime = global.CombatWaitTime * time.Second
 	StateMachineImpl.ParentAct = false
 	StateMachineImpl.ChildAct = false
+	StateMachineImpl.GoldMoreUserId = GoldMoreUserId
 
 	StateMachineImpl.RegisterState()
 	for _, element := range StateMachineImpl.StateList {

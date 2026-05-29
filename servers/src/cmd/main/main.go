@@ -60,7 +60,7 @@ func Battle(DB *sql.DB, RD *redis.Client, User_repo userrepo.User_repo, user_ser
 	BattleHandler.User_s = user_service
 
 	battleservice.NewMatchManager(User_repo)
-	battleservice.InitBattleContainer()
+	battleservice.InitBattleContainer(User_repo)
 	battleservice.InitCardList(BattleService)
 	route.RegisterBattleWS(BattleHandler)
 
