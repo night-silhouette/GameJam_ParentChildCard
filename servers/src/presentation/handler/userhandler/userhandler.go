@@ -293,18 +293,20 @@ func (u *User_handler_impl) StarterPack() gin.HandlerFunc {
 }
 
 type DebugGiveCardByCardIdDto struct {
-	CardId int `json:"card_id"`
+	CardId float64 `json:"card_id"`
 }
 
 func (u *User_handler_impl) DebugGiveCardByCardId() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var req DebugGiveCardByCardIdDto
 		UserId := c.GetInt("id")
-		if err := c.ShouldBindQuery(&req); err != nil {
+		if err := c.ShouldBindJSON(&req); err != nil {
 			response.Fail(c, global.ResponseInvalidReqParams)
+			fmt.Println(err)
 			return
 		}
-		err := u.s.GiveCardByCardId(c.Request.Context(), UserId, req.CardId)
+		fmt.Println(req)
+		err := u.s.GiveCardByCardId(c.Request.Context(), UserId, int(req.CardId))
 		if err != global.ResponseSuccess {
 			response.Fail(c, err)
 			return
