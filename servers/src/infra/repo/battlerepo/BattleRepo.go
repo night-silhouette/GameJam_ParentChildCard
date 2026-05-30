@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"log"
-	
+
 	"pcc_card/infra/repo"
 
 	"github.com/redis/go-redis/v9"
@@ -55,11 +55,12 @@ func (r *BattleRepoImpl) ReadCardByID(ctx context.Context, db repo.SQLQueryer, I
 	if err != nil {
 		log.Println(err)
 	}
-	if res["category"] == 1 || res["category"] == 2 {
-		res["is_parent"] = true
-	}
-	if res["category"] == 3 || res["category"] == 4 {
-		res["is_parent"] = false
+	if cat, ok := res["category"].(float64); ok {
+		if cat == 1 || cat == 2 {
+			res["is_parent"] = true
+		} else if cat == 3 || cat == 4 {
+			res["is_parent"] = false
+		}
 	}
 
 	return res

@@ -26,13 +26,14 @@ type Ctx struct {
 	CtxStateNotify *CtxStateNotify
 	CardPool       *[]CardAbstract.Card //和手牌数组里的是同一份对象，都是从总体复制出来的
 	DisCardPool    *Util.SafeContainer[CardAbstract.Card]
+	TempIdCalc     *atomic.Int32 //计算tempid
 
 	NeedInterrupt       atomic.Bool
 	InterruptChan       chan struct{}
 	InterruptListenFunc atomic.Value //func(id int, action BattleDto.Action, ResponseChan chan<- BattleDto.Action) bool
 }
 
-func NewCtx(idA int, idB int, CardPool *[]CardAbstract.Card, ParentContext context.Context, CardList map[int]map[int]CardAbstract.Card) *Ctx {
+func NewCtx(idA int, idB int, CardPool *[]CardAbstract.Card, ParentContext context.Context, CardList map[int]map[int]CardAbstract.Card, TempIdCalc *atomic.Int32) *Ctx {
 	c := &Ctx{}
 	c.EffectsStack = NewEffectStack()
 	c.entityCounter = 1
@@ -40,6 +41,12 @@ func NewCtx(idA int, idB int, CardPool *[]CardAbstract.Card, ParentContext conte
 	c.CardPool = CardPool
 	c.PlayerDataMap = make(map[int]*PlayerData, 2)
 	c.PlayerDataMap[idA] = NewPlayerData(idA, CardList[idA])
+	for _, card := range CardList[idA] {
+		card.SetBtCtx(c)
+	}
+	for _, card := range CardList[idB] {
+		card.SetBtCtx(c)
+	}
 	c.PlayerDataMap[idB] = NewPlayerData(idB, CardList[idB])
 	c.CtxStateNotify = NewCtxStateNotify()
 	//c.CardObserver = NewCardObserver(ParentContext, c)//弃用哨兵模式
@@ -47,6 +54,8 @@ func NewCtx(idA int, idB int, CardPool *[]CardAbstract.Card, ParentContext conte
 	c.InterruptListenFunc.Store(func(id int, action BattleDto.Action, ResponseChan chan<- BattleDto.Action) bool { return false })
 	c.DisCardPool = Util.NewSafeContainer[CardAbstract.Card](ParentContext, 8)
 	c.InterruptChan = make(chan struct{}, 1)
+	c.TempIdCalc = TempIdCalc
+
 	return c
 }
 
@@ -303,7 +312,7 @@ func (c *Ctx) ProtoColInterrupt(UserId int, InterruptDto *BattleData.InterruptDt
 	var DataIsOK atomic.Bool
 	DataIsOK.Store(false)
 
-	TimeEnding := func() { //结束回调
+	TimeEnding := func() {    //结束回调
 		if !DataIsOK.Load() { //随机取
 			dataMutex.Lock()
 			data.TempIdList = Util.GetRandomElements(InterruptDto.TempIdList, InterruptDto.SelectNum)
@@ -496,7 +505,7 @@ func (c *Ctx) RandomSelectCard(id int) BattleData.Where { //这个是个不安�
 		if _, ok := card.(CardAbstract.Character); !ok {
 			continue
 		}
-
+		fmt.Println(card.GetInfo())
 		if card.GetInfo()["is_parent"].(bool) {
 			c.SetParentCardBT(id, card)
 			delete(cardInHard, cardId)

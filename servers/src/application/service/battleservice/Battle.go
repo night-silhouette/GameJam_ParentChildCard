@@ -20,13 +20,17 @@ type Battle struct {
 	SM       *StateMachine
 	Ctx      *Ctx
 	Nt       *NotifyManager
+
+	TempId atomic.Int32
 }
 
-func NewBattle(UserA int, UserB int, CardList map[int]map[int]CardAbstract.Card, GoldMoreUserId int) *Battle {
+func NewBattle(UserA int, UserB int, CardList map[int][]int, GoldMoreUserId int) *Battle {
+	var TempId atomic.Int32
+	TempId.Store(int32(0))
 	rootContext := context.Background()
 	BattleContext, cancel := context.WithCancel(rootContext)
 	id := int(atomic.AddInt64(&battleIDCounter, 1))
-	ctx := NewCtx(UserA, UserB, CardListImpl.Copy(), BattleContext, CardList)
+	ctx := NewCtx(UserA, UserB, CardListImpl.Copy(), BattleContext, CloneByCardListImpl(CardList, &TempId), &TempId)
 	Nt := NewNotifyManager(UserA, UserB, 32) //初始化bufferSize
 	SM := NewStateMachine(ctx, UserA, UserB, Nt, BattleContext, GoldMoreUserId)
 	go func() {
@@ -70,14 +74,17 @@ func InitBattleContainer(repo userrepo.User_repo) {
 
 }
 
-// 传来的卡的id。出来的是充血对象
-func CloneByCardListImpl(cardIdList map[int][]int) map[int]map[int]CardAbstract.Card {
+// CloneByCardListImpl 传来的卡的id。出来的是充血对象(填充tempid了的)
+func CloneByCardListImpl(cardIdList map[int][]int, NumCalc *atomic.Int32) map[int]map[int]CardAbstract.Card {
 	res := make(map[int]map[int]CardAbstract.Card)
 	for key, value := range cardIdList {
 		res[key] = make(map[int]CardAbstract.Card)
 		for _, CardId := range value {
 			card := CardListImpl.GetCardImpl(CardId)
-			res[key][card.GetID()] = card
+
+			tempId := (*NumCalc).Add(1)
+			card.SetTempId(int(tempId))
+			res[key][card.GetTempId()] = card
 		}
 
 	}
@@ -87,7 +94,7 @@ func CloneByCardListImpl(cardIdList map[int][]int) map[int]map[int]CardAbstract.
 // AddBattle 传来的卡的id。
 func (bc *BattleContainer) AddBattle(id1 int, id2 int, cardIdList map[int][]int, GoldMoreUserId int) int { //启动接口
 
-	Bt := NewBattle(id1, id2, CloneByCardListImpl(cardIdList), GoldMoreUserId)
+	Bt := NewBattle(id1, id2, cardIdList, GoldMoreUserId)
 	bc.mu.Lock()
 	defer bc.mu.Unlock()
 

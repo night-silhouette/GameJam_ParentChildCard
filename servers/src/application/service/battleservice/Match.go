@@ -1,7 +1,6 @@
 package battleservice
 
 import (
-	"context"
 	"math"
 	"math/rand/v2"
 	"pcc_card/application/entity/BattleData"
@@ -219,12 +218,12 @@ func (m *MatchManager) MatchCatch() (bool, int, int, map[int][]int, int) { //最
 	//------判别那个人带入的gold更大---
 
 	//------删除带入的卡牌---------
-	for _, dto := range MatchPool.data[idx1].data.CardList {
-		m.repo.DeleteStuff(context.Background(), m.repo.Get_db(), id1, dto.StuffId)
-	}
-	for _, dto := range MatchPool.data[idx2].data.CardList {
-		m.repo.DeleteStuff(context.Background(), m.repo.Get_db(), id2, dto.StuffId)
-	}
+	//for _, dto := range MatchPool.data[idx1].data.CardList {
+	//	m.repo.DeleteStuff(context.Background(), m.repo.Get_db(), id1, dto.StuffId)
+	//}
+	//for _, dto := range MatchPool.data[idx2].data.CardList {
+	//	m.repo.DeleteStuff(context.Background(), m.repo.Get_db(), id2, dto.StuffId)
+	//}
 	//------删除带入的卡牌---------
 
 	//删除匹配池子里的元数据

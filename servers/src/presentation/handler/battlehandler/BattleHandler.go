@@ -118,6 +118,7 @@ func (u *BattleHandlerImpl) BattleWs() gin.HandlerFunc {
 		BtData := c.Query("btData")
 		decodedJson, err := url.QueryUnescape(BtData)
 		if err != nil {
+			fmt.Println(err)
 			response.WsFail(conn, global.ResponseInvalidReqParams)
 			return
 		}
@@ -125,14 +126,17 @@ func (u *BattleHandlerImpl) BattleWs() gin.HandlerFunc {
 
 		err = json.Unmarshal([]byte(decodedJson), &data)
 		if err != nil {
+			fmt.Println(err)
 			response.WsFail(conn, global.ResponseInvalidReqParams)
 			return
 		}
 		fmt.Println(data)
 		//检验data合法性
-		ok := u.User_s.CheckBtDataIsValid(goctx, id, data.CardList)
+		ok := u.User_s.CheckBtDataIsValid(goctx, id, data.CardList, data.Gold)
 		if ok != global.ResponseSuccess {
+			fmt.Println(ok)
 			response.WsFail(conn, ok)
+			return
 		}
 		//-------------------对带入的card和gold信息解析---------------------
 		fmt.Println("数据合法")

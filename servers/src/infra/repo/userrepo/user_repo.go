@@ -49,6 +49,7 @@ type User_repo interface {
 	DeleteStuff(ctx context.Context, db repo.SQLQueryer, userId int, stuffId int) global.ResponseStatusCode
 	GetStuffByStuffId(ctx context.Context, db repo.SQLQueryer, userId int, stuffId int) (global.ResponseStatusCode, BattleData.BagStuffDto)
 	JudgeCardIsParent(ctx context.Context, db repo.SQLQueryer, CardId int) (global.ResponseStatusCode, bool)
+	JudgeCardIsCharacter(ctx context.Context, db repo.SQLQueryer, CardId int) (global.ResponseStatusCode, bool)
 }
 
 type User_repo_impl struct {
@@ -697,16 +698,37 @@ func (r *User_repo_impl) GetStuffByStuffId(ctx context.Context, db repo.SQLQuery
 }
 
 func (r *User_repo_impl) JudgeCardIsParent(ctx context.Context, db repo.SQLQueryer, CardId int) (global.ResponseStatusCode, bool) {
-	query := "select category from new_cards where id = $1"
+	query := "select category from newcards where id = $1"
 
 	var category int
 	err := db.QueryRowContext(ctx, query, CardId).Scan(&category)
 	if err != nil {
+		fmt.Println(err)
 		if err == sql.ErrNoRows {
 			return global.ResponseDataNotFound, false
 		}
+		return global.ResponseInternalServersError, false
 	}
+
 	if category == 1 || category == 2 {
+		return global.ResponseSuccess, true
+	} else {
+		return global.ResponseSuccess, false
+	}
+
+}
+func (r *User_repo_impl) JudgeCardIsCharacter(ctx context.Context, db repo.SQLQueryer, CardId int) (global.ResponseStatusCode, bool) {
+	query := "select category from newcards where id = $1"
+	var category int
+	err := db.QueryRowContext(ctx, query, CardId).Scan(&category)
+	if err != nil {
+		fmt.Println(err)
+		if err == sql.ErrNoRows {
+			return global.ResponseDataNotFound, false
+		}
+		return global.ResponseInternalServersError, false
+	}
+	if category == 1 || category == 3 {
 		return global.ResponseSuccess, true
 	} else {
 		return global.ResponseSuccess, false

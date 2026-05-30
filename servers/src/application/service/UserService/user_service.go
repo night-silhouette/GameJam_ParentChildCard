@@ -45,7 +45,7 @@ type User_service interface {
 
 	GetUserGold(ctx context.Context, userId int) (int, global.ResponseStatusCode)
 	SellCard(ctx context.Context, userId int, stuffIdList []int) global.ResponseStatusCode
-	CheckBtDataIsValid(ctx context.Context, userId int, data []BattleData.BagStuffDto) global.ResponseStatusCode
+	CheckBtDataIsValid(ctx context.Context, userId int, data []BattleData.BagStuffDto, gold int) global.ResponseStatusCode
 }
 
 type User_service_impl struct {
@@ -291,7 +291,7 @@ func (u *User_service_impl) SellCard(ctx context.Context, userId int, stuffIdLis
 	return global.ResponseSuccess
 }
 
-func (u *User_service_impl) CheckBtDataIsValid(ctx context.Context, userId int, data []BattleData.BagStuffDto) global.ResponseStatusCode {
+func (u *User_service_impl) CheckBtDataIsValid(ctx context.Context, userId int, data []BattleData.BagStuffDto, gold int) global.ResponseStatusCode {
 	if len(data) != 5 {
 		return global.BattleCardNumErr
 	}
@@ -302,18 +302,41 @@ func (u *User_service_impl) CheckBtDataIsValid(ctx context.Context, userId int, 
 		}
 	}
 
-	c_num := 0
+	child_num := 0
+	character_num := 0
 	for _, e := range data {
-		err, flag := u.repo.JudgeCardIsParent(ctx, u.repo.Get_db(), e.CardId)
-		if err != global.ResponseSuccess {
-			return err
+		err1, flag1 := u.repo.JudgeCardIsParent(ctx, u.repo.Get_db(), e.CardId)
+		if err1 != global.ResponseSuccess {
+			return err1
 		}
-		if !flag {
-			c_num++
+		if !flag1 {
+			child_num++
 		}
+		err2, flag2 := u.repo.JudgeCardIsCharacter(ctx, u.repo.Get_db(), e.CardId)
+		if err2 != global.ResponseSuccess {
+			return err2
+		}
+		if flag2 {
+			character_num++
+		}
+
 	}
-	if c_num > 2 {
+	//至少2子
+	if child_num > 2 {
 		return global.BattleEnterDataInvalid
+	}
+	//三战二法
+	if character_num != 3 {
+		return global.BattleEnterDataInvalid
+	}
+
+	//判定钱够不够
+	err3, gold_num := u.repo.GetAssetGold(ctx, u.repo.Get_db(), userId)
+	if err3 != global.ResponseSuccess {
+		return err3
+	}
+	if gold_num-gold < 0 {
+		return global.ResponseGoldNotEnough
 	}
 
 	return global.ResponseSuccess
