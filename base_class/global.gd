@@ -1,7 +1,7 @@
 extends Node
 var BASE_URL = "http://120.26.145.68:10086" 
 # Global.gd 或 NetworkClient.gd
-@export var token_save :bool = true;
+var token_save :bool = true;
 var init_battle_time :int;
 
 const ACTION_NAME = {

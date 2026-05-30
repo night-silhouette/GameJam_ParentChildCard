@@ -19,7 +19,13 @@ enum ResponseStatusCode {
 	ResponseRepeatRequest,
 	ResponseUnknownError,
 	ResponseTokenHasUpdate,
-	BattleInvalidTiming
+	BattleInvalidTiming,
+	BattleEffectStackOverflow,
+	BattleCardCategoryError,
+	BattleCardNotFound,
+	BattleNotInYourRound,
+	BattleHasCard,
+	BattleCardNumErr
 }
 
 var error_message := {
@@ -53,7 +59,14 @@ var error_message := {
 	ResponseStatusCode.ResponseRepeatRequest: "重复请求",
 	ResponseStatusCode.ResponseUnknownError: "未知错误",
 	ResponseStatusCode.ResponseTokenHasUpdate: "Token已被更新",
-	ResponseStatusCode.BattleInvalidTiming: "不在正确的战斗时机"
+	ResponseStatusCode.BattleInvalidTiming: "不在正确的战斗时机",
+	ResponseStatusCode.BattleEffectStackOverflow:     "卡牌效果结算堆栈溢出",
+	ResponseStatusCode.BattleCardCategoryError:       "卡牌种类有误",
+	ResponseStatusCode.BattleCardNotFound:            "此牌没有被找到",
+	ResponseStatusCode.BattleNotInYourRound:          "此时不在你的回合",
+	ResponseStatusCode.BattleHasCard:                 "此位置有牌了",
+	ResponseStatusCode.BattleCardNumErr:              "卡牌数量有误"
+
 }
 
 func get_message(code:int) -> String:

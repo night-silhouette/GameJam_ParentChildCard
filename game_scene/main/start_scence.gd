@@ -12,10 +12,6 @@ func _ready() -> void:
 	SignalBus.request_validate_token.emit();
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-
-		
-		
-		
 		
 func _token_success() :
 	token_success = true;

@@ -15,7 +15,7 @@ func _ready():
 func _handle_raw_api_data(api_name: String, method: int, code: int, data: Variant, msg: String):
 # 登录和token
 	if code != 0 :
-		#print("code = ",code,NetError.get_message(code));
+		print("code = ",code,NetError.get_message(code));
 		return
 		
 	match api_name:
@@ -39,11 +39,11 @@ func _handle_raw_api_data(api_name: String, method: int, code: int, data: Varian
 				if code == 0:
 					
 					SignalBus.token_validated_success.emit()
-					##print("token成功")
+					print("token成功")
 				else:
 					current_token = ""
 					SignalBus.network_disconnected.emit()
-					##print("toke过期 " + NetError.error_message[code]);
+					print("toke过期 " + NetError.error_message[code]);
 
 	# -------------------------------------
 	# 2. 用户信息相关 (/v1/user)
