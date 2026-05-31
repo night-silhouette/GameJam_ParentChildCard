@@ -448,7 +448,6 @@ func (s *ShuffleDeal) exit() {
 }
 
 //#endregion
-
 //#region State:SelectSkillCard
 
 type SelectSkillCard struct {
@@ -872,7 +871,6 @@ func (c *Combat) process(GoCtx context.Context) {
 }
 
 //endregion
-
 //region State:CardCalc
 
 type CardCalc struct {
@@ -970,7 +968,6 @@ func (s *CardCalc) process(GoCtx context.Context) {
 }
 
 //endregion
-
 //region State:SkillCardCalc
 
 type SkillCardCalc struct {

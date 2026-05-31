@@ -226,6 +226,10 @@ func (m *MatchManager) MatchCatch() (bool, int, int, map[int][]int, int) { //最
 	//}
 	//------删除带入的卡牌---------
 
+	//删除带入的金币
+	//m.repo.UpdateAssetGold(context.Background(), m.repo.Get_db(),id1,MatchPool.data[idx1].data.Gold)
+	//m.repo.UpdateAssetGold(context.Background(), m.repo.Get_db(),id2,MatchPool.data[idx2].data.Gold)
+
 	//删除匹配池子里的元数据
 	if idx1 < idx2 {
 		MatchPool.data = append(MatchPool.data[:idx2], MatchPool.data[idx2+1:]...)
