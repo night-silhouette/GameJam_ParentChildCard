@@ -19,9 +19,9 @@ const (
 	Lev1Category3Num = 5
 	Lev1Category4Num = 5
 
-	BattleWaitTime      = 15 //s
-	SelectCharacterTime = 10 //s
-	SelectSkillCardTime = 10 //s
-	JudgeWaitTime       = 6  //s
-	CombatWaitTime      = 30 //s
+	BattleWaitTime      = 1    //s
+	SelectCharacterTime = 10   //s
+	SelectSkillCardTime = 1    //s
+	JudgeWaitTime       = 1    //s
+	CombatWaitTime      = 1000 //s
 )

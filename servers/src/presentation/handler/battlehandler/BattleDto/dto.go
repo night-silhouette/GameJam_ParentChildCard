@@ -29,6 +29,7 @@ const (
 	Interrupt
 	GetDisCard
 	SkillCardCalc
+	GetEnergy
 )
 
 var ActionName = map[ActionCode]string{
@@ -49,6 +50,7 @@ var ActionName = map[ActionCode]string{
 	Interrupt:             "中断选牌",
 	GetDisCard:            "查看弃牌堆",
 	SkillCardCalc:         "法术牌计算",
+	GetEnergy:             "查看能量值",
 }
 
 type Predicates int

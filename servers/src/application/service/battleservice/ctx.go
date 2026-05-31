@@ -199,6 +199,36 @@ type PlayerData struct {
 	ParentCardBT CardAbstract.Card
 	ChildCardBT  CardAbstract.Card
 	SkillCardBT  CardAbstract.Card
+	Energy       int
+
+	dataMutex sync.RWMutex
+}
+
+func (p *PlayerData) GetEnergy() int {
+	p.dataMutex.RLock()
+	defer p.dataMutex.RUnlock()
+	return p.Energy
+}
+
+func (p *PlayerData) UpdateEnergy(offset int) {
+	p.dataMutex.Lock()
+	defer p.dataMutex.Unlock()
+	if p.IsCanUpdateEnergy(offset) {
+		temp := p.Energy + offset
+		if temp > 5 {
+			temp = 5
+		}
+		p.Energy = temp
+	}
+}
+
+func (p *PlayerData) IsCanUpdateEnergy(offset int) bool {
+	p.dataMutex.RLock()
+	defer p.dataMutex.RUnlock()
+	if (p.Energy + offset) < 0 {
+		return false
+	}
+	return true
 }
 
 func (c *PlayerData) GetBt(where BattleData.Where) CardAbstract.Card {
@@ -218,6 +248,7 @@ func NewPlayerData(ID int, CardInHand map[int]CardAbstract.Card) *PlayerData {
 	p := &PlayerData{}
 	p.CardInHand = CardInHand
 	p.ID = ID
+	p.Energy = 1 //能量初始值为一
 	return p
 }
 
@@ -312,7 +343,7 @@ func (c *Ctx) ProtoColInterrupt(UserId int, InterruptDto *BattleData.InterruptDt
 	var DataIsOK atomic.Bool
 	DataIsOK.Store(false)
 
-	TimeEnding := func() {    //结束回调
+	TimeEnding := func() { //结束回调
 		if !DataIsOK.Load() { //随机取
 			dataMutex.Lock()
 			data.TempIdList = Util.GetRandomElements(InterruptDto.TempIdList, InterruptDto.SelectNum)
