@@ -35,6 +35,7 @@ func (s *StateMachine) RegisterState() {
 		"Combat":          &Combat{},
 		"SkillCardCalc":   &SkillCardCalc{},
 		"CardCalc":        &CardCalc{},
+		"SelectWeather":   &SelectWeather{},
 	}
 	for key, element := range s.StateList {
 		element.SetName(key)
@@ -349,7 +350,7 @@ func (s *ShuffleDeal) enter() {
 
 		s.SM.SendActionById(s.Id1, BattleDto.NewAction(BattleDto.StartBattle, BattleDto.Notify, ""))
 		s.SM.SendActionById(s.Id2, BattleDto.NewAction(BattleDto.StartBattle, BattleDto.Notify, ""))
-		go s.SM.finish("SelectSkillCard")
+		go s.SM.finish("SelectWeather")
 		s.SM.Mutex.Unlock()
 	}) //定时开始战斗
 }
@@ -456,6 +457,94 @@ func (s *ShuffleDeal) exit() {
 }
 
 //#endregion
+
+// #region State:SelectWeather
+type SelectWeather struct {
+	StateTemplate
+	StopChan    chan struct{}
+	CrashChan   chan struct{}
+	WeatherList []int
+}
+
+type SelectWeatherDto struct {
+	Weather BattleData.Weather `json:"weather" mapstructure:"weather"`
+}
+
+// Change !!天气变化主函数
+func (s *SelectWeather) Change(w BattleData.Weather) {
+
+}
+
+// ToSelect 随机出3个天气,加上宁静
+func (s *SelectWeather) ToSelect() []int {
+
+	num := BattleData.WeatherCanSelectNum //几个里随机
+	k := 3                                //要几个
+	nums := rand.Perm(num)
+	res := make([]int, k)
+	for i := 0; i < k; i++ {
+		res[i] = nums[i] + 1
+	}
+	res = append(res, 0)
+	return res
+}
+
+func (s *SelectWeather) process(GoCtx context.Context) {
+	handleAction := func(id int, action BattleDto.Action, ResponseChan chan<- BattleDto.Action) bool {
+		if action.ActionCode == BattleDto.SelectWeather && action.Predicates == BattleDto.Result {
+			var data SelectWeatherDto
+			s.SM.DataDecode(action, &data, id)
+			s.SM.SendActionById(id, BattleDto.NewAction(BattleDto.SelectWeather, BattleDto.Succeed, data))
+			s.CrashChan <- struct{}{}
+			s.Change(data.Weather)
+
+			go s.SM.finish("SelectSkillCard")
+		}
+
+		return false
+	}
+	s.SM.AcceptAction(GoCtx, handleAction)
+}
+
+func (s *SelectWeather) timeEnding() {
+	res := Util.GetRandomElements[int](s.WeatherList, 1)[0]
+	s.Change(BattleData.Weather(res))
+	s.SM.SendActionById(s.SM.GoldMoreUserId, BattleDto.NewAction(BattleDto.SelectWeather, BattleDto.Succeed, SelectWeatherDto{Weather: BattleData.Weather(res)}))
+	go s.SM.finish("SelectSkillCard")
+}
+
+func (s *SelectWeather) enter() {
+
+	//----通知谁的钱多----
+	opponentId := s.c.GetOpponentId(s.SM.GoldMoreUserId)
+	s.SM.SendActionById(s.SM.GoldMoreUserId, BattleDto.NewAction(
+		BattleDto.SelectWeather,
+		BattleDto.Notify,
+		map[string]bool{"is_more": true},
+	))
+	s.SM.SendActionById(opponentId, BattleDto.NewAction(
+		BattleDto.SelectWeather,
+		BattleDto.Notify,
+		map[string]bool{"is_more": false},
+	))
+	//----通知谁的钱多----
+
+	//-----让钱多的人选天气-----
+	queryMap := make(map[string]any)
+	queryMap["state_wait_time"] = Util.SendTime(global.SelectWeatherTime * time.Second)
+	s.WeatherList = s.ToSelect()
+	queryMap["weather_list"] = s.WeatherList
+	s.SM.SendActionById(s.SM.GoldMoreUserId, BattleDto.NewAction(BattleDto.SelectWeather, BattleDto.Query, queryMap))
+	//-----让钱多的人选天气-----
+
+	//设置定时
+	StopChan, CrashChan := Util.CreateTimer(global.SelectWeatherTime*time.Second, s.timeEnding)
+	s.StopChan = StopChan
+	s.CrashChan = CrashChan
+}
+
+//#endregion
+
 //#region State:SelectSkillCard
 
 type SelectSkillCard struct {
