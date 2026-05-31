@@ -22,14 +22,11 @@ func spawn_piece():
 	
 func animationplayer():
 	$cheese_animationpalyer.play("抖动");
-	press_case += 1;
-	
-	if press_case == 3:
-		_animationplayer.play("手柄进入")
-		await _animationplayer.animation_finished
-		$"../游戏开始".visible = true	
-		$"../牌库".visible = true	
-	
+	_animationplayer.play("手柄进入")
+	await _animationplayer.animation_finished
+	$"../游戏开始".visible = true	
+	$"../牌库".visible = true	
+
 		
 		
 		

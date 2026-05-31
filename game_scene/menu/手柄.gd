@@ -7,10 +7,7 @@ func _ready() -> void:
 	SignalBus.ws_disconnected.connect(_ws_disconnected)
 
 func _on_笑脸按钮_button_down() -> void:
-	SignalBus.to_connect_ws.emit();
-	animatedSprite2D.play()
-	colorRect.visible = true;
-	animatedSprite2D.visible = true;
+	SignalBus.change_ui.emit()
 	
 
 

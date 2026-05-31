@@ -1,0 +1,177 @@
+[gd_scene load_steps=13 format=3 uid="uid://cuvi8jmlquxkr"]
+
+[ext_resource type="Texture2D" uid="uid://dgyqirah3ilvl" path="res://素材/使用素材/战斗内/桌面/卡库栏底版 .png" id="1_c20ep"]
+[ext_resource type="Script" uid="uid://dsjhgmpb1haaw" path="res://game_ui/match/match_ui.gd" id="1_oqlle"]
+[ext_resource type="Script" uid="uid://dt0fvtr10talu" path="res://game_ui/battle/牌库/切换.gd" id="2_xikpt"]
+[ext_resource type="PackedScene" uid="uid://dpfvbx3mhmx8g" path="res://game_ui/battle/牌库/右切换.tscn" id="3_84dsw"]
+[ext_resource type="PackedScene" uid="uid://crktwrkpkruf6" path="res://game_ui/battle/牌库/左切换.tscn" id="4_aq36u"]
+[ext_resource type="PackedScene" uid="uid://bwufxlkxb2sy0" path="res://base_class/card/match_card.tscn" id="5_xikpt"]
+[ext_resource type="PackedScene" uid="uid://bhfgqoa1s3286" path="res://game_scene/bag/金币显示.tscn" id="6_aq36u"]
+[ext_resource type="Script" uid="uid://nnvjn0vvfsct" path="res://game_ui/match/card_manage_match.gd" id="7_18hej"]
+[ext_resource type="PackedScene" uid="uid://iijoebau858w" path="res://game_scene/街机按钮.tscn" id="8_a5828"]
+[ext_resource type="PackedScene" uid="uid://dot3sukqu6su7" path="res://game_scene/标识.tscn" id="9_hgah4"]
+[ext_resource type="Texture2D" uid="uid://ci7ym6d16j3bs" path="res://素材/使用素材/战斗外/游戏初始界面/UI手（左手）.png" id="10_hgah4"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_a5828"]
+
+[node name="match_ui" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_oqlle")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.2520276, 0.25202766, 0.25202757, 1)
+
+[node name="牌库底板" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = 587.0
+offset_top = 480.00006
+offset_right = 4147.0
+offset_bottom = 1657.0
+rotation = 5.852089
+scale = Vector2(0.13613302, 0.13613302)
+texture = ExtResource("1_c20ep")
+
+[node name="切换" type="Control" parent="牌库底板"]
+anchors_preset = 0
+offset_left = 1300.1633
+offset_top = 535.0786
+offset_right = 1340.1633
+offset_bottom = 575.0786
+script = ExtResource("2_xikpt")
+
+[node name="右切换" parent="牌库底板/切换" instance=ExtResource("3_84dsw")]
+layout_mode = 0
+offset_left = 680.0
+offset_top = 792.0
+offset_right = 1074.0
+offset_bottom = 1413.0
+scale = Vector2(0.5, 0.5)
+metadata/_edit_lock_ = true
+
+[node name="左切换" parent="牌库底板/切换" instance=ExtResource("4_aq36u")]
+layout_mode = 0
+offset_left = 184.0
+offset_top = 800.0
+offset_right = 578.0
+offset_bottom = 1421.0
+scale = Vector2(0.5, 0.5)
+metadata/_edit_lock_ = true
+
+[node name="bag" type="GridContainer" parent="牌库底板"]
+layout_mode = 0
+offset_left = 193.00235
+offset_top = 72.59962
+offset_right = 2057.9275
+offset_bottom = 674.522
+scale = Vector2(1.8104677, 1.8104677)
+theme_override_constants/h_separation = 24
+theme_override_constants/v_separation = 108
+columns = 5
+
+[node name="match_card5" parent="牌库底板/bag" instance=ExtResource("5_xikpt")]
+layout_mode = 2
+
+[node name="match_card2" parent="牌库底板/bag" instance=ExtResource("5_xikpt")]
+layout_mode = 2
+
+[node name="match_card" parent="牌库底板/bag" instance=ExtResource("5_xikpt")]
+layout_mode = 2
+
+[node name="match_card3" parent="牌库底板/bag" instance=ExtResource("5_xikpt")]
+layout_mode = 2
+
+[node name="match_card4" parent="牌库底板/bag" instance=ExtResource("5_xikpt")]
+layout_mode = 2
+
+[node name="GridContainer" type="GridContainer" parent="."]
+layout_mode = 0
+offset_left = 262.0
+offset_top = 58.0
+offset_right = 1923.0
+offset_bottom = 628.0
+scale = Vector2(0.341016, 0.341016)
+columns = 5
+
+[node name="match_card5" parent="GridContainer" instance=ExtResource("5_xikpt")]
+layout_mode = 2
+
+[node name="match_card4" parent="GridContainer" instance=ExtResource("5_xikpt")]
+layout_mode = 2
+
+[node name="match_card3" parent="GridContainer" instance=ExtResource("5_xikpt")]
+layout_mode = 2
+
+[node name="match_card2" parent="GridContainer" instance=ExtResource("5_xikpt")]
+layout_mode = 2
+
+[node name="match_card" parent="GridContainer" instance=ExtResource("5_xikpt")]
+layout_mode = 2
+
+[node name="使用" parent="." instance=ExtResource("6_aq36u")]
+layout_mode = 0
+offset_left = 17.0
+offset_top = 225.0
+offset_right = 278.0
+offset_bottom = 477.0
+
+[node name="num" type="LineEdit" parent="使用"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 288.0383
+offset_top = 33.235207
+offset_right = 340.9262
+offset_bottom = -11.968018
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 76
+theme_override_styles/normal = SubResource("StyleBoxEmpty_a5828")
+max_length = 16
+
+[node name="card_manage_match" type="Node" parent="."]
+script = ExtResource("7_18hej")
+
+[node name="街机按钮" parent="." instance=ExtResource("8_a5828")]
+layout_mode = 0
+offset_left = 283.0
+offset_top = 490.0
+offset_right = 714.0
+offset_bottom = 817.0
+scale = Vector2(0.3976495, 0.40073693)
+
+[node name="标识" parent="." instance=ExtResource("9_hgah4")]
+layout_mode = 0
+offset_left = 271.0
+offset_top = 536.0
+offset_right = 415.0
+offset_bottom = 843.0
+rotation = -2.8565483
+scale = Vector2(0.21863914, 0.21863914)
+
+[node name="返回" type="TextureButton" parent="."]
+layout_mode = 0
+offset_left = 1110.0001
+offset_top = 25.000002
+offset_right = 1751.0001
+offset_bottom = 727.0
+rotation = 1.5707964
+scale = Vector2(0.16706024, 0.16706024)
+texture_normal = ExtResource("10_hgah4")
+texture_pressed = ExtResource("10_hgah4")
+texture_hover = ExtResource("10_hgah4")
+
+[connection signal="button_down" from="街机按钮" to="." method="_on_街机按钮_button_down"]
+[connection signal="button_down" from="返回" to="." method="_on_返回_button_down"]

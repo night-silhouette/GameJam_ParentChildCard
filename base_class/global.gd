@@ -56,8 +56,8 @@ const ZONE_CARD = {
 	
 	#战斗外：
 	BAG_ZONE = 10,  #背包区域
-	SELL_ZONE  = 11  #卖出区域
-				
+	SELL_ZONE  = 11,  #卖出区域
+	MATCH_ZONE = 12	, #出战区域
 	
 }
 

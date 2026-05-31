@@ -126,19 +126,11 @@ func _gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed:
 		match event.button_index:
 			MOUSE_BUTTON_LEFT:
-				accept_event() 
-				SignalBus.left_clicked.emit(stuff_id)
+				accept_event()
+				if zone == Global.ZONE_CARD.BAG_ZONE:
+					SignalBus.left_clicked.emit(stuff_id,0)
 			
 			MOUSE_BUTTON_RIGHT:
 				accept_event()
-				print("接受")
-				# 💡 核心修改 4：切换选中状态并计算 state
-				is_chosen = !is_chosen # 取反：true 变 false，false 变 true
-				var state = 1 if is_chosen else 0
-				
-				if state == 1 :
-					$"勾".visible = true;
-				else:
-					$"勾".visible = false;
-				# 发送带有最新状态的信号
-				SignalBus.right_clicked.emit(stuff_id, state)
+				if  zone == Global.ZONE_CARD.MATCH_ZONE:
+					SignalBus.right_clicked.emit(stuff_id, 2)

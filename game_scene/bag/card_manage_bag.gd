@@ -2,7 +2,7 @@ extends Node
 # 【UI 展现层】只管渲染和玩家交互
 
 @export var card_slot_scene: PackedScene 
-@export var items_per_page: int = 8 
+@export var items_per_page: int = 4
 
 @onready var grid_container: GridContainer = $"../card_vector"
 @onready var btn_left = $"../切换/左切换"
@@ -28,7 +28,6 @@ func _ready() -> void:
 
 # 当局外数据层发生任何变化时，UI 自动被动响应
 func _on_global_data_updated() -> void:
-	current_page = 0 # 重置页码
 	_update_ui()
 
 
@@ -86,7 +85,10 @@ func _on_card_left_clicked(stuff_id: int) -> void:
 
 func _on_card_right_clicked(stuff_id: int,state) -> void:
 	# 💡 右键点击时，UI 自己不删数据，而是命令全局数据层去改数据
-	if state == 1:
-		InventoryManager.move_to_sell_zone(stuff_id)
-	else:
-		InventoryManager.move_to_bag_zone(stuff_id)
+	match state:
+			0:
+				InventoryManager.move_to_bag_zone(stuff_id)
+			1:
+				InventoryManager.move_to_sell_zone(stuff_id)
+			2:
+				InventoryManager.move_to_combat_zone(stuff_id)

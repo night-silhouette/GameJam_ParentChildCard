@@ -1,11 +1,12 @@
-[gd_scene load_steps=6 format=3 uid="uid://cwlnbe14kg5qx"]
+[gd_scene load_steps=7 format=3 uid="uid://cwlnbe14kg5qx"]
 
 [ext_resource type="Texture2D" uid="uid://dje375wa2ans7" path="res://素材/使用素材/卡牌/基础卡牌重置素材/卡牌.png" id="1_mnxpg"]
 [ext_resource type="Script" uid="uid://ch7axvdkd3t8r" path="res://base_class/card/bag_card.gd" id="1_rkg2p"]
 [ext_resource type="FontFile" uid="uid://bj1pdtvpfop4a" path="res://素材/使用素材/YaoSuiXinShouXieTi-2.ttf" id="3_nvbpl"]
+[ext_resource type="Texture2D" uid="uid://bhngjavywsdho" path="res://素材/使用素材/选择/确认/零件/勾.png" id="4_5pqt6"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_rkg2p"]
-font_size = 36
+font_size = 56
 font_color = Color(0, 0, 0, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_5pqt6"]
@@ -36,33 +37,31 @@ stretch_mode = 5
 [node name="详细" type="Label" parent="."]
 z_index = 10
 layout_mode = 0
-offset_left = 5.949847
-offset_top = 577.1352
-offset_right = 125.949814
-offset_bottom = 769.1352
-scale = Vector2(2.6429946, 2.6429946)
+offset_top = 577.13525
+offset_right = 315.34192
+offset_bottom = 749.6808
+text = "母牌/10"
 label_settings = SubResource("LabelSettings_rkg2p")
 horizontal_alignment = 1
 autowrap_mode = 3
 
 [node name="name" type="Label" parent="."]
 layout_mode = 0
-offset_left = 71.39817
+offset_left = -17.849556
 offset_top = 214.1945
-offset_right = 209.39816
+offset_right = 250.25024
 offset_bottom = 284.19452
 scale = Vector2(1.4425231, 1.4425231)
 label_settings = SubResource("LabelSettings_5pqt6")
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Border" type="ReferenceRect" parent="."]
+[node name="勾" type="TextureRect" parent="."]
+visible = false
+z_index = 10
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-border_color = Color(0.76862746, 0.15686275, 0.1764706, 1)
-border_width = 2.8
-editor_only = false
+offset_top = 124.946785
+offset_right = 616.0
+offset_bottom = 668.9468
+scale = Vector2(0.5705235, 0.5705235)
+texture = ExtResource("4_5pqt6")

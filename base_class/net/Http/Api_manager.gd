@@ -29,6 +29,7 @@ func _ready():
 	SignalBus.request_card_random.connect(_request_card_random)
 	SignalBus.request_get_self_gold.connect(_request_get_self_gold)
 	SignalBus.request_debug_addcard.connect(_request_debug_addcard)
+	SignalBus.request_sell_card.connect(_request_sell_card)
 # =========================
 # Token
 # =========================
@@ -167,3 +168,11 @@ func _request_debug_addcard():
 	}
 	
 	NetworkClient.call_api(url, HTTPClient.METHOD_POST, body)
+
+func _request_sell_card():
+	var url = "/v1/bags/sell/"
+	var card_list:Array = InventoryManager.get_sell_zone_stuff_ids();
+	var body = {
+		"stuff_id_list" = card_list
+	}
+	NetworkClient.call_api(url,HTTPClient.METHOD_POST)
