@@ -31,6 +31,8 @@ const (
 	BattleNotInYourRound
 	BattleHasCard
 	BattleCardNumErr
+	BattleEnergyNotEnough
+	BattleCantSwitch
 )
 
 var StatusMsg = map[ResponseStatusCode]string{
@@ -59,4 +61,6 @@ var StatusMsg = map[ResponseStatusCode]string{
 	BattleHasCard:                 "此位置有牌了",
 	BattleCardNumErr:              "卡牌数量有误",
 	BattleEnterDataInvalid:        "非法入场卡牌",
+	BattleEnergyNotEnough:         "能量不够",
+	BattleCantSwitch:              "不可以换牌",
 }

@@ -231,17 +231,37 @@ func (p *PlayerData) IsCanUpdateEnergy(offset int) bool {
 	return true
 }
 
-func (c *PlayerData) GetBt(where BattleData.Where) CardAbstract.Card {
+// 这样就和字典一样,可以直接取要的位置的卡,
+func (p *PlayerData) GetBt(where BattleData.Where) CardAbstract.Card {
+	p.dataMutex.Lock()
+	defer p.dataMutex.Unlock()
+
 	switch where {
 	case BattleData.SkillCard:
-		return c.SkillCardBT
+		return p.SkillCardBT
 	case BattleData.ChildCard:
-		return c.ChildCardBT
+		return p.ChildCardBT
 	case BattleData.ParentCard:
-		return c.ParentCardBT
+		return p.ParentCardBT
 	default:
 		return nil
 	}
+}
+
+// 没有做skillcard的鉴定
+func (p *PlayerData) SwitchCard(where BattleData.Where, card CardAbstract.Card) {
+	p.dataMutex.Lock()
+	defer p.dataMutex.Unlock()
+	var SwitchedCard CardAbstract.Card
+	if where == BattleData.ChildCard {
+		SwitchedCard = p.ChildCardBT
+		p.ChildCardBT = card
+	}
+	if where == BattleData.ParentCard {
+		SwitchedCard = p.ParentCardBT
+		p.ParentCardBT = card
+	}
+	p.CardInHand[SwitchedCard.GetTempId()] = SwitchedCard
 }
 
 func NewPlayerData(ID int, CardInHand map[int]CardAbstract.Card) *PlayerData {
@@ -343,7 +363,7 @@ func (c *Ctx) ProtoColInterrupt(UserId int, InterruptDto *BattleData.InterruptDt
 	var DataIsOK atomic.Bool
 	DataIsOK.Store(false)
 
-	TimeEnding := func() { //结束回调
+	TimeEnding := func() {    //结束回调
 		if !DataIsOK.Load() { //随机取
 			dataMutex.Lock()
 			data.TempIdList = Util.GetRandomElements(InterruptDto.TempIdList, InterruptDto.SelectNum)

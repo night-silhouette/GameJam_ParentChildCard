@@ -114,9 +114,6 @@ type StateMachine struct {
 	Winner         int
 	Loser          int
 	CombatDataChan chan map[string][]BattleData.CombatDto
-
-	ChildAct  bool
-	ParentAct bool
 }
 
 func NewStateMachine(c *Ctx, id1 int, id2 int, Nt *NotifyManager, ParentNodeCtx context.Context, GoldMoreUserId int) *StateMachine {
@@ -132,8 +129,6 @@ func NewStateMachine(c *Ctx, id1 int, id2 int, Nt *NotifyManager, ParentNodeCtx 
 	StateMachineImpl.StateStack = make([]State, 0)
 	StateMachineImpl.CombatDataChan = make(chan map[string][]BattleData.CombatDto, 1)
 
-	StateMachineImpl.ParentAct = false
-	StateMachineImpl.ChildAct = false
 	StateMachineImpl.GoldMoreUserId = GoldMoreUserId
 
 	StateMachineImpl.RegisterState()
@@ -327,13 +322,6 @@ type ShuffleDeal struct {
 }
 
 func (s *ShuffleDeal) enter() {
-	//for {
-	//
-	//	OK := s.RandomCard()
-	//	if OK {
-	//		break
-	//	}
-	//}
 	s.SM.SendActionById(s.Id1, BattleDto.NewAction(BattleDto.MatchSuccess, BattleDto.Notify, NewStateWaitTime(global.BattleWaitTime*time.Second))) //通知匹配成功
 	s.SM.SendActionById(s.Id2, BattleDto.NewAction(BattleDto.MatchSuccess, BattleDto.Notify, NewStateWaitTime(global.BattleWaitTime*time.Second)))
 
@@ -893,40 +881,7 @@ func (c *Combat) process(GoCtx context.Context) {
 			}
 			return true
 		}
-		//if action.ActionCode == BattleDto.DeployCard && action.Predicates == BattleDto.Result {
-		//	if id == c.SM.Loser {
-		//		c.SM.SendActionById(id, BattleDto.NewErrAction(global.BattleNotInYourRound))
-		//		return true
-		//	}
-		//	var data BattleData.SelectCard
-		//	err := mapstructure.Decode(action.ActionData, &data)
-		//	if err != nil {
-		//		fmt.Println(err)
-		//		c.SM.SendActionById(id, BattleDto.NewErrAction(global.ResponseInvalidReqParams))
-		//		return true
-		//	}
-		//	if data.Where != BattleData.SkillCard {
-		//		cardTempId := data.CardTempId
-		//		if c.c.CheckCardByWhere(id, data.Where) { //判定这个上牌的位置是不是有牌了
-		//			c.SM.SendActionById(id, BattleDto.NewErrAction(global.BattleHasCard))
-		//			return true
-		//		}
-		//
-		//		if card, ok := c.c.PlayerDataMap[id].CardInHand[cardTempId]; ok { //手牌里有不有
-		//			if _, ok := card.(CardAbstract.SkillCard); !ok {
-		//				c.c.SetCardBt(id, card)
-		//				c.SM.SendActionById(id, BattleDto.NewAction(BattleDto.DeployCard, BattleDto.Succeed, "选择成功"))
-		//				return true
-		//			} else {
-		//				c.SM.SendActionById(id, BattleDto.NewErrAction(global.BattleCardCategoryError))
-		//				return true
-		//			}
-		//		} else {
-		//			c.SM.SendActionById(id, BattleDto.NewErrAction(global.BattleCardNotFound))
-		//			return true
-		//		}
-		//	}
-		//}
+
 		return false
 	}
 	c.SM.AcceptAction(GoCtx, handleAction)
@@ -963,6 +918,35 @@ func (s *CardCalc) CalcBtCry() { //光环的效果
 	Extc(LoserChiCard)
 }
 
+func (s *CardCalc) Switch(_data BattleData.CombatDto, UserId int) bool {
+	data := _data.SelectCard
+
+	if data.Where != BattleData.SkillCard {
+		cardTempId := data.CardTempId
+		if card, ok := s.c.PlayerDataMap[UserId].CardInHand[cardTempId]; ok { //手牌里有不有
+			if _, ok := card.(CardAbstract.SkillCard); !ok {
+				playerData := s.c.PlayerDataMap[UserId]
+				if !playerData.IsCanUpdateEnergy(-1) {
+					s.SM.SendActionById(UserId, BattleDto.NewErrAction(global.BattleEnergyNotEnough))
+					return false
+				}
+				playerData.UpdateEnergy(-1)
+
+				playerData.SwitchCard(data.Where, card)
+				s.SM.SendActionById(UserId, BattleDto.NewAction(BattleDto.DeployCard, BattleDto.Succeed, "换牌成功"))
+				return true
+			} else {
+				s.SM.SendActionById(UserId, BattleDto.NewErrAction(global.BattleCardCategoryError))
+				return false
+			}
+		} else {
+			s.SM.SendActionById(UserId, BattleDto.NewErrAction(global.BattleCardNotFound))
+			return false
+		}
+	}
+	return false
+}
+
 func (s *CardCalc) CalcNotSwitch(data BattleData.CombatDto) {
 	opponentCardId := s.c.GetCardBt(s.SM.Loser, data.OpponentWhere).GetTempId()
 	if data.Behavior == BattleData.Attack { //执行前端传过来的行为
@@ -982,8 +966,30 @@ CalcLoop:
 
 		select {
 		case data := <-s.SM.CombatDataChan:
-			fmt.Println(data)
-			//s.Calc(data)
+			SwitchCard := func(User string, UserId int) {
+				DtoList := data[User]
+				for _, Dto := range DtoList {
+					if Dto.Behavior != BattleData.SwitchCard {
+						break
+					}
+					s.Switch(Dto, UserId)
+				}
+			}
+			SwitchCard("Winner", s.SM.Winner)
+			SwitchCard("Loser", s.SM.Loser)
+
+			Calc := func(User string, UserId int) {
+				DtoList := data[User]
+				for _, Dto := range DtoList {
+					if Dto.Behavior == BattleData.SwitchCard {
+						s.SM.SendActionById(UserId, BattleDto.NewErrAction(global.BattleCantSwitch))
+						continue
+					}
+					s.CalcNotSwitch(Dto)
+				}
+			}
+			Calc("Winner", s.SM.Winner)
+			Calc("Loser", s.SM.Loser)
 
 		default:
 			break CalcLoop
@@ -1031,9 +1037,6 @@ func (s *SkillCardCalc) enter() {
 
 }
 func (s *SkillCardCalc) exit() { //这里其实主要可以初始化下一个循环的参数
-
-	s.SM.ParentAct = false
-	s.SM.ChildAct = false
 
 }
 func (s *SkillCardCalc) process(GoCtx context.Context) {
