@@ -7,7 +7,7 @@ extends Node
 @onready var match_card: GridContainer = $"../GridContainer"
 @onready var btn_left = $"../牌库底板/切换/左切换"
 @onready var btn_right= $"../牌库底板/切换/右切换"
-@onready var page_label = $"../页码"
+@onready var page_label = $"../牌库底板/页面"
 
 var current_page: int = 0
 
@@ -70,20 +70,18 @@ func _update_bag_zone() -> void:
 
 # 专门处理出战区的刷新（无翻页，直接映射前5个）
 func _update_match_zone() -> void:
-	# 💡 从全局单例获取出战区数据列表
-	var match_list = InventoryManager.get_cards_in_zone(Global.ZONE_CARD.MATCH_ZONE) # 需在 InventoryManager 中实现此方法返回出战数组
+	var match_list = InventoryManager.get_cards_in_zone(Global.ZONE_CARD.MATCH_ZONE)
 	var total_items = match_list.size()
-	
-	# 将数据映射到预设好的 5 个卡槽上
+
 	for i in range(match_slots.size()):
 		var slot = match_slots[i]
-		
+
 		if i < total_items:
-			slot.visible = true
 			if slot.has_method("setup"):
 				slot.setup(match_list[i])
 		else:
-			slot.visible = false
+			if slot.has_method("clear_data"):
+				slot.clear_data()
 
 # --- 交互操作 ---
 
@@ -93,18 +91,18 @@ func _on_left_pressed() -> void:
 		_update_bag_zone() # 只刷新背包区即可
 
 func _on_right_pressed() -> void:
-	var bag_list = InventoryManager.get_bag_list()
+	var bag_list = InventoryManager.get_cards_in_zone(Global.ZONE_CARD.BAG_ZONE)
 	var max_page = max(0, (bag_list.size() - 1) / items_per_page)
 	
 	if current_page < max_page:
 		current_page += 1
 		_update_bag_zone() # 只刷新背包区即可
 
-func _on_card_left_clicked(stuff_id: int) -> void:
+func _on_card_left_clicked(stuff_id: int,state : int) -> void:
 	InventoryManager.move_to_combat_zone(stuff_id)
 
 func _on_card_right_clicked(stuff_id: int, state: int) -> void:
-	# 💡 右键点击时，UI 自己不改数据，而是命令全局数据层去改
+	# 💡 右键点击时，UI 自己不改数据，而是命令全局数据层去改                                                                                                           
 	match state:
 		0:
 			InventoryManager.move_to_bag_zone(stuff_id)

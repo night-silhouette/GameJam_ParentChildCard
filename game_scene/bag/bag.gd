@@ -5,6 +5,7 @@ extends Control
 func _ready() -> void:
 	SignalBus.request_bag_card.emit();
 	SignalBus.request_get_self_gold.emit()
+	
 
 
 func _on_返回_button_down() -> void:
@@ -13,4 +14,3 @@ func _on_返回_button_down() -> void:
 
 func _on_街机按钮_button_down() -> void:
 	SignalBus.request_sell_card.emit()
-	SignalBus.request_bag_card.emit()

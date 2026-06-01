@@ -1,45 +1,33 @@
-[gd_scene load_steps=13 format=3 uid="uid://b3rvrkc3s32ci"]
-
-[ext_resource type="Texture2D" uid="uid://3casn66e7f33" path="res://素材/使用素材/战斗内/判定/箱子.png" id="1_lys1p"]
+[gd_scene load_steps=12 format=3 uid="uid://b3rvrkc3s32ci"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_674nr"]
-atlas = ExtResource("1_lys1p")
 region = Rect2(0, 0, 540, 446)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_lwlne"]
-atlas = ExtResource("1_lys1p")
 region = Rect2(540, 0, 540, 446)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_2vybc"]
-atlas = ExtResource("1_lys1p")
 region = Rect2(1080, 0, 540, 446)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_7t5rk"]
-atlas = ExtResource("1_lys1p")
 region = Rect2(1620, 0, 540, 446)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_4ay1g"]
-atlas = ExtResource("1_lys1p")
 region = Rect2(2160, 0, 540, 446)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_4x2pm"]
-atlas = ExtResource("1_lys1p")
 region = Rect2(0, 446, 540, 446)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_e8ds8"]
-atlas = ExtResource("1_lys1p")
 region = Rect2(540, 446, 540, 446)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_yd02a"]
-atlas = ExtResource("1_lys1p")
 region = Rect2(1080, 446, 540, 446)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_uciht"]
-atlas = ExtResource("1_lys1p")
 region = Rect2(1620, 446, 540, 446)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_f6wln"]
-atlas = ExtResource("1_lys1p")
 region = Rect2(2160, 446, 540, 446)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_gjkfi"]

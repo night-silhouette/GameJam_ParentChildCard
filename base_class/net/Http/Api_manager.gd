@@ -172,7 +172,9 @@ func _request_debug_addcard():
 func _request_sell_card():
 	var url = "/v1/bags/sell/"
 	var card_list:Array = InventoryManager.get_sell_zone_stuff_ids();
+	print(card_list)
 	var body = {
 		"stuff_id_list" = card_list
 	}
-	NetworkClient.call_api(url,HTTPClient.METHOD_POST)
+	print(body)
+	NetworkClient.call_api(url,HTTPClient.METHOD_POST, body)

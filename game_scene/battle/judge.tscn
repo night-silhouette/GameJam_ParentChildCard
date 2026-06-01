@@ -1,9 +1,12 @@
-[gd_scene load_steps=6 format=3 uid="uid://bdiipd0anxspc"]
+[gd_scene load_steps=9 format=3 uid="uid://bdiipd0anxspc"]
 
 [ext_resource type="Script" uid="uid://ctj4xfih6m8dy" path="res://game_scene/battle/judge.gd" id="1_jd4vg"]
+[ext_resource type="Texture2D" uid="uid://dx1ewstebv33h" path="res://素材/使用素材/万能组件.png" id="2_dt2ld"]
 [ext_resource type="Texture2D" uid="uid://b46shojf52tgq" path="res://素材/使用素材/战斗内/判定/1.png" id="2_k5qlo"]
 [ext_resource type="Texture2D" uid="uid://pu7jg52o37qj" path="res://素材/使用素材/战斗内/判定/3.png" id="4_ju23d"]
+[ext_resource type="Texture2D" uid="uid://bhngjavywsdho" path="res://素材/使用素材/选择/确认/零件/勾.png" id="4_k5qlo"]
 [ext_resource type="Texture2D" uid="uid://dy6ly0ef45ur6" path="res://素材/使用素材/战斗内/判定/2.png" id="6_mjwwl"]
+[ext_resource type="PackedScene" uid="uid://cf218n73yp1t0" path="res://game_scene/battle/万能按钮.tscn" id="7_hjgkk"]
 
 [sub_resource type="ButtonGroup" id="ButtonGroup_xq164"]
 
@@ -19,6 +22,11 @@ scale = Vector2(0.6122466, 0.62323314)
 size_flags_horizontal = 8
 script = ExtResource("1_jd4vg")
 
+[node name="万能组件" type="Sprite2D" parent="."]
+position = Vector2(908.13086, 510.24237)
+scale = Vector2(2.0214677, 2.0214677)
+texture = ExtResource("2_dt2ld")
+
 [node name="剪刀" type="TextureButton" parent="."]
 layout_mode = 2
 toggle_mode = true
@@ -27,6 +35,16 @@ texture_normal = ExtResource("2_k5qlo")
 texture_pressed = ExtResource("2_k5qlo")
 stretch_mode = 3
 
+[node name="勾" type="TextureRect" parent="剪刀"]
+visible = false
+z_index = 10
+layout_mode = 0
+offset_top = 124.946785
+offset_right = 616.0
+offset_bottom = 668.9468
+scale = Vector2(0.5705235, 0.5705235)
+texture = ExtResource("4_k5qlo")
+
 [node name="包袱" type="TextureButton" parent="."]
 layout_mode = 2
 toggle_mode = true
@@ -34,9 +52,37 @@ button_group = SubResource("ButtonGroup_xq164")
 texture_normal = ExtResource("4_ju23d")
 texture_pressed = ExtResource("4_ju23d")
 
+[node name="勾" type="TextureRect" parent="包袱"]
+visible = false
+z_index = 10
+layout_mode = 0
+offset_top = 124.946785
+offset_right = 616.0
+offset_bottom = 668.9468
+scale = Vector2(0.5705235, 0.5705235)
+texture = ExtResource("4_k5qlo")
+
 [node name="石头" type="TextureButton" parent="."]
 layout_mode = 2
 toggle_mode = true
 button_group = SubResource("ButtonGroup_xq164")
 texture_normal = ExtResource("6_mjwwl")
 texture_pressed = ExtResource("6_mjwwl")
+
+[node name="勾" type="TextureRect" parent="石头"]
+visible = false
+z_index = 10
+layout_mode = 0
+offset_top = 124.946785
+offset_right = 616.0
+offset_bottom = 668.9468
+scale = Vector2(0.5705235, 0.5705235)
+texture = ExtResource("4_k5qlo")
+
+[node name="万能按钮" parent="石头" instance=ExtResource("7_hjgkk")]
+layout_mode = 0
+offset_left = 1128.1936
+offset_top = 1031.7167
+offset_right = 2277.1936
+offset_bottom = 2108.7168
+scale = Vector2(0.61152494, 0.61152494)

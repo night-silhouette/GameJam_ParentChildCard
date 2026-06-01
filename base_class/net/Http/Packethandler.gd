@@ -107,5 +107,5 @@ func _handle_raw_api_data(api_name: String, method: int, code: int, data: Varian
 				print("add_success")
 		"/v1/bags/sell/":
 			if method ==  HTTPClient.METHOD_POST:
-				print("sell_sucess")
+				SignalBus.sell_card_success.emit()
 				

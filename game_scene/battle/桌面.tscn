@@ -19,13 +19,13 @@ data_UI = [NodePath("parent_card2"), NodePath("child_card1"), NodePath("op_paren
 metadata/_edit_lock_ = true
 
 [node name="母牌_检验区" parent="." instance=ExtResource("2_yp7nw")]
-position = Vector2(654.20593, 851.2707)
-scale = Vector2(8.238132, 6.9926343)
+position = Vector2(657.96564, 1021.52484)
+scale = Vector2(6.830821, 4.6497335)
 zone = 3
 
 [node name="子牌_检验区" parent="." instance=ExtResource("2_yp7nw")]
-position = Vector2(1466.3236, 828.0542)
-scale = Vector2(6.8849497, 8.270023)
+position = Vector2(1470.0834, 1025.3943)
+scale = Vector2(6.8395796, 4.353077)
 zone = 4
 
 [node name="child_card1" parent="." instance=ExtResource("4_vq28s")]

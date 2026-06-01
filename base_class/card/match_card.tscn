@@ -6,7 +6,7 @@
 
 [sub_resource type="LabelSettings" id="LabelSettings_rkg2p"]
 font_size = 56
-font_color = Color(0, 0, 0, 1)
+font_color = Color(0.78775924, 0.78775924, 0.78775924, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_5pqt6"]
 font = ExtResource("3_8tpen")
@@ -36,10 +36,10 @@ stretch_mode = 5
 [node name="详细" type="Label" parent="."]
 z_index = 10
 layout_mode = 0
-offset_left = 5.949847
-offset_top = 577.1352
-offset_right = 315.34192
-offset_bottom = 648.5333
+offset_left = 17.849543
+offset_top = -65.448364
+offset_right = 327.2416
+offset_bottom = 5.949768
 label_settings = SubResource("LabelSettings_rkg2p")
 horizontal_alignment = 1
 

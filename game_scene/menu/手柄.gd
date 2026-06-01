@@ -7,8 +7,8 @@ func _ready() -> void:
 	SignalBus.ws_disconnected.connect(_ws_disconnected)
 
 func _on_笑脸按钮_button_down() -> void:
-	SignalBus.change_ui.emit()
-	
+	SignalBus.change_ui.emit("tomatch")
+	$"../ColorRect".visible = true
 
 
 func _battle_over():

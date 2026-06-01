@@ -59,7 +59,7 @@ signal user_updated_success()
 signal get_card_random(card_list)
 signal get_card_bag(card_list)
 signal get_self_gold(gold)
-
+signal sell_card_success()
 
 # 邮件
 signal send_mail_success()
@@ -76,7 +76,7 @@ signal get_time_debug(T: int)
 # =========================
 # 连接
 # =========================
-signal to_connect_ws
+signal to_connect_ws(body)
 signal ws_connected
 signal ws_disconnected
 
@@ -151,5 +151,5 @@ signal exit_hover(temp_id)
 signal finishTurn
 #endregion
 
-signal left_clicked(stuff_id: int)
+signal left_clicked(stuff_id: int,state: int)
 signal right_clicked(stuff_id: int,state: int)	

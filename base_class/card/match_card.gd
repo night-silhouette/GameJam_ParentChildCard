@@ -127,10 +127,38 @@ func _gui_input(event: InputEvent) -> void:
 		match event.button_index:
 			MOUSE_BUTTON_LEFT:
 				accept_event()
+				print("接受左键成功")
 				if zone == Global.ZONE_CARD.BAG_ZONE:
 					SignalBus.left_clicked.emit(stuff_id,0)
 			
 			MOUSE_BUTTON_RIGHT:
 				accept_event()
+				print("接受右键成功")
 				if  zone == Global.ZONE_CARD.MATCH_ZONE:
-					SignalBus.right_clicked.emit(stuff_id, 2)
+					SignalBus.right_clicked.emit(stuff_id, 0)
+					
+func clear_data() -> void:
+	# 1. 数据重置
+	card_name = "未上牌"
+	stuff_id = -1
+	price = -1
+	zone = -1
+	is_chosen = false
+	
+	# 2. UI 文本与纹理回归默认
+	if ui_name:
+		ui_name.text = "未上牌"
+		
+	if texture_rect:
+		texture_rect.texture = null # 如果你有通用的默认卡背/空框纹理，这里可以替换为 load("res://...")
+		
+	# 3. 前瞻性防御：顺便清理残留的特效和标签状态
+	if lab:
+		lab.visible = false
+		lab.text = ""
+		
+	if has_node("勾"):
+		$"勾".visible = false
+		
+	# 还原缩放，防止卡在悬停放大的状态
+	scale = NORMAL_SCALE

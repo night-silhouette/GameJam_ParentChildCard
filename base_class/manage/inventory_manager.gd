@@ -31,6 +31,7 @@ func _ready() -> void:
 	# 数据层直接对接网络/系统信号
 	SignalBus.get_card_bag.connect(_get_card_bag)
 	SignalBus.get_self_gold.connect(_get_self_gold)
+	SignalBus.sell_card_success.connect(_sell_card_success)
 
 
 func _get_card_bag(incoming_card_data: Array):
@@ -67,16 +68,38 @@ func move_to_bag_zone(stuff_id: int) -> bool:
 			return true
 	return false
 func move_to_combat_zone(stuff_id: int) -> bool:
-	# 1. 统计当前出战区的状态
-	var match_total_count: int = 0
-	var match_sub_card_count: int = 0
-	
-	for item in card_list:
-		if item["zone"] == Global.ZONE_CARD.MATCH_ZONE:
+	var match_total_count := 0
+	var match_sub_card_count := 0
+	# 统计当前出战区
+	for card in card_list:
+		if card["zone"] == Global.ZONE_CARD.MATCH_ZONE:
 			match_total_count += 1
-			# 💡 请根据你的实际数据结构修改这里的“子牌”判断条件
-			if item.get("is_sub_card", false) == true: 
+
+			var res: CardResource = card["resource"]
+			if res and res.is_sub_card:
 				match_sub_card_count += 1
+	# 找目标卡
+	for card in card_list:
+		if card["stuff_id"] != stuff_id:
+			continue
+		# 已经在出战区
+		if card["zone"] == Global.ZONE_CARD.MATCH_ZONE:
+			return true
+		var res: CardResource = card["resource"]
+		# 总数限制
+		if match_total_count >= 5:
+			print("出战区已满（最多5张卡牌）")
+			return false
+		# 子牌限制
+		if res and res.is_sub_card and match_sub_card_count >= 2:
+			print("出战区子牌已满（最多2张子牌）")
+			return false
+		card["zone"] = Global.ZONE_CARD.MATCH_ZONE
+		bag_updated.emit()
+
+		return true
+
+	return false
 	
 	# 2. 检查总数上限：如果出战区已经有5张了，直接拒绝
 	if match_total_count >= 5:
@@ -96,7 +119,6 @@ func move_to_combat_zone(stuff_id: int) -> bool:
 			item["zone"] = Global.ZONE_CARD.MATCH_ZONE
 			bag_updated.emit()
 			
-				
 			return true
 			
 	return false
@@ -138,6 +160,9 @@ func get_all_card_ids_by_filename() -> Array[int]:
 	id_list.sort()
 	return id_list
 
+func _sell_card_success():
+	SignalBus.request_bag_card.emit();
+	SignalBus.request_get_self_gold.emit();
 
 func get_cards_in_zone(target_zone: int) -> Array:
 	var result = []
@@ -151,6 +176,6 @@ func get_sell_zone_stuff_ids() -> Array[int]:
 	
 	for card in card_list:
 		if card.get("zone") == Global.ZONE_CARD.SELL_ZONE:
-			result.append(card["stuff_id"])
+			result.append(int(card["stuff_id"]))
 			
 	return result
