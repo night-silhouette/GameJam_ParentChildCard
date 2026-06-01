@@ -33,7 +33,6 @@ func (s *StateMachine) RegisterState() {
 		"SelectSkillCard": &SelectSkillCard{},
 		"Judge":           &Judge{},
 		"Combat":          &Combat{},
-		"SkillCardCalc":   &SkillCardCalc{},
 		"CardCalc":        &CardCalc{},
 		"SelectWeather":   &SelectWeather{},
 	}
@@ -47,6 +46,11 @@ func (s *StateMachine) SharedProcess(id int, action BattleDto.Action, ResponseCh
 		res["self"] = s.c.PlayerDataMap[id].GetEnergy()
 		res["opponent"] = s.c.PlayerDataMap[s.c.GetOpponentId(id)].GetEnergy()
 		ResponseChan <- BattleDto.NewAction(BattleDto.GetEnergy, BattleDto.Result, res)
+		return true
+	}
+	if action.ActionCode == BattleDto.GetChildCardList && action.Predicates == BattleDto.Query {
+		res := s.c.GetChildCardDto()
+		ResponseChan <- BattleDto.NewAction(BattleDto.GetChildCardList, BattleDto.Result, res)
 		return true
 	}
 
@@ -532,7 +536,6 @@ func (s *SelectWeather) enter() {
 }
 
 //#endregion
-
 //#region State:SelectSkillCard
 
 type SelectSkillCard struct {
@@ -960,12 +963,29 @@ func (s *CardCalc) CalcNotSwitch(data BattleData.CombatDto) {
 	s.SM.SendActionById(s.SM.Id1, BattleDto.NewAction(BattleDto.CardCalc, BattleDto.Finish, ""))
 }
 
+// SkillCalc 双方的法术牌结算都在这了
+func (s *CardCalc) SkillCalc() {
+	if s.c.PlayerDataMap[s.SM.Winner].SkillCardBT != nil {
+		s.c.PlayerDataMap[s.SM.Winner].SkillCardBT.(CardAbstract.SkillCard).PlayMagic() //触发法术，然后，在法术这个函数里面，用和ctx的协议，把通知前端的action传出来
+		s.c.StackSettle()                                                               //执行效果堆栈
+		s.SM.SendActionById(s.SM.Id2, BattleDto.NewAction(BattleDto.CardCalc, BattleDto.Finish, ""))
+		s.SM.SendActionById(s.SM.Id1, BattleDto.NewAction(BattleDto.CardCalc, BattleDto.Finish, ""))
+	}
+	if s.c.PlayerDataMap[s.SM.Loser].SkillCardBT != nil {
+		s.c.PlayerDataMap[s.SM.Loser].SkillCardBT.(CardAbstract.SkillCard).PlayMagic()
+		s.c.StackSettle() //执行效果堆栈
+		s.SM.SendActionById(s.SM.Id2, BattleDto.NewAction(BattleDto.CardCalc, BattleDto.Finish, ""))
+		s.SM.SendActionById(s.SM.Id1, BattleDto.NewAction(BattleDto.CardCalc, BattleDto.Finish, ""))
+	}
+}
+
 func (s *CardCalc) main() {
 CalcLoop:
 	for {
 
 		select {
 		case data := <-s.SM.CombatDataChan:
+			//结算换牌
 			SwitchCard := func(User string, UserId int) {
 				DtoList := data[User]
 				for _, Dto := range DtoList {
@@ -977,7 +997,7 @@ CalcLoop:
 			}
 			SwitchCard("Winner", s.SM.Winner)
 			SwitchCard("Loser", s.SM.Loser)
-
+			//结算攻击或者技能
 			Calc := func(User string, UserId int) {
 				DtoList := data[User]
 				for _, Dto := range DtoList {
@@ -990,6 +1010,8 @@ CalcLoop:
 			}
 			Calc("Winner", s.SM.Winner)
 			Calc("Loser", s.SM.Loser)
+			//结算法术
+			s.SkillCalc()
 
 		default:
 			break CalcLoop
@@ -1021,45 +1043,6 @@ func (s *CardCalc) process(GoCtx context.Context) {
 		return false
 	}
 	s.SM.AcceptAction(GoCtx, handleAction)
-}
-
-//endregion
-//region State:SkillCardCalc
-
-type SkillCardCalc struct {
-	StateTemplate
-}
-
-func (s *SkillCardCalc) enter() {
-
-	s.SM.SendActionById(s.Id1, BattleDto.NewAction(BattleDto.SkillCardCalc, BattleDto.Notify, ""))
-	s.SM.SendActionById(s.Id2, BattleDto.NewAction(BattleDto.SkillCardCalc, BattleDto.Notify, ""))
-
-}
-func (s *SkillCardCalc) exit() { //这里其实主要可以初始化下一个循环的参数
-
-}
-func (s *SkillCardCalc) process(GoCtx context.Context) {
-	handleAction := func(id int, action BattleDto.Action, ResponseChan chan<- BattleDto.Action) bool {
-		return false
-	}
-	s.SM.AcceptAction(GoCtx, handleAction)
-}
-func (s *SkillCardCalc) main() {
-	if s.c.PlayerDataMap[s.SM.Winner].SkillCardBT != nil {
-		s.c.PlayerDataMap[s.SM.Winner].SkillCardBT.(CardAbstract.SkillCard).PlayMagic() //触发法术，然后，在法术这个函数里面，用和ctx的协议，把通知前端的action传出来
-		s.c.StackSettle()                                                               //执行效果堆栈
-		s.SM.SendActionById(s.SM.Id2, BattleDto.NewAction(BattleDto.CardCalc, BattleDto.Finish, ""))
-		s.SM.SendActionById(s.SM.Id1, BattleDto.NewAction(BattleDto.CardCalc, BattleDto.Finish, ""))
-	}
-	if s.c.PlayerDataMap[s.SM.Loser].SkillCardBT != nil {
-		s.c.PlayerDataMap[s.SM.Loser].SkillCardBT.(CardAbstract.SkillCard).PlayMagic()
-		s.c.StackSettle() //执行效果堆栈
-		s.SM.SendActionById(s.SM.Id2, BattleDto.NewAction(BattleDto.CardCalc, BattleDto.Finish, ""))
-		s.SM.SendActionById(s.SM.Id1, BattleDto.NewAction(BattleDto.CardCalc, BattleDto.Finish, ""))
-	}
-
-	go s.SM.finish("SelectSkillCard") //暂时直接转
 }
 
 //endregion

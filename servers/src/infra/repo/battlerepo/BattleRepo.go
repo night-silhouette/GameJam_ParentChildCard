@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"log"
+	"pcc_card/application/entity/BattleData"
 
 	"pcc_card/infra/repo"
 
@@ -43,7 +44,8 @@ func (r *BattleRepoImpl) ReadCardByID(ctx context.Context, db repo.SQLQueryer, I
         'price', price, 
         'skillCharge', "skillCharge", 
         'skillcardUseNum', "skillcardUseNum", 
-        'category', category
+        'category', category,
+       'level', level
     ) from newcards where id = $1`
 
 	data := db.QueryRowContext(ctx, query, ID)
@@ -60,6 +62,7 @@ func (r *BattleRepoImpl) ReadCardByID(ctx context.Context, db repo.SQLQueryer, I
 			res["is_parent"] = true
 		} else if cat == 3 || cat == 4 {
 			res["is_parent"] = false
+			res["ChildState"] = BattleData.NotActive
 		}
 	}
 

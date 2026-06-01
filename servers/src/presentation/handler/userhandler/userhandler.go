@@ -50,6 +50,7 @@ func (u *User_handler_impl) CardSell() gin.HandlerFunc {
 		var req CardSellDto
 		UserId := c.GetInt("id")
 		if err := c.ShouldBindJSON(&req); err != nil {
+			fmt.Println(err)
 			response.Fail(c, global.ResponseInvalidReqParams)
 			return
 		}

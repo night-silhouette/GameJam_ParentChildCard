@@ -1,0 +1,13 @@
+package BattleData
+
+type ChildCardDto struct {
+	CardDto
+	ChildState ChildState `json:"child_state"`
+}
+
+func NewChildCardDto(dto CardDto, ChildState ChildState) *ChildCardDto {
+	res := &ChildCardDto{}
+	res.CardDto = dto
+	res.ChildState = ChildState
+	return res
+}

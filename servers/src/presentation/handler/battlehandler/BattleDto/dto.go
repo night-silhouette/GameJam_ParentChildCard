@@ -31,6 +31,7 @@ const (
 	SkillCardCalc
 	GetEnergy
 	SelectWeather
+	GetChildCardList
 )
 
 var ActionName = map[ActionCode]string{
@@ -53,6 +54,7 @@ var ActionName = map[ActionCode]string{
 	SkillCardCalc:         "法术牌计算",
 	GetEnergy:             "查看能量值",
 	SelectWeather:         "天气选择",
+	GetChildCardList:      "查看子牌堆",
 }
 
 type Predicates int

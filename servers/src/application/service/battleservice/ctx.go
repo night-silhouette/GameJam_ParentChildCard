@@ -28,12 +28,13 @@ type Ctx struct {
 	DisCardPool    *Util.SafeContainer[CardAbstract.Card]
 	TempIdCalc     *atomic.Int32 //计算tempid
 
+	ChildList           *Util.SafeContainer[CardAbstract.Card]
 	NeedInterrupt       atomic.Bool
 	InterruptChan       chan struct{}
 	InterruptListenFunc atomic.Value //func(id int, action BattleDto.Action, ResponseChan chan<- BattleDto.Action) bool
 }
 
-func NewCtx(idA int, idB int, CardPool *[]CardAbstract.Card, ParentContext context.Context, CardList map[int]map[int]CardAbstract.Card, TempIdCalc *atomic.Int32) *Ctx {
+func NewCtx(idA int, idB int, CardPool *[]CardAbstract.Card, ParentContext context.Context, CardList map[int]map[int]CardAbstract.Card, TempIdCalc *atomic.Int32, cList []CardAbstract.Card) *Ctx {
 	c := &Ctx{}
 	c.EffectsStack = NewEffectStack()
 	c.entityCounter = 1
@@ -55,7 +56,10 @@ func NewCtx(idA int, idB int, CardPool *[]CardAbstract.Card, ParentContext conte
 	c.DisCardPool = Util.NewSafeContainer[CardAbstract.Card](ParentContext, 8)
 	c.InterruptChan = make(chan struct{}, 1)
 	c.TempIdCalc = TempIdCalc
-
+	c.ChildList = Util.NewSafeContainer[CardAbstract.Card](ParentContext, 8)
+	c.ChildList.Do(func(data *[]CardAbstract.Card) {
+		*data = cList
+	})
 	return c
 }
 
@@ -363,7 +367,7 @@ func (c *Ctx) ProtoColInterrupt(UserId int, InterruptDto *BattleData.InterruptDt
 	var DataIsOK atomic.Bool
 	DataIsOK.Store(false)
 
-	TimeEnding := func() {    //结束回调
+	TimeEnding := func() { //结束回调
 		if !DataIsOK.Load() { //随机取
 			dataMutex.Lock()
 			data.TempIdList = Util.GetRandomElements(InterruptDto.TempIdList, InterruptDto.SelectNum)
@@ -719,6 +723,21 @@ func (c *Ctx) MoveDisCardPool(UserId int, tempId int) {
 		return
 	}
 
+}
+
+func (c *Ctx) GetChildCardDto() []*BattleData.ChildCardDto {
+	result := make([]*BattleData.ChildCardDto, 0, 10)
+
+	c.ChildList.Do(func(data *[]CardAbstract.Card) {
+
+		for _, card := range *data {
+			el := BattleData.NewChildCardDto(CardAbstract.GetCardDto(card), card.GetInfo()["ChildState"].(BattleData.ChildState))
+			fmt.Println(el)
+			fmt.Println(card)
+			result = append(result, el)
+		}
+	})
+	return result
 }
 
 //endregion

@@ -3,7 +3,9 @@ package battleservice
 import (
 	"math"
 	"math/rand/v2"
+	"pcc_card/Util"
 	"pcc_card/application/entity/BattleData"
+	"pcc_card/application/entity/Card/CardAbstract"
 	"pcc_card/global"
 	"pcc_card/infra/repo/userrepo"
 	"sync"
@@ -100,12 +102,12 @@ func (m *MatchManager) StartMatchLoop() {
 	for {
 		select {
 		case <-MatchCheck.C:
-			Ok, id1, id2, CardIdMap, GoldMoreUserId := m.TryMatch()
+			Ok, id1, id2, CardIdMap, GoldMoreUserId, cList := m.TryMatch()
 			if !Ok {
 				continue
 			} else {
 
-				BTID := BC.AddBattle(id1, id2, CardIdMap, GoldMoreUserId)
+				BTID := BC.AddBattle(id1, id2, CardIdMap, GoldMoreUserId, cList)
 				if v, ok := MatchSignals.Load(id1); ok {
 					v.(chan MatchResult) <- MatchResult{BattleID: BTID, Opponent: id2}
 				}
@@ -122,14 +124,18 @@ func (m *MatchManager) AddPool(id int, data BattleData.EnterBtData) {
 	MatchPool.Add(id, data)
 }
 
-func (m *MatchManager) TryMatch() (bool, int, int, map[int][]int, int) {
+// 这才是匹配算法的集中地,判定是否要把他抓进去
+func (m *MatchManager) TryMatch() (bool, int, int, map[int][]int, int, []CardAbstract.Card) {
 	NeedNum := m.GetRequiredNum()
 	NowNum := MatchPool.GetSize()
 	if NowNum >= NeedNum {
-		_, id1, id2, res, GoldMoreUserId := m.MatchCatch()
-		return true, id1, id2, res, GoldMoreUserId
+		_, id1, id2, res, GoldMoreUserId := m.MatchCatch() //这一步是在抓了
+		cList := RandChildList()
+
+		return true, id1, id2, res, GoldMoreUserId, cList
 	}
-	return false, -1, -1, nil, -1
+
+	return false, -1, -1, nil, -1, make([]CardAbstract.Card, 0)
 }
 
 func (m *MatchManager) GetRequiredNum() int {
@@ -251,6 +257,14 @@ func (m *MatchManager) IsHasID(id int) bool {
 		}
 	}
 	return false
+}
+
+func RandChildList() []CardAbstract.Card {
+	CList := CardListImpl.GetChildCard()
+	res := Util.GetRandomElements[CardAbstract.Card](CList, 10)
+
+	//fmt.Println("随机后的子牌堆:", res)
+	return res
 }
 
 //----------------------------------异步通知handler-----------------------------------

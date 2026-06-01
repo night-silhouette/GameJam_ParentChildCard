@@ -24,13 +24,13 @@ type Battle struct {
 	TempId atomic.Int32
 }
 
-func NewBattle(UserA int, UserB int, CardList map[int][]int, GoldMoreUserId int) *Battle {
+func NewBattle(UserA int, UserB int, CardList map[int][]int, GoldMoreUserId int, cList []CardAbstract.Card) *Battle {
 	var TempId atomic.Int32
 	TempId.Store(int32(0))
 	rootContext := context.Background()
 	BattleContext, cancel := context.WithCancel(rootContext)
 	id := int(atomic.AddInt64(&battleIDCounter, 1))
-	ctx := NewCtx(UserA, UserB, CardListImpl.Copy(), BattleContext, CloneByCardListImpl(CardList, &TempId), &TempId)
+	ctx := NewCtx(UserA, UserB, CardListImpl.Copy(), BattleContext, CloneByCardListImpl(CardList, &TempId), &TempId, cList)
 	Nt := NewNotifyManager(UserA, UserB, 32) //初始化bufferSize
 	SM := NewStateMachine(ctx, UserA, UserB, Nt, BattleContext, GoldMoreUserId)
 	go func() {
@@ -92,9 +92,9 @@ func CloneByCardListImpl(cardIdList map[int][]int, NumCalc *atomic.Int32) map[in
 }
 
 // AddBattle 传来的卡的id。
-func (bc *BattleContainer) AddBattle(id1 int, id2 int, cardIdList map[int][]int, GoldMoreUserId int) int { //启动接口
+func (bc *BattleContainer) AddBattle(id1 int, id2 int, cardIdList map[int][]int, GoldMoreUserId int, cList []CardAbstract.Card) int { //启动接口
 
-	Bt := NewBattle(id1, id2, cardIdList, GoldMoreUserId)
+	Bt := NewBattle(id1, id2, cardIdList, GoldMoreUserId, cList)
 	bc.mu.Lock()
 	defer bc.mu.Unlock()
 

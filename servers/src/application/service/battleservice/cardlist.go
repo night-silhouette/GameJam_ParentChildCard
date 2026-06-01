@@ -16,9 +16,14 @@ type CardList struct {
 
 var CardListImpl CardList
 
+// GetCardImpl 这是对外的,带锁的
 func (Cd *CardList) GetCardImpl(CardId int) CardAbstract.Card {
 	Cd.Mt.Lock()
 	defer Cd.Mt.Unlock()
+	return Cd.getCardImpl(CardId)
+}
+
+func (Cd *CardList) getCardImpl(CardId int) CardAbstract.Card {
 	for _, el := range CardListImpl.data {
 		if el.GetID() == CardId {
 			res := el.Clone()
@@ -32,7 +37,19 @@ func (Cd *CardList) GetCardImpl(CardId int) CardAbstract.Card {
 func InitCardList(s BattleService) {
 	CardListImpl = CardList{}
 	CardListImpl.init(s)
+}
 
+// GetChildCard 输出子牌数组
+func (Cd *CardList) GetChildCard() []CardAbstract.Card {
+	Cd.Mt.Lock()
+	defer Cd.Mt.Unlock()
+	res := make([]CardAbstract.Card, 0)
+	for _, el := range CardListImpl.data {
+		if !el.GetInfo()["is_parent"].(bool) {
+			res = append(res, el.Clone())
+		}
+	}
+	return res
 }
 
 func (Cd *CardList) Copy() *[]CardAbstract.Card {
