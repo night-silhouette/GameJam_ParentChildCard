@@ -19,6 +19,8 @@ var child_bt_object: int;
 # 1. 定义状态枚举
 enum GameState {
 	INIT_STATE,
+	CHOOSE_CHID_CARD,
+	CHOOSE_WEATHER,
 	USE_MAGIC_CARD,
 	USE_COMBAT_CARD,
 	JUDGEMENT

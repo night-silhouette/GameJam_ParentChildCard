@@ -7,7 +7,7 @@
 [ext_resource type="Script" uid="uid://ctldl5kprxqch" path="res://game_ui/battle/object_pool.gd" id="4_cqcp3"]
 [ext_resource type="PackedScene" uid="uid://ccxtlwqyr1co8" path="res://game_scene/battle/敌方牌库.tscn" id="4_f0my5"]
 [ext_resource type="PackedScene" uid="uid://bdiipd0anxspc" path="res://game_scene/battle/judge.tscn" id="9_kfivi"]
-[ext_resource type="Script" uid="uid://cy15d728nlkst" path="res://base_class/manage/card_manager.gd" id="9_oo4tg"]
+[ext_resource type="Script" uid="uid://cy15d728nlkst" path="res://base_class/manage/data_manager_BT.gd" id="9_oo4tg"]
 [ext_resource type="Script" uid="uid://nh4u5p1dmxgy" path="res://game_scene/battle/万能按钮.gd" id="10_qjvm6"]
 [ext_resource type="Script" uid="uid://bqs27ao7omrns" path="res://game_scene/battle/state_machine.gd" id="11_ile2j"]
 [ext_resource type="PackedScene" uid="uid://chfbecbd2f45c" path="res://game_scene/battle/法术放置.tscn" id="11_ro313"]

@@ -1,0 +1,56 @@
+[gd_scene load_steps=6 format=3 uid="uid://cfmasar4a3kho"]
+
+[ext_resource type="Script" uid="uid://bufjnhv72tlty" path="res://game_scene/battle/hovercard.gd" id="1_npg73"]
+[ext_resource type="Texture2D" uid="uid://dje375wa2ans7" path="res://素材/使用素材/卡牌/基础卡牌重置素材/卡牌.png" id="1_o01e1"]
+[ext_resource type="FontFile" uid="uid://bj1pdtvpfop4a" path="res://素材/使用素材/YaoSuiXinShouXieTi-2.ttf" id="2_npg73"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_rkg2p"]
+font_size = 56
+font_color = Color(0.78775924, 0.78775924, 0.78775924, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_5pqt6"]
+font = ExtResource("2_npg73")
+font_size = 55
+font_color = Color(0.3254902, 0.09411765, 0, 1)
+
+[node name="hovercard" type="Control"]
+custom_minimum_size = Vector2(329, 570)
+layout_mode = 3
+anchors_preset = 0
+offset_right = 329.0
+offset_bottom = 570.0
+scale = Vector2(0.16807154, 0.16807154)
+script = ExtResource("1_npg73")
+
+[node name="卡牌纹理" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("1_o01e1")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="详细" type="Label" parent="."]
+z_index = 10
+layout_mode = 0
+offset_left = 17.849543
+offset_top = -65.448364
+offset_right = 327.2416
+offset_bottom = 5.949768
+label_settings = SubResource("LabelSettings_rkg2p")
+horizontal_alignment = 1
+
+[node name="name" type="Label" parent="."]
+layout_mode = 0
+offset_left = -17.849545
+offset_top = 220.14435
+offset_right = 246.12561
+offset_bottom = 290.14435
+scale = Vector2(1.4425231, 1.4425231)
+text = "未上牌"
+label_settings = SubResource("LabelSettings_5pqt6")
+horizontal_alignment = 1
+vertical_alignment = 1

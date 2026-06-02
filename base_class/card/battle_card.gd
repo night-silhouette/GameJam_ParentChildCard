@@ -1,4 +1,4 @@
-extends Control
+extends card
    # 所有可进入区域
 
 enum CardState { IDLE, HOVERED, DRAGGING }
@@ -10,7 +10,6 @@ var hp ;
 var damage  ;
 var buff_id ;
 var zone ;
-var spell_des ;
 
 # 拖拽判定距离（防止误触，按住鼠标移动超过这个像素才算拖拽，不需要可以设为 0）
 const DRAG_THRESHOLD = 5.0
@@ -36,7 +35,28 @@ func update_card_data(base_res) -> void:
 	temp_id = base_res.temp_id;
 	buff_id = base_res.buff_id;
 	zone = base_res.zone;
-	spell_des = base_res.spell_des;
+	
+	var res: CardResource = base_res.get("resource")
+	if res == null: return
+		
+	# 填充父类数据
+	id = res.id
+	card_name = res.name
+	card_texture = res.card_texture
+	value = res.value 
+	is_combat_card = res.is_combat_card
+	is_sub_card = res.is_sub_card
+	
+	# 把剩下的战斗数据也填上
+	card_damage = res.damage
+	initial_health = res.initial_health
+	max_health = res.max_health
+	skill_charge = res.skill_charge
+	skill_card_use_num = res.skill_card_use_num
+	skill_description = res.skill_description
+	notes = res.notes
+	sub_card_trigger_effect = res.sub_card_trigger_effect
+	
 func free_card():
 	display.texture = null;
 	hp = null;

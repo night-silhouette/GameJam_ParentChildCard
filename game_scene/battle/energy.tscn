@@ -1,0 +1,27 @@
+[gd_scene load_steps=3 format=3 uid="uid://c1exceqgab5ww"]
+
+[ext_resource type="Texture2D" uid="uid://damm001coeieh" path="res://素材/使用素材/战斗外/登录界面/点UI .png" id="1_gaxvx"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_wgw8q"]
+font_size = 64
+font_color = Color(0.92156863, 0.10980392, 0.14509805, 1)
+
+[node name="energy" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+
+[node name="TextureRect" type="TextureRect" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+texture = ExtResource("1_gaxvx")
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 0
+offset_left = 242.0
+offset_top = 2.0
+offset_right = 282.0
+offset_bottom = 27.0
+scale = Vector2(4.9943795, 3.5662055)
+text = "1/5"
+label_settings = SubResource("LabelSettings_wgw8q")

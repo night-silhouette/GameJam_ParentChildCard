@@ -1,0 +1,11 @@
+[gd_scene format=3 uid="uid://cj46rgu2oe0x"]
+
+[node name="child_card_list" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+size_flags_horizontal = 0
+
+[node name="grid" type="GridContainer" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0

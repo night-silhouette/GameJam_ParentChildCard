@@ -29,22 +29,7 @@ func _ready() -> void:
 
 ## 核心功能：通过 ID 生成resoure
 func querry_resoure_by_id(card_id: int) -> Resource:
-	# 1. 格式化路径，%03d 会将 1 转换为 001，将 12 转换为 012
-	var file_name = "card_%03d.tres" % card_id
-	var full_path = base_path.path_join(file_name)
-	
-	# 2. 检查文件是否存在
-	if not FileAccess.file_exists(full_path):
-		push_error("CardManager: 找不到资源文件 -> " + full_path)
-		return null
-	
-	# 3. 加载资源
-	var data = load(full_path) as CardResource
-	if data == null:
-		push_error("CardManager: 资源加载失败或类型错误 -> " + full_path)
-		return null
-	
-	return data;
+	return InventoryManager._find_card_resource_by_id(card_id)
 	
 func _self_inhand_updated(data):
 	_update_cards(data,Global.ZONE_CARD.DECK_ZONE)
@@ -175,10 +160,7 @@ func _init_single_card(card_data: Dictionary, zone) -> Dictionary:
 		new_card["buff_id"] = Array(raw_buff).map(func(x): return int(x))
 
 	# 注入本地配置静态数据
-	new_card["is_combat_card"] = resource_data.is_combat_card
-	new_card["is_sub_card"] = resource_data.is_sub_card
-	new_card["texture"] = resource_data.card_texture
-	new_card["spell_des"] = resource_data.effect_description;
+	new_card["resouce"] = resource_data;
 	new_card["zone"] = zone
 
 	return new_card

@@ -38,7 +38,6 @@ func _update_view():
 		if i < page_cards.size():
 			child.update_card_data(page_cards[i])
 			child.show()
-			# 确保卡牌视觉状态正常（比如之前被拖拽时可能变透明了，这里重置一下）
 			child.modulate.a = 1.0 
 		else:
 			child.hide()

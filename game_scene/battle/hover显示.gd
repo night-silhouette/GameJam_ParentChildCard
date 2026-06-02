@@ -5,8 +5,8 @@ extends Control
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	card_manager.UI_date_update.connect(_refresh_ui)
-
-
+	
+	
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _refresh_ui():
 	var _temp_id = card_manager.hover_card;
