@@ -35,6 +35,7 @@ func (s *StateMachine) RegisterState() {
 		"Combat":          &Combat{},
 		"CardCalc":        &CardCalc{},
 		"SelectWeather":   &SelectWeather{},
+		"ActiveChildCard": &ActiveChildCard{},
 	}
 	for key, element := range s.StateList {
 		element.SetName(key)
@@ -342,7 +343,7 @@ func (s *ShuffleDeal) enter() {
 
 		s.SM.SendActionById(s.Id1, BattleDto.NewAction(BattleDto.StartBattle, BattleDto.Notify, ""))
 		s.SM.SendActionById(s.Id2, BattleDto.NewAction(BattleDto.StartBattle, BattleDto.Notify, ""))
-		go s.SM.finish("SelectWeather")
+		go s.SM.finish("ActiveChildCard")
 		s.SM.Mutex.Unlock()
 	}) //定时开始战斗
 }
@@ -449,8 +450,220 @@ func (s *ShuffleDeal) exit() {
 }
 
 //#endregion
+//#region State:ActiveChildCard
 
-// #region State:SelectWeather
+type ActiveChildCard struct {
+	sync.Mutex
+	StateTemplate
+	TaskMap   map[int][]int
+	DoneMap   map[int]bool
+	ChanStop  chan struct{}
+	ChanCrash chan struct{}
+	Completed bool
+}
+
+type ActiveChildCardDto struct {
+	TempIdList []int `json:"temp_id_list" mapstructure:"temp_id_list"`
+}
+
+func (a *ActiveChildCard) SpecialInit() {
+	a.TaskMap = make(map[int][]int)
+	a.TaskMap[a.Id1] = make([]int, 0)
+	a.TaskMap[a.Id2] = make([]int, 0)
+	a.DoneMap = map[int]bool{a.Id1: false, a.Id2: false}
+	a.Completed = false
+}
+
+func (a *ActiveChildCard) enter() {
+	queryMap := map[string]any{
+		"state_wait_time": Util.SendTime(global.ActiveChildCardTime * time.Second),
+		"child_list":      a.SM.c.GetChildCardDto(),
+	}
+	a.SM.SendActionById(a.Id1, BattleDto.NewAction(BattleDto.ActiveChildCard, BattleDto.Query, queryMap))
+	a.SM.SendActionById(a.Id2, BattleDto.NewAction(BattleDto.ActiveChildCard, BattleDto.Query, queryMap))
+	a.ChanStop, a.ChanCrash = Util.CreateTimer(global.ActiveChildCardTime*time.Second, a.SelectEnd)
+}
+
+func (a *ActiveChildCard) exit() {
+	a.StateTemplate.exit()
+	a.TaskMap = nil
+	a.DoneMap = nil
+	a.ChanCrash = nil
+	a.ChanStop = nil
+	a.Completed = false
+}
+
+func (a *ActiveChildCard) process(GoCtx context.Context) {
+	handleAction := func(id int, action BattleDto.Action, ResponseChan chan<- BattleDto.Action) bool {
+		if action.ActionCode == BattleDto.ActiveChildCard && action.Predicates == BattleDto.Result {
+			a.Lock()
+			defer a.Unlock()
+			if a.Completed {
+				return true
+			}
+			if a.DoneMap[id] {
+				a.SM.SendActionById(id, BattleDto.NewErrAction(global.ResponseRepeatRequest))
+				return true
+			}
+
+			var data ActiveChildCardDto
+			if !a.SM.DataDecode(action, &data, id) {
+				return true
+			}
+
+			uniqueIds := uniqueIntSlice(data.TempIdList)
+			if len(uniqueIds) > 5 {
+				a.SM.SendActionById(id, BattleDto.NewErrAction(global.ResponseInvalidReqParams))
+				return true
+			}
+
+			validIds := a.validChildTempIds()
+			if !Util.VerifyIncludes(validIds, uniqueIds) {
+				a.SM.SendActionById(id, BattleDto.NewErrAction(global.ResponseInvalidReqParams))
+				return true
+			}
+
+			a.TaskMap[id] = uniqueIds
+			a.DoneMap[id] = true
+			a.SM.SendActionById(id, BattleDto.NewAction(BattleDto.ActiveChildCard, BattleDto.Succeed, "选择已接收"))
+			if a.DoneMap[a.Id1] && a.DoneMap[a.Id2] {
+				go a.finishSelect()
+			}
+			return true
+		}
+		return false
+	}
+	a.SM.AcceptAction(GoCtx, handleAction)
+}
+
+func (a *ActiveChildCard) SelectEnd() {
+	a.Lock()
+	defer a.Unlock()
+	if a.Completed {
+		return
+	}
+	a.finishSelect()
+}
+
+func (a *ActiveChildCard) finishSelect() {
+	if a.Completed {
+		return
+	}
+	a.Completed = true
+
+	selected := a.computeFinalSelection()
+	a.activateChildCards(selected)
+
+	result := map[string]any{"selected_temp_id_list": selected}
+	a.SM.SendActionById(a.Id1, BattleDto.NewAction(BattleDto.ActiveChildCard, BattleDto.Finish, result))
+	a.SM.SendActionById(a.Id2, BattleDto.NewAction(BattleDto.ActiveChildCard, BattleDto.Finish, result))
+
+	go a.SM.finish("SelectWeather")
+}
+
+func (a *ActiveChildCard) computeFinalSelection() []int {
+	selected1 := a.TaskMap[a.Id1]
+	selected2 := a.TaskMap[a.Id2]
+	intersection := intersectionIntSlice(selected1, selected2)
+	if len(intersection) > 5 {
+		intersection = intersection[:5]
+	}
+	if len(intersection) == 5 {
+		return intersection
+	}
+
+	validIds := a.validChildTempIds()
+	rest := excludeIntSlice(validIds, intersection)
+	need := 5 - len(intersection)
+	randoms := Util.GetRandomElements(rest, need)
+	return append(intersection, randoms...)
+}
+
+func (a *ActiveChildCard) validChildTempIds() []int {
+	result := make([]int, 0)
+	a.SM.c.ChildList.Do(func(data *[]CardAbstract.Card) {
+		for _, card := range *data {
+			result = append(result, card.GetTempId())
+		}
+	})
+	return result
+}
+
+func (a *ActiveChildCard) activateChildCards(selected []int) {
+	a.SM.c.ChildList.Do(func(data *[]CardAbstract.Card) {
+		for _, card := range *data {
+			if containsInt(selected, card.GetTempId()) {
+				card.GetInfo()["ChildState"] = BattleData.Active
+			}
+		}
+	})
+}
+
+// 返回值: 不包含重复元素的切片，且保持原有的相对顺序
+func uniqueIntSlice(ids []int) []int {
+	result := make([]int, 0, len(ids))
+	seen := make(map[int]struct{}, len(ids))
+	for _, id := range ids {
+		if _, ok := seen[id]; ok {
+			continue
+		}
+		seen[id] = struct{}{}
+		result = append(result, id)
+	}
+	return result
+}
+
+// intersectionIntSlice 获取两个整数切片的交集
+// a1, a2: 两个待比较的切片
+// 返回值: 同时存在于 a1 和 a2 中的元素组成的切片（已去重）
+func intersectionIntSlice(a1, a2 []int) []int {
+	set := make(map[int]struct{}, len(a1))
+	for _, v := range a1 {
+		set[v] = struct{}{}
+	}
+	result := make([]int, 0)
+	for _, v := range a2 {
+		if _, ok := set[v]; ok {
+			result = append(result, v)
+		}
+	}
+	return uniqueIntSlice(result)
+}
+
+// excludeIntSlice 从 list 中排除掉存在于 excludes 中的元素（差集操作）
+// list: 原始数据切片
+// excludes: 需要排除的黑名单切片
+// 返回值: 存在于 list 但不在 excludes 中的元素
+func excludeIntSlice(list, excludes []int) []int {
+	excludeSet := make(map[int]struct{}, len(excludes))
+	for _, v := range excludes {
+		excludeSet[v] = struct{}{}
+	}
+	result := make([]int, 0, len(list))
+	for _, v := range list {
+		if _, ok := excludeSet[v]; !ok {
+			result = append(result, v)
+		}
+	}
+	return result
+}
+
+// containsInt 判断切片中是否包含某个特定的整数
+// list: 查找范围
+// target: 目标整数
+// 返回值: 找到返回 true，否则返回 false
+func containsInt(list []int, target int) bool {
+	for _, v := range list {
+		if v == target {
+			return true
+		}
+	}
+	return false
+}
+
+//#endregion
+//#region State:SelectWeather
+
 type SelectWeather struct {
 	StateTemplate
 	StopChan    chan struct{}
@@ -533,6 +746,10 @@ func (s *SelectWeather) enter() {
 	StopChan, CrashChan := Util.CreateTimer(global.SelectWeatherTime*time.Second, s.timeEnding)
 	s.StopChan = StopChan
 	s.CrashChan = CrashChan
+}
+
+func (s *SelectWeather) exit() {
+
 }
 
 //#endregion

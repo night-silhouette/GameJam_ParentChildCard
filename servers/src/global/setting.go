@@ -21,6 +21,7 @@ const (
 
 	SelectWeatherTime   = 8    //s
 	BattleWaitTime      = 1    //s
+	ActiveChildCardTime = 8    //s
 	SelectCharacterTime = 10   //s
 	SelectSkillCardTime = 1    //s
 	JudgeWaitTime       = 1    //s
