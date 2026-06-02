@@ -19,6 +19,7 @@ func _refresh_ui():
 		$damage.text = str(card.get("damage", ""))
 		$"详细".text = str(card.get("spell_des", ""))
 		$Control.update_card_data(card)
+		$TextureRect.texture = card.texture
 		_fade_in(self);
 		
 func _fade_in(target_card: Control, duration: float = 0.5) -> void:

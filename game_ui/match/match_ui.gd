@@ -5,10 +5,9 @@ extends Control
 func _ready() -> void:
 	SignalBus.request_bag_card.emit()
 	SignalBus.ws_connected.connect(_ws_connected)
-
+	
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-
 
 func _on_街机按钮_button_down() -> void:
 	# 1. 从全局数据层提取需要的原始卡牌数据，过滤掉不需要传给后端的 "zone" 和 "resource"
@@ -19,6 +18,8 @@ func _on_街机按钮_button_down() -> void:
 			"card_id": card["card_id"],
 			"price": card["price"]
 		})
+	if raw_card_list.size()<5:
+		return;
 	var input_text = $"使用/num".text # 获取文本
 	var input_amount: int;
 	# 1. 判空检查（防止什么都没填就提交）

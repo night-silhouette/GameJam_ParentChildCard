@@ -32,6 +32,7 @@ grow_vertical = 2
 metadata/_edit_lock_ = true
 
 [node name="边框" type="TextureRect" parent="."]
+visible = false
 offset_top = -3296.0002
 offset_right = 1858.0
 offset_bottom = 3099.9998
@@ -52,10 +53,10 @@ grow_vertical = 1
 scale = Vector2(0.19120544, 0.19120544)
 
 [node name="万能按钮" parent="." instance=ExtResource("13_3krv3")]
-offset_left = 1048.0
-offset_top = 561.0
-offset_right = 2197.0
-offset_bottom = 1638.0
+offset_left = 1018.0001
+offset_top = 535.0
+offset_right = 2167.0
+offset_bottom = 1612.0
 scale = Vector2(0.085008465, 0.085008465)
 script = ExtResource("10_qjvm6")
 

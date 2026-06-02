@@ -2,9 +2,9 @@
 
 [ext_resource type="Texture2D" uid="uid://bra5u7smhbanq" path="res://素材/使用素材/战斗内/桌面/信息框  -子牌.png" id="1_8t7r2"]
 [ext_resource type="Script" uid="uid://dtjh32kuq2vf1" path="res://game_scene/battle/hover显示.gd" id="1_mevhq"]
+[ext_resource type="Texture2D" uid="uid://dje375wa2ans7" path="res://素材/使用素材/卡牌/基础卡牌重置素材/卡牌.png" id="5_g3kcg"]
 [ext_resource type="LabelSettings" uid="uid://ik6wcfsli47v" path="res://game_ui/数值.tres" id="5_membc"]
 [ext_resource type="FontFile" uid="uid://bj1pdtvpfop4a" path="res://素材/使用素材/YaoSuiXinShouXieTi-2.ttf" id="6_0acmd"]
-[ext_resource type="PackedScene" uid="uid://diwsy4ebydgfx" path="res://base_class/card/battle_card.tscn" id="7_63lvv"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_udkdb"]
 font = ExtResource("6_0acmd")
@@ -55,10 +55,11 @@ scale = Vector2(1.2763497, 1.255454)
 label_settings = SubResource("LabelSettings_udkdb")
 autowrap_mode = 3
 
-[node name="Control" parent="." instance=ExtResource("7_63lvv")]
+[node name="TextureRect" type="TextureRect" parent="."]
 layout_mode = 0
-offset_left = 28.704964
-offset_top = 17.66466
-offset_right = 357.70496
-offset_bottom = 587.6647
-scale = Vector2(0.4633435, 0.4633435)
+offset_left = 26.49689
+offset_top = 6.6242895
+offset_right = 629.4969
+offset_bottom = 1044.6243
+scale = Vector2(0.2664736, 0.2664736)
+texture = ExtResource("5_g3kcg")

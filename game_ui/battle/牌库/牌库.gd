@@ -52,7 +52,7 @@ func get_current_page() -> Array:
 func _on_card_request_drag(card_data):
 	# 1. 激活全局游荡对象（DragProxy）
 	# 假设你有一个全局单例 DragManager 
-	#DragManager.start_drag(card_data)
+	#DragManager.start_drag(card_data/)
 	
 	# 2. 核心操作：修改数据层！
 	# 告诉 card_manager：这张牌现在离开 DECK_ZONE 了，进入临时状态
