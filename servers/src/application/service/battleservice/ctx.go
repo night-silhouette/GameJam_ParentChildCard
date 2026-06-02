@@ -59,6 +59,9 @@ func NewCtx(idA int, idB int, CardPool *[]CardAbstract.Card, ParentContext conte
 	c.ChildList = Util.NewSafeContainer[CardAbstract.Card](ParentContext, 8)
 	c.ChildList.Do(func(data *[]CardAbstract.Card) {
 		*data = cList
+		for _, card := range *data {
+			card.SetTempId(int(TempIdCalc.Add(1)))
+		}
 	})
 	return c
 }
@@ -217,7 +220,7 @@ func (p *PlayerData) GetEnergy() int {
 func (p *PlayerData) UpdateEnergy(offset int) {
 	p.dataMutex.Lock()
 	defer p.dataMutex.Unlock()
-	if p.IsCanUpdateEnergy(offset) {
+	if p.isCanUpdateEnergy(offset) {
 		temp := p.Energy + offset
 		if temp > 5 {
 			temp = 5
@@ -226,13 +229,17 @@ func (p *PlayerData) UpdateEnergy(offset int) {
 	}
 }
 
-func (p *PlayerData) IsCanUpdateEnergy(offset int) bool {
-	p.dataMutex.RLock()
-	defer p.dataMutex.RUnlock()
+func (p *PlayerData) isCanUpdateEnergy(offset int) bool {
 	if (p.Energy + offset) < 0 {
 		return false
 	}
 	return true
+}
+
+func (p *PlayerData) IsCanUpdateEnergy(offset int) bool {
+	p.dataMutex.RLock()
+	defer p.dataMutex.RUnlock()
+	return p.isCanUpdateEnergy(offset)
 }
 
 // 这样就和字典一样,可以直接取要的位置的卡,
@@ -367,7 +374,7 @@ func (c *Ctx) ProtoColInterrupt(UserId int, InterruptDto *BattleData.InterruptDt
 	var DataIsOK atomic.Bool
 	DataIsOK.Store(false)
 
-	TimeEnding := func() { //结束回调
+	TimeEnding := func() {    //结束回调
 		if !DataIsOK.Load() { //随机取
 			dataMutex.Lock()
 			data.TempIdList = Util.GetRandomElements(InterruptDto.TempIdList, InterruptDto.SelectNum)
@@ -732,8 +739,7 @@ func (c *Ctx) GetChildCardDto() []*BattleData.ChildCardDto {
 
 		for _, card := range *data {
 			el := BattleData.NewChildCardDto(CardAbstract.GetCardDto(card), card.GetInfo()["ChildState"].(BattleData.ChildState))
-			fmt.Println(el)
-			fmt.Println(card)
+
 			result = append(result, el)
 		}
 	})

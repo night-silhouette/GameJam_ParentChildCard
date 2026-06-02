@@ -1,7 +1,6 @@
 package CardImpl
 
 import (
-	"fmt"
 	"pcc_card/application/entity/BattleData"
 	"pcc_card/application/entity/Card/CardAbstract"
 	"pcc_card/application/entity/protocol"
@@ -53,8 +52,6 @@ func (c CharacterBaseCard) EffectHurt(AttackId int, AtkHp float64) {
 	c.BtCtx.ProtoColPush(protocol.NewHurt(c.OwnerId, AttackId, c.TempId, AtkHp))
 }
 func (c CharacterBaseCard) Notify(Beh BattleData.AnimationBehavior, UserID int) {
-	fmt.Print(Beh)
-	fmt.Println("卡牌执行了")
 	c.BtCtx.Notify(BattleData.NewAnimationDto(c.TempId, Beh, c.BtCtx.GetBtCardInfo(c.OwnerId)), UserID)
 }
 func (c CharacterBaseCard) Interrupt(res *[]int, time time.Duration, TempIdList []int, SelectNum int) { //res一定要塞到effect函数里处理

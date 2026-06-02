@@ -552,6 +552,7 @@ func (a *ActiveChildCard) finishSelect() {
 	a.Completed = true
 
 	selected := a.computeFinalSelection()
+
 	a.activateChildCards(selected)
 
 	result := map[string]any{"selected_temp_id_list": selected}
@@ -579,6 +580,7 @@ func (a *ActiveChildCard) computeFinalSelection() []int {
 	return append(intersection, randoms...)
 }
 
+// 获得所有的TempIds
 func (a *ActiveChildCard) validChildTempIds() []int {
 	result := make([]int, 0)
 	a.SM.c.ChildList.Do(func(data *[]CardAbstract.Card) {
@@ -919,6 +921,8 @@ func (J *Judge) EndJudge() {
 			J.SM.Winner = J.Id2
 			J.SM.Loser = J.Id1
 		}
+
+		J.c.PlayerDataMap[J.SM.Winner].UpdateEnergy(2)
 	}
 
 	J.WaitAnimationPlay = true
@@ -1167,17 +1171,15 @@ func (s *CardCalc) Switch(_data BattleData.CombatDto, UserId int) bool {
 	return false
 }
 
-func (s *CardCalc) CalcNotSwitch(data BattleData.CombatDto) {
+func (s *CardCalc) CalcNotSwitch(data BattleData.CombatDto, UserId int) {
 	opponentCardId := s.c.GetCardBt(s.SM.Loser, data.OpponentWhere).GetTempId()
 	if data.Behavior == BattleData.Attack { //执行前端传过来的行为
-		s.c.GetCardBt(s.SM.Winner, data.SelfWhere).(CardAbstract.Character).Attack(opponentCardId)
+		s.c.GetCardBt(UserId, data.SelfWhere).(CardAbstract.Character).Attack(opponentCardId)
 	} else if data.Behavior == BattleData.Skill {
-		s.c.GetCardBt(s.SM.Winner, data.SelfWhere).(CardAbstract.Character).Skill(opponentCardId)
+		s.c.GetCardBt(UserId, data.SelfWhere).(CardAbstract.Character).Skill(opponentCardId)
 	}
 
 	s.c.StackSettle() //执行效果堆栈
-	s.SM.SendActionById(s.SM.Id2, BattleDto.NewAction(BattleDto.CardCalc, BattleDto.Finish, ""))
-	s.SM.SendActionById(s.SM.Id1, BattleDto.NewAction(BattleDto.CardCalc, BattleDto.Finish, ""))
 }
 
 // SkillCalc 双方的法术牌结算都在这了
@@ -1185,14 +1187,10 @@ func (s *CardCalc) SkillCalc() {
 	if s.c.PlayerDataMap[s.SM.Winner].SkillCardBT != nil {
 		s.c.PlayerDataMap[s.SM.Winner].SkillCardBT.(CardAbstract.SkillCard).PlayMagic() //触发法术，然后，在法术这个函数里面，用和ctx的协议，把通知前端的action传出来
 		s.c.StackSettle()                                                               //执行效果堆栈
-		s.SM.SendActionById(s.SM.Id2, BattleDto.NewAction(BattleDto.CardCalc, BattleDto.Finish, ""))
-		s.SM.SendActionById(s.SM.Id1, BattleDto.NewAction(BattleDto.CardCalc, BattleDto.Finish, ""))
 	}
 	if s.c.PlayerDataMap[s.SM.Loser].SkillCardBT != nil {
 		s.c.PlayerDataMap[s.SM.Loser].SkillCardBT.(CardAbstract.SkillCard).PlayMagic()
 		s.c.StackSettle() //执行效果堆栈
-		s.SM.SendActionById(s.SM.Id2, BattleDto.NewAction(BattleDto.CardCalc, BattleDto.Finish, ""))
-		s.SM.SendActionById(s.SM.Id1, BattleDto.NewAction(BattleDto.CardCalc, BattleDto.Finish, ""))
 	}
 }
 
@@ -1214,6 +1212,11 @@ CalcLoop:
 			}
 			SwitchCard("Winner", s.SM.Winner)
 			SwitchCard("Loser", s.SM.Loser)
+
+			//通知换牌结算完成
+			s.SM.SendActionById(s.SM.Id2, BattleDto.NewAction(BattleDto.DeployCard, BattleDto.Finish, ""))
+			s.SM.SendActionById(s.SM.Id1, BattleDto.NewAction(BattleDto.DeployCard, BattleDto.Finish, ""))
+
 			//结算攻击或者技能
 			Calc := func(User string, UserId int) {
 				DtoList := data[User]
@@ -1222,14 +1225,18 @@ CalcLoop:
 						s.SM.SendActionById(UserId, BattleDto.NewErrAction(global.BattleCantSwitch))
 						continue
 					}
-					s.CalcNotSwitch(Dto)
+					s.CalcNotSwitch(Dto, UserId)
 				}
 			}
 			Calc("Winner", s.SM.Winner)
 			Calc("Loser", s.SM.Loser)
+
 			//结算法术
 			s.SkillCalc()
 
+			//全部结算完成,发个通知
+			s.SM.SendActionById(s.SM.Id2, BattleDto.NewAction(BattleDto.CardCalc, BattleDto.Finish, ""))
+			s.SM.SendActionById(s.SM.Id1, BattleDto.NewAction(BattleDto.CardCalc, BattleDto.Finish, ""))
 		default:
 			break CalcLoop
 		}
@@ -1263,3 +1270,7 @@ func (s *CardCalc) process(GoCtx context.Context) {
 }
 
 //endregion
+
+func transformToSelfAndOpponent[T any](map[int]T, IdSelf int, Opponent) map[string]T {
+
+}

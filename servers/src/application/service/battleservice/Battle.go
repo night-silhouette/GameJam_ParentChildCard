@@ -30,7 +30,16 @@ func NewBattle(UserA int, UserB int, CardList map[int][]int, GoldMoreUserId int,
 	rootContext := context.Background()
 	BattleContext, cancel := context.WithCancel(rootContext)
 	id := int(atomic.AddInt64(&battleIDCounter, 1))
-	ctx := NewCtx(UserA, UserB, CardListImpl.Copy(), BattleContext, CloneByCardListImpl(CardList, &TempId), &TempId, cList)
+
+	//clone手牌,给userid到ownerId
+	CardInHand := CloneByCardListImpl(CardList, &TempId)
+	for UserId, CardMap := range CardInHand {
+		for _, Card := range CardMap {
+			Card.SetOwnerId(UserId)
+		}
+	}
+
+	ctx := NewCtx(UserA, UserB, CardListImpl.Copy(), BattleContext, CardInHand, &TempId, cList)
 	Nt := NewNotifyManager(UserA, UserB, 32) //初始化bufferSize
 	SM := NewStateMachine(ctx, UserA, UserB, Nt, BattleContext, GoldMoreUserId)
 	go func() {
