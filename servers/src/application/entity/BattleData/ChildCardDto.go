@@ -11,3 +11,12 @@ func NewChildCardDto(dto CardDto, ChildState ChildState) *ChildCardDto {
 	res.ChildState = ChildState
 	return res
 }
+
+type ChildState int
+
+const (
+	Active ChildState = iota
+	NotActive
+	Died
+	HasCatch
+)

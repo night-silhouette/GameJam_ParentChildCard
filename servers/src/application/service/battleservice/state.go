@@ -1201,21 +1201,32 @@ CalcLoop:
 		select {
 		case data := <-s.SM.CombatDataChan:
 			//结算换牌
-			SwitchCard := func(User string, UserId int) {
+
+			//-----记录换牌过程-----
+			SwitchCardMap := make(map[int][]BattleData.SelectCard)
+			SwitchCardMap[s.SM.Id2] = make([]BattleData.SelectCard, 0)
+			SwitchCardMap[s.SM.Id1] = make([]BattleData.SelectCard, 0)
+			//-----记录换牌过程-----
+
+			//----执行换牌----
+			SwitchCard := func(User string, UserId int, SwitchCardMap map[int][]BattleData.SelectCard) {
 				DtoList := data[User]
 				for _, Dto := range DtoList {
 					if Dto.Behavior != BattleData.SwitchCard {
 						break
 					}
-					s.Switch(Dto, UserId)
+					if s.Switch(Dto, UserId) { //这里执行交换
+						SwitchCardMap[UserId] = append(SwitchCardMap[UserId], Dto.SelectCard) //然后交换成功的记录
+					}
 				}
 			}
-			SwitchCard("Winner", s.SM.Winner)
-			SwitchCard("Loser", s.SM.Loser)
+			SwitchCard("Winner", s.SM.Winner, SwitchCardMap)
+			SwitchCard("Loser", s.SM.Loser, SwitchCardMap)
+			//----执行换牌----
 
 			//通知换牌结算完成
-			s.SM.SendActionById(s.SM.Id2, BattleDto.NewAction(BattleDto.DeployCard, BattleDto.Finish, ""))
-			s.SM.SendActionById(s.SM.Id1, BattleDto.NewAction(BattleDto.DeployCard, BattleDto.Finish, ""))
+			s.SM.SendActionById(s.SM.Id2, BattleDto.NewAction(BattleDto.DeployCard, BattleDto.Finish, transformToSelfAndOpponent[BattleData.SelectCard, []BattleData.SelectCard](SwitchCardMap, s.SM.Id2)))
+			s.SM.SendActionById(s.SM.Id1, BattleDto.NewAction(BattleDto.DeployCard, BattleDto.Finish, transformToSelfAndOpponent[BattleData.SelectCard, []BattleData.SelectCard](SwitchCardMap, s.SM.Id1)))
 
 			//结算攻击或者技能
 			Calc := func(User string, UserId int) {
@@ -1271,6 +1282,17 @@ func (s *CardCalc) process(GoCtx context.Context) {
 
 //endregion
 
-func transformToSelfAndOpponent[T any](map[int]T, IdSelf int, Opponent) map[string]T {
-
+// T是数据类型,转化传输的是[]T这种类型
+func transformToSelfAndOpponent[T any, L []T](DataMap map[int]L, UserId int) map[string]L {
+	res := make(map[string]L)
+	res["self"] = make(L, 0)
+	res["opponent"] = make(L, 0)
+	for id, data := range DataMap {
+		if id == UserId {
+			res["self"] = data
+		} else {
+			res["opponent"] = data
+		}
+	}
+	return res
 }
