@@ -18,19 +18,17 @@ var child_bt_object: int;
 
 # 1. 定义状态枚举
 enum GameState {
-	INIT_STATE,
-	CHOOSE_CHID_CARD,
-	CHOOSE_WEATHER,
-	USE_MAGIC_CARD,
-	USE_COMBAT_CARD,
-	JUDGEMENT
+	INIT_STATE,           # 看牌阶段（可拖拽上牌）
+	CHOOSE_CHILD_CARD,    # 选择子卡牌阶段
+	CHOOSE_WEATHER,       # 选择天气阶段
+	USE_MAGIC_CARD,       # 选择技能牌阶段
+	USE_COMBAT_CARD,      # 战斗行动阶段
+	JUDGEMENT             # 判定阶段（剪刀石头布）
 }
 
 # 2. 状态变量（带类型推导与 setter）
 var current_state: GameState = GameState.INIT_STATE:
 	set(value):
-		SignalBus.request_get_self_cards_inhand.emit()
-		SignalBus.request_get_combat_cards.emit()
 		_exit_state(current_state)
 		current_state = value
 		_enter_state(current_state)
@@ -45,6 +43,13 @@ func _ready() -> void:
 	SignalBus.deploy_magic_success.connect(_deploy_magic_success)
 	SignalBus.magic_card_finish.connect(_magic_card_finish)
 	SignalBus.judge_finish.connect(_judge_finish)
+	
+	# [新增] 0.102 新阶段信号
+	SignalBus.active_child_card_start.connect(_on_active_child_card_start)
+	SignalBus.active_child_card_finish.connect(_on_active_child_card_finish)
+	SignalBus.select_weather_start.connect(_on_select_weather_start)
+	SignalBus.select_weather_succeed.connect(_on_select_weather_succeed)
+	SignalBus.card_calc_finish.connect(_on_card_calc_finish)
 
 	# 初始化进入第一个状态
 	_enter_state(current_state)
@@ -60,6 +65,16 @@ func _exit_state(old_state: GameState) -> void:
 	match old_state:
 		GameState.INIT_STATE:
 			pass
+		
+		GameState.CHOOSE_CHILD_CARD:
+			# 退出子卡选择阶段：清理选中状态
+			card_manager.clear_selection(3)  # match_code=3 子卡激活选择
+			all_block.allow_input()
+		
+		GameState.CHOOSE_WEATHER:
+			# 退出天气选择阶段
+			all_block.allow_input()
+		
 		GameState.USE_MAGIC_CARD:
 			combat_block.allow_input()
 		
@@ -78,16 +93,29 @@ func _enter_state(new_state: GameState) -> void:
 	match new_state:
 		GameState.INIT_STATE:
 			time.countdown_time = TimeOffset.get_remaining_seconds(Global.init_battle_time);
-			print("进入初始化状态")
+			print("进入初始化状态（看牌阶段）")
+		
+		GameState.CHOOSE_CHILD_CARD:
+			# 进入子卡选择阶段：全屏阻塞，等待玩家选择
+			all_block.block_input()
+			print("进入子卡牌选择阶段")
+		
+		GameState.CHOOSE_WEATHER:
+			# 进入天气选择阶段：全屏阻塞，等待玩家选择
+			all_block.block_input()
+			print("进入天气选择阶段")
+		
 		GameState.USE_MAGIC_CARD:
 			combat_block.block_input();
 			print("进入魔法卡使用状态")
+		
 		GameState.USE_COMBAT_CARD:
 			spell_block.block_input()
 			if(is_win):
 				combat_block.block_input();
 			SignalBus.request_combat_finish.emit();
 			print("进入战斗卡使用状态")
+		
 		GameState.JUDGEMENT:
 			Global.revive(judge);
 			Global.revive(jugde_bt);
@@ -112,6 +140,34 @@ func _judge_start(t) -> void:
 	time.start_countdown(TimeOffset.get_remaining_seconds(t));
 	change_state(GameState.JUDGEMENT) 
 
+# [新增] 子卡选择阶段开始
+func _on_active_child_card_start(t, child_list) -> void:
+	time.start_countdown(TimeOffset.get_remaining_seconds(t));
+	change_state(GameState.CHOOSE_CHILD_CARD)
+
+# [新增] 子卡选择阶段结束
+func _on_active_child_card_finish(selected_temp_id_list) -> void:
+	# 子卡选择结束，进入天气选择阶段（或根据后端流程调整）
+	print("子卡选择结束，选中: ", selected_temp_id_list)
+	# 注意：实际状态切换应由后端信号触发，这里只是日志
+
+# [新增] 天气选择阶段开始
+func _on_select_weather_start(t, weather_list) -> void:
+	time.start_countdown(TimeOffset.get_remaining_seconds(t));
+	change_state(GameState.CHOOSE_WEATHER)
+
+# [新增] 天气选择成功
+func _on_select_weather_succeed(weather_data) -> void:
+	print("天气选择成功: ", weather_data)
+	# 天气选择成功后，进入技能牌选择阶段
+	# 实际切换由后端 DeployCard.Query 触发
+
+# [新增] 卡牌结算完成
+func _on_card_calc_finish() -> void:
+	print("卡牌效果结算完成")
+	# 结算完成后，进入下一轮的技能牌选择阶段
+	# 实际切换由后端信号触发
+
 func _on_万能按钮_button_down() -> void:
 	var card:Array;
 	match current_state :
@@ -129,6 +185,18 @@ func _on_万能按钮_button_down() -> void:
 			else:
 				SignalBus.request_deploy_magic_card.emit(card[0].id,card[0].temp_id)
 
+		GameState.CHOOSE_CHILD_CARD:
+			# [新增] 子卡选择阶段：提交选中的子卡
+			time.countdown_time = 0;
+			var selected = card_manager.get_selected_temp_ids(3);  # match_code=3
+			SignalBus.request_active_child_card.emit(selected)
+		
+		GameState.CHOOSE_WEATHER:
+			# [新增] 天气选择阶段：提交选中的天气
+			time.countdown_time = 0;
+			# 天气选择逻辑由 UI 层维护，这里获取并提交
+			# 实际实现需要根据 UI 设计调整
+			
 		GameState.USE_MAGIC_CARD:
 			time.countdown_time = 0;
 			card = card_manager.get_cards_by_zone(Global.ZONE_CARD.SPELL_ZONE);
@@ -136,14 +204,20 @@ func _on_万能按钮_button_down() -> void:
 				SignalBus.request_deploy_magic_card.emit(-1,-1);
 			else:
 				SignalBus.request_deploy_magic_card.emit(card[0].id,card[0].temp_id)
+		
 		GameState.USE_COMBAT_CARD:
 			time.countdown_time = 0;
 			card = card_manager.get_cards_by_zone(Global.ZONE_CARD.PARENT_BATTLE_ZONE);
-			SignalBus.request_deploy_parent_card.emit(card[0].id,card[0].temp_id)
+			if not card.is_empty():
+				SignalBus.request_deploy_parent_card.emit(card[0].id,card[0].temp_id)
+			
 			card = card_manager.get_cards_by_zone(Global.ZONE_CARD.CHILD_BATTLE_ZONE);
-			SignalBus.request_deploy_child_card.emit(card[0].id,card[0].temp_id)
+			if not card.is_empty():
+				SignalBus.request_deploy_child_card.emit(card[0].id,card[0].temp_id)
+			
 			SignalBus.request_combat_movement.emit(parent_action,0,parent_bt_object);
-			SignalBus.request_combat_movement.emit(child_action,0,child_bt_object);
+			SignalBus.request_combat_movement.emit(child_action,0,parent_bt_object);
+		
 		GameState.JUDGEMENT:
 			time.countdown_time = 0;
 			jugde_bt.update_single_judge_data(0,judge.index_judge)
@@ -154,11 +228,10 @@ func _on_万能按钮_button_down() -> void:
 func _deploy_magic_success():
 	if current_state == GameState.USE_MAGIC_CARD :
 		pass;
-func _magic_card_finish(	):
+func _magic_card_finish( ):
 	if current_state == GameState.USE_MAGIC_CARD :
 		pass;
 func _judge_finish(data):
 	if current_state == GameState.JUDGEMENT:
 		jugde_bt.judge_data = [int(data.self), int(data.opponent)]
 		jugde_bt.is_win = int(data.is_win)
-		

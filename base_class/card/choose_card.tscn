@@ -1,5 +1,6 @@
-[gd_scene load_steps=6 format=3 uid="uid://berfm8ug5kccq"]
+[gd_scene load_steps=7 format=3 uid="uid://berfm8ug5kccq"]
 
+[ext_resource type="Script" uid="uid://d1crwdvt7japg" path="res://base_class/card/choose_card.gd" id="1_ekftw"]
 [ext_resource type="Texture2D" uid="uid://dje375wa2ans7" path="res://素材/使用素材/卡牌/基础卡牌重置素材/卡牌.png" id="1_nakgl"]
 [ext_resource type="FontFile" uid="uid://bj1pdtvpfop4a" path="res://素材/使用素材/YaoSuiXinShouXieTi-2.ttf" id="2_ekftw"]
 [ext_resource type="Texture2D" uid="uid://bhngjavywsdho" path="res://素材/使用素材/选择/确认/零件/勾.png" id="3_8nntq"]
@@ -20,6 +21,7 @@ anchors_preset = 0
 offset_right = 329.0
 offset_bottom = 570.0
 scale = Vector2(0.16807154, 0.16807154)
+script = ExtResource("1_ekftw")
 
 [node name="卡牌纹理" type="TextureRect" parent="."]
 layout_mode = 1

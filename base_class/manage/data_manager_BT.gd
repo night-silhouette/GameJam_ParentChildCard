@@ -4,119 +4,219 @@ extends Node
 @export var spawn_container: Control
 @export_dir var base_path: String = "res://game_data/card/" # 资源存放的基础路径
 @export var state_machine : Node;
+
+#region 数据变更信号
 signal UI_date_update
 signal change_card_zone(temp_id, new_zone)
 
+## [新增] 能量数据变更信号
+signal energy_changed(self_energy: int, opponent_energy: int)
+
+## [新增] 天气数据变更信号
+signal weather_changed(weather_data: Dictionary)
+
+## [新增] 中断选牌数据变更信号
+signal interrupt_changed(interrupt_data: Dictionary)
+
+## [新增] 弃牌堆数据变更信号
+signal discard_changed
+#endregion
+
+
+#region 全局变量（非卡牌数据，用 setter 发信号通知 UI）
+## [新增] 己方能量
+var self_energy: int = 0:
+	set(value):
+		self_energy = value
+		energy_changed.emit(self_energy, opponent_energy)
+
+## [新增] 对手能量
+var opponent_energy: int = 0:
+	set(value):
+		opponent_energy = value
+		energy_changed.emit(self_energy, opponent_energy)
+
+## [新增] 天气数据（包含 weather 和 weather_list）
+var weather_data: Dictionary = {}:
+	set(value):
+		weather_data = value
+		weather_changed.emit(weather_data)
+
+## [新增] 中断选牌数据
+var interrupt_data: Dictionary = {}:
+	set(value):
+		interrupt_data = value
+		interrupt_changed.emit(interrupt_data)
+#endregion
+
+
+#region 游戏运行时变量
 var free_card_nextzone = null;
 var free_card_prevzone = null;
 var hover_card :int   =  -1;
 var card_list :Array = [];#这里的card只掌握数据，不拥有任何的实体
+#endregion
+
+
 func _ready() -> void:
-	#WS
+	# ==================== WS 卡牌数据导入 ====================
 	SignalBus.self_inhand_updated.connect(_self_inhand_updated)
 	SignalBus.bt_oppinfo_updated.connect(_bt_oppinfo_updated)
 	SignalBus.bt_selfinfo_updated.connect(_bt_selfinfo_updated)
 	change_card_zone.connect(_change_card_zone)
-	
-	#game
+
+	# ==================== [新增] WS 非卡牌数据导入 ====================
+	SignalBus.energy_updated.connect(_on_energy_updated)
+	SignalBus.discard_list_updated.connect(_on_discard_list_updated)
+
+	# ==================== 游戏交互信号 ====================
 	SignalBus.enter_freecard.connect(_enter_freecard)
 	SignalBus.exit_freecard.connect(_exit_freecard)
 	SignalBus.detected_area.connect(_detected_area)
 	SignalBus.exit_area.connect(_exit_area)
 	SignalBus.enter_hover.connect(_enter_hover)
 	SignalBus.exit_hover.connect(_exit_hover)
-#region 牌的导入
 
-## 核心功能：通过 ID 生成resoure
+
+#region ==================== Zone 优先级系统 ====================
+
+## Zone 优先级定义：数值越大优先级越高
+## combat zone > hand zone > state zone
+const ZONE_PRIORITY = {
+	# combat zones (最高优先级)
+	Global.ZONE_CARD.PARENT_BATTLE_ZONE: 300,
+	Global.ZONE_CARD.CHILD_BATTLE_ZONE: 300,
+	Global.ZONE_CARD.SPELL_ZONE: 300,
+	Global.ZONE_CARD.ENEMY_PARENT_ZONE: 300,
+	Global.ZONE_CARD.ENEMY_CHILD_ZONE: 300,
+	Global.ZONE_CARD.ENEMY_SPELL_ZONE: 300,
+	
+	# hand zones (中等优先级)
+	Global.ZONE_CARD.DECK_ZONE: 200,
+	
+	# state zones (最低优先级 - 由 child_state 决定)
+	Global.ZONE_CARD.CHILD_ACTIVE: 100,
+	Global.ZONE_CARD.CHILD_NOT_ACTIVE: 100,
+	Global.ZONE_CARD.CHILD_DIED: 100,
+	Global.ZONE_CARD.CHILD_HAS_CATCH: 100,
+	
+	# 其他
+	Global.ZONE_CARD.DISCARD_ZONE: 50,
+	Global.ZONE_CARD.FREE_ZONE: 10,
+}
+
+## 获取 zone 的优先级，未定义的返回 0
+func _get_zone_priority(zone: int) -> int:
+	return ZONE_PRIORITY.get(zone, 0)
+
+## 判断新 zone 是否应该覆盖旧 zone
+## 规则：新 zone 优先级 >= 旧 zone 优先级时才覆盖
+## 例外：FREE_ZONE 总是可以被覆盖
+func _should_override_zone(old_zone: int, new_zone: int) -> bool:
+	if old_zone == Global.ZONE_CARD.FREE_ZONE:
+		return true
+	var old_priority = _get_zone_priority(old_zone)
+	var new_priority = _get_zone_priority(new_zone)
+	return new_priority >= old_priority
+
+#endregion
+
+
+#region ==================== 卡牌数据导入（原有逻辑） ====================
+
+## 核心功能：通过 ID 查询本地 .tres 资源
 func querry_resoure_by_id(card_id: int) -> Resource:
 	return InventoryManager._find_card_resource_by_id(card_id)
-	
-func _self_inhand_updated(data):
-	_update_cards(data,Global.ZONE_CARD.DECK_ZONE)
 
+## 导入：己方手牌数据 → DECK_ZONE (hand zone, 优先级 200)
+func _self_inhand_updated(data):
+	_update_cards(data, Global.ZONE_CARD.DECK_ZONE)
+
+## 导入：对手战场数据 → 敌方 combat zones (优先级 300)
 func _bt_oppinfo_updated(data):
 	var bt_skill = [data.get("skill_card_bt")]
 	var bt_parent = [data.get("parent_card_bt")]
 	var bt_child = [data.get("child_card_bt")]
-	_update_cards(bt_skill,Global.ZONE_CARD.ENEMY_SPELL_ZONE)
-	_update_cards(bt_parent,Global.ZONE_CARD.ENEMY_PARENT_ZONE)
-	_update_cards(bt_child,Global.ZONE_CARD.ENEMY_CHILD_ZONE)
+	_update_cards(bt_skill, Global.ZONE_CARD.ENEMY_SPELL_ZONE)
+	_update_cards(bt_parent, Global.ZONE_CARD.ENEMY_PARENT_ZONE)
+	_update_cards(bt_child, Global.ZONE_CARD.ENEMY_CHILD_ZONE)
 
+## 导入：己方战场数据 → 己方 combat zones (优先级 300)
 func _bt_selfinfo_updated(data):
 	var bt_skill = [data.get("skill_card_bt")]
 	var bt_parent = [data.get("parent_card_bt")]
 	var bt_child = [data.get("child_card_bt")]
-	_update_cards(bt_skill,Global.ZONE_CARD.SPELL_ZONE)
-	_update_cards(bt_parent,Global.ZONE_CARD.PARENT_BATTLE_ZONE)
-	_update_cards(bt_child,Global.ZONE_CARD.CHILD_BATTLE_ZONE)
+	_update_cards(bt_skill, Global.ZONE_CARD.SPELL_ZONE)
+	_update_cards(bt_parent, Global.ZONE_CARD.PARENT_BATTLE_ZONE)
+	_update_cards(bt_child, Global.ZONE_CARD.CHILD_BATTLE_ZONE)
 
-func find_card_by_key(cards: Array, target_dict: Dictionary, key_to_match = "temp_id") -> Dictionary:
-	if target_dict == null:
-		return {}
-
-	var target_value = target_dict.get(key_to_match)
-
-	for card in cards:
-		# 防止数组里混入 null
-		if card == null:
-			continue
-
-		if card.get(key_to_match) == target_value:
-			return card
-			
-	return {}
-
+## 批量同步卡牌数据到指定区域（带优先级判断）
 func _update_cards(data: Array, ZONE):
 	# 1. 数据清洗：过滤掉无效的空位（id 为 -1 或数据为空）
 	card_list = card_list.filter(func(card): return card != null)
 	var valid_new_data = []
 	var active_temp_ids = []
-	
+
 	for d in data:
 		if d != null and d.get("id", -1) != -1:
 			valid_new_data.append(d)
 			active_temp_ids.append(d.get("temp_id"))
 
-	# 2. 同步数据：处理【添加】和【更新】
+	# 2. 同步数据：处理【添加】和【更新】（带优先级判断）
 	for new_data in valid_new_data:
 		_sync_card_data(new_data, ZONE)
 
 	# 3. 区域清理：处理【删除】
 	_cleanup_zone(ZONE, active_temp_ids)
-	
+
 	UI_date_update.emit()
-	
-## 内部解耦函数：同步单条卡牌数据
+
+## 内部解耦函数：同步单条卡牌数据（带优先级判断）
 func _sync_card_data(new_data: Dictionary, zone):
-	# 【核心修复】：查询时，把要对比的 temp_id 也先转成 int，防止 int 和 float 混用导致匹配失败
 	var target_temp_id = int(new_data.get("temp_id", -1))
-	
+
 	var existing_card : Dictionary = {}
 	for card in card_list:
 		if card != null and int(card.get("temp_id", -2)) == target_temp_id:
 			existing_card = card
 			break
-	
+
 	if not existing_card.is_empty():
-		# 更新数据
-		existing_card["zone"] = zone
-		existing_card["hp"] = int(new_data.get("hp", 0))
-		existing_card["damage"] = int(new_data.get("damage", 0))
+		# 优先级判断：新 zone 优先级 >= 旧 zone 才更新
+		var old_zone = int(existing_card.get("zone", 0))
+		if not _should_override_zone(old_zone, zone):
+			# 不更新 zone，但更新其他数据（hp, damage, buff 等）
+			_update_card_stats(existing_card, new_data)
+			return
 		
-		var raw_buff = new_data.get("buff_id", [])
-		if raw_buff is float or raw_buff is int:
-			existing_card["buff_id"] = [int(raw_buff)]
-		else:
-			existing_card["buff_id"] = Array(raw_buff).map(func(x): return int(x))
+		# 更新 zone 和数据
+		existing_card["zone"] = zone
+		_update_card_stats(existing_card, new_data)
 	else:
 		var new_card_dict = _init_single_card(new_data, zone)
-		# 严格校验：确保不是空字典
 		if not new_card_dict.is_empty():
 			card_list.append(new_card_dict)
 
+## [新增] 仅更新卡牌的数值数据（不更新 zone）
+func _update_card_stats(card: Dictionary, new_data: Dictionary):
+	card["hp"] = int(new_data.get("hp", 0))
+	card["damage"] = int(new_data.get("damage", 0))
+
+	# 支持 buff_list 格式（0.102 新增 BuffDto）
+	var raw_buff = new_data.get("buff_list", new_data.get("buff_id", []))
+	if raw_buff is float or raw_buff is int:
+		card["buff_id"] = [int(raw_buff)]
+	elif raw_buff is Array:
+		card["buff_id"] = Array(raw_buff).map(func(x): return int(x.get("buff_id", x) if x is Dictionary else x))
+	else:
+		card["buff_id"] = []
+	
+	# [新增] 保存 child_state（用于后续优先级判断和 UI 显示）
+	if new_data.has("child_state"):
+		card["child_state"] = int(new_data.get("child_state", 1))
+
 ## 内部解耦函数：清理指定区域中已不存在的卡牌
 func _cleanup_zone(zone, active_ids: Array):
-	# 【核心修复】：把活跃的 ID 队列也全转成整型 int 数组，防止 in 操作符因类型不同而误杀
 	var clean_active_ids: Array[int] = []
 	for id in active_ids:
 		clean_active_ids.append(int(id))
@@ -127,138 +227,225 @@ func _cleanup_zone(zone, active_ids: Array):
 			var current_temp_id = int(current_card.get("temp_id", -1))
 			if not current_temp_id in clean_active_ids:
 				card_list.remove_at(i)
+
 ## 内部解耦函数：初始化单张卡牌，并做严格的类型转换
 func _init_single_card(card_data: Dictionary, zone) -> Dictionary:
 	if card_data == null or card_data.is_empty():
 		return {}
 
-	# 【核心修复】：网络传过来的是浮点数 21.0，必须强制转为整型 int
 	var card_id: int = int(card_data.get("id", -1))
 	if card_id == -1:
 		push_error("CardManager: 收到不合法的卡牌ID (-1)")
 		return {}
 
-	# 查询本地资源
 	var resource_data = querry_resoure_by_id(card_id)
 	if resource_data == null:
-		# 这里的报错能帮你精准定位是不是本地漏了哪张牌的配置
 		push_error("CardManager: 本地没有对应 [id: " + str(card_id) + "] 的 .tres 资源文件！")
 		return {}
 
-	# 深度拷贝网络数据，并规范化数据类型
 	var new_card = {}
 	new_card["id"] = card_id
 	new_card["temp_id"] = int(card_data.get("temp_id", -1))
 	new_card["hp"] = int(card_data.get("hp", 0))
 	new_card["damage"] = int(card_data.get("damage", 0))
-	
-	# 处理 buff_id，如果是单值浮点数(0.0)转成数组或规范的整型
-	var raw_buff = card_data.get("buff_id", [])
+
+	# 支持 buff_list 格式
+	var raw_buff = card_data.get("buff_list", card_data.get("buff_id", []))
 	if raw_buff is float or raw_buff is int:
 		new_card["buff_id"] = [int(raw_buff)]
+	elif raw_buff is Array:
+		new_card["buff_id"] = Array(raw_buff).map(func(x): return int(x.get("buff_id", x) if x is Dictionary else x))
 	else:
-		new_card["buff_id"] = Array(raw_buff).map(func(x): return int(x))
+		new_card["buff_id"] = []
+
+	# [新增] 保存 child_state（如果存在）
+	if card_data.has("child_state"):
+		new_card["child_state"] = int(card_data.get("child_state", 1))
 
 	# 注入本地配置静态数据
-	new_card["resouce"] = resource_data;
+	new_card["resouce"] = resource_data
 	new_card["zone"] = zone
 
 	return new_card
-	
+
 #endregion
 
 
+#region ==================== [新增] 非卡牌数据导入 ====================
 
-##获取一个区域内的所有卡牌。
+## [新增] 导入：能量值数据
+## 服务器返回 {"self": int, "opponent": int}
+func _on_energy_updated(data):
+	if data is Dictionary:
+		self_energy = int(data.get("self", 0))
+		opponent_energy = int(data.get("opponent", 0))
+
+## [新增] 导入：子牌堆列表 → 根据 child_state 翻译为对应 zone（state zone, 优先级 100）
+## 服务器返回 []ChildCardDto，每张子卡带 child_state 字段
+## child_state 0=Active, 1=NotActive, 2=Died, 3=HasCatch
+## 翻译为 zone：CHILD_ACTIVE / CHILD_NOT_ACTIVE / CHILD_DIED / CHILD_HAS_CATCH
+## 注意：优先级规则 combat(300) > hand(200) > state(100)
+## 如果子卡已在 combat zone 或 hand zone，state zone 不会覆盖
+func _on_child_card_list_updated(data):
+	if data is Array:
+		_update_cards(data, Global.ZONE_CARD.CHILD_NOT_ACTIVE)  # 默认传入 state zone，但 _sync_card_data 会按优先级判断
+
+## [新增] 导入：弃牌堆数据 → DISCARD_ZONE（显示区域，优先级 50）
+## 服务器返回 []CardDto，zone 只管显示
+func _on_discard_list_updated(data):
+	if data is Array:
+		_update_cards(data, Global.ZONE_CARD.DISCARD_ZONE)
+		discard_changed.emit()
+
+#endregion
+
+
+#region ==================== 选中触发逻辑（choose_card 类卡牌使用） ====================
+
+## [新增] 选中状态变更信号
+## match_code: 1=出战区, 2=卖出区, 3=子卡激活选择, 4=中断选牌, 5=天气选择
+## temp_id: 卡牌唯一标识
+## is_selected: true=选中, false=取消选中
+signal selection_changed(match_code: int, temp_id: int, is_selected: bool)
+
+## [新增] 维护各匹配码下的选中卡牌集合
+## key: match_code(int), value: Array[int] (temp_id 列表)
+var selection_pools: Dictionary = {}
+
+## [新增] 选中触发入口函数
+## 根据 match_code 将 temp_id 加入或移出对应数组
+## match_code 定义：
+##   1 - 出战区选择（MATCH_ZONE）
+##   2 - 卖出区选择（SELL_ZONE）
+##   3 - 子卡激活选择（CHILD_ACTIVE）
+##   4 - 中断选牌（INTERRUPT_SELECT）
+##   5 - 天气选择（WEATHER_SELECT）
+func toggle_selection(match_code: int, temp_id: int) -> bool:
+	if not selection_pools.has(match_code):
+		selection_pools[match_code] = []
+	
+	var pool: Array = selection_pools[match_code]
+	var index = pool.find(temp_id)
+	
+	if index >= 0:
+		# 已选中 → 取消选中
+		pool.remove_at(index)
+		selection_changed.emit(match_code, temp_id, false)
+		return false
+	else:
+		# 未选中 → 加入选中
+		pool.append(temp_id)
+		selection_changed.emit(match_code, temp_id, true)
+		return true
+
+## [新增] 获取指定 match_code 下的所有选中 temp_id
+func get_selected_temp_ids(match_code: int) -> Array[int]:
+	if not selection_pools.has(match_code):
+		return []
+	return selection_pools[match_code].duplicate()
+
+## [新增] 清空指定 match_code 的选中状态
+func clear_selection(match_code: int):
+	if selection_pools.has(match_code):
+		var pool: Array = selection_pools[match_code]
+		for temp_id in pool:
+			selection_changed.emit(match_code, temp_id, false)
+		selection_pools[match_code] = []
+
+## [新增] 清空所有选中状态
+func clear_all_selections():
+	for match_code in selection_pools.keys():
+		clear_selection(match_code)
+
+#endregion
+
+
+#region ==================== 区域查询工具 ====================
+
+## 获取一个区域内的所有卡牌
 func get_cards_by_zone(zone) -> Array:
 	var result: Array = []
-
 	for card in card_list:
-		# 防止 null
 		if card == null:
 			continue
-
-		# 区域匹配
 		if card.get("zone") == zone:
 			result.append(card)
-
 	return result
-	
 
-## 修改指定卡牌的区域。
+## 修改指定卡牌的区域
 func _change_card_zone(temp_id, new_zone) -> bool:
-
 	for card in card_list:
-
-		# 找到目标卡
 		if card.get("temp_id") == temp_id:
-		
 			card["zone"] = new_zone
-			
 			UI_date_update.emit()
 			return true
-
-	# 没找到
 	return false
-#游荡对象需要记录原先的zone，但是数据库中的zone应该改变。返回时根据游荡对象的zone去改变
 
-func select_card_by_key(value,key_to_match):
+## 通过 key 查找卡牌
+func select_card_by_key(value, key_to_match):
 	for card in card_list:
 		if card[key_to_match] == value:
-			return card;
-	return {};
-		
-func _enter_freecard(temp_id,zone):
+			return card
+	return {}
+
+#endregion
+
+
+#region ==================== 游戏交互逻辑 ====================
+
+func _enter_freecard(temp_id, zone):
 	free_card_prevzone = zone;
-	_change_card_zone(temp_id,Global.ZONE_CARD.FREE_ZONE);
+	_change_card_zone(temp_id, Global.ZONE_CARD.FREE_ZONE);
+
 func _exit_freecard(temp_id):
-	var icard = select_card_by_key(temp_id,"temp_id")
+	var icard = select_card_by_key(temp_id, "temp_id")
 	if free_card_nextzone == null:
-		_change_card_zone(temp_id,free_card_prevzone);
+		_change_card_zone(temp_id, free_card_prevzone);
 	elif icard["is_combat_card"] == false and free_card_nextzone == Global.ZONE_CARD.SPELL_ZONE:
 		match state_machine.current_state:
 			state_machine.GameState.USE_MAGIC_CARD:
 				for i in get_cards_by_zone(free_card_nextzone):
 					i["zone"] = Global.ZONE_CARD.DECK_ZONE;
-			
-		_change_card_zone(temp_id,free_card_nextzone)
+		_change_card_zone(temp_id, free_card_nextzone)
 	elif icard["is_combat_card"] == true and icard["is_sub_card"] == false and free_card_nextzone == Global.ZONE_CARD.PARENT_BATTLE_ZONE:
 		match state_machine.current_state:
 			state_machine.GameState.USE_COMBAT_CARD:
 				if state_machine.is_win == 1:
 					for i in get_cards_by_zone(free_card_nextzone):
 						i["zone"] = Global.ZONE_CARD.DECK_ZONE;
-					_change_card_zone(temp_id,free_card_nextzone)
+					_change_card_zone(temp_id, free_card_nextzone)
 			state_machine.GameState.INIT_STATE:
 				for i in get_cards_by_zone(free_card_nextzone):
 					i["zone"] = Global.ZONE_CARD.DECK_ZONE;
-				_change_card_zone(temp_id,free_card_nextzone)
-				
+				_change_card_zone(temp_id, free_card_nextzone)
 	elif icard["is_combat_card"] == true and icard["is_sub_card"] == true and free_card_nextzone == Global.ZONE_CARD.CHILD_BATTLE_ZONE:
 		match state_machine.current_state:
 			state_machine.GameState.USE_COMBAT_CARD:
 				for i in get_cards_by_zone(free_card_nextzone):
 					i["zone"] = Global.ZONE_CARD.DECK_ZONE;
-				_change_card_zone(temp_id,free_card_nextzone)
+				_change_card_zone(temp_id, free_card_nextzone)
 			state_machine.GameState.INIT_STATE:
 				for i in get_cards_by_zone(free_card_nextzone):
 					i["zone"] = Global.ZONE_CARD.DECK_ZONE;
-				_change_card_zone(temp_id,free_card_nextzone)
-				
-	elif free_card_nextzone == Global.ZONE_CARD.DECK_ZONE :
-		_change_card_zone(temp_id,free_card_nextzone)	
-	else :
-		_change_card_zone(temp_id,free_card_prevzone)
-	
+				_change_card_zone(temp_id, free_card_nextzone)
+	elif free_card_nextzone == Global.ZONE_CARD.DECK_ZONE:
+		_change_card_zone(temp_id, free_card_nextzone)
+	else:
+		_change_card_zone(temp_id, free_card_prevzone)
+
 func _detected_area(zone):
 	free_card_nextzone = zone;
+
 func _exit_area(zone):
-	if zone == free_card_nextzone :
+	if zone == free_card_nextzone:
 		free_card_nextzone = null;
 
 func _enter_hover(temp_id):
 	hover_card = temp_id;
 	UI_date_update.emit()
+
 func _exit_hover():
 	hover_card = -1;
 	UI_date_update.emit()
+
+#endregion

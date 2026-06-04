@@ -98,10 +98,33 @@ signal match_success(t)
 # =========================
 # 卡牌数据
 # =========================
+##全局接口
 signal self_inhand_updated(cards)
 signal oppent_inhand_updated(cards)
 signal bt_selfinfo_updated(cards)
 signal bt_oppinfo_updated(cards)
+signal energy_updated(energy_list)
+
+# 子卡牌
+signal child_card_list_updated(child_cards)
+signal active_child_card_start(t, child_list)
+signal active_child_card_succeed
+signal active_child_card_finish(selected_temp_id_list)
+
+# 天气
+signal select_weather_notify(is_more)
+signal select_weather_start(t, weather_list)
+signal select_weather_succeed(weather_data)
+
+# 卡牌结算
+signal card_calc_finish
+signal card_calc_switch_card(self_cards, opponent_cards)
+signal card_calc_animation(animation_data)
+signal interrupt_start(interrupt_data)
+signal interrupt_succeed
+
+# 弃牌堆
+signal discard_list_updated(cards)
 
 #判定
 ##判定回合开始信号
@@ -134,6 +157,15 @@ signal request_get_combat_cards
 signal request_end_animation
 signal request_combat_finish
 signal request_combat_movement(behavoir,self_where,opponent_where)
+
+# 新增请求
+signal request_get_energy
+signal request_get_child_card_list
+signal request_select_weather(weather)
+signal request_active_child_card(temp_id_list)
+signal request_get_discard_list
+signal request_interrupt_select(temp_id_list)
+
 # 调试
 signal request_debug_time
 signal request_debug_matchpool

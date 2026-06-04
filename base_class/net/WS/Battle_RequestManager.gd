@@ -13,6 +13,14 @@ func _ready():
 	SignalBus.request_get_combat_cards.connect(_request_get_combat_cards)
 	SignalBus.request_end_animation.connect(_request_end_animation)
 	SignalBus.request_combat_movement.connect(_request_combat_movement)
+	
+	# 新增请求信号连接
+	SignalBus.request_get_energy.connect(_request_get_energy)
+	SignalBus.request_get_child_card_list.connect(_request_get_child_card_list)
+	SignalBus.request_select_weather.connect(_request_select_weather)
+	SignalBus.request_active_child_card.connect(_request_active_child_card)
+	SignalBus.request_get_discard_list.connect(_request_get_discard_list)
+	SignalBus.request_interrupt_select.connect(_request_interrupt_select)
 # -----------------
 # 具体的请求处理函数 (可以在这里封装不同结构的 action_data)
 # -----------------
@@ -62,6 +70,39 @@ func _request_combat_movement(behavoir,self_where,opponent_where):
 	}
 	_send_to_server(NetDef.Action.COMBAT,NetDef.Predicate.RESULT,action_data)
 	
+func _request_get_energy():
+	print("[WS 发送] 查看能量值")
+	_send_to_server(NetDef.Action.GetEnergy, NetDef.Predicate.QUERY, null)
+
+func _request_get_child_card_list():
+	print("[WS 发送] 查看子牌堆")
+	_send_to_server(NetDef.Action.GetChildCardList, NetDef.Predicate.QUERY, null)
+
+func _request_select_weather(weather: int):
+	print("[WS 发送] 选择天气: ", weather)
+	var action_data = {
+		"weather": weather
+	}
+	_send_to_server(NetDef.Action.SelectWeather, NetDef.Predicate.RESULT, action_data)
+
+func _request_active_child_card(temp_id_list: Array):
+	print("[WS 发送] 激活子卡牌: ", temp_id_list)
+	var action_data = {
+		"temp_id_list": temp_id_list
+	}
+	_send_to_server(NetDef.Action.ActiveChildCard, NetDef.Predicate.RESULT, action_data)
+
+func _request_get_discard_list():
+	print("[WS 发送] 查看弃牌堆")
+	_send_to_server(NetDef.Action.GetDisCard, NetDef.Predicate.QUERY, null)
+
+func _request_interrupt_select(temp_id_list: Array):
+	print("[WS 发送] 中断选牌: ", temp_id_list)
+	var action_data = {
+		"temp_id_list": temp_id_list
+	}
+	_send_to_server(NetDef.Action.Interrupt, NetDef.Predicate.RESULT, action_data)
+
 func _send_to_server(action_code: int, predicate: int, action_data: Variant):
 	# 调用你实际的 WebSocket 发送函数
 	BattleWs.send_action(action_code,action_data,predicate)

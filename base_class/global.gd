@@ -4,41 +4,9 @@ var BASE_URL =  "http://120.26.145.68:10086" #"http://120.26.145.68:5300"
 var token_save :bool = false;
 var init_battle_time :int;
 
-const ACTION_NAME = {
-	1: "取消匹配",
-	2: "获取自己的卡牌信息",
-	3: "获取对手的卡牌信息",
-	4: "获取场上的战斗信息",
-	5: "结束战斗",
-	6: "开始战斗",
-	7: "部署一张牌",
-	8: "战斗回合判断",
-	9: "匹配成功",
-	10: "动画结束",
-	11: "执行战斗行动"
-}
-enum Predicates {
-	EMPTY = 0,
-	NOTIFY = 1,
-	QUERY = 2,
-	RESULT = 3,
-	FINISH = 4,
-	SUCCEED = 5
-}
-# 配置表格式：{ action_code: { predicate: [预期类型, 信号] } }
-const ACTION = {
-	CANCEL_MATCH = 1,
-	GET_SELF_CARDS = 2,
-	GET_OPPONENT_CARDS = 3,
-	GET_BT_INFO = 4,
-	OVER_BATTLE = 5,
-	START_BATTLE = 6,
-	DEPLOY_CARD = 7,
-	JUDGE = 8,
-	MATCH_SUCCESS = 9,
-	ANIMATION_END = 10,
-	COMBAT = 11,
-}
+# 注意：Action / Predicate / ACTION_NAME 等网络协议定义已统一迁移到 Net_def.gd
+# 请使用 NetDef.Action / NetDef.Predicate 等，避免重复定义
+
 const ZONE_CARD = {
 	DECK_ZONE = 1,               # 牌堆
 	
@@ -54,7 +22,7 @@ const ZONE_CARD = {
 	ENEMY_CHILD_ZONE = 8,     # 敌方子牌区
 	ENEMY_SPELL_ZONE = 9,    # 敌方法术牌区
 	
-
+	
 	
 	#战斗外：
 	BAG_ZONE = 10,  #背包区域
@@ -62,9 +30,11 @@ const ZONE_CARD = {
 	MATCH_ZONE = 12	, #出战区域
 	
 	
-	#CHILD_CARD_ZONE:
-	UNACTIVE = 13,
-	ACTIVE = 14,
+	# 子牌状态 zone（由 child_state 翻译而来，UI 统一按 zone 读取）
+	CHILD_ACTIVE = 13,       # 子牌已激活
+	CHILD_NOT_ACTIVE = 14,   # 子牌未激活
+	CHILD_DIED = 15,         # 子牌已死亡（不进弃牌堆）
+	CHILD_HAS_CATCH = 16,    # 子牌已被捕获
 	
 }
 

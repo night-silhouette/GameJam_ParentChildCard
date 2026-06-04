@@ -29,6 +29,11 @@ func _dispatch(action_code: int, action_data: Variant, predicate: int):
 					
 				else:
 					push_error("GET_SELF_CARDS 返回格式错误，期望 Array")
+		NetDef.Action.GET_OPPONENT_CARDS:
+			if predicate == NetDef.Predicate.RESULT:
+				
+				if action_data is Array:
+					SignalBus.oppent_inhand_updated.emit(action_data)
 					
 		NetDef.Action.GET_BT_INFO:
 			if predicate == NetDef.Predicate.RESULT:
@@ -36,7 +41,8 @@ func _dispatch(action_code: int, action_data: Variant, predicate: int):
 				var opp_data = action_data.get("opponent");
 				SignalBus.bt_selfinfo_updated.emit(self_data);
 				SignalBus.bt_oppinfo_updated.emit(opp_data);
-		
+				
+
 		NetDef.Action.START_BATTLE:
 			if predicate == NetDef.Predicate.NOTIFY:
 				SignalBus.battle_started.emit(action_code)
@@ -76,10 +82,68 @@ func _dispatch(action_code: int, action_data: Variant, predicate: int):
 				SignalBus.judge_put.emit()
 		NetDef.Action.COMBAT:
 			var t = action_data.state_wait_time;
-			if predicate == NetDef.Predicate.QUERY:	
+			if predicate == NetDef.Predicate.QUERY:
 				SignalBus.combat_start_success.emit(t,1);
 			if predicate == NetDef.Predicate.NOTIFY:
 				SignalBus.combat_start_success.emit(t,0);
+		
+		# 新增：能量值
+		NetDef.Action.GetEnergy:
+			if predicate == NetDef.Predicate.RESULT:
+				SignalBus.energy_updated.emit(action_data)
+		
+		# 新增：子牌堆
+		NetDef.Action.GetChildCardList:
+			if predicate == NetDef.Predicate.RESULT:
+				if action_data is Array:
+					SignalBus.child_card_list_updated.emit(action_data)
+				else:
+					push_error("GET_CHILD_CARD_LIST 返回格式错误，期望 Array")
+		
+		# 新增：激活子卡牌
+		NetDef.Action.ActiveChildCard:
+			if predicate == NetDef.Predicate.QUERY:
+				var t = action_data.get("state_wait_time", 0)
+				var child_list = action_data.get("child_list", [])
+				SignalBus.active_child_card_start.emit(t, child_list)
+			if predicate == NetDef.Predicate.SUCCEED:
+				SignalBus.active_child_card_succeed.emit()
+			if predicate == NetDef.Predicate.FINISH:
+				var selected_list = action_data.get("selected_temp_id_list", [])
+				SignalBus.active_child_card_finish.emit(selected_list)
+		
+		# 新增：选择天气
+		NetDef.Action.SelectWeather:
+			if predicate == NetDef.Predicate.NOTIFY:
+				var is_more = action_data.get("is_more", false)
+				SignalBus.select_weather_notify.emit(is_more)
+			if predicate == NetDef.Predicate.QUERY:
+				var t = action_data.get("state_wait_time", 0)
+				var weather_list = action_data.get("weather_list", [])
+				SignalBus.select_weather_start.emit(t, weather_list)
+			if predicate == NetDef.Predicate.SUCCEED:
+				SignalBus.select_weather_succeed.emit(action_data)
+		
+		# 新增：弃牌堆
+		NetDef.Action.GetDisCard:
+			if predicate == NetDef.Predicate.RESULT:
+				if action_data is Array:
+					SignalBus.discard_list_updated.emit(action_data)
+				else:
+					push_error("GET_DISCARD 返回格式错误，期望 Array")
+		
+		# 新增：卡牌结算
+		NetDef.Action.CardCalc:
+			if predicate == NetDef.Predicate.FINISH:
+				SignalBus.card_calc_finish.emit()
+		
+		# 新增：中断选牌
+		NetDef.Action.Interrupt:
+			if predicate == NetDef.Predicate.NOTIFY:
+				SignalBus.interrupt_start.emit(action_data)
+			if predicate == NetDef.Predicate.SUCCEED:
+				SignalBus.interrupt_succeed.emit()
+		
 		_:
 			# 未处理的 action
 			push_warning("New", NetDef.get_action_name(action_code),action_data,predicate)

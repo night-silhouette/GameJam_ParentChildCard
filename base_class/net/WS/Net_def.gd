@@ -24,10 +24,14 @@ enum Action {
 	ANIMATION_END = 10,
 	COMBAT = 11,
 	CardCalc = 12,
-	Debug = 13 ,                
-	Interrupt = 14,           
-	GetDisCard = 15 , 
-	SkillCardCalc = 16         
+	Debug = 13,
+	Interrupt = 14,
+	GetDisCard = 15,
+	SkillCardCalc = 16,
+	GetEnergy = 17,
+	SelectWeather = 18,
+	GetChildCardList = 19,
+	ActiveChildCard = 20
 }
 
 const ACTION_NAME = {
@@ -42,11 +46,15 @@ const ACTION_NAME = {
 	Action.MATCH_SUCCESS: "匹配成功",
 	Action.ANIMATION_END: "动画结束",
 	Action.COMBAT: "执行战斗行动",
-	Action.CardCalc:"卡牌效果结算",
-	Action.Debug:"测试",
-	Action.Interrupt:"中断选牌",
-	Action.GetDisCard:"查看弃牌堆",
-	Action.SkillCardCalc:"法术牌的计算"
+	Action.CardCalc: "卡牌效果结算",
+	Action.Debug: "测试",
+	Action.Interrupt: "中断选牌",
+	Action.GetDisCard: "查看弃牌堆",
+	Action.SkillCardCalc: "法术牌的计算",
+	Action.GetEnergy: "查看能量值",
+	Action.SelectWeather: "选择天气",
+	Action.GetChildCardList: "查看子牌堆",
+	Action.ActiveChildCard: "激活子卡牌"
 }
 
 # 辅助函数：快速获取名字打印日志

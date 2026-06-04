@@ -27,27 +27,44 @@ func _ready():
 	mouse_exited.connect(_on_mouse_exited)
 	
 
-func update_card_data(base_res) -> void:
-	display.texture = base_res.texture
-	if base_res.is_combat_card :
-		hp = base_res.hp;
-		damage = base_res.damage;
-	temp_id = base_res.temp_id;
-	buff_id = base_res.buff_id;
-	zone = base_res.zone;
+func update_card_data(base_res: Dictionary) -> void:
+	# base_res 是 data_manager_BT 中的 card 字典，格式如下：
+	# {
+	#   "id": int,           # 卡牌配置ID
+	#   "temp_id": int,      # 运行时唯一标识
+	#   "hp": int,           # 当前生命值
+	#   "damage": int,       # 当前伤害值
+	#   "buff_id": Array,    # Buff列表
+	#   "zone": int,         # 显示区域
+	#   "child_state": int,   # 子牌状态（可选）
+	#   "resouce": CardResource  # 本地配置资源
+	# }
 	
-	var res: CardResource = base_res.get("resource")
+	var res: CardResource = base_res.get("resouce")  # 注意拼写 "resouce"
 	if res == null: return
-		
-	# 填充父类数据
+	
+	# 1. 先填充卡牌纹理（从 CardResource 获取）
+	display.texture = res.card_texture
+	
+	# 2. 填充运行时数据（从 Dictionary 获取）
+	temp_id = base_res.get("temp_id")
+	zone = base_res.get("zone")
+	buff_id = base_res.get("buff_id", [])
+	
+	# 战斗数据：如果这张卡在战场上，hp/damage 才有意义
+	if res.is_combat_card:
+		hp = base_res.get("hp", 0)
+		damage = base_res.get("damage", 0)
+	
+	# 3. 填充父类静态配置数据（从 CardResource 获取）
 	id = res.id
 	card_name = res.name
 	card_texture = res.card_texture
-	value = res.value 
+	value = res.value
 	is_combat_card = res.is_combat_card
 	is_sub_card = res.is_sub_card
 	
-	# 把剩下的战斗数据也填上
+	# 4. 填充战斗相关配置
 	card_damage = res.damage
 	initial_health = res.initial_health
 	max_health = res.max_health
