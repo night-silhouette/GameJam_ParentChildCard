@@ -66,6 +66,26 @@ func NewCtx(idA int, idB int, CardPool *[]CardAbstract.Card, ParentContext conte
 	return c
 }
 
+func (c *Ctx) GetNeedCheckChildCard() []CardAbstract.ChildCard {
+	res := make([]CardAbstract.ChildCard, 0)
+	c.ChildList.Do(func(data *[]CardAbstract.Card) {
+		for _, card := range *data {
+			if card.GetInfo()["ChildState"] == BattleData.Active {
+				childCard := card.(CardAbstract.ChildCard)
+				res = append(res, childCard)
+			}
+		}
+		for _, playerData := range c.PlayerDataMap {
+			for _, Card := range playerData.CardInHand {
+				if Card.GetInfo()["is_parent"]==false {
+					childCard := Card.(CardAbstract.ChildCard)
+					res = append(res, childCard)
+				}
+			}
+		},
+	})
+}
+
 //__________________________________________EffectsStack______________________________________________
 
 //todo

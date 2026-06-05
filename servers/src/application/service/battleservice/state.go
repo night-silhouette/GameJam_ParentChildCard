@@ -10,6 +10,7 @@ import (
 	"pcc_card/global"
 	"pcc_card/presentation/handler/battlehandler/BattleDto"
 	"sync"
+	"sync/atomic"
 
 	"time"
 
@@ -1116,10 +1117,11 @@ func (c *Combat) process(GoCtx context.Context) {
 
 type CardCalc struct {
 	StateTemplate
+	HaveDone atomic.Bool
 }
 
 func (s *CardCalc) SpecialInit() {
-
+	s.HaveDone.Store(false)
 }
 
 func (s *CardCalc) enter() {
@@ -1172,7 +1174,7 @@ func (s *CardCalc) Switch(_data BattleData.CombatDto, UserId int) bool {
 }
 
 func (s *CardCalc) CalcNotSwitch(data BattleData.CombatDto, UserId int) {
-	opponentCardId := s.c.GetCardBt(s.SM.Loser, data.OpponentWhere).GetTempId()
+	opponentCardId := s.c.GetCardBt(UserId, data.OpponentWhere).GetTempId()
 	if data.Behavior == BattleData.Attack { //执行前端传过来的行为
 		s.c.GetCardBt(UserId, data.SelfWhere).(CardAbstract.Character).Attack(opponentCardId)
 	} else if data.Behavior == BattleData.Skill {
@@ -1248,6 +1250,7 @@ CalcLoop:
 			//全部结算完成,发个通知
 			s.SM.SendActionById(s.SM.Id2, BattleDto.NewAction(BattleDto.CardCalc, BattleDto.Finish, ""))
 			s.SM.SendActionById(s.SM.Id1, BattleDto.NewAction(BattleDto.CardCalc, BattleDto.Finish, ""))
+			s.HaveDone.Store(true)
 		default:
 			break CalcLoop
 		}
@@ -1256,25 +1259,16 @@ CalcLoop:
 
 }
 
-func (s *CardCalc) exit() {}
+func (s *CardCalc) exit() {
+	s.HaveDone.Store(false)
+}
 func (s *CardCalc) process(GoCtx context.Context) {
 	fmt.Println("进入cardcal的process了")
 	handleAction := func(id int, action BattleDto.Action, ResponseChan chan<- BattleDto.Action) bool {
-		//if action.ActionCode == BattleDto.AnimationPlayEnd && action.Predicates == BattleDto.Notify && s.HasBehavior.Load() && s.HaveDone.Load() {
-		//
-		//	s.SM.Mutex.Lock()
-		//	if s.SM.CombatTime == 0 {
-		//		go s.SM.finish("SkillCardCalc")
-		//		s.SM.Mutex.Unlock()
-		//		return true
-		//	} else {
-		//		go s.SM.finish("Combat")
-		//		s.SM.Mutex.Unlock()
-		//		return true
-		//	}
-		//
-		//}
-
+		if action.ActionCode == BattleDto.AnimationPlayEnd && action.Predicates == BattleDto.Notify && s.HaveDone.Load() {
+			go s.SM.finish("SelectSkillCard")
+			return true
+		}
 		return false
 	}
 	s.SM.AcceptAction(GoCtx, handleAction)
