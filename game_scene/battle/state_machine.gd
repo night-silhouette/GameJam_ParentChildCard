@@ -68,7 +68,7 @@ func _exit_state(old_state: GameState) -> void:
 		
 		GameState.CHOOSE_CHILD_CARD:
 			# 退出子卡选择阶段：清理选中状态
-			card_manager.clear_selection(3)  # match_code=3 子卡激活选择
+			card_manager.clear_child_selection()
 			all_block.allow_input()
 		
 		GameState.CHOOSE_WEATHER:
@@ -93,35 +93,35 @@ func _enter_state(new_state: GameState) -> void:
 	match new_state:
 		GameState.INIT_STATE:
 			time.countdown_time = TimeOffset.get_remaining_seconds(Global.init_battle_time);
-			print("进入初始化状态（看牌阶段）")
+			# print("进入初始化状态（看牌阶段）")
 		
 		GameState.CHOOSE_CHILD_CARD:
 			# 进入子卡选择阶段：全屏阻塞，等待玩家选择
 			all_block.block_input()
-			print("进入子卡牌选择阶段")
+			# print("进入子卡牌选择阶段")
 		
 		GameState.CHOOSE_WEATHER:
 			# 进入天气选择阶段：全屏阻塞，等待玩家选择
 			all_block.block_input()
-			print("进入天气选择阶段")
+			# print("进入天气选择阶段")
 		
 		GameState.USE_MAGIC_CARD:
 			combat_block.block_input();
-			print("进入魔法卡使用状态")
+			# print("进入魔法卡使用状态")
 		
 		GameState.USE_COMBAT_CARD:
 			spell_block.block_input()
 			if(is_win):
 				combat_block.block_input();
 			SignalBus.request_combat_finish.emit();
-			print("进入战斗卡使用状态")
+			# print("进入战斗卡使用状态")
 		
 		GameState.JUDGEMENT:
 			Global.revive(judge);
 			Global.revive(jugde_bt);
 			combat_block.block_input();
 			spell_block.block_input()
-			print("进入结算/判定状态")
+			# print("进入结算/判定状态")
 
 # --- 信号回调（在这里控制状态流转） ---
 func _on_match_success(t) -> void:
@@ -148,8 +148,9 @@ func _on_active_child_card_start(t, child_list) -> void:
 # [新增] 子卡选择阶段结束
 func _on_active_child_card_finish(selected_temp_id_list) -> void:
 	# 子卡选择结束，进入天气选择阶段（或根据后端流程调整）
-	print("子卡选择结束，选中: ", selected_temp_id_list)
+	# print("子卡选择结束，选中: ", selected_temp_id_list)
 	# 注意：实际状态切换应由后端信号触发，这里只是日志
+	pass
 
 # [新增] 天气选择阶段开始
 func _on_select_weather_start(t, weather_list) -> void:
@@ -158,15 +159,17 @@ func _on_select_weather_start(t, weather_list) -> void:
 
 # [新增] 天气选择成功
 func _on_select_weather_succeed(weather_data) -> void:
-	print("天气选择成功: ", weather_data)
+	# print("天气选择成功: ", weather_data)
 	# 天气选择成功后，进入技能牌选择阶段
 	# 实际切换由后端 DeployCard.Query 触发
+	pass
 
 # [新增] 卡牌结算完成
 func _on_card_calc_finish() -> void:
-	print("卡牌效果结算完成")
+	# print("卡牌效果结算完成")
 	# 结算完成后，进入下一轮的技能牌选择阶段
 	# 实际切换由后端信号触发
+	pass
 
 func _on_万能按钮_button_down() -> void:
 	var card:Array;
@@ -186,9 +189,9 @@ func _on_万能按钮_button_down() -> void:
 				SignalBus.request_deploy_magic_card.emit(card[0].id,card[0].temp_id)
 
 		GameState.CHOOSE_CHILD_CARD:
-			# [新增] 子卡选择阶段：提交选中的子卡
+			# 子卡选择阶段：提交选中的子卡
 			time.countdown_time = 0;
-			var selected = card_manager.get_selected_temp_ids(3);  # match_code=3
+			var selected = card_manager.get_active_child_list()
 			SignalBus.request_active_child_card.emit(selected)
 		
 		GameState.CHOOSE_WEATHER:

@@ -18,10 +18,6 @@ func _ready() -> void:
 	for card in cards_ui:
 		if card:
 			card.visible = false
-			
-	for card in cards_ui:
-		if card:
-			card.visible = false
 
 func refresh_ui():
 

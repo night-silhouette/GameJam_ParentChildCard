@@ -80,7 +80,7 @@ func _on_right_pressed() -> void:
 
 func _on_card_left_clicked(stuff_id: int) -> void:
 	# 左键打开详情页（可以呼叫你的详细页 UI 或者是发射全局弹出信号）
-	print("UI接收左键，准备展示详情，卡牌独一ID: ", stuff_id)
+	pass
 
 
 func _on_card_right_clicked(stuff_id: int,state) -> void:

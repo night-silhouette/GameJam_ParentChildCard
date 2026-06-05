@@ -104,6 +104,7 @@ func _handle_raw_api_data(api_name: String, method: int, code: int, data: Varian
 				SignalBus.get_self_gold.emit(data);
 		"/v1/debug/Card/":
 			if method == HTTPClient.METHOD_POST:
+				pass
 				print("add_success")
 		"/v1/bags/sell/":
 			if method ==  HTTPClient.METHOD_POST:

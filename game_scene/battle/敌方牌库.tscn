@@ -48,11 +48,11 @@ metadata/_edit_lock_ = true
 
 [node name="card_vector" type="GridContainer" parent="."]
 layout_mode = 0
-offset_left = 540.0
-offset_top = 61.0
-offset_right = 2629.3506
-offset_bottom = 1501.4711
-scale = Vector2(1.407666, 0.71468335)
+offset_left = 640.0
+offset_top = 123.0
+offset_right = 2381.0
+offset_bottom = 693.0
+scale = Vector2(1.6125907, 1.6125907)
 theme_override_constants/h_separation = 24
 theme_override_constants/v_separation = 108
 columns = 5

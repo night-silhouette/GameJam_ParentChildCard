@@ -12,4 +12,5 @@ func _to_menu():
 	SignalBus.change_scence.emit("tomenu");
 	SignalBus.change_ui.emit("tomenu");
 func _fail(msg: String):
-	print("登陆失败：",msg);
+	# print("登陆失败：",msg);
+	pass

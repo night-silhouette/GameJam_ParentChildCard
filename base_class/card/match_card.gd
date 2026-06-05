@@ -4,9 +4,9 @@ extends card
 signal hovered(card_data: Dictionary)
 signal unhovered()
 
-var stuff_id: int
-var price: int
-var zone : int
+var stuff_id: int = 0
+var price: int = 0
+var zone: int = 0
 
 # 💡 新增：用于记录当前卡牌是否被选中 (true 为选中，false 为未选中)
 var is_chosen: bool = false 
@@ -29,9 +29,9 @@ func _ready() -> void:
 	
 	
 func setup(data: Dictionary) -> void:
-	stuff_id = data.get("stuff_id", 0)
-	price = data.get("price", 0)
-	zone = data.get("zone",0)
+	stuff_id = int(data.get("stuff_id", 0))
+	price = int(data.get("price", 0))
+	zone = int(data.get("zone", 0))
 	if zone == Global.ZONE_CARD.SELL_ZONE :
 		is_chosen = true;
 		$"勾".visible = true
@@ -73,7 +73,7 @@ func setup(data: Dictionary) -> void:
 	if lab:
 		lab.visible = false
 		
-	# 💡 核心修改 2：初始化时确保“选中特效”是关闭的
+	# 💡 核心修改 2：初始化时确保"选中特效"是关闭的
 	
 # 快捷获取当前卡牌类型文本
 func get_type_string() -> String:
@@ -127,14 +127,12 @@ func _gui_input(event: InputEvent) -> void:
 		match event.button_index:
 			MOUSE_BUTTON_LEFT:
 				accept_event()
-				print("接受左键成功")
 				if zone == Global.ZONE_CARD.BAG_ZONE:
-					SignalBus.left_clicked.emit(stuff_id,0)
+					SignalBus.left_clicked.emit(stuff_id, 0)
 			
 			MOUSE_BUTTON_RIGHT:
 				accept_event()
-				print("接受右键成功")
-				if  zone == Global.ZONE_CARD.MATCH_ZONE:
+				if zone == Global.ZONE_CARD.MATCH_ZONE:
 					SignalBus.right_clicked.emit(stuff_id, 0)
 					
 func clear_data() -> void:
@@ -150,8 +148,8 @@ func clear_data() -> void:
 		ui_name.text = "未上牌"
 		
 	if texture_rect:
-		texture_rect.texture = null # 如果你有通用的默认卡背/空框纹理，这里可以替换为 load("res://...")
-		
+		texture_rect.texture = null
+	
 	# 3. 前瞻性防御：顺便清理残留的特效和标签状态
 	if lab:
 		lab.visible = false

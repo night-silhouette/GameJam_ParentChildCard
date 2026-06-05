@@ -56,7 +56,7 @@ func _dispatch(action_code: int, action_data: Variant, predicate: int):
 			if predicate == NetDef.Predicate.QUERY:
 				var t = action_data.state_wait_time;
 				var where = int(action_data.where);
-				print(where)
+				# print(where)
 				match where:
 					2:
 						SignalBus.magic_card_start.emit(t)

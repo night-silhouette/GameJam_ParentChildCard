@@ -312,14 +312,8 @@ signal selection_changed(match_code: int, temp_id: int, is_selected: bool)
 ## key: match_code(int), value: Array[int] (temp_id 列表)
 var selection_pools: Dictionary = {}
 
-## [新增] 选中触发入口函数
-## 根据 match_code 将 temp_id 加入或移出对应数组
-## match_code 定义：
-##   1 - 出战区选择（MATCH_ZONE）
-##   2 - 卖出区选择（SELL_ZONE）
-##   3 - 子卡激活选择（CHILD_ACTIVE）
-##   4 - 中断选牌（INTERRUPT_SELECT）
-##   5 - 天气选择（WEATHER_SELECT）
+var active_card_list#上限为五张，右键取消左键确认，
+
 func toggle_selection(match_code: int, temp_id: int) -> bool:
 	if not selection_pools.has(match_code):
 		selection_pools[match_code] = []
@@ -399,39 +393,43 @@ func _enter_freecard(temp_id, zone):
 
 func _exit_freecard(temp_id):
 	var icard = select_card_by_key(temp_id, "temp_id")
+	if icard.is_empty():
+		_change_card_zone(temp_id, free_card_prevzone)
+		return
+
 	if free_card_nextzone == null:
-		_change_card_zone(temp_id, free_card_prevzone);
-	elif icard["is_combat_card"] == false and free_card_nextzone == Global.ZONE_CARD.SPELL_ZONE:
-		match state_machine.current_state:
-			state_machine.GameState.USE_MAGIC_CARD:
-				for i in get_cards_by_zone(free_card_nextzone):
-					i["zone"] = Global.ZONE_CARD.DECK_ZONE;
-		_change_card_zone(temp_id, free_card_nextzone)
-	elif icard["is_combat_card"] == true and icard["is_sub_card"] == false and free_card_nextzone == Global.ZONE_CARD.PARENT_BATTLE_ZONE:
-		match state_machine.current_state:
-			state_machine.GameState.USE_COMBAT_CARD:
-				if state_machine.is_win == 1:
-					for i in get_cards_by_zone(free_card_nextzone):
-						i["zone"] = Global.ZONE_CARD.DECK_ZONE;
-					_change_card_zone(temp_id, free_card_nextzone)
-			state_machine.GameState.INIT_STATE:
-				for i in get_cards_by_zone(free_card_nextzone):
-					i["zone"] = Global.ZONE_CARD.DECK_ZONE;
-				_change_card_zone(temp_id, free_card_nextzone)
-	elif icard["is_combat_card"] == true and icard["is_sub_card"] == true and free_card_nextzone == Global.ZONE_CARD.CHILD_BATTLE_ZONE:
-		match state_machine.current_state:
-			state_machine.GameState.USE_COMBAT_CARD:
-				for i in get_cards_by_zone(free_card_nextzone):
-					i["zone"] = Global.ZONE_CARD.DECK_ZONE;
-				_change_card_zone(temp_id, free_card_nextzone)
-			state_machine.GameState.INIT_STATE:
-				for i in get_cards_by_zone(free_card_nextzone):
-					i["zone"] = Global.ZONE_CARD.DECK_ZONE;
-				_change_card_zone(temp_id, free_card_nextzone)
-	elif free_card_nextzone == Global.ZONE_CARD.DECK_ZONE:
-		_change_card_zone(temp_id, free_card_nextzone)
+		_change_card_zone(temp_id, free_card_prevzone)
+		return
+
+	var can_deploy = _can_deploy_card(icard, free_card_nextzone)
+	if can_deploy:
+		_deploy_card_to_zone(temp_id, free_card_nextzone)
 	else:
 		_change_card_zone(temp_id, free_card_prevzone)
+
+func _can_deploy_card(icard: Dictionary, target_zone: int) -> bool:
+	if target_zone == Global.ZONE_CARD.DECK_ZONE:
+		return true
+
+	if icard["is_combat_card"] == false and target_zone == Global.ZONE_CARD.SPELL_ZONE:
+		return state_machine.current_state == state_machine.GameState.USE_MAGIC_CARD
+
+	if icard["is_combat_card"] == true and icard["is_sub_card"] == false and target_zone == Global.ZONE_CARD.PARENT_BATTLE_ZONE:
+		var valid_states = [state_machine.GameState.USE_COMBAT_CARD, state_machine.GameState.INIT_STATE]
+		if state_machine.current_state == state_machine.GameState.USE_COMBAT_CARD:
+			return state_machine.is_win == 1
+		return state_machine.current_state in valid_states
+
+	if icard["is_combat_card"] == true and icard["is_sub_card"] == true and target_zone == Global.ZONE_CARD.CHILD_BATTLE_ZONE:
+		var valid_states = [state_machine.GameState.USE_COMBAT_CARD, state_machine.GameState.INIT_STATE]
+		return state_machine.current_state in valid_states
+
+	return false
+
+func _deploy_card_to_zone(temp_id: int, target_zone: int):
+	for card in get_cards_by_zone(target_zone):
+		card["zone"] = Global.ZONE_CARD.DECK_ZONE
+	_change_card_zone(temp_id, target_zone)
 
 func _detected_area(zone):
 	free_card_nextzone = zone;

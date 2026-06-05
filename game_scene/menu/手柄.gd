@@ -12,7 +12,8 @@ func _on_笑脸按钮_button_down() -> void:
 
 
 func _battle_over():
-	print("退出战斗")
+	# print("退出战斗")
+	pass
 func _ws_disconnected():
 	animatedSprite2D.visible = false;
 	

@@ -17,7 +17,7 @@ extends Node
 			trigger_import = false 
 
 func _start_import() -> void:
-	print("========= 开始精准导入卡牌数据 (干净 ID 命名模式) =========")
+	# print("========= 开始精准导入卡牌数据 (干净 ID 命名模式) =========")
 	
 	# 确保输出目录存在
 	if not DirAccess.dir_exists_absolute(output_dir):
@@ -67,7 +67,7 @@ func _start_import() -> void:
 				var h_name = row[i].strip_edges()
 				if h_name != "":
 					header_map[h_name] = i
-			print("[表头刷新] 检测到列顺序更新: ", header_map)
+			# print("[表头刷新] 检测到列顺序更新: ", header_map)
 			continue # 表头行不需要当作卡牌导入，跳过
 			
 		# 如果还没有读取到任何有效的表头，则无法解析，继续往下读
@@ -111,7 +111,7 @@ func _start_import() -> void:
 		var file_name = "card_" + str(card_id) + ".tres"
 		var res_file_path = output_dir.path_join(file_name)
 		
-		print("正在导出 -> 文件: %s | 名称: %s | 等级: %d | 战斗牌: %s | 子牌: %s" % [file_name, card_name, card_level, str(is_combat), str(is_sub)])
+		# print("正在导出 -> 文件: %s | 名称: %s | 等级: %d | 战斗牌: %s | 子牌: %s" % [file_name, card_name, card_level, str(is_combat), str(is_sub)])
 
 		var card_res: CardResource
 		if ResourceLoader.exists(res_file_path):
@@ -164,4 +164,4 @@ func _start_import() -> void:
 			push_error("无法保存文件: " + res_file_path)
 			
 	file.close()
-	print("========= 导入完成！所有卡牌已成功直接存入 %s 文件夹，共生成 %d 个资源 =========" % [output_dir, imported_count])
+	# print("========= 导入完成！所有卡牌已成功直接存入 %s 文件夹，共生成 %d 个资源 =========" % [output_dir, imported_count])

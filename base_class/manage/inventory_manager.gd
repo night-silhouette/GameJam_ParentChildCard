@@ -37,11 +37,11 @@ func _ready() -> void:
 func _get_card_bag(incoming_card_data: Array):
 	var temp_list = []
 	for item in incoming_card_data:
-		var card_res = _find_card_resource_by_id(item["card_id"])
+		var card_res = _find_card_resource_by_id(int(item["card_id"]))
 		var data = {
-			"stuff_id": item["stuff_id"],
-			"card_id": item["card_id"],
-			"price": item["price"],
+			"stuff_id": int(item["stuff_id"]),
+			"card_id": int(item["card_id"]),
+			"price": int(item["price"]),
 			"zone": Global.ZONE_CARD.BAG_ZONE,
 			"resource": card_res
 		}
@@ -88,39 +88,17 @@ func move_to_combat_zone(stuff_id: int) -> bool:
 		var res: CardResource = card["resource"]
 		# 总数限制
 		if match_total_count >= 5:
-			print("出战区已满（最多5张卡牌）")
+			# print("出战区已满（最多5张卡牌）")
 			return false
 		# 子牌限制
 		if res and res.is_sub_card and match_sub_card_count >= 2:
-			print("出战区子牌已满（最多2张子牌）")
+			# print("出战区子牌已满（最多2张子牌）")
 			return false
 		card["zone"] = Global.ZONE_CARD.MATCH_ZONE
 		bag_updated.emit()
 
 		return true
 
-	return false
-	
-	# 2. 检查总数上限：如果出战区已经有5张了，直接拒绝
-	if match_total_count >= 5:
-		print("出战区已满（最多5张卡牌）")
-		return false
-		
-	# 3. 找到目标卡牌并执行子牌限制检查
-	for item in card_list:
-		if item["stuff_id"] == stuff_id:
-			
-			# 检查子牌上限：如果目标是一张子牌，并且出战区已经有2张子牌了，直接拒绝
-			if item.get("is_sub_card", false) == true and match_sub_card_count >= 2:
-				print("出战区子牌已满（最多2张子牌）")
-				return false
-				
-			# 所有条件都通过了，放行
-			item["zone"] = Global.ZONE_CARD.MATCH_ZONE
-			bag_updated.emit()
-			
-			return true
-			
 	return false
 
 # 静态资源检索器
@@ -167,7 +145,7 @@ func _sell_card_success():
 func get_cards_in_zone(target_zone: int) -> Array:
 	var result = []
 	for card in card_list:
-		if card.zone == target_zone:
+		if card["zone"] == target_zone:
 			result.append(card)
 	return result
 	

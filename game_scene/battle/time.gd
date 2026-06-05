@@ -73,7 +73,7 @@ func _on_countdown_finished():
 	label.text = "GO!" # 或者是 "时间到"
 	# 发出信号，通知上层逻辑（例如：通知网络层“我本地时间到了，向服务器发强制过牌/空过包”）
 	countdown_finished.emit()
-	print("【前端通知】倒计时已结束，信号已发出。")
+	# print("【前端通知】倒计时已结束，信号已发出。")
 
 # 在最后 5 秒文字扣减时调用心跳特效
 func _play_tick_effect():

@@ -54,18 +54,18 @@ func _input(event: InputEvent) -> void:
 ## =========================
 
 func _step_1_login():
-	print("\n[步骤 1] 发起 HTTP 登录，账号: ", username)
+	# print("\n[步骤 1] 发起 HTTP 登录，账号: ", username)
 	# 触发你提供的登录逻辑信号
 	SignalBus.request_register_user.emit(username, password)
 	SignalBus.request_login.emit(username,password)
 
 func _step_2_connect_ws():
-	print("\n[步骤 2] 发起 WS 连接请求 (必须在登录成功后进行)...")
+	# print("\n[步骤 2] 发起 WS 连接请求 (必须在登录成功后进行)...")
 	# 触发连接命令
 	SignalBus.to_connect_ws.emit()
 
 func _step_3_get_cards():
-	print("\n[步骤 3] 发送 WS 业务请求：获取手牌...")
+	# print("\n[步骤 3] 发送 WS 业务请求：获取手牌...")
 	# 触发业务信号
 	SignalBus.request_get_self_cards.emit()
 
@@ -74,20 +74,23 @@ func _step_3_get_cards():
 ## =========================
 
 func _on_ws_connected():
-	print("[状态] 成功：WebSocket 已连接！(实例: %d)" % instance_id)
+	# print("[状态] 成功：WebSocket 已连接！(实例: %d)" % instance_id)
+	pass
 
 func _on_ws_disconnected():
-	print("[警告] WebSocket 连接断开")
+	# print("[警告] WebSocket 连接断开")
+	pass
 
 func _on_cards_received(cards: Array):
-	print("[最终结果] 业务信号收到数据包内容：", cards)
+	# print("[最终结果] 业务信号收到数据包内容：", cards)
+	pass
 
 ## =========================
 ## 分发器模拟 (模拟后端回包)
 ## =========================
 
 func _simulate_server_response():
-	print("\n[模拟] 构造服务器回包数据流向 BattleWs...")
+	# print("\n[模拟] 构造服务器回包数据流向 BattleWs...")
 	var mock_data = {
 		"code": 0,
 		"msg": "OK",
@@ -126,10 +129,10 @@ func _setup_multi_instance_layout():
 	DisplayServer.window_set_title("实例 %d | 账号: %s" % [instance_id, username])
 
 func _print_help_menu():
-	print("==========================================")
-	print("   联网多例手动测试工具 (实例: %d)" % instance_id)
-	print("   [Enter] : 执行登录 (获取 Token)")
-	print("   [C]     : 连接 WebSocket")
-	print("   [G]     : 获取手牌 (WS 业务请求)")
-	print("   [M]     : 模拟服务器回包 (本地链路测试)")
-	print("==========================================")
+	# print("==========================================")
+	# print("   联网多例手动测试工具 (实例: %d)" % instance_id)
+	# print("   [Enter] : 执行登录 (获取 Token)")
+	# print("   [C]     : 连接 WebSocket")
+	# print("   [G]     : 获取手牌 (WS 业务请求)")
+	# print("   [M]     : 模拟服务器回包 (本地链路测试)")
+	# print("==========================================")

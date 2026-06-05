@@ -1,7 +1,7 @@
 extends Node
-var BASE_URL =  "http://120.26.145.68:10086" #"http://120.26.145.68:5300"
+var BASE_URL = "http://120.26.145.68:10086" 
 # Global.gd 或 NetworkClient.gd
-var token_save :bool = false;
+var token_save :bool = false;	
 var init_battle_time :int;
 
 # 注意：Action / Predicate / ACTION_NAME 等网络协议定义已统一迁移到 Net_def.gd

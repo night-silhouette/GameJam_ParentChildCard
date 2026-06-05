@@ -15,10 +15,10 @@ func _ready() -> void:
 		
 func _token_success() :
 	token_success = true;
-	print("token成功")
+	# print("token成功")
 func _token_fail():
 	token_success = false
-	print("token错误")
+	# print("token错误")
 
 
 func _on_timer_timeout() -> void:
@@ -26,7 +26,7 @@ func _on_timer_timeout() -> void:
 	if token_success and Global.token_save :
 		SignalBus.change_scence.emit("tomenu");
 		SignalBus.change_ui.emit("tomenu");
-		print("menu")
+		# print("menu")
 	else :
 		SignalBus.change_scence.emit("tologin");
 		SignalBus.change_ui.emit("tologin")

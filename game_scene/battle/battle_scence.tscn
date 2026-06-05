@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://c85a1ra55sbk0"]
+[gd_scene load_steps=21 format=3 uid="uid://c85a1ra55sbk0"]
 
 [ext_resource type="Script" uid="uid://dw1q80ff6ue4v" path="res://game_scene/battle/battle_scence.gd" id="1_51ed8"]
 [ext_resource type="Texture2D" uid="uid://dng874p0igvq" path="res://素材/使用素材/战斗内/转换.png" id="1_chjg7"]
@@ -14,6 +14,7 @@
 [ext_resource type="PackedScene" uid="uid://drj8312i1aoi6" path="res://game_scene/battle/桌面.tscn" id="12_3krv3"]
 [ext_resource type="PackedScene" uid="uid://d2ji4k252p7g6" path="res://game_scene/battle/freecard.tscn" id="12_ro313"]
 [ext_resource type="PackedScene" uid="uid://cf218n73yp1t0" path="res://game_scene/battle/万能按钮.tscn" id="13_3krv3"]
+[ext_resource type="PackedScene" uid="uid://c1exceqgab5ww" path="res://game_scene/battle/energy.tscn" id="13_xnxs8"]
 [ext_resource type="PackedScene" uid="uid://cqmay6c2lkrk7" path="res://game_scene/battle/time.tscn" id="16_ijq1m"]
 [ext_resource type="PackedScene" uid="uid://1su868ejv50g" path="res://game_scene/battle/input_blocker.tscn" id="17_fpned"]
 [ext_resource type="PackedScene" uid="uid://bda2rak4wq7xg" path="res://game_scene/battle/jugde_bt.tscn" id="19_ka56j"]
@@ -123,7 +124,23 @@ anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
 
-[node name="敌方牌库" parent="卡牌显示" instance=ExtResource("4_f0my5")]
+[node name="我方能量" parent="卡牌显示" instance=ExtResource("13_xnxs8")]
+layout_mode = 0
+offset_left = 696.0
+offset_top = 557.0
+offset_right = 696.0
+offset_bottom = 557.0
+scale = Vector2(0.16098198, 0.16098198)
+
+[node name="敌方能量" parent="卡牌显示" instance=ExtResource("13_xnxs8")]
+layout_mode = 0
+offset_left = 444.0
+offset_top = 50.0
+offset_right = 444.0
+offset_bottom = 50.0
+scale = Vector2(0.16098198, 0.16098198)
+
+[node name="敌方牌库" parent="卡牌显示" node_paths=PackedStringArray("object_pool", "card_manager") instance=ExtResource("4_f0my5")]
 layout_mode = 0
 offset_left = 1016.99994
 offset_top = 147.0
@@ -131,6 +148,8 @@ offset_right = 1016.99994
 offset_bottom = 147.0
 rotation = 3.1415927
 scale = Vector2(0.12341149, 0.12341149)
+object_pool = NodePath("../../数据层/object_pool")
+card_manager = NodePath("../../数据层/card_manager")
 
 [node name="桌面" parent="卡牌显示" node_paths=PackedStringArray("card_manager") instance=ExtResource("12_3krv3")]
 layout_mode = 0
@@ -148,12 +167,13 @@ offset_right = 1260.0
 offset_bottom = 888.0
 card_manager = NodePath("../../数据层/card_manager")
 
-[node name="敌方法术牌" parent="卡牌显示" instance=ExtResource("22_1hcvr")]
+[node name="敌方法术牌" parent="卡牌显示" node_paths=PackedStringArray("card_manager") instance=ExtResource("22_1hcvr")]
 layout_mode = 0
 offset_left = 160.99998
 offset_top = 70.0
 offset_right = 504.00006
 offset_bottom = 635.0
+card_manager = NodePath("../../数据层/card_manager")
 metadata/_edit_lock_ = true
 
 [node name="牌库" parent="卡牌显示" node_paths=PackedStringArray("object_pool", "card_manager") instance=ExtResource("3_8qm6s")]
@@ -200,7 +220,6 @@ offset_right = 40.0
 offset_bottom = 40.0
 
 [node name="judge" parent="." instance=ExtResource("9_kfivi")]
-visible = false
 offset_left = 377.0
 offset_top = 214.0
 offset_right = 1042.0

@@ -4,9 +4,9 @@ extends card
 signal hovered(card_data: Dictionary)
 signal unhovered()
 
-var stuff_id: int
-var price: int
-var zone : int
+var stuff_id: int = 0
+var price: int = 0
+var zone: int = 0
 
 # 💡 新增：用于记录当前卡牌是否被选中 (true 为选中，false 为未选中)
 var is_chosen: bool = false 
@@ -29,9 +29,9 @@ func _ready() -> void:
 	
 	
 func setup(data: Dictionary) -> void:
-	stuff_id = data.get("stuff_id", 0)
-	price = data.get("price", 0)
-	zone = data.get("zone",0)
+	stuff_id = int(data.get("stuff_id", 0))
+	price = int(data.get("price", 0))
+	zone = int(data.get("zone", 0))
 	if zone == Global.ZONE_CARD.SELL_ZONE :
 		is_chosen = true;
 		$"勾".visible = true
@@ -127,11 +127,11 @@ func _gui_input(event: InputEvent) -> void:
 		match event.button_index:
 			MOUSE_BUTTON_LEFT:
 				accept_event() 
-				SignalBus.left_clicked.emit(stuff_id)
+				SignalBus.left_clicked.emit(stuff_id, 0)
 			
 			MOUSE_BUTTON_RIGHT:
 				accept_event()
-				print("接受")
+				# print("接受")
 				# 💡 核心修改 4：切换选中状态并计算 state
 				is_chosen = !is_chosen # 取反：true 变 false，false 变 true
 				var state = 1 if is_chosen else 0

@@ -6,7 +6,7 @@ extends Control
 
 
 var cards: Array   # 你的全部牌
-var page_size: int = 10
+var page_size: int = 5
 var start_index: int = 0
 
 func _ready() -> void:

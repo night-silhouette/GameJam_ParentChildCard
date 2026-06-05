@@ -5,11 +5,11 @@ enum CardState { IDLE, HOVERED, DRAGGING }
 var current_state: CardState = CardState.IDLE
 const HOVER_ALLOWED_ZONES = [Global.ZONE_CARD.DECK_ZONE,Global.ZONE_CARD.SPELL_ZONE] 
 @onready var display: TextureRect = $"卡牌纹理"
-var temp_id ;
-var hp ;
-var damage  ;
-var buff_id ;
-var zone ;
+var temp_id: int = 0
+var hp: int = 0
+var damage: int = 0
+var buff_id: Array = []
+var zone: int = 0
 
 # 拖拽判定距离（防止误触，按住鼠标移动超过这个像素才算拖拽，不需要可以设为 0）
 const DRAG_THRESHOLD = 5.0
@@ -76,10 +76,10 @@ func update_card_data(base_res: Dictionary) -> void:
 	
 func free_card():
 	display.texture = null;
-	hp = null;
-	damage = null;
-	temp_id = null;
-	buff_id = null;
+	hp = 0;
+	damage = 0;
+	temp_id = 0;
+	buff_id = [];
 	
 func change_state(new_state: CardState):
 	if current_state == new_state:

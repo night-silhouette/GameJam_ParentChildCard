@@ -181,6 +181,7 @@ signal exit_area(zone)
 signal enter_hover(temp_id)
 signal exit_hover(temp_id)
 signal finishTurn
+signal enemy_card_deployed(card_id, pos)
 #endregion
 
 signal left_clicked(stuff_id: int,state: int)

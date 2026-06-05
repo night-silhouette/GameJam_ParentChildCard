@@ -5,30 +5,23 @@ var is_connected := false
 func _ready() -> void:
 	SignalBus.to_connect_ws.connect(_connect_ws);
 func _connect_ws(body):
+	# body 格式来自 match_ui: {"btData": {"card_list": [...], "gold": 0}}
+	# 提取内层 btData 作为真正的 data 内容
+	var inner_data = body.get("btData", body)
+	var data_string = JSON.stringify(inner_data)
 	
-# 1. 先把金币和卡牌的字典转换为 JSON 字符串
-	# 这步会把字典变成：{"card_list":[...],"gold":10} 的字符串
-	var btData_string = JSON.stringify(body)
-	
-	# 2. 对 JSON 字符串进行 URL 编码（非常重要！）
-	# 因为 JSON 里面有花括号 {}、引号 ""、逗号 ，这些特殊字符在 URL 里是非法的，必须编码
-	var encoded_btData = btData_string.uri_encode()
-	
-	# 3. 获取 Token
+	# 获取 Token
 	var token_string = TokenManager.get_token()
 	
-	# 4. 组装基础 URL
+	# 组装 URL（data 不编码，直接拼 JSON 字符串）
 	var base_url = Global.BASE_URL.replace("http", "ws") + "/v1/ws/"
+	var url = base_url + "?token=" + token_string + "&btData=" + data_string
 	
-	# 5. 把 token 和 编码后的 btData 用 ? 和 & 拼接在一起
-	var url = base_url + "?token=" + token_string + "&btData=" + encoded_btData
-	
+	print("WS连接中... URL: ", url)
 	var err = ws.connect_to_url(url)
 	
 	if err != OK:
 		push_error("WS连接失败")
-	else:
-		print("WS连接中... URL: ", url)
 		
 		
 func _process(delta):
@@ -56,7 +49,7 @@ func _process(delta):
 # 收消息（只转发，不解析业务）
 func _on_message(msg: String):
 	var res = JSON.parse_string(msg)
-	print(res)
+	# print(res)
 	if res == null:
 		print("WS解析失败")
 		return
@@ -84,6 +77,6 @@ func send_action(action_code: int, action_data = null, predicates: int = 2): # 1
 	
 	var json = JSON.stringify(action)
 	ws.send_text(json)
-	print("send成功")
+	#print("send成功")
 	# 调试用：打印发送的内容
 	# print("向后端发送: ", json)
