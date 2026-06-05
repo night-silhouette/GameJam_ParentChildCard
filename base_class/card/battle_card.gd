@@ -16,9 +16,8 @@ const DRAG_THRESHOLD = 5.0
 var mouse_start_pos = Vector2.ZERO
 
 
-var dragging = false
-var click_offset = Vector2.ZERO
-var original_position = Vector2.ZERO
+var is_selectable: bool = false
+signal card_selected(temp_id: int)
 
 
 
@@ -125,8 +124,10 @@ func _on_mouse_exited():
 
 # --- 拖拽判定 ---
 func _gui_input(event):
-	# 鼠标按下
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
 		if event.pressed:
-			change_state(CardState.DRAGGING)
+			if is_selectable:
+				card_selected.emit(temp_id)
+			else:
+				change_state(CardState.DRAGGING)
 	

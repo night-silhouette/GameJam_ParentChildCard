@@ -58,5 +58,4 @@ func _on_返回_button_down() -> void:
 	SignalBus.change_ui.emit("tomenu")
 	
 func _ws_connected():
-	SignalBus.change_ui.emit("tobattle")
-	SignalBus.change_scence.emit("tobattle")
+	pass

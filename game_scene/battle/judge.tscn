@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://bdiipd0anxspc"]
+[gd_scene load_steps=8 format=3 uid="uid://bdiipd0anxspc"]
 
 [ext_resource type="Script" uid="uid://ctj4xfih6m8dy" path="res://game_scene/battle/judge.gd" id="1_jd4vg"]
 [ext_resource type="Texture2D" uid="uid://dx1ewstebv33h" path="res://素材/使用素材/万能组件.png" id="2_dt2ld"]
@@ -6,7 +6,6 @@
 [ext_resource type="Texture2D" uid="uid://pu7jg52o37qj" path="res://素材/使用素材/战斗内/判定/3.png" id="4_ju23d"]
 [ext_resource type="Texture2D" uid="uid://bhngjavywsdho" path="res://素材/使用素材/选择/确认/零件/勾.png" id="4_k5qlo"]
 [ext_resource type="Texture2D" uid="uid://dy6ly0ef45ur6" path="res://素材/使用素材/战斗内/判定/2.png" id="6_mjwwl"]
-[ext_resource type="PackedScene" uid="uid://cf218n73yp1t0" path="res://game_scene/battle/万能按钮.tscn" id="7_hjgkk"]
 
 [sub_resource type="ButtonGroup" id="ButtonGroup_xq164"]
 
@@ -39,10 +38,11 @@ stretch_mode = 3
 visible = false
 z_index = 10
 layout_mode = 0
-offset_top = 124.946785
-offset_right = 616.0
-offset_bottom = 668.9468
-scale = Vector2(0.5705235, 0.5705235)
+offset_left = -14.699958
+offset_top = 128.36287
+offset_right = 601.30005
+offset_bottom = 672.36285
+scale = Vector2(1.1256114, 1.1256114)
 texture = ExtResource("4_k5qlo")
 
 [node name="包袱" type="TextureButton" parent="."]
@@ -56,10 +56,11 @@ texture_pressed = ExtResource("4_ju23d")
 visible = false
 z_index = 10
 layout_mode = 0
-offset_top = 124.946785
-offset_right = 616.0
-offset_bottom = 668.9468
-scale = Vector2(0.5705235, 0.5705235)
+offset_left = -14.699958
+offset_top = 128.36287
+offset_right = 601.30005
+offset_bottom = 672.36285
+scale = Vector2(1.1256114, 1.1256114)
 texture = ExtResource("4_k5qlo")
 
 [node name="石头" type="TextureButton" parent="."]
@@ -73,16 +74,9 @@ texture_pressed = ExtResource("6_mjwwl")
 visible = false
 z_index = 10
 layout_mode = 0
-offset_top = 124.946785
-offset_right = 616.0
-offset_bottom = 668.9468
-scale = Vector2(0.5705235, 0.5705235)
+offset_left = -14.699951
+offset_top = 128.36287
+offset_right = 601.30005
+offset_bottom = 672.36285
+scale = Vector2(1.1256114, 1.1256114)
 texture = ExtResource("4_k5qlo")
-
-[node name="万能按钮" parent="石头" instance=ExtResource("7_hjgkk")]
-layout_mode = 0
-offset_left = 1128.1936
-offset_top = 1031.7167
-offset_right = 2277.1936
-offset_bottom = 2108.7168
-scale = Vector2(0.61152494, 0.61152494)

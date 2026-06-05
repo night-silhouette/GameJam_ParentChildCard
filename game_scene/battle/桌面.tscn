@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://drj8312i1aoi6"]
+[gd_scene load_steps=13 format=3 uid="uid://drj8312i1aoi6"]
 
 [ext_resource type="Texture2D" uid="uid://bxbpcw7rdnhhj" path="res://素材/使用素材/战斗内/桌面/说明/桌面.png" id="1_m77db"]
 [ext_resource type="Script" uid="uid://cdupj53tbybnx" path="res://game_scene/battle/桌面.gd" id="2_kwvrx"]
@@ -6,6 +6,12 @@
 [ext_resource type="PackedScene" uid="uid://diwsy4ebydgfx" path="res://base_class/card/battle_card.tscn" id="4_kwvrx"]
 [ext_resource type="PackedScene" uid="uid://dx67q76jhqn1l" path="res://game_ui/battle/子卡详细.tscn" id="4_vq28s"]
 [ext_resource type="PackedScene" uid="uid://dngn8v87puqiy" path="res://game_ui/battle/母卡详细.tscn" id="5_nqrhk"]
+[ext_resource type="PackedScene" uid="uid://bvywilaq1ou8w" path="res://game_scene/menu/笑脸按钮.tscn" id="7_nqrhk"]
+[ext_resource type="Texture2D" uid="uid://b3mweynhhftgm" path="res://素材/使用素材/战斗内/桌面/指向/9.png" id="8_y8gow"]
+[ext_resource type="Texture2D" uid="uid://ogdp7llfedj2" path="res://素材/使用素材/战斗内/功能区/战斗卡行为选择/手/1.png" id="9_4vh08"]
+[ext_resource type="Texture2D" uid="uid://bxd3bccdhucok" path="res://素材/使用素材/战斗内/功能区/战斗卡行为选择/技能.png" id="10_snraw"]
+[ext_resource type="Texture2D" uid="uid://cqs0a3ba4wl8h" path="res://素材/使用素材/战斗内/功能区/战斗卡行为选择/手/2.png" id="11_igswe"]
+[ext_resource type="Texture2D" uid="uid://hxj871mw4kby" path="res://素材/使用素材/战斗内/功能区/战斗卡行为选择/普攻.png" id="12_ysthc"]
 
 [node name="桌面" type="TextureRect" node_paths=PackedStringArray("cards_ui", "data_UI")]
 offset_right = 2171.0
@@ -93,3 +99,60 @@ offset_right = 1731.407
 offset_bottom = 941.46356
 rotation = 3.1415927
 scale = Vector2(0.6111597, 0.6111597)
+
+[node name="战斗" parent="." instance=ExtResource("7_nqrhk")]
+visible = false
+layout_mode = 0
+offset_left = 63.91668
+offset_top = 394.68008
+offset_right = 1648.9166
+offset_bottom = 1673.6799
+scale = Vector2(0.23225516, 0.28033492)
+
+[node name="法术" parent="." instance=ExtResource("7_nqrhk")]
+visible = false
+layout_mode = 0
+offset_left = 1770.8677
+offset_top = 425.63535
+offset_right = 3355.8677
+offset_bottom = 1704.6351
+scale = Vector2(0.23225516, 0.28033492)
+
+[node name="指向" type="TextureRect" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="9" type="Sprite2D" parent="."]
+visible = false
+position = Vector2(977.5491, 630.7143)
+scale = Vector2(0.5974407, 0.5974407)
+texture = ExtResource("8_y8gow")
+
+[node name="1" type="Sprite2D" parent="."]
+visible = false
+position = Vector2(2270.9216, 986.69995)
+scale = Vector2(0.8009654, 0.8009654)
+texture = ExtResource("9_4vh08")
+
+[node name="技能" type="Sprite2D" parent="1"]
+visible = false
+position = Vector2(30.078613, -456.59064)
+scale = Vector2(1.6122327, 1.6122327)
+texture = ExtResource("10_snraw")
+hframes = 5
+vframes = 2
+
+[node name="2" type="Sprite2D" parent="."]
+visible = false
+position = Vector2(-154.15186, 990.5695)
+scale = Vector2(0.69745284, 0.69745284)
+texture = ExtResource("11_igswe")
+
+[node name="普攻" type="Sprite2D" parent="2"]
+visible = false
+position = Vector2(93.99463, -313.4225)
+scale = Vector2(0.8709027, 0.8709027)
+texture = ExtResource("12_ysthc")
+hframes = 5
+vframes = 2

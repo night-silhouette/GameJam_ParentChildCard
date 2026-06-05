@@ -1,6 +1,5 @@
 extends Node
 var BASE_URL = "http://120.26.145.68:10086" 
-# Global.gd 或 NetworkClient.gd
 var token_save :bool = false;	
 var init_battle_time :int;
 
@@ -37,7 +36,12 @@ const ZONE_CARD = {
 	CHILD_HAS_CATCH = 16,    # 子牌已被捕获
 	
 }
-
+const WEATHER = {
+	PEACE = 0,
+	SALD = 1,
+	RAIN = 2,
+	SUNNY = 3,
+}
 ## 接口 1：让节点进入【假死】状态
 func fake_death(target_node: Node) -> void:
 	if not is_instance_valid(target_node):
@@ -90,3 +94,4 @@ func _set_all_collisions(root_node: Node, enabled: bool) -> void:
 		# 递归向下查找（比如卡牌内部嵌套的复合节点）
 		if child.get_child_count() > 0:
 			_set_all_collisions(child, enabled)
+			

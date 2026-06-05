@@ -1,0 +1,35 @@
+[gd_scene load_steps=3 format=3 uid="uid://csfb5yccdy0eg"]
+
+[ext_resource type="Texture2D" uid="uid://dx1ewstebv33h" path="res://素材/使用素材/万能组件.png" id="1_23trf"]
+[ext_resource type="PackedScene" uid="uid://cfmasar4a3kho" path="res://game_scene/battle/hovercard.tscn" id="2_ynd0e"]
+
+[node name="active_child_card" type="HBoxContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = 879.8612
+offset_bottom = 390.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.6122466, 0.62323314)
+size_flags_horizontal = 8
+
+[node name="万能组件" type="Sprite2D" parent="."]
+position = Vector2(842.7978, 505.42883)
+scale = Vector2(1.8175784, 1.0102506)
+texture = ExtResource("1_23trf")
+
+[node name="hovercard" parent="." instance=ExtResource("2_ynd0e")]
+layout_mode = 2
+
+[node name="hovercard2" parent="." instance=ExtResource("2_ynd0e")]
+layout_mode = 2
+
+[node name="hovercard3" parent="." instance=ExtResource("2_ynd0e")]
+layout_mode = 2
+
+[node name="hovercard4" parent="." instance=ExtResource("2_ynd0e")]
+layout_mode = 2
+
+[node name="hovercard5" parent="." instance=ExtResource("2_ynd0e")]
+layout_mode = 2

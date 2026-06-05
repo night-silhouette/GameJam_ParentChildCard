@@ -1,9 +1,11 @@
 extends Node
 ## 导出变量
-@export var card_scene: PackedScene = preload("res://base_class/card/card.tscn")
+@export var card_scene: PackedScene = preload("res://base_class/card/battle_card.tscn")
 @export var spawn_container: Control
 @export_dir var base_path: String = "res://game_data/card/" # 资源存放的基础路径
 @export var state_machine : Node;
+@export var self_energy_node : Control
+@export var oppent_energy_node :Control
 
 #region 数据变更信号
 signal UI_date_update

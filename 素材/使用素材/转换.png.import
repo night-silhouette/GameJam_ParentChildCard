@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dng874p0igvq"
-path="res://.godot/imported/转换.png-9b7fcf50e784b48a0b3b5477bf012685.ctex"
+path="res://.godot/imported/转换.png-3cdc03c7b3356172a2c01fbf8025ba3c.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://素材/使用素材/战斗内/转换.png"
-dest_files=["res://.godot/imported/转换.png-9b7fcf50e784b48a0b3b5477bf012685.ctex"]
+source_file="res://素材/使用素材/转换.png"
+dest_files=["res://.godot/imported/转换.png-3cdc03c7b3356172a2c01fbf8025ba3c.ctex"]
 
 [params]
 

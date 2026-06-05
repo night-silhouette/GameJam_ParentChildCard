@@ -77,9 +77,9 @@ func setup(data: Dictionary) -> void:
 	
 # 快捷获取当前卡牌类型文本
 func get_type_string() -> String:
+	var combat_type = "战斗牌" if is_combat_card else "法术牌"
 	var sub_type = "子牌" if is_sub_card else "母牌"
-	
-	return sub_type
+	return sub_type + "/" + combat_type
 
 
 # 3. 监听鼠标悬停与离开事件

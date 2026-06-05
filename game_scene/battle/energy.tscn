@@ -1,6 +1,7 @@
-[gd_scene load_steps=3 format=3 uid="uid://c1exceqgab5ww"]
+[gd_scene load_steps=4 format=3 uid="uid://c1exceqgab5ww"]
 
 [ext_resource type="Texture2D" uid="uid://damm001coeieh" path="res://素材/使用素材/战斗外/登录界面/点UI .png" id="1_gaxvx"]
+[ext_resource type="Script" uid="uid://bt78m3fcrrc17" path="res://game_scene/battle/energy.gd" id="1_wgw8q"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_wgw8q"]
 font_size = 64
@@ -9,6 +10,7 @@ font_color = Color(0.92156863, 0.10980392, 0.14509805, 1)
 [node name="energy" type="Control"]
 layout_mode = 3
 anchors_preset = 0
+script = ExtResource("1_wgw8q")
 
 [node name="TextureRect" type="TextureRect" parent="."]
 layout_mode = 0

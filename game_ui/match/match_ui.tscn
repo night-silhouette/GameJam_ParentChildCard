@@ -242,7 +242,6 @@ texture_pressed = ExtResource("10_hgah4")
 texture_hover = ExtResource("10_hgah4")
 
 [node name="ColorRect2" type="ColorRect" parent="."]
-visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -252,11 +251,11 @@ grow_vertical = 2
 color = Color(0.2520276, 0.25202766, 0.25202757, 1)
 
 [node name="wait" type="AnimatedSprite2D" parent="."]
-visible = false
 position = Vector2(544.00006, 342)
 scale = Vector2(0.30098227, 0.30098227)
 sprite_frames = SubResource("SpriteFrames_n0lx2")
 animation = &"wait"
+frame_progress = 0.097611375
 
 [connection signal="button_down" from="街机按钮" to="." method="_on_街机按钮_button_down"]
 [connection signal="button_down" from="返回" to="." method="_on_返回_button_down"]

@@ -1,13 +1,15 @@
 extends Node
-class_name GameManager # 或者卡牌管理器等
+class_name GameManager
 @export var card_manager = Node
 @export var time = Control
 @export var all_block = Control
 @export var combat_block = Control
 @export var spell_block = Control
 
-@export var judge = Control;
-@export var jugde_bt = Control;
+@export var judge = Control
+@export var jugde_bt = Control
+@export var weather = Control
+@export var choose_child_card = Control
 
 var is_win:int ;
 
@@ -55,6 +57,8 @@ func _ready() -> void:
 	_enter_state(current_state)
 	Global.fake_death(judge)
 	Global.fake_death(jugde_bt)
+	Global.fake_death(weather)
+	Global.fake_death(choose_child_card)
 	
 	
 # --- 核心：状态切换逻辑 ---
@@ -67,13 +71,13 @@ func _exit_state(old_state: GameState) -> void:
 			pass
 		
 		GameState.CHOOSE_CHILD_CARD:
-			# 退出子卡选择阶段：清理选中状态
 			card_manager.clear_child_selection()
 			all_block.allow_input()
+			Global.fake_death(choose_child_card)
 		
 		GameState.CHOOSE_WEATHER:
-			# 退出天气选择阶段
 			all_block.allow_input()
+			Global.fake_death(weather)
 		
 		GameState.USE_MAGIC_CARD:
 			combat_block.allow_input()
@@ -96,14 +100,13 @@ func _enter_state(new_state: GameState) -> void:
 			# print("进入初始化状态（看牌阶段）")
 		
 		GameState.CHOOSE_CHILD_CARD:
-			# 进入子卡选择阶段：全屏阻塞，等待玩家选择
 			all_block.block_input()
-			# print("进入子卡牌选择阶段")
+			Global.revive(choose_child_card)
 		
 		GameState.CHOOSE_WEATHER:
-			# 进入天气选择阶段：全屏阻塞，等待玩家选择
 			all_block.block_input()
-			# print("进入天气选择阶段")
+			Global.revive(weather)
+			weather.init_all_unpressed()
 		
 		GameState.USE_MAGIC_CARD:
 			combat_block.block_input();
@@ -117,9 +120,10 @@ func _enter_state(new_state: GameState) -> void:
 			# print("进入战斗卡使用状态")
 		
 		GameState.JUDGEMENT:
-			Global.revive(judge);
-			Global.revive(jugde_bt);
-			combat_block.block_input();
+			Global.revive(judge)
+			Global.revive(jugde_bt)
+			judge.init_all_unpressed()
+			combat_block.block_input()
 			spell_block.block_input()
 			# print("进入结算/判定状态")
 
@@ -195,10 +199,8 @@ func _on_万能按钮_button_down() -> void:
 			SignalBus.request_active_child_card.emit(selected)
 		
 		GameState.CHOOSE_WEATHER:
-			# [新增] 天气选择阶段：提交选中的天气
-			time.countdown_time = 0;
-			# 天气选择逻辑由 UI 层维护，这里获取并提交
-			# 实际实现需要根据 UI 设计调整
+			time.countdown_time = 0
+			SignalBus.request_select_weather.emit(weather.index_judge)
 			
 		GameState.USE_MAGIC_CARD:
 			time.countdown_time = 0;
@@ -236,5 +238,6 @@ func _magic_card_finish( ):
 		pass;
 func _judge_finish(data):
 	if current_state == GameState.JUDGEMENT:
+		Global.fake_death(judge)
 		jugde_bt.judge_data = [int(data.self), int(data.opponent)]
 		jugde_bt.is_win = int(data.is_win)
