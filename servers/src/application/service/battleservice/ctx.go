@@ -75,15 +75,21 @@ func (c *Ctx) GetNeedCheckChildCard() []CardAbstract.ChildCard {
 				res = append(res, childCard)
 			}
 		}
-		for _, playerData := range c.PlayerDataMap {
-			for _, Card := range playerData.CardInHand {
-				if Card.GetInfo()["is_parent"]==false {
-					childCard := Card.(CardAbstract.ChildCard)
-					res = append(res, childCard)
-				}
-			}
-		},
+
 	})
+	for _, playerData := range c.PlayerDataMap {
+		for _, Card := range playerData.CardInHand {
+			if Card.GetInfo()["is_parent"] == false {
+				childCard := Card.(CardAbstract.ChildCard)
+				res = append(res, childCard)
+			}
+		}
+	}
+	return res
+}
+
+func (c *Ctx) ChildCardCheck() bool {
+	return false
 }
 
 //__________________________________________EffectsStack______________________________________________

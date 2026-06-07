@@ -321,7 +321,7 @@ func (u *User_service_impl) CheckBtDataIsValid(ctx context.Context, userId int, 
 		}
 
 	}
-	//至少2子
+	//最多2子
 	if child_num > 2 {
 		return global.BattleEnterDataInvalid
 	}

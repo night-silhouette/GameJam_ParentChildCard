@@ -69,6 +69,10 @@ func (Cd *CardList) init(s BattleService) {
 		CardImpl.NewCard0003(),
 		CardImpl.NewCard0004(),
 		CardImpl.NewCard0005(),
+		CardImpl.NewCard0006(),
+		CardImpl.NewCard0007(),
+		CardImpl.NewCard0008(),
+		CardImpl.NewCard0009(),
 
 		CardImpl.NewCard1000(),
 		CardImpl.NewCard1001(),
@@ -78,18 +82,25 @@ func (Cd *CardList) init(s BattleService) {
 		CardImpl.NewCard1005(),
 		CardImpl.NewCard1006(),
 		CardImpl.NewCard1007(),
+		CardImpl.NewCard1008(),
 
 		CardImpl.NewCard2000(),
 		CardImpl.NewCard2001(),
 		CardImpl.NewCard2002(),
 		CardImpl.NewCard2003(),
 		CardImpl.NewCard2004(),
+		CardImpl.NewCard2005(),
+		CardImpl.NewCard2006(),
+		CardImpl.NewCard2007(),
 
 		CardImpl.NewCard3000(),
 		CardImpl.NewCard3001(),
 		CardImpl.NewCard3002(),
 		CardImpl.NewCard3003(),
 		CardImpl.NewCard3004(),
+		CardImpl.NewCard3005(),
+		CardImpl.NewCard3006(),
+		CardImpl.NewCard3007(),
 	}
 	for _, e := range Cd.data {
 		e.InitBuffList()

@@ -5,8 +5,14 @@ type Weather int
 const (
 	ningjing Weather = iota
 	shabao
-	ganyv
-	qingtian
+	ganmu
+	mingyang
+	miwu
+	dashu
+	zhipou
+	shuangjiang
+	shutu
+	fengdu
 )
 
-const WeatherCanSelectNum = 3
+const WeatherCanSelectNum = 9

@@ -115,12 +115,12 @@
 在超时情况下，服务器会根据双方选择的交集补齐或随机补足到固定数量，并返回 Finish 后进入 `SelectWeather` 状态。
 
 ### <4> SelectWeather 阶段
-|action_code|方向|Predicates|传参(action_data)|注释|
-| :---: | :---: | :---: | :---: | :---: |
-|SelectWeather|服务器->客户端|Notify|{"is_more": bool}|告知双方谁在本回合钱更多（有优先选择权）|
-|SelectWeather|服务器->客户端|Query|{"state_wait_time":StateWaitTime, "weather_list":[]int}|向拥有优先权的玩家请求选择天气，包含可选天气列表与倒计时|
-|SelectWeather|客户端->服务器|Result|[SelectWeatherDto](#selectweatherdto)|玩家返回所选天气|
-|SelectWeather|服务器->客户端|Succeed|[SelectWeatherDto](#selectweatherdto)|服务器确认选择成功并广播结果给对手（若超时由系统随机选择）|
+|action_code|方向|Predicates|                     传参(action_data)                     |注释|
+| :---: | :---: | :---: |:-------------------------------------------------------:| :---: |
+|SelectWeather|服务器->客户端|Notify|                    {"is_more": bool}                    |告知双方谁在本回合钱更多（有优先选择权）|
+|SelectWeather|服务器->客户端|Query| {"state_wait_time":StateWaitTime, "weather_list":[]int} |向拥有优先权的玩家请求选择天气，包含可选天气列表与倒计时|
+|SelectWeather|客户端->服务器|Result|          [SelectWeatherDto](#selectweatherdto)          |玩家返回所选天气|
+|SelectWeather|服务器->客户端|Succeed|                map{"weather":weather枚举}                 |服务器确认选择成功并广播结果给对手（若超时由系统随机选择）|
 
 服务器在倒计时结束仍未选择时会随机选择一个天气并通知双方，然后进入下一状态 `SelectSkillCard`。
 

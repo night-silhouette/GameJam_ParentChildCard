@@ -14,10 +14,10 @@ var Isdebug string = "debug"
 const (
 	InitCardNum = 4
 
-	Lev1Category1Num = 6
-	Lev1Category2Num = 8
-	Lev1Category3Num = 5
-	Lev1Category4Num = 5
+	Lev1Category1Num = 10
+	Lev1Category2Num = 9
+	Lev1Category3Num = 8
+	Lev1Category4Num = 8
 
 	SelectWeatherTime   = 1    //s
 	BattleWaitTime      = 1    //s

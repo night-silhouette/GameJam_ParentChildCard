@@ -703,6 +703,7 @@ func (s *SelectWeather) process(GoCtx context.Context) {
 			var data SelectWeatherDto
 			s.SM.DataDecode(action, &data, id)
 			s.SM.SendActionById(id, BattleDto.NewAction(BattleDto.SelectWeather, BattleDto.Succeed, data))
+			s.SM.SendActionById(s.c.GetOpponentId(id), BattleDto.NewAction(BattleDto.SelectWeather, BattleDto.Succeed, data))
 			s.CrashChan <- struct{}{}
 			s.Change(data.Weather)
 
@@ -717,7 +718,8 @@ func (s *SelectWeather) process(GoCtx context.Context) {
 func (s *SelectWeather) timeEnding() {
 	res := Util.GetRandomElements[int](s.WeatherList, 1)[0]
 	s.Change(BattleData.Weather(res))
-	s.SM.SendActionById(s.SM.GoldMoreUserId, BattleDto.NewAction(BattleDto.SelectWeather, BattleDto.Succeed, SelectWeatherDto{Weather: BattleData.Weather(res)}))
+	s.SM.SendActionById(s.SM.Id1, BattleDto.NewAction(BattleDto.SelectWeather, BattleDto.Succeed, SelectWeatherDto{Weather: BattleData.Weather(res)}))
+	s.SM.SendActionById(s.SM.Id2, BattleDto.NewAction(BattleDto.SelectWeather, BattleDto.Succeed, SelectWeatherDto{Weather: BattleData.Weather(res)}))
 	go s.SM.finish("SelectSkillCard")
 }
 
