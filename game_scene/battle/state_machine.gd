@@ -71,7 +71,6 @@ func _exit_state(old_state: GameState) -> void:
 			pass
 		
 		GameState.CHOOSE_CHILD_CARD:
-			card_manager.clear_child_selection()
 			all_block.allow_input()
 			Global.fake_death(choose_child_card)
 		

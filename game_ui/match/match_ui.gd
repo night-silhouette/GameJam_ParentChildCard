@@ -5,12 +5,12 @@ extends Control
 func _ready() -> void:
 	SignalBus.request_bag_card.emit()
 	SignalBus.ws_connected.connect(_ws_connected)
+	$"街机按钮".button_down.connect(_on_街机按钮_button_down, CONNECT_ONE_SHOT)
 	
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 
 func _on_街机按钮_button_down() -> void:
-	$"街机按钮".disabled = true;
 	# 1. 从全局数据层提取需要的原始卡牌数据，过滤掉不需要传给后端的 "zone" 和 "resource"
 	var raw_card_list = []
 	for card in InventoryManager.get_cards_in_zone(Global.ZONE_CARD.MATCH_ZONE):

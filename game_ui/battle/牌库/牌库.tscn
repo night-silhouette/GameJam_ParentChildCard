@@ -64,22 +64,22 @@ libraries = {
 &"": SubResource("AnimationLibrary_08b1w")
 }
 
-[node name="card_vector" type="GridContainer" parent="."]
-layout_mode = 0
-offset_left = 540.0
-offset_top = 61.0
-offset_right = 2629.3506
-offset_bottom = 1501.4711
-scale = Vector2(1.407666, 0.71468335)
-theme_override_constants/h_separation = 24
-theme_override_constants/v_separation = 108
-columns = 5
-
 [node name="检验区" parent="." instance=ExtResource("9_08b1w")]
 position = Vector2(2133.0002, 593.00006)
 rotation = 1.5707964
 scale = Vector2(-11.698448, -26.967438)
 zone = 1
+
+[node name="card_vector" type="GridContainer" parent="."]
+layout_mode = 0
+offset_left = 640.0
+offset_top = 123.0
+offset_right = 2381.0
+offset_bottom = 693.0
+scale = Vector2(1.6125907, 1.6125907)
+theme_override_constants/h_separation = 24
+theme_override_constants/v_separation = 108
+columns = 5
 
 [connection signal="button_down" from="切换/右切换" to="." method="_on_右切换_button_down"]
 [connection signal="button_down" from="切换/左切换" to="." method="_on_左切换_button_down"]

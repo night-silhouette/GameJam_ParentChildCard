@@ -12,7 +12,7 @@ func _handle_ws_data(code: int, data: Variant, msg: String):
 	var action_data = data.get("action_data", null)
 	var predicate = int(data.get("predicates", 0)) 
 	
-	print("[WS 接收] -> ", NetDef.get_predicate_name(predicate), "：",action_code)
+	print("[WS 接收] -> ", NetDef.get_predicate_name(predicate), "：",NetDef.ACTION_NAME[action_code])
 	
 	_dispatch(action_code, action_data, predicate)
 

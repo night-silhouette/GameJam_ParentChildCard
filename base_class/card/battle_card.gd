@@ -5,6 +5,8 @@ enum CardState { IDLE, HOVERED, DRAGGING }
 var current_state: CardState = CardState.IDLE
 const HOVER_ALLOWED_ZONES = [Global.ZONE_CARD.DECK_ZONE,Global.ZONE_CARD.SPELL_ZONE] 
 @onready var display: TextureRect = $"卡牌纹理"
+@onready var name_diapaly: Label = $name
+
 var temp_id: int = 0
 var hp: int = 0
 var damage: int = 0
