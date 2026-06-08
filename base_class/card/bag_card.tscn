@@ -1,5 +1,6 @@
-[gd_scene load_steps=6 format=3 uid="uid://cwlnbe14kg5qx"]
+[gd_scene load_steps=7 format=3 uid="uid://cwlnbe14kg5qx"]
 
+[ext_resource type="Script" uid="uid://ch7axvdkd3t8r" path="res://base_class/card/bag_card.gd" id="1_5pqt6"]
 [ext_resource type="Texture2D" uid="uid://dje375wa2ans7" path="res://素材/使用素材/卡牌/基础卡牌重置素材/卡牌.png" id="1_mnxpg"]
 [ext_resource type="FontFile" uid="uid://bj1pdtvpfop4a" path="res://素材/使用素材/YaoSuiXinShouXieTi-2.ttf" id="3_nvbpl"]
 [ext_resource type="Texture2D" uid="uid://bhngjavywsdho" path="res://素材/使用素材/选择/确认/零件/勾.png" id="4_5pqt6"]
@@ -20,6 +21,7 @@ anchors_preset = 0
 offset_right = 329.0
 offset_bottom = 570.0
 scale = Vector2(0.16807154, 0.16807154)
+script = ExtResource("1_5pqt6")
 
 [node name="卡牌纹理" type="TextureRect" parent="."]
 layout_mode = 1

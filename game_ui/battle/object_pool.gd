@@ -1,7 +1,7 @@
 extends Node
 
 # 预加载卡牌场景
-const CARD_SCENE = preload("res://base_class/card/card.tscn")
+const CARD_SCENE = preload("res://base_class/card/battle_card.tscn")
 
 # 存储“闲置”卡牌的数组（仓库）
 var _pool = []
@@ -9,7 +9,7 @@ var _pool = []
 # 初始预热：在游戏开始或加载时调用
 func _ready():
 	# 比如预先生成 40 张牌
-	pre_warm_pool(40)
+	pre_warm_pool(20)
 
 
 func create_new_card():

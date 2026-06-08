@@ -10,6 +10,7 @@ func _ready() -> void:
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 
 func _on_街机按钮_button_down() -> void:
+	$"街机按钮".disabled = true;
 	# 1. 从全局数据层提取需要的原始卡牌数据，过滤掉不需要传给后端的 "zone" 和 "resource"
 	var raw_card_list = []
 	for card in InventoryManager.get_cards_in_zone(Global.ZONE_CARD.MATCH_ZONE):
@@ -18,7 +19,7 @@ func _on_街机按钮_button_down() -> void:
 			"card_id": int(card["card_id"]),
 			"price": int(card["price"])
 		})
-	if raw_card_list.size() < 5:
+	if raw_card_list.size() != 5:
 		return;
 	var input_text = $"使用/num".text # 获取文本
 	var input_amount: int;
@@ -52,6 +53,7 @@ func _on_街机按钮_button_down() -> void:
 	
 	# 6. 发送信号并播放等待动画
 	SignalBus.to_connect_ws.emit(body)
+	$wait.visible = true;
 	$wait.play("wait")
 
 func _on_返回_button_down() -> void:

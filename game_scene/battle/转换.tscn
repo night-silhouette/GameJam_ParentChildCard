@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=3 uid="uid://c6euaia4cenn0"]
+
+[ext_resource type="Texture2D" uid="uid://ivigl72imvsl" path="res://素材/使用素材/战斗内/功能区/卡牌数量显示/转换.png" id="1_8t0p6"]
+
+[node name="转换" type="TextureButton"]
+offset_top = -1.0
+offset_right = 435.0
+offset_bottom = 401.0
+texture_normal = ExtResource("1_8t0p6")
+texture_pressed = ExtResource("1_8t0p6")
+texture_hover = ExtResource("1_8t0p6")

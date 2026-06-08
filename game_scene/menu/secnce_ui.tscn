@@ -159,15 +159,5 @@ offset_right = 455.0
 offset_bottom = 679.0
 scale = Vector2(0.30404234, 0.30404234)
 
-[node name="ColorRect" type="ColorRect" parent="."]
-visible = false
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0, 0, 0, 0.58431375)
-
 [connection signal="button_down" from="空格" to="cheese" method="animationplayer"]
 [connection signal="button_down" from="Button" to="Button" method="_on_button_down"]

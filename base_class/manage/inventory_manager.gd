@@ -4,13 +4,20 @@ extends Node
 # 当数据发生变化时，通知全家老小（比如 UI 刷新）
 signal bag_updated 
 signal gold_updated(value:int)
+signal notice_updated(msg: String)
+
+var notice_msg: String = "":
+	set(value):
+		notice_msg = value
+		if value != "" and value != "null":
+			notice_updated.emit(value)
 
 var card_list: Array = []:
 	set(value):
 		card_list = value
 		# 数据一进来，立刻在局外完成排序
 		card_list.sort_custom(func(a, b): return a["price"] > b["price"])
-		# 发射信号，告诉 UI 层：“数据更新了，你们该干嘛干嘛”
+		# 发射信号，告诉 UI 层："数据更新了，你们该干嘛干嘛"
 		bag_updated.emit()
 
 var _gold : int = 0
@@ -70,14 +77,21 @@ func move_to_bag_zone(stuff_id: int) -> bool:
 func move_to_combat_zone(stuff_id: int) -> bool:
 	var match_total_count := 0
 	var match_sub_card_count := 0
+	var match_combat_card_count := 0
+	var match_magic_card_count := 0
 	# 统计当前出战区
 	for card in card_list:
 		if card["zone"] == Global.ZONE_CARD.MATCH_ZONE:
 			match_total_count += 1
 
 			var res: CardResource = card["resource"]
-			if res and res.is_sub_card:
-				match_sub_card_count += 1
+			if res:
+				if res.is_sub_card:
+					match_sub_card_count += 1
+				if res.is_combat_card:
+					match_combat_card_count += 1
+				else:
+					match_magic_card_count += 1
 	# 找目标卡
 	for card in card_list:
 		if card["stuff_id"] != stuff_id:
@@ -88,11 +102,19 @@ func move_to_combat_zone(stuff_id: int) -> bool:
 		var res: CardResource = card["resource"]
 		# 总数限制
 		if match_total_count >= 5:
-			# print("出战区已满（最多5张卡牌）")
+			notice_msg = "出战区已满（最多5张卡牌）"
 			return false
 		# 子牌限制
 		if res and res.is_sub_card and match_sub_card_count >= 2:
-			# print("出战区子牌已满（最多2张子牌）")
+			notice_msg = "出战区子牌已满（最多2张子牌）"
+			return false
+		# 战斗牌限制
+		if res and res.is_combat_card and match_combat_card_count >= 3:
+			notice_msg = "出战区战斗牌已满（最多3张战斗牌）"
+			return false
+		# 法术牌限制
+		if res and not res.is_combat_card and match_magic_card_count >= 2:
+			notice_msg = "出战区法术牌已满（最多2张法术牌）"
 			return false
 		card["zone"] = Global.ZONE_CARD.MATCH_ZONE
 		bag_updated.emit()

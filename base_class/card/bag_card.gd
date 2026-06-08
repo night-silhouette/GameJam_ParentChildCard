@@ -86,7 +86,9 @@ func get_type_string() -> String:
 func _mouse_entered() -> void:
 	_play_scale_tween(HOVER_SCALE)
 	
-	# 💡 核心修改 3：将名称信息从详细描述中移除
+	if stuff_id <= 0:
+		return
+	
 	if lab:
 		lab.text = " %s/ %d" % [get_type_string(), value]
 		lab.visible = true

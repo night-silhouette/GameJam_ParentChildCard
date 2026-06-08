@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=3 uid="uid://cuvi8jmlquxkr"]
+[gd_scene load_steps=24 format=3 uid="uid://cuvi8jmlquxkr"]
 
 [ext_resource type="Texture2D" uid="uid://dgyqirah3ilvl" path="res://素材/使用素材/战斗内/桌面/卡库栏底版 .png" id="1_c20ep"]
 [ext_resource type="Script" uid="uid://dsjhgmpb1haaw" path="res://game_ui/match/match_ui.gd" id="1_oqlle"]
@@ -12,6 +12,7 @@
 [ext_resource type="PackedScene" uid="uid://dot3sukqu6su7" path="res://game_scene/标识.tscn" id="9_hgah4"]
 [ext_resource type="Texture2D" uid="uid://ci7ym6d16j3bs" path="res://素材/使用素材/战斗外/游戏初始界面/UI手（左手）.png" id="10_hgah4"]
 [ext_resource type="Texture2D" uid="uid://v6mxhb2ytswh" path="res://素材/使用素材/战斗外/游戏模式选择与匹配/匹配到后的信息显示动画/匹配信息框/信息框.png" id="12_6u7u6"]
+[ext_resource type="PackedScene" uid="uid://s14mr1ndy4u6" path="res://game_ui/告示牌.tscn" id="12_ea11v"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_6u7u6"]
 font_size = 36
@@ -82,12 +83,15 @@ animations = [{
 
 [node name="match_ui" type="Control"]
 layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+anchors_preset = 0
 script = ExtResource("1_oqlle")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+scale = Vector2(29.056538, 16.544558)
+color = Color(0.12955832, 0.12955853, 0.12955844, 0.49019608)
 
 [node name="牌库底板" type="TextureRect" parent="."]
 layout_mode = 0
@@ -241,21 +245,22 @@ texture_normal = ExtResource("10_hgah4")
 texture_pressed = ExtResource("10_hgah4")
 texture_hover = ExtResource("10_hgah4")
 
-[node name="ColorRect2" type="ColorRect" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0.2520276, 0.25202766, 0.25202757, 1)
+[node name="告示牌" parent="." instance=ExtResource("12_ea11v")]
+visible = false
+layout_mode = 0
+offset_left = 401.0
+offset_top = 260.0
+offset_right = 939.0
+offset_bottom = 614.0
+scale = Vector2(0.4787446, 0.4787446)
 
 [node name="wait" type="AnimatedSprite2D" parent="."]
-position = Vector2(544.00006, 342)
+visible = false
+position = Vector2(545, 305.00003)
 scale = Vector2(0.30098227, 0.30098227)
 sprite_frames = SubResource("SpriteFrames_n0lx2")
 animation = &"wait"
-frame_progress = 0.097611375
+frame_progress = 0.7351176
 
 [connection signal="button_down" from="街机按钮" to="." method="_on_街机按钮_button_down"]
 [connection signal="button_down" from="返回" to="." method="_on_返回_button_down"]
