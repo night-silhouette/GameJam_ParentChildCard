@@ -1,5 +1,6 @@
 extends Node
 class_name GameManager
+
 @export var card_manager = Node
 @export var time = Control
 @export var all_block = Control
@@ -9,7 +10,7 @@ class_name GameManager
 @export var judge = Control
 @export var jugde_bt = Control
 @export var weather = Control
-@export var choose_child_card = Control
+@export var choose_child_card = GridContainer
 
 var is_win:int ;
 
@@ -17,6 +18,9 @@ var parent_action :int ;
 var parent_bt_object: int;
 var child_action :int ;
 var child_bt_object: int;
+
+## 子卡选择阶段：服务器返回的可用子卡列表
+var _child_card_list: Array = []
 
 # 1. 定义状态枚举
 enum GameState {
@@ -33,6 +37,7 @@ var current_state: GameState = GameState.INIT_STATE:
 	set(value):
 		_exit_state(current_state)
 		current_state = value
+		print("当前状态为:",current_state)
 		_enter_state(current_state)
 
 # --- 初始化 ---
@@ -73,6 +78,7 @@ func _exit_state(old_state: GameState) -> void:
 		GameState.CHOOSE_CHILD_CARD:
 			all_block.allow_input()
 			Global.fake_death(choose_child_card)
+			card_manager.clear_selection(3)
 		
 		GameState.CHOOSE_WEATHER:
 			all_block.allow_input()
@@ -93,14 +99,21 @@ func _exit_state(old_state: GameState) -> void:
 
 
 func _enter_state(new_state: GameState) -> void:
+	# 每进入一个状态，刷新全部战斗数据
+	_refresh_all_battle_data()
+	
 	match new_state:
 		GameState.INIT_STATE:
 			time.countdown_time = TimeOffset.get_remaining_seconds(Global.init_battle_time);
+			all_block.allow_input()
+			combat_block.allow_input()
+			spell_block.allow_input()
 			# print("进入初始化状态（看牌阶段）")
 		
 		GameState.CHOOSE_CHILD_CARD:
 			all_block.block_input()
 			Global.revive(choose_child_card)
+			_populate_child_cards()
 		
 		GameState.CHOOSE_WEATHER:
 			all_block.block_input()
@@ -126,6 +139,31 @@ func _enter_state(new_state: GameState) -> void:
 			spell_block.block_input()
 			# print("进入结算/判定状态")
 
+func _refresh_all_battle_data() -> void:
+	SignalBus.request_get_self_cards_inhand.emit()
+	SignalBus.request_get_opponent_cards_inhand.emit()
+	SignalBus.request_get_combat_cards.emit()
+	SignalBus.request_get_energy.emit()
+	SignalBus.request_get_child_card_list.emit()
+
+## 用服务器返回的 child_list 数据填充 choose_child_card 下的每个 choose_card 实例
+func _populate_child_cards() -> void:
+	var container = choose_child_card
+	if not is_instance_valid(container):
+		container = get_node_or_null("../../选择子牌")
+	if container == null:
+		return
+	var children = container.get_children()
+	for i in range(children.size()):
+		var card = children[i]
+		if i < _child_card_list.size():
+			var data = _child_card_list[i]
+			card.match_code = 3  # 子卡激活选择
+			card.setup(data)
+			card.visible = true
+		else:
+			card.visible = false
+
 # --- 信号回调（在这里控制状态流转） ---
 func _on_match_success(t) -> void:
 	change_state(GameState.INIT_STATE)
@@ -145,6 +183,7 @@ func _judge_start(t) -> void:
 
 # [新增] 子卡选择阶段开始
 func _on_active_child_card_start(t, child_list) -> void:
+	_child_card_list = child_list if child_list is Array else []
 	time.start_countdown(TimeOffset.get_remaining_seconds(t));
 	change_state(GameState.CHOOSE_CHILD_CARD)
 

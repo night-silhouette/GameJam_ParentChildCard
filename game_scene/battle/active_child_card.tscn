@@ -7,16 +7,16 @@
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_right = 879.8612
-offset_bottom = 390.0
+offset_right = 509.0
+offset_bottom = -78.0
 grow_horizontal = 2
 grow_vertical = 2
 scale = Vector2(0.6122466, 0.62323314)
 size_flags_horizontal = 8
 
 [node name="万能组件" type="Sprite2D" parent="."]
-position = Vector2(842.7978, 505.42883)
-scale = Vector2(1.8175784, 1.0102506)
+position = Vector2(842.7976, 287.2119)
+scale = Vector2(1.8175786, 1.0102506)
 texture = ExtResource("1_23trf")
 
 [node name="hovercard" parent="." instance=ExtResource("2_ynd0e")]

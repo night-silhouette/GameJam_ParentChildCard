@@ -44,11 +44,11 @@ label_settings = SubResource("LabelSettings_rkg2p")
 horizontal_alignment = 1
 
 [node name="name" type="Label" parent="."]
-layout_mode = 0
-offset_left = -17.849545
-offset_top = 220.14435
+layout_mode = 1
+offset_left = -17.849543
+offset_top = 214.19453
 offset_right = 246.12561
-offset_bottom = 290.14435
+offset_bottom = 284.19452
 scale = Vector2(1.4425231, 1.4425231)
 text = "未上牌"
 label_settings = SubResource("LabelSettings_5pqt6")

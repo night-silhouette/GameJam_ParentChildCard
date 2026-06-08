@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=3 uid="uid://c85a1ra55sbk0"]
+[gd_scene load_steps=25 format=3 uid="uid://c85a1ra55sbk0"]
 
 [ext_resource type="Script" uid="uid://dw1q80ff6ue4v" path="res://game_scene/battle/battle_scence.gd" id="1_51ed8"]
 [ext_resource type="Texture2D" uid="uid://dng874p0igvq" path="res://素材/使用素材/转换.png" id="1_chjg7"]
@@ -23,6 +23,7 @@
 [ext_resource type="PackedScene" uid="uid://cd5cqk0qbc0vj" path="res://game_scene/battle/选择子牌.tscn" id="22_f0my5"]
 [ext_resource type="Script" uid="uid://by3tvpfm7iyls" path="res://base_class/debug/deug_action.gd" id="23_1hcvr"]
 [ext_resource type="PackedScene" uid="uid://csfb5yccdy0eg" path="res://game_scene/battle/active_child_card.tscn" id="23_b7tvc"]
+[ext_resource type="PackedScene" uid="uid://c6euaia4cenn0" path="res://game_scene/battle/转换.tscn" id="24_b7tvc"]
 
 [node name="battle_scence" type="Node"]
 script = ExtResource("1_51ed8")
@@ -280,12 +281,18 @@ offset_right = 2281.3506
 offset_bottom = 1498.4711
 
 [node name="active_child_card" parent="." instance=ExtResource("23_b7tvc")]
-visible = false
-offset_left = 632.0
-offset_top = -15.0
-offset_right = 1511.8613
-offset_bottom = 375.0
-scale = Vector2(0.16740316, 0.17040716)
+offset_left = 611.0
+offset_top = 16.0
+offset_right = 1120.0
+offset_bottom = -62.0
+scale = Vector2(0.2187003, 0.2226248)
+
+[node name="转换" parent="." instance=ExtResource("24_b7tvc")]
+offset_left = 1015.0
+offset_top = 61.0
+offset_right = 1450.0
+offset_bottom = 463.0
+scale = Vector2(0.13159403, 0.13159403)
 
 [connection signal="button_down" from="万能按钮" to="数据层/State_machine" method="_on_万能按钮_button_down"]
 [connection signal="button_down" from="debug/debug_action" to="debug/debug_action2" method="_on_debug_action_button_down"]

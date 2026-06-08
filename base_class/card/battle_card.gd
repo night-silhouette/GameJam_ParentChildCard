@@ -47,6 +47,9 @@ func update_card_data(base_res: Dictionary) -> void:
 	# 1. 先填充卡牌纹理（从 CardResource 获取）
 	display.texture = res.card_texture
 	
+	# 显示卡牌名字
+	name_diapaly.text = res.name
+	
 	# 2. 填充运行时数据（从 Dictionary 获取）
 	temp_id = base_res.get("temp_id")
 	zone = base_res.get("zone")

@@ -71,6 +71,9 @@ func _ready() -> void:
 	SignalBus.energy_updated.connect(_on_energy_updated)
 	SignalBus.discard_list_updated.connect(_on_discard_list_updated)
 
+	# ==================== 数据变更 → UI ====================
+	energy_changed.connect(_on_energy_changed)
+
 	# ==================== 游戏交互信号 ====================
 	SignalBus.enter_freecard.connect(_enter_freecard)
 	SignalBus.exit_freecard.connect(_exit_freecard)
@@ -282,6 +285,13 @@ func _on_energy_updated(data):
 		self_energy = int(data.get("self", 0))
 		opponent_energy = int(data.get("opponent", 0))
 
+## 能量数据变更后推送到 UI 节点
+func _on_energy_changed(_self: int, _opponent: int):
+	if is_instance_valid(self_energy_node) and self_energy_node.has_method("_update_lab"):
+		self_energy_node.num = _self
+	if is_instance_valid(oppent_energy_node) and oppent_energy_node.has_method("_update_lab"):
+		oppent_energy_node.num = _opponent
+
 ## [新增] 导入：子牌堆列表 → 根据 child_state 翻译为对应 zone（state zone, 优先级 100）
 ## 服务器返回 []ChildCardDto，每张子卡带 child_state 字段
 ## child_state 0=Active, 1=NotActive, 2=Died, 3=HasCatch
@@ -340,8 +350,12 @@ func get_selected_temp_ids(match_code: int) -> Array[int]:
 		return []
 	return selection_pools[match_code].duplicate()
 
+## [新增] 获取子卡激活选择（match_code=3）的选中列表，供提交用
+func get_active_child_list() -> Array:
+	return get_selected_temp_ids(3)
+
 ## [新增] 清空指定 match_code 的选中状态
-func clear_selection(match_code: int):
+func clear_selection(match_code: int) -> void:
 	if selection_pools.has(match_code):
 		var pool: Array = selection_pools[match_code]
 		for temp_id in pool:
