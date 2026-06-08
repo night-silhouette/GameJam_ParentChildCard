@@ -7,6 +7,7 @@ import (
 	"pcc_card/Util"
 	"pcc_card/application/entity/BattleData"
 	"pcc_card/application/entity/Card/CardAbstract"
+	"pcc_card/application/entity/protocol"
 	"pcc_card/global"
 	"pcc_card/presentation/handler/battlehandler/BattleDto"
 	"sync"
@@ -43,8 +44,15 @@ func (s *StateMachine) RegisterState() {
 	}
 }
 func (s *StateMachine) SharedProcess(id int, action BattleDto.Action, ResponseChan chan<- BattleDto.Action) bool {
+	if action.ActionCode == BattleDto.GetUserId && action.Predicates == BattleDto.Query {
+		res := make(map[string]int)
+		res["self"] = id
+		res["opponent"] = s.c.GetOpponentId(id)
+		ResponseChan <- BattleDto.NewAction(BattleDto.GetWeather, BattleDto.Result, res)
+	}
+
 	if action.ActionCode == BattleDto.GetWeather && action.Predicates == BattleDto.Query {
-		res := BattleData.Weather(s.c.Weather.Load())
+		res := protocol.Weather(s.c.Weather.Load())
 		ResponseChan <- BattleDto.NewAction(BattleDto.GetWeather, BattleDto.Result, res)
 		return true
 	}
@@ -681,19 +689,19 @@ type SelectWeather struct {
 }
 
 type SelectWeatherDto struct {
-	Weather BattleData.Weather `json:"weather" mapstructure:"weather"`
+	Weather protocol.Weather `json:"weather" mapstructure:"weather"`
 }
 
 // Change !!天气变化主函数
-func (s *SelectWeather) Change(w BattleData.Weather) {
+func (s *SelectWeather) Change(w protocol.Weather) {
 	s.c.Weather.Store(int64(w))
 }
 
 // ToSelect 随机出3个天气,加上宁静
 func (s *SelectWeather) ToSelect() []int {
 
-	num := BattleData.WeatherCanSelectNum //几个里随机
-	k := 3                                //要几个
+	num := protocol.WeatherCanSelectNum //几个里随机
+	k := 3                              //要几个
 	nums := rand.Perm(num)
 	res := make([]int, k)
 	for i := 0; i < k; i++ {
@@ -723,9 +731,9 @@ func (s *SelectWeather) process(GoCtx context.Context) {
 
 func (s *SelectWeather) timeEnding() {
 	res := Util.GetRandomElements[int](s.WeatherList, 1)[0]
-	s.Change(BattleData.Weather(res))
-	s.SM.SendActionById(s.SM.Id1, BattleDto.NewAction(BattleDto.SelectWeather, BattleDto.Succeed, SelectWeatherDto{Weather: BattleData.Weather(res)}))
-	s.SM.SendActionById(s.SM.Id2, BattleDto.NewAction(BattleDto.SelectWeather, BattleDto.Succeed, SelectWeatherDto{Weather: BattleData.Weather(res)}))
+	s.Change(protocol.Weather(res))
+	s.SM.SendActionById(s.SM.Id1, BattleDto.NewAction(BattleDto.SelectWeather, BattleDto.Succeed, SelectWeatherDto{Weather: protocol.Weather(res)}))
+	s.SM.SendActionById(s.SM.Id2, BattleDto.NewAction(BattleDto.SelectWeather, BattleDto.Succeed, SelectWeatherDto{Weather: protocol.Weather(res)}))
 	go s.SM.finish("SelectSkillCard")
 
 }
@@ -1262,6 +1270,9 @@ CalcLoop:
 
 			//结算法术(s.c.ChildCardCheck()在里面了)
 			s.SkillCalc()
+
+			//结算天气
+			protocol.WeatherFuncMap[protocol.Weather(s.c.Weather.Load())](s.c) //从天气执行函数map储存种取出来执行
 
 			//全部结算完成,发个通知
 			s.SM.SendActionById(s.SM.Id2, BattleDto.NewAction(BattleDto.CardCalc, BattleDto.Finish, ""))

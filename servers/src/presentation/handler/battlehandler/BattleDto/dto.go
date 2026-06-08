@@ -35,6 +35,7 @@ const (
 	ActiveChildCard
 	GetWeather
 	CatchChild
+	GetUserId
 )
 
 var ActionName = map[ActionCode]string{

@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	"pcc_card/application/entity/protocol"
 	"pcc_card/application/service"
 	"pcc_card/application/service/UserService"
 	"pcc_card/application/service/battleservice"
@@ -34,6 +35,7 @@ func main() {
 	route.Init()
 	User_repo, user_service := user(DB, RD)
 	Battle(DB, RD, User_repo, user_service)
+	protocol.InitWeatherFuncMap()
 	route.Run()
 
 }

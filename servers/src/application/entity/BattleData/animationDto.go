@@ -11,15 +11,40 @@ const (
 )
 
 type AnimationDto struct {
-	TempId            int               `json:"temp_id" mapstructure:"temp_id"`
+	Caller            int               `json:"caller" mapstructure:"caller"`
+	Acceptor          int               `json:"acceptor" mapstructure:"acceptor"`
 	AnimationBehavior AnimationBehavior `json:"animation_behavior" mapstructure:"animation_behavior"`
-	BtCardInfo        BtCardInfo        `json:"bt_card_info" mapstructure:"bt_card_info"`
+	DataAll           DataAll           `json:"data_all" mapstructure:"data_all"`
 }
 
-func NewAnimationDto(tempId int, AnimationBehavior AnimationBehavior, info BtCardInfo) AnimationDto {
-	result := AnimationDto{}
-	result.TempId = tempId
-	result.AnimationBehavior = AnimationBehavior
-	result.BtCardInfo = info
-	return result
+type DataAll struct {
+	BtCardInfo    BtCardInfo     `json:"bt_card_info" mapstructure:"bt_card_info"`
+	CardInHand    CardInHand     `json:"card_in_hand" mapstructure:"card_in_hand"`
+	Energy        int            `json:"energy" mapstructure:"energy"`
+	DiscardPool   []CardDto      `json:"discard_pool" mapstructure:"discard_pool"`
+	ChildCardPool []ChildCardDto `json:"child_child_pool" mapstructure:"child_child_pool"`
+}
+
+func NewAnimationDto(
+	callerId int,
+	acceptorId int,
+	behavior AnimationBehavior,
+	info BtCardInfo,
+	cardInHand CardInHand,
+	energy int,
+	discardPool []CardDto,
+	childCardPool []ChildCardDto,
+) AnimationDto {
+	return AnimationDto{
+		Caller:            callerId,
+		Acceptor:          acceptorId,
+		AnimationBehavior: behavior,
+		DataAll: DataAll{
+			BtCardInfo:    info,
+			CardInHand:    cardInHand,
+			Energy:        energy,
+			DiscardPool:   discardPool,
+			ChildCardPool: childCardPool,
+		},
+	}
 }
