@@ -43,6 +43,12 @@ func (s *StateMachine) RegisterState() {
 	}
 }
 func (s *StateMachine) SharedProcess(id int, action BattleDto.Action, ResponseChan chan<- BattleDto.Action) bool {
+	if action.ActionCode == BattleDto.GetWeather && action.Predicates == BattleDto.Query {
+		res := BattleData.Weather(s.c.Weather.Load())
+		ResponseChan <- BattleDto.NewAction(BattleDto.GetWeather, BattleDto.Result, res)
+		return true
+	}
+
 	if action.ActionCode == BattleDto.GetEnergy && action.Predicates == BattleDto.Query {
 		res := make(map[string]int)
 		res["self"] = s.c.PlayerDataMap[id].GetEnergy()
@@ -680,7 +686,7 @@ type SelectWeatherDto struct {
 
 // Change !!天气变化主函数
 func (s *SelectWeather) Change(w BattleData.Weather) {
-
+	s.c.Weather.Store(int64(w))
 }
 
 // ToSelect 随机出3个天气,加上宁静
@@ -721,6 +727,7 @@ func (s *SelectWeather) timeEnding() {
 	s.SM.SendActionById(s.SM.Id1, BattleDto.NewAction(BattleDto.SelectWeather, BattleDto.Succeed, SelectWeatherDto{Weather: BattleData.Weather(res)}))
 	s.SM.SendActionById(s.SM.Id2, BattleDto.NewAction(BattleDto.SelectWeather, BattleDto.Succeed, SelectWeatherDto{Weather: BattleData.Weather(res)}))
 	go s.SM.finish("SelectSkillCard")
+
 }
 
 func (s *SelectWeather) enter() {
@@ -1190,11 +1197,14 @@ func (s *CardCalc) CalcNotSwitch(data BattleData.CombatDto, UserId int) {
 func (s *CardCalc) SkillCalc() {
 	if s.c.PlayerDataMap[s.SM.Winner].SkillCardBT != nil {
 		s.c.PlayerDataMap[s.SM.Winner].SkillCardBT.(CardAbstract.SkillCard).PlayMagic() //触发法术，然后，在法术这个函数里面，用和ctx的协议，把通知前端的action传出来
-		s.c.StackSettle()                                                               //执行效果堆栈
+		s.c.StackSettle()
+		s.c.ChildCardCheck()
 	}
+
 	if s.c.PlayerDataMap[s.SM.Loser].SkillCardBT != nil {
 		s.c.PlayerDataMap[s.SM.Loser].SkillCardBT.(CardAbstract.SkillCard).PlayMagic()
 		s.c.StackSettle() //执行效果堆栈
+		s.c.ChildCardCheck()
 	}
 }
 
@@ -1225,7 +1235,9 @@ CalcLoop:
 				}
 			}
 			SwitchCard("Winner", s.SM.Winner, SwitchCardMap)
+			s.c.ChildCardCheck()
 			SwitchCard("Loser", s.SM.Loser, SwitchCardMap)
+			s.c.ChildCardCheck()
 			//----执行换牌----
 
 			//通知换牌结算完成
@@ -1244,9 +1256,11 @@ CalcLoop:
 				}
 			}
 			Calc("Winner", s.SM.Winner)
+			s.c.ChildCardCheck()
 			Calc("Loser", s.SM.Loser)
+			s.c.ChildCardCheck()
 
-			//结算法术
+			//结算法术(s.c.ChildCardCheck()在里面了)
 			s.SkillCalc()
 
 			//全部结算完成,发个通知

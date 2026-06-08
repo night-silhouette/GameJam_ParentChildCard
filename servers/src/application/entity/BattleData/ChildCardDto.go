@@ -2,7 +2,7 @@ package BattleData
 
 type ChildCardDto struct {
 	CardDto
-	ChildState ChildState `json:"child_state"`
+	ChildState ChildState `json:"child_state" mapstructure:"child_state"`
 }
 
 func NewChildCardDto(dto CardDto, ChildState ChildState) *ChildCardDto {

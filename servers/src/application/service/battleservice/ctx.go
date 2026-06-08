@@ -28,6 +28,7 @@ type Ctx struct {
 	DisCardPool    *Util.SafeContainer[CardAbstract.Card]
 	TempIdCalc     *atomic.Int32 //计算tempid
 
+	Weather             atomic.Int64
 	ChildList           *Util.SafeContainer[CardAbstract.Card]
 	NeedInterrupt       atomic.Bool
 	InterruptChan       chan struct{}
@@ -66,6 +67,7 @@ func NewCtx(idA int, idB int, CardPool *[]CardAbstract.Card, ParentContext conte
 	return c
 }
 
+// 把手牌里的和野生的标定数组里被激活的加起来
 func (c *Ctx) GetNeedCheckChildCard() []CardAbstract.ChildCard {
 	res := make([]CardAbstract.ChildCard, 0)
 	c.ChildList.Do(func(data *[]CardAbstract.Card) {
@@ -88,8 +90,51 @@ func (c *Ctx) GetNeedCheckChildCard() []CardAbstract.ChildCard {
 	return res
 }
 
-func (c *Ctx) ChildCardCheck() bool {
-	return false
+// 聚合了,卡到手牌的过程,和通知前端
+func (c *Ctx) ChildCatch(card CardAbstract.ChildCard, UserId int) {
+	OpponentId := c.GetOpponentId(UserId)
+	playerData := c.PlayerDataMap[UserId]
+	OpPlayerData := c.PlayerDataMap[OpponentId]
+	playerData.dataMutex.Lock()
+	defer playerData.dataMutex.Unlock()
+	OpPlayerData.dataMutex.Lock()
+	defer OpPlayerData.dataMutex.Unlock()
+
+	Notify := func(Origin int) {
+		Dto := BattleData.ChildCardCatchDto{ //通知
+			Origin: Origin,
+			Object: UserId,
+		}
+		c.StateMachine.SendActionById(UserId, BattleDto.NewAction(BattleDto.CatchChild, BattleDto.Result, Dto))
+		c.StateMachine.SendActionById(OpponentId, BattleDto.NewAction(BattleDto.CatchChild, BattleDto.Result, Dto))
+	}
+	if card.GetInfo()["ChildState"] == BattleData.Active {
+		playerData.CardInHand[card.GetTempId()] = card     //底层数据改牌
+		card.GetInfo()["ChildState"] = BattleData.HasCatch //改状态
+		Notify(-1)
+		return
+
+	} else if card.GetInfo()["ChildState"] == BattleData.HasCatch {
+		delete(OpPlayerData.CardInHand, card.GetTempId())
+		playerData.CardInHand[card.GetTempId()] = card
+		Notify(OpponentId)
+		return
+	}
+
+}
+
+// 循环需要检查的数组,然后触发
+func (c *Ctx) ChildCardCheck() {
+	NeedCheckChildCard := c.GetNeedCheckChildCard()
+	for _, card := range NeedCheckChildCard {
+		cFunc := card.Check(c)
+		flag, UserId := cFunc.Exec(c)
+		if flag {
+			c.ChildCatch(card, UserId)
+			card.Trigger(c, UserId)
+			c.StackSettle()
+		}
+	}
 }
 
 //__________________________________________EffectsStack______________________________________________
@@ -400,7 +445,7 @@ func (c *Ctx) ProtoColInterrupt(UserId int, InterruptDto *BattleData.InterruptDt
 	var DataIsOK atomic.Bool
 	DataIsOK.Store(false)
 
-	TimeEnding := func() {    //结束回调
+	TimeEnding := func() { //结束回调
 		if !DataIsOK.Load() { //随机取
 			dataMutex.Lock()
 			data.TempIdList = Util.GetRandomElements(InterruptDto.TempIdList, InterruptDto.SelectNum)
