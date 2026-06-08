@@ -72,7 +72,6 @@ type DisCard struct {
 func (D *DisCard) Execute(pc ProtocolCardWithCtx) {
 	for _, tempId := range *D.TempIdList {
 		pc.ProtoColMoveDisCardPool(D.UserId, tempId)
-		pc.Notify(BattleData.NewAnimationDto(tempId, BattleData.AnDisCard, pc.GetBtCardInfo(D.UserId)), D.UserId)
 
 	}
 }

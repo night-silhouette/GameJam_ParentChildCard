@@ -14,13 +14,13 @@ type CharacterBaseCard struct {
 }
 
 func (c CharacterBaseCard) Attack(TargetId int) {
-	c.Notify(BattleData.AnAttack, -1)
+	c.Notify(BattleData.AnAttack, -1, c.GetTempId(), TargetId)
 
 	c.EffectAttack(TargetId, c.AtkNow)
 }
 
 func (c CharacterBaseCard) Hurt(AttackId int, HurtHp float64) {
-	c.Notify(BattleData.AnHurt, -1)
+	c.Notify(BattleData.AnHurt, -1, AttackId, c.GetTempId())
 	c.EffectHurt(AttackId, HurtHp)
 }
 
@@ -29,7 +29,7 @@ func (c CharacterBaseCard) Skill(TargetId int) {
 }
 
 func (c CharacterBaseCard) Death(AttackId int) {
-	c.Notify(BattleData.AnDeath, -1)
+	c.Notify(BattleData.AnDeath, -1, AttackId, c.GetTempId())
 	SelectCharacterCard := make([]int, 0)
 	c.SetCardBt(&SelectCharacterCard)
 	c.DisCard(&[]int{c.GetTempId()}) //反向压入
@@ -51,8 +51,8 @@ func (c CharacterBaseCard) EffectAttack(targetTempId int, AtkHp float64) {
 func (c CharacterBaseCard) EffectHurt(AttackId int, AtkHp float64) {
 	c.BtCtx.ProtoColPush(protocol.NewHurt(c.OwnerId, AttackId, c.TempId, AtkHp))
 }
-func (c CharacterBaseCard) Notify(Beh BattleData.AnimationBehavior, UserID int) {
-	c.BtCtx.Notify(BattleData.NewAnimationDto(c.TempId, Beh, c.BtCtx.GetBtCardInfo(c.OwnerId)), UserID)
+func (c CharacterBaseCard) Notify(Beh BattleData.AnimationBehavior, UserID int, CallerId int, AcceptorId int) { //都是tempid
+	c.BtCtx.Notify(BattleData.NewAnimationDto(CallerId, AcceptorId, Beh), UserID)
 }
 func (c CharacterBaseCard) Interrupt(res *[]int, time time.Duration, TempIdList []int, SelectNum int) { //res一定要塞到effect函数里处理
 	resChan := make(chan []int)
