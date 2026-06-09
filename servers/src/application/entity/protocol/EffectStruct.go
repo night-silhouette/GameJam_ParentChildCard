@@ -36,6 +36,7 @@ type Hurt struct {
 
 func (A *Hurt) Execute(pc ProtocolCardWithCtx) {
 	pc.ProtoColReduceCardBtHp(A.SendTempId, A.UserId, A.TargetTempId, A.AtkValue)
+	pc.ProtoNotifyValue()
 }
 
 func NewHurt(UserId int, SendTempId int, TargetTempId int, AtkValue float64) *Hurt {
@@ -72,7 +73,7 @@ type DisCard struct {
 func (D *DisCard) Execute(pc ProtocolCardWithCtx) {
 	for _, tempId := range *D.TempIdList {
 		pc.ProtoColMoveDisCardPool(D.UserId, tempId)
-
+		pc.ProtoNotifyCardMove()
 	}
 }
 

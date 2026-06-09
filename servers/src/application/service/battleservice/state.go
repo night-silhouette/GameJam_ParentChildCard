@@ -1142,7 +1142,8 @@ func (s *CardCalc) SpecialInit() {
 }
 
 func (s *CardCalc) enter() {
-
+	s.SM.SendActionById(s.SM.Id2, BattleDto.NewAction(BattleDto.CardCalc, BattleDto.Notify, ""))
+	s.SM.SendActionById(s.SM.Id1, BattleDto.NewAction(BattleDto.CardCalc, BattleDto.Notify, ""))
 }
 
 func (s *CardCalc) CalcBtCry() { //光环的效果

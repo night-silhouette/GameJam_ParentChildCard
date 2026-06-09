@@ -26,7 +26,7 @@ const (
 	Combat
 	CardCalc
 	Debug
-	Interrupt
+	Interrupt //-----------------------------------
 	GetDisCard
 	SkillCardCalc
 	GetEnergy
@@ -34,8 +34,11 @@ const (
 	GetChildCardList
 	ActiveChildCard
 	GetWeather
-	CatchChild
+	CatchChild //-----------------------------------
 	GetUserId
+	CardMove        //-----------------------------------
+	AnimationNotify //-----------------------------------
+	ValueNotify     //-----------------------------------
 )
 
 var ActionName = map[ActionCode]string{
@@ -46,7 +49,7 @@ var ActionName = map[ActionCode]string{
 	GetBtCardInfo:         "获取场上的战斗信息",
 	OverBattle:            "结束战斗",
 	StartBattle:           "开始战斗",
-	DeployCard:            "部署一张牌",
+	DeployCard:            "部署牌",
 	Judge:                 "战斗回合判断",
 	MatchSuccess:          "匹配成功",
 	AnimationPlayEnd:      "动画结束",
@@ -62,6 +65,9 @@ var ActionName = map[ActionCode]string{
 	ActiveChildCard:       "子牌激活选择",
 	GetWeather:            "获取天气",
 	CatchChild:            "捕获子牌",
+	CardMove:              "结算卡牌移动通知",
+	AnimationNotify:       "行为动画通知",
+	ValueNotify:           "数值变化通知",
 }
 
 type Predicates int

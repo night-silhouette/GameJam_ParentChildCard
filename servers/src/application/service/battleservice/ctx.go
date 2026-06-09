@@ -426,11 +426,11 @@ func (c *Ctx) ProtoColSetCardBt(UserId int, TempId int) {
 // Notify 传-1，表全部
 func (c *Ctx) Notify(AnimationDto BattleData.AnimationDto, UserId int) {
 	if UserId == -1 {
-		c.StateMachine.SendActionById(c.StateMachine.Id2, BattleDto.NewAction(BattleDto.CardCalc, BattleDto.Notify, AnimationDto))
-		c.StateMachine.SendActionById(c.StateMachine.Id1, BattleDto.NewAction(BattleDto.CardCalc, BattleDto.Notify, AnimationDto))
+		c.StateMachine.SendActionById(c.StateMachine.Id2, BattleDto.NewAction(BattleDto.AnimationNotify, BattleDto.Notify, AnimationDto))
+		c.StateMachine.SendActionById(c.StateMachine.Id1, BattleDto.NewAction(BattleDto.AnimationNotify, BattleDto.Notify, AnimationDto))
 		return
 	} else {
-		c.StateMachine.SendActionById(UserId, BattleDto.NewAction(BattleDto.CardCalc, BattleDto.Notify, AnimationDto))
+		c.StateMachine.SendActionById(UserId, BattleDto.NewAction(BattleDto.AnimationNotify, BattleDto.Notify, AnimationDto))
 		return
 	}
 
@@ -550,6 +550,16 @@ func (c *Ctx) ProtoColSetDamageCardBt(UserId int, TargetTempId int, NewDamage fl
 		NewDamage = 0
 	}
 	card.SetAtkNow(NewDamage)
+}
+
+func (c *Ctx) ProtoNotifyValue() {
+	c.StateMachine.SendActionById(c.StateMachine.Id1, BattleDto.NewAction(BattleDto.ValueNotify, BattleDto.Result, c.GetDataAll(c.StateMachine.Id1)))
+	c.StateMachine.SendActionById(c.StateMachine.Id2, BattleDto.NewAction(BattleDto.ValueNotify, BattleDto.Result, c.GetDataAll(c.StateMachine.Id2)))
+}
+
+func (c *Ctx) ProtoNotifyCardMove() {
+	c.StateMachine.SendActionById(c.StateMachine.Id1, BattleDto.NewAction(BattleDto.CardMove, BattleDto.Result, c.GetDataAll(c.StateMachine.Id1)))
+	c.StateMachine.SendActionById(c.StateMachine.Id2, BattleDto.NewAction(BattleDto.CardMove, BattleDto.Result, c.GetDataAll(c.StateMachine.Id2)))
 }
 
 //endregion
@@ -815,6 +825,22 @@ func (c *Ctx) GetChildCardDto() []*BattleData.ChildCardDto {
 		}
 	})
 	return result
+}
+
+func (c *Ctx) GetDataAll(UseId int) *BattleData.DataAll {
+	EnergyDto := BattleData.EnergyDto{
+		Self:     c.PlayerDataMap[UseId].GetEnergy(),
+		Opponent: c.PlayerDataMap[c.GetOpponentId(UseId)].GetEnergy(),
+	}
+	BtInfo := c.GetBtCardInfo(UseId)
+	res := BattleData.NewDataAll(
+		&BtInfo,
+		c.GetCardInHard(UseId),
+		&EnergyDto,
+		c.GetDisCardDto(),
+		c.GetChildCardDto(),
+	)
+	return res
 }
 
 //endregion
