@@ -23,6 +23,8 @@ type ProtocolCardWithCtx interface {
 	ProtoColMoveDisCardPool(UserId int, TempId int)
 	GetBtCardInfo(id int) BattleData.BtCardInfo
 	ProtoColCancelInterrupt()
-	ProtoNotifyValue()
+	ProtoNotifyValue() //数值通知(发一个dataAll)
 	ProtoNotifyCardMove()
+	ProtoColUpdateEnergy(UserId int, offset int)
+	ProtoColCanUpdateEnergy(UserId int, offset int) bool
 }

@@ -445,7 +445,7 @@ func (c *Ctx) ProtoColInterrupt(UserId int, InterruptDto *BattleData.InterruptDt
 	var DataIsOK atomic.Bool
 	DataIsOK.Store(false)
 
-	TimeEnding := func() { //结束回调
+	TimeEnding := func() {    //结束回调
 		if !DataIsOK.Load() { //随机取
 			dataMutex.Lock()
 			data.TempIdList = Util.GetRandomElements(InterruptDto.TempIdList, InterruptDto.SelectNum)
@@ -481,6 +481,11 @@ func (c *Ctx) ProtoColInterrupt(UserId int, InterruptDto *BattleData.InterruptDt
 		}
 		return false
 	})
+}
+
+func (c *Ctx) ProtoColUpdateEnergy(UserId int, offset int) {
+	playerData := c.PlayerDataMap[UserId]
+	playerData.UpdateEnergy(offset)
 }
 
 func (c *Ctx) ProtoColCardBtAttack(SendTempId int, UserId int, TargetTempId int, AtkHp float64) {
@@ -537,6 +542,11 @@ func (c *Ctx) ProtoColHealCardBt(UserId int, TargetTempId int, HealHp float64) {
 
 func (c *Ctx) ProtoColGetCharacterCard(UserId int) []int {
 	return c.GetCharacterCardinCardInHand(UserId)
+}
+
+func (c *Ctx) ProtoColCanUpdateEnergy(UserId int, offset int) bool {
+	playData := c.PlayerDataMap[UserId]
+	return playData.isCanUpdateEnergy(offset)
 }
 
 func (c *Ctx) ProtoColSetDamageCardBt(UserId int, TargetTempId int, NewDamage float64) {

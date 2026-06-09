@@ -13,48 +13,69 @@ type CharacterBaseCard struct {
 	Card CardAbstract.Card
 }
 
-func (c CharacterBaseCard) Attack(TargetId int) {
+func (c *CharacterBaseCard) Attack(TargetId int) {
+	offset := int(c.GetInfo()["skillCharge"].(float64))
+	if !c.BtCtx.ProtoColCanUpdateEnergy(c.OwnerId, -offset) {
+		return
+	}
+
 	c.Notify(BattleData.AnAttack, -1, c.GetTempId(), TargetId)
 
 	c.EffectAttack(TargetId, c.AtkNow)
+	c.EffectUpdateEnergy(-offset)
 }
 
-func (c CharacterBaseCard) Hurt(AttackId int, HurtHp float64) {
+func (c *CharacterBaseCard) Hurt(AttackId int, HurtHp float64) {
 	c.Notify(BattleData.AnHurt, -1, AttackId, c.GetTempId())
 	c.EffectHurt(AttackId, HurtHp)
 }
 
-func (c CharacterBaseCard) Skill(TargetId int) {
-
+func (c *CharacterBaseCard) Skill(TargetId int) {
+	offset := int(c.GetInfo()["skillCharge"].(float64))
+	if !c.BtCtx.ProtoColCanUpdateEnergy(c.OwnerId, -offset) {
+		return
+	}
+	c.Notify(BattleData.AnHurt, -1, c.GetTempId(), TargetId)
+	c.EffectUpdateEnergy(-offset)
 }
 
-func (c CharacterBaseCard) Death(AttackId int) {
+func (c *CharacterBaseCard) Death(AttackId int) {
 	c.Notify(BattleData.AnDeath, -1, AttackId, c.GetTempId())
 	SelectCharacterCard := make([]int, 0)
 	c.SetCardBt(&SelectCharacterCard)
 	c.DisCard(&[]int{c.GetTempId()}) //反向压入
 	c.Interrupt(&SelectCharacterCard, global.SelectCharacterTime*time.Second, c.BtCtx.ProtoColGetCharacterCard(c.OwnerId), 1)
 }
-func (c CharacterBaseCard) BtCry() {
+func (c *CharacterBaseCard) BtCry() {
 
 }
-func (c CharacterBaseCard) RoundEnd() {
+func (c *CharacterBaseCard) RoundEnd() {
 
 }
 
 //todo
 //---------二次分装---------
 
-func (c CharacterBaseCard) EffectAttack(targetTempId int, AtkHp float64) {
+func (c *CharacterBaseCard) EffectAttack(targetTempId int, AtkHp float64) {
 	c.BtCtx.ProtoColPush(protocol.NewAttack(c.OwnerId, c.TempId, targetTempId, AtkHp))
 }
-func (c CharacterBaseCard) EffectHurt(AttackId int, AtkHp float64) {
+func (c *CharacterBaseCard) EffectHurt(AttackId int, AtkHp float64) {
 	c.BtCtx.ProtoColPush(protocol.NewHurt(c.OwnerId, AttackId, c.TempId, AtkHp))
 }
-func (c CharacterBaseCard) Notify(Beh BattleData.AnimationBehavior, UserID int, CallerId int, AcceptorId int) { //都是tempid
+
+func (c *CharacterBaseCard) EffectHeal(targetTempId int, HealHp float64) {
+	c.BtCtx.ProtoColPush(protocol.NewHeal(c.OwnerId, &targetTempId, HealHp))
+}
+
+func (c *CharacterBaseCard) EffectUpdateEnergy(offset int) {
+	c.BtCtx.ProtoColPush(protocol.NewUpdateEnergy(c.OwnerId, offset))
+}
+
+// 通知标明行为发起者和受到者
+func (c *CharacterBaseCard) Notify(Beh BattleData.AnimationBehavior, UserID int, CallerId int, AcceptorId int) { //都是tempid
 	c.BtCtx.Notify(BattleData.NewAnimationDto(CallerId, AcceptorId, Beh), UserID)
 }
-func (c CharacterBaseCard) Interrupt(res *[]int, time time.Duration, TempIdList []int, SelectNum int) { //res一定要塞到effect函数里处理
+func (c *CharacterBaseCard) Interrupt(res *[]int, time time.Duration, TempIdList []int, SelectNum int) { //res一定要塞到effect函数里处理
 	resChan := make(chan []int)
 	c.BtCtx.ProtoColPush(&protocol.Interrupt{
 		UserId:     c.OwnerId,
@@ -70,14 +91,14 @@ func (c CharacterBaseCard) Interrupt(res *[]int, time time.Duration, TempIdList 
 	}()
 }
 
-func (c CharacterBaseCard) DisCard(TempIdList *[]int) {
+func (c *CharacterBaseCard) DisCard(TempIdList *[]int) {
 	c.BtCtx.ProtoColPush(protocol.NewDisCard(c.OwnerId, TempIdList))
 }
 
-func (c CharacterBaseCard) SetCardBt(TempIdList *[]int) {
+func (c *CharacterBaseCard) SetCardBt(TempIdList *[]int) {
 	c.BtCtx.ProtoColPush(protocol.NewSetCardBt(c.OwnerId, TempIdList))
 }
 
-func (c CharacterBaseCard) GiveBuff(TempId int, b protocol.Buff) {
+func (c *CharacterBaseCard) GiveBuff(TempId int, b protocol.Buff) {
 	c.BtCtx.ProtoColPush(protocol.NewGiveBuff(TempId, b, &c.BuffList))
 }
