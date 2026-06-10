@@ -2,37 +2,39 @@ package protocol
 
 import (
 	"pcc_card/application/entity/BattleData"
-	"pcc_card/application/entity/CardMeta"
+	"pcc_card/application/entity/Card/CardAbstract"
 )
 
 type BuffBase struct {
 	//几层
 	Stacks int
-	BuffId int
+	BuffId BuffId
+	Value  float64 //数值
 }
 
-type Giant struct {
-	BuffBase
-}
-
-func (b *Giant) GetBuffDto() BattleData.BuffDto {
+func (b *BuffBase) GetBuffDto() BattleData.BuffDto {
 	res := BattleData.BuffDto{}
-	res.BuffId = b.BuffId
+	res.BuffId = int(b.BuffId)
 	res.BuffStacks = b.Stacks
+	res.Value = b.Value
 	return res
 }
 
-func (b *Giant) BuffExecute(info *CardMeta.CardInfo, signalMap map[string]CardMeta.ControlSignal, dec *CardMeta.Decorator) {
-
+func NewBuffBase(buffId BuffId, buffStacks int, Value float64) *BuffBase {
+	return &BuffBase{
+		BuffId: buffId,
+		Stacks: buffStacks,
+		Value:  Value,
+	}
 }
 
-func (b *Giant) RoundEnd() {
-
+func (b *BuffBase) RoundEnd(pc ProtocolCardWithCtx) {
+	b.Stacks -= 1
+	BuffRoundEndFuncMap[b.BuffId](pc, b.Value)
 }
 
-func NewGiant(Stacks int) *Giant {
-	res := &Giant{}
-	res.Stacks = Stacks
-	res.BuffId = 0
-	return res
+func AddBuff(card CardAbstract.Card, buff Buff) {
+	dec := card.GetDec()
+	card.AppendBuff(buff)
+
 }

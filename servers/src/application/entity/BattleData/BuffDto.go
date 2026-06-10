@@ -1,6 +1,7 @@
 package BattleData
 
 type BuffDto struct {
-	BuffId     int `json:"buff_id" mapstructure:"buff_id"`
-	BuffStacks int `json:"buff_stacks" mapstructure:"buff_stacks"`
+	BuffId     int     `json:"buff_id" mapstructure:"buff_id"`
+	BuffStacks int     `json:"buff_stacks" mapstructure:"buff_stacks"`
+	Value      float64 `json:"value" mapstructure:"value"`
 }

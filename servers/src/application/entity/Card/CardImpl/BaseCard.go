@@ -82,8 +82,8 @@ func (c *BaseCard) ReInitialize() {
 	}
 }
 
-func (c *BaseCard) GetBuffList() []protocol.Buff {
-	return c.BuffList
+func (c *BaseCard) GetBuffList() *[]protocol.Buff {
+	return &c.BuffList
 }
 
 func (c *BaseCard) AppendBuff(b protocol.Buff) {

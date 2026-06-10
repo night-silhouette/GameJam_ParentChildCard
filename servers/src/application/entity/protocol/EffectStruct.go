@@ -2,6 +2,7 @@ package protocol
 
 import (
 	"pcc_card/application/entity/BattleData"
+	"pcc_card/application/entity/CardMeta"
 	"time"
 )
 
@@ -10,19 +11,23 @@ type Attack struct {
 	SendTempId   int
 	TargetTempId int
 	AtkValue     float64
+	Dec          *CardMeta.Decorator
 }
 
-func NewAttack(UserId int, SendTempId int, TargetTempId int, AtkValue float64) *Attack {
+func NewAttack(UserId int, SendTempId int, TargetTempId int, AtkValue float64, Dec *CardMeta.Decorator) *Attack {
 	res := Attack{}
 	res.UserId = UserId
 	res.SendTempId = SendTempId
 	res.TargetTempId = TargetTempId
 	res.AtkValue = AtkValue
+	res.Dec = Dec
 	return &res
 }
 
 func (A *Attack) Execute(pc ProtocolCardWithCtx) {
-	pc.ProtoColCardBtAttack(A.SendTempId, A.UserId, A.TargetTempId, A.AtkValue)
+	originValue := A.AtkValue
+	FinalAtkValue := A.Dec.CalcAttack(originValue)
+	pc.ProtoColCardBtAttack(A.SendTempId, A.UserId, A.TargetTempId, float64(FinalAtkValue))
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------
@@ -32,19 +37,23 @@ type Hurt struct {
 	SendTempId   int
 	TargetTempId int
 	AtkValue     float64
+	Dec          *CardMeta.Decorator
 }
 
 func (A *Hurt) Execute(pc ProtocolCardWithCtx) {
-	pc.ProtoColReduceCardBtHp(A.SendTempId, A.UserId, A.TargetTempId, A.AtkValue)
+
+	FinalAtkValue := A.Dec.CalcHurt(A.AtkValue)
+	pc.ProtoColReduceCardBtHp(A.SendTempId, A.UserId, A.TargetTempId, float64(FinalAtkValue))
 	pc.ProtoNotifyValue()
 }
 
-func NewHurt(UserId int, SendTempId int, TargetTempId int, AtkValue float64) *Hurt {
+func NewHurt(UserId int, SendTempId int, TargetTempId int, AtkValue float64, Dec *CardMeta.Decorator) *Hurt {
 	res := Hurt{}
 	res.UserId = UserId
 	res.SendTempId = SendTempId
 	res.TargetTempId = TargetTempId
 	res.AtkValue = AtkValue
+	res.Dec = Dec
 	return &res
 }
 
@@ -54,6 +63,7 @@ type Heal struct {
 	UserId       int
 	TargetTempId *int
 	HealValue    float64
+	Dec          *CardMeta.Decorator
 }
 
 func (H *Heal) Execute(pc ProtocolCardWithCtx) {
@@ -61,15 +71,18 @@ func (H *Heal) Execute(pc ProtocolCardWithCtx) {
 	if H.TargetTempId != nil {
 		target = *H.TargetTempId
 	}
-	pc.ProtoColHealCardBt(H.UserId, target, H.HealValue)
+	originValue := H.HealValue
+	FinalHeal := H.Dec.CalcHeal(originValue)
+	pc.ProtoColHealCardBt(H.UserId, target, float64(FinalHeal))
 	pc.ProtoNotifyValue()
 }
 
-func NewHeal(UserId int, TargetTempId *int, HealValue float64) *Heal {
+func NewHeal(UserId int, TargetTempId *int, HealValue float64, Dec *CardMeta.Decorator) *Heal {
 	res := Heal{}
 	res.UserId = UserId
 	res.TargetTempId = TargetTempId
 	res.HealValue = HealValue
+	res.Dec = Dec
 	return &res
 }
 

@@ -23,7 +23,7 @@ type Card interface {
 	SetAtkNow(atkNow float64)
 	SetBtCtx(btCtx protocol.ProtocolCardWithCtx)
 	ReInitialize()
-	GetBuffList() []protocol.Buff
+	GetBuffList() *[]protocol.Buff
 	AppendBuff(b protocol.Buff)
 	InitBuffList()
 	SetDec(Dec *CardMeta.Decorator)

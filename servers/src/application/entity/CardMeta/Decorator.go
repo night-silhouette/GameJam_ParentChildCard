@@ -1,22 +1,39 @@
 package CardMeta
 
 type Decorator struct {
-	Additive   float64
-	Multiplier float64
+	AttackSum  float64
+	AttackPord float64 //加算的
+	HurtSum    float64
+	HurtPord   float64 //(还收到多少伤害)
+	HealPord   float64 //
 }
 
-func (c *Decorator) Calc(Value float64) float64 {
-	return (Value + c.Additive) * c.Multiplier
+func (c *Decorator) CalcHeal(OriginValue float64) int {
+	return int(OriginValue * c.HealPord)
 }
 
-func (c *Decorator) Add(NewD Decorator) {
-	c.Additive = c.Additive + NewD.Additive
-	c.Multiplier = c.Multiplier * NewD.Multiplier
+func (c *Decorator) CalcAttack(OriginValue float64) int {
+	return int((OriginValue + c.AttackSum) * c.AttackPord)
+}
+
+func (c *Decorator) CalcHurt(AttackValue float64) int {
+	return int(AttackValue*c.HurtPord + c.HurtSum)
+}
+
+func (c *Decorator) AttackPordAdd(AttackPord float64) {
+	c.AttackPord += AttackPord
+}
+func (c *Decorator) HurtPordAdd(HurtPord float64) {
+	c.HurtPord *= 1 - HurtPord
 }
 
 func NewDecorator() *Decorator {
-	res := Decorator{}
-	res.Multiplier = 1.0
-	res.Additive = 1.0
+	res := Decorator{
+		AttackSum:  0,
+		AttackPord: 1,
+		HurtSum:    0,
+		HurtPord:   1,
+		HealPord:   1,
+	}
 	return &res
 }
