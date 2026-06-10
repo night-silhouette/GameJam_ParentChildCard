@@ -147,20 +147,18 @@ func NewSetCardBt(UserId int, TempIdList *[]int) *SetCardBt {
 //----------------------------------------------------
 
 type GiveBuff struct {
-	BuffListP *[]Buff
-	TempId    int
-	Buff      Buff
+	TempId *int
+	Buff   Buff
 }
 
 func (G *GiveBuff) Execute(pc ProtocolCardWithCtx) {
-	*G.BuffListP = append(*G.BuffListP, G.Buff)
+	pc.GiveBuff(*G.TempId, &G.Buff)
 }
 
-func NewGiveBuff(TempId int, Buff Buff, BuffListP *[]Buff) *GiveBuff {
+func NewGiveBuff(TempId *int, Buff Buff) *GiveBuff {
 	res := GiveBuff{}
 	res.TempId = TempId
 	res.Buff = Buff
-	res.BuffListP = BuffListP
 	return &res
 }
 

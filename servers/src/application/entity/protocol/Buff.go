@@ -1,14 +1,5 @@
 package protocol
 
-import (
-	"pcc_card/application/entity/BattleData"
-)
-
-type Buff interface {
-	GetBuffDto() BattleData.BuffDto
-	RoundEnd()
-}
-
 func InitBuff() {
 	InitBuffRoundEndFuncMap()
 	InitBuffOnRemoveFuncMap()

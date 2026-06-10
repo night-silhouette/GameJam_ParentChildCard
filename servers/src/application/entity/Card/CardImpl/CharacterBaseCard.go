@@ -35,7 +35,7 @@ func (c *CharacterBaseCard) Skill(TargetId int) {
 	if !c.BtCtx.ProtoColCanUpdateEnergy(c.OwnerId, -offset) {
 		return
 	}
-	c.Notify(BattleData.AnHurt, -1, c.GetTempId(), TargetId)
+	c.Notify(BattleData.AnSkill, -1, c.GetTempId(), TargetId)
 	c.EffectUpdateEnergy(-offset)
 }
 
@@ -99,6 +99,6 @@ func (c *CharacterBaseCard) SetCardBt(TempIdList *[]int) {
 	c.BtCtx.ProtoColPush(protocol.NewSetCardBt(c.OwnerId, TempIdList))
 }
 
-func (c *CharacterBaseCard) GiveBuff(TempId int, b protocol.Buff) {
-	c.BtCtx.ProtoColPush(protocol.NewGiveBuff(TempId, b, &c.BuffList))
+func (c *CharacterBaseCard) GiveBuff(TempId *int, b protocol.Buff) {
+	c.BtCtx.ProtoColPush(protocol.NewGiveBuff(TempId, b))
 }

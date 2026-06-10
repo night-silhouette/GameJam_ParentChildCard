@@ -9,7 +9,7 @@ type ProtocolCardWithCtx interface {
 	// Notify 传-1，表全部
 	Notify(AnimationDto BattleData.AnimationDto, UserId int)
 	ProtoColPush(e Effect)
-
+	GiveBuff(TempId int, buff *Buff)
 	// ProtoColGetCharacterCard 获取所有手中的角色牌
 	ProtoColGetCharacterCard(UserId int) []int
 	// ProtoColSetCardBt 上牌(要BT上没牌才可以上)

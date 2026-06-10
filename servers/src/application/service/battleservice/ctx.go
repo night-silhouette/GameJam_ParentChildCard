@@ -577,6 +577,11 @@ func (c *Ctx) ProtoNotifyCardMove() {
 //todo
 //region 对卡牌数据的操作算法
 
+func (c *Ctx) GiveBuff(TempId int, buff *protocol.Buff) {
+	card := c.FindCard(TempId)
+	card.AddBuff(buff, c)
+}
+
 // FindCard 这是一个总和方法,他会在两个人的手牌和出战斗牌里根据tempId找牌
 func (c *Ctx) FindCard(tempId int) CardAbstract.Card {
 	var card CardAbstract.Card
@@ -850,6 +855,38 @@ func (c *Ctx) GetDataAll(UseId int) *BattleData.DataAll {
 		c.GetDisCardDto(),
 		c.GetChildCardDto(),
 	)
+	return res
+}
+
+func (c *Ctx) GetCharacter() []CardAbstract.Card {
+
+	res := make([]CardAbstract.Card, 0)
+	
+	appendPlayer := func(p *PlayerData) {
+		if p == nil {
+			return
+		}
+		if p.ParentCardBT != nil {
+			res = append(res, p.ParentCardBT)
+		}
+		if p.ChildCardBT != nil {
+			res = append(res, p.ChildCardBT)
+		}
+	}
+	appendCardInHand := func(UserId int){
+		player := c.PlayerDataMap[UserId]
+		for _, card := range player.CardInHand {
+			if characterCard, ok := card.(CardAbstract.Character); ok {
+				res = append(res, characterCard)
+			}
+		}
+	}
+	
+
+	appendCardInHand(c.StateMachine.Id1)
+	appendCardInHand(c.StateMachine.Id2)
+	appendPlayer(c.PlayerDataMap[c.StateMachine.Id1])
+	appendPlayer(c.PlayerDataMap[c.StateMachine.Id2])
 	return res
 }
 

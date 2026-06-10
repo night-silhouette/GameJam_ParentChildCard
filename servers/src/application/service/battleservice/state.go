@@ -461,7 +461,6 @@ func (s *ShuffleDeal) RandomCard() bool {
 
 func (s *ShuffleDeal) exit() {
 	s.StateTemplate.exit()
-
 }
 
 //#endregion
@@ -1274,6 +1273,12 @@ CalcLoop:
 
 			//结算天气
 			protocol.WeatherFuncMap[protocol.Weather(s.c.Weather.Load())](s.c) //从天气执行函数map储存种取出来执行
+
+			//结算buff
+			CharacterCardList := s.c.GetCharacter()
+			for _, Card := range CharacterCardList {
+				Card.BuffRoundEnd(s.c)
+			}
 
 			//全部结算完成,发个通知
 			s.SM.SendActionById(s.SM.Id2, BattleDto.NewAction(BattleDto.CardCalc, BattleDto.Finish, ""))

@@ -16,7 +16,7 @@ type BaseCard struct {
 	AtkNow           float64
 	TempId           int
 	OwnerId          int
-	BuffList         []protocol.Buff
+	BuffList         []*protocol.Buff
 	Dec              *CardMeta.Decorator
 	ControlSignalMap map[string]CardMeta.ControlSignal
 }
@@ -82,15 +82,15 @@ func (c *BaseCard) ReInitialize() {
 	}
 }
 
-func (c *BaseCard) GetBuffList() *[]protocol.Buff {
+func (c *BaseCard) GetBuffList() *[]*protocol.Buff {
 	return &c.BuffList
 }
 
-func (c *BaseCard) AppendBuff(b protocol.Buff) {
+func (c *BaseCard) AppendBuff(b *protocol.Buff) {
 	c.BuffList = append(c.BuffList, b)
 }
 func (c *BaseCard) InitBuffList() {
-	c.BuffList = make([]protocol.Buff, 0, 8)
+	c.BuffList = make([]*protocol.Buff, 0, 8)
 }
 
 func (c *BaseCard) SetDec(Dec *CardMeta.Decorator) {
@@ -102,4 +102,30 @@ func (c *BaseCard) GetDec() *CardMeta.Decorator {
 }
 func (c *BaseCard) InitControlSignalMap() {
 	c.ControlSignalMap = make(map[string]CardMeta.ControlSignal)
+}
+
+func (c *BaseCard) AddBuff(buff *protocol.Buff, pc protocol.ProtocolCardWithCtx) {
+	c.AppendBuff(buff)
+	protocol.BuffOnApplyFuncMap[buff.BuffId](pc, buff.Value) //执行挂载函数
+}
+
+func (c *BaseCard) BuffRoundEnd(pc protocol.ProtocolCardWithCtx) {
+	for _, b := range c.BuffList { //循环结算当回合所有的buff
+		protocol.BuffRoundEndFuncMap[b.BuffId](pc, b.Value) //每回合执行回合结束函数
+		b.Stacks -= 1                                       //层数减一
+		if b.Stacks == 0 {
+			protocol.BuffOnRemoveFuncMap[b.BuffId](pc, b.Value)
+			var targetIdx int
+			for i, v := range c.BuffList {
+				if v.TempId == b.TempId {
+					targetIdx = i
+					break
+				}
+			}
+			// 循环结束后，如果找到了，再执行安全删除
+			if targetIdx != -1 {
+				c.BuffList = append(c.BuffList[:targetIdx], c.BuffList[targetIdx+1:]...)
+			}
+		} //buff结束了,执行buff结束函数
+	}
 }

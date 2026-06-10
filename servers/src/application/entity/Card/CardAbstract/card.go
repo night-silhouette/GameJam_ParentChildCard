@@ -23,12 +23,14 @@ type Card interface {
 	SetAtkNow(atkNow float64)
 	SetBtCtx(btCtx protocol.ProtocolCardWithCtx)
 	ReInitialize()
-	GetBuffList() *[]protocol.Buff
-	AppendBuff(b protocol.Buff)
+	GetBuffList() *[]*protocol.Buff
+	AppendBuff(b *protocol.Buff)
 	InitBuffList()
 	SetDec(Dec *CardMeta.Decorator)
 	GetDec() *CardMeta.Decorator
 	InitControlSignalMap()
+	AddBuff(buff *protocol.Buff, pc protocol.ProtocolCardWithCtx)
+	BuffRoundEnd(pc protocol.ProtocolCardWithCtx)
 }
 
 func GetCardDto(c Card) BattleData.CardDto {
@@ -38,7 +40,7 @@ func GetCardDto(c Card) BattleData.CardDto {
 	res.Hp = c.GetHpNow()
 	res.Damage = c.GetAtkNow()
 	BuffDtoList := make([]BattleData.BuffDto, 0, 8)
-	for _, buff := range c.GetBuffList() {
+	for _, buff := range *c.GetBuffList() {
 		BuffDtoList = append(BuffDtoList, buff.GetBuffDto())
 	}
 	res.BuffDtoList = BuffDtoList

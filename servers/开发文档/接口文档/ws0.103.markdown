@@ -1,9 +1,11 @@
 
 # 0.103版本号接口文档
 	更新日志:
-    1.增加了查看天气的公共接口,actionCode==GetWeather
+    1.增加了查看天气的公共接口,actionCode为GetWeather
     2.子牌获取的通知(cardcal阶段的),ChildCardCatchDto
     3.公共接口(GetUserId)双方的UserId,初始状态触发之后获取一次之后记录下来就好了
+    4.cardcalc大改
+    5.buffdto改了
 
 ## 一.action_code映射表
 |action_code|action_name|value|注解|
