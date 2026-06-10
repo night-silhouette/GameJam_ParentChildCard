@@ -1168,16 +1168,21 @@ func (s *CardCalc) Switch(_data BattleData.CombatDto, UserId int) bool {
 		cardTempId := data.CardTempId
 		if card, ok := s.c.PlayerDataMap[UserId].CardInHand[cardTempId]; ok { //手牌里有不有
 			if _, ok := card.(CardAbstract.SkillCard); !ok {
+
 				playerData := s.c.PlayerDataMap[UserId]
-				if !playerData.IsCanUpdateEnergy(-1) {
+				if !playerData.IsCanUpdateEnergy(-1) { //减少能量
 					s.SM.SendActionById(UserId, BattleDto.NewErrAction(global.BattleEnergyNotEnough))
 					return false
 				}
 				playerData.UpdateEnergy(-1)
 
+				//-----------------------换牌正文-----------------------
+
 				playerData.SwitchCard(data.Where, card)
 				s.SM.SendActionById(UserId, BattleDto.NewAction(BattleDto.DeployCard, BattleDto.Succeed, "换牌成功"))
 				return true
+				//-----------------------换牌正文-----------------------
+
 			} else {
 				s.SM.SendActionById(UserId, BattleDto.NewErrAction(global.BattleCardCategoryError))
 				return false

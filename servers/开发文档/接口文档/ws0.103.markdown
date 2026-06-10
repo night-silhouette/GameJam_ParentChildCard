@@ -6,6 +6,7 @@
     3.公共接口(GetUserId)双方的UserId,初始状态触发之后获取一次之后记录下来就好了
     4.cardcalc大改
     5.buffdto改了
+    6.where字段变过了
 
 ## 一.action_code映射表
 |action_code|action_name|value|注解|

@@ -12,22 +12,25 @@ type Attack struct {
 	TargetTempId int
 	AtkValue     float64
 	Dec          *CardMeta.Decorator
+	Category     BattleData.ValueChange
 }
 
-func NewAttack(UserId int, SendTempId int, TargetTempId int, AtkValue float64, Dec *CardMeta.Decorator) *Attack {
+func NewAttack(UserId int, SendTempId int, TargetTempId int, AtkValue float64, Dec *CardMeta.Decorator, category BattleData.ValueChange) *Attack {
 	res := Attack{}
 	res.UserId = UserId
 	res.SendTempId = SendTempId
 	res.TargetTempId = TargetTempId
 	res.AtkValue = AtkValue
 	res.Dec = Dec
+	res.Category = category
 	return &res
 }
 
 func (A *Attack) Execute(pc ProtocolCardWithCtx) {
 	originValue := A.AtkValue
 	FinalAtkValue := A.Dec.CalcAttack(originValue)
-	pc.ProtoColCardBtAttack(A.SendTempId, A.UserId, A.TargetTempId, float64(FinalAtkValue))
+	pc.ProtoColCardBtAttack(A.SendTempId, A.UserId, A.TargetTempId, float64(FinalAtkValue), A.Category)
+	pc.ProtoNotifyValue(A.Category, float64(FinalAtkValue), A.TargetTempId)
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------
@@ -38,22 +41,29 @@ type Hurt struct {
 	TargetTempId int
 	AtkValue     float64
 	Dec          *CardMeta.Decorator
+	Category     BattleData.ValueChange
 }
 
 func (A *Hurt) Execute(pc ProtocolCardWithCtx) {
+	var FinalAtkValue int
+	if A.Category == BattleData.Damage { //判断是否是真伤,是的话,就不走装饰器
+		FinalAtkValue = A.Dec.CalcHurt(A.AtkValue)
+	} else if A.Category == BattleData.TrueDamage {
+		FinalAtkValue = int(A.AtkValue)
+	}
 
-	FinalAtkValue := A.Dec.CalcHurt(A.AtkValue)
 	pc.ProtoColReduceCardBtHp(A.SendTempId, A.UserId, A.TargetTempId, float64(FinalAtkValue))
-	pc.ProtoNotifyValue()
+	pc.ProtoNotifyValue(A.Category, float64(FinalAtkValue), A.TargetTempId)
 }
 
-func NewHurt(UserId int, SendTempId int, TargetTempId int, AtkValue float64, Dec *CardMeta.Decorator) *Hurt {
+func NewHurt(UserId int, SendTempId int, TargetTempId int, AtkValue float64, Dec *CardMeta.Decorator, Category BattleData.ValueChange) *Hurt {
 	res := Hurt{}
 	res.UserId = UserId
 	res.SendTempId = SendTempId
 	res.TargetTempId = TargetTempId
 	res.AtkValue = AtkValue
 	res.Dec = Dec
+	res.Category = Category
 	return &res
 }
 
@@ -74,7 +84,7 @@ func (H *Heal) Execute(pc ProtocolCardWithCtx) {
 	originValue := H.HealValue
 	FinalHeal := H.Dec.CalcHeal(originValue)
 	pc.ProtoColHealCardBt(H.UserId, target, float64(FinalHeal))
-	pc.ProtoNotifyValue()
+	pc.ProtoNotifyValue(BattleData.Heal, H.HealValue, *H.TargetTempId)
 }
 
 func NewHeal(UserId int, TargetTempId *int, HealValue float64, Dec *CardMeta.Decorator) *Heal {
@@ -89,14 +99,18 @@ func NewHeal(UserId int, TargetTempId *int, HealValue float64, Dec *CardMeta.Dec
 //-----------------------------------------------------------------------------------------------------------------------------------------
 
 type Interrupt struct {
-	UserId     int
-	Time       time.Duration
-	TempIdList []int
-	SelectNum  int
-	Res        chan []int
+	UserId           int
+	Time             time.Duration
+	TempIdList       []int
+	SelectNum        int
+	Res              chan []int
+	CheckIsInterrupt *bool
 }
 
 func (I *Interrupt) Execute(pc ProtocolCardWithCtx) {
+	if !(*I.CheckIsInterrupt) {
+		return
+	}
 	dto := BattleData.NewInterruptDto(I.Time, I.TempIdList, I.SelectNum)
 	pc.ProtoColInterrupt(I.UserId, dto, I.Res, I.Time)
 }
@@ -104,43 +118,55 @@ func (I *Interrupt) Execute(pc ProtocolCardWithCtx) {
 //----------------------------------------------------
 
 type DisCard struct {
-	UserId     int
-	TempIdList *[]int
+	UserId      int
+	TempIdList  *[]int
+	IsInterrupt *bool
 }
 
 func (D *DisCard) Execute(pc ProtocolCardWithCtx) {
 	for _, tempId := range *D.TempIdList {
 		pc.ProtoColMoveDisCardPool(D.UserId, tempId)
-		pc.ProtoNotifyCardMove()
+		pc.ProtoNotifyCardMove(BattleData.DisCardPool, tempId)
+	}
+	if !pc.CheckCard(D.UserId) { //检查出没有出战的牌了
+
+		*D.IsInterrupt = true
+	} else {
+		*D.IsInterrupt = false
 	}
 }
 
-func NewDisCard(UserId int, TempIdList *[]int) *DisCard {
+func NewDisCard(UserId int, TempIdList *[]int, IsInterrupt *bool) *DisCard {
 	res := DisCard{}
 	res.UserId = UserId
 	res.TempIdList = TempIdList
+	res.IsInterrupt = IsInterrupt
 	return &res
 }
 
 //----------------------------------------------------
 
 type SetCardBt struct {
-	TempIdList *[]int
-	UserId     int
+	TempIdList       *[]int
+	UserId           int
+	CheckIsInterrupt *bool
 }
 
 func (S *SetCardBt) Execute(pc ProtocolCardWithCtx) {
+	if !(*S.CheckIsInterrupt) {
+		return
+	}
 	tempId := (*S.TempIdList)[0]
 	pc.ProtoColSetCardBt(S.UserId, tempId)
 
 }
 
 // NewSetCardBt 只上数组里的一张
-func NewSetCardBt(UserId int, TempIdList *[]int) *SetCardBt {
+func NewSetCardBt(UserId int, TempIdList *[]int, CheckIsInterrupt *bool) *SetCardBt {
 	res := SetCardBt{}
 	res.UserId = UserId
 	res.TempIdList = TempIdList
-
+	res.CheckIsInterrupt = CheckIsInterrupt
 	return &res
 }
 

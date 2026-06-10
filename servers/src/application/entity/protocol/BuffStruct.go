@@ -21,10 +21,11 @@ func (b *Buff) GetBuffDto() BattleData.BuffDto {
 	return res
 }
 
-func NewBuffBase(buffId BuffId, buffStacks int, Value float64, num int) *Buff {
+func NewBuffBase(buffId BuffId, buffStacks int, Value float64, TempId int) *Buff {
 	return &Buff{
 		BuffId: buffId,
 		Stacks: buffStacks,
 		Value:  Value,
+		TempId: TempId,
 	}
 }

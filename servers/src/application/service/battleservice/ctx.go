@@ -26,7 +26,7 @@ type Ctx struct {
 	CtxStateNotify *CtxStateNotify
 	CardPool       *[]CardAbstract.Card //和手牌数组里的是同一份对象，都是从总体复制出来的
 	DisCardPool    *Util.SafeContainer[CardAbstract.Card]
-	TempIdCalc     *atomic.Int32 //计算tempid
+	TempIdCalc     *atomic.Int32 //计算tempid//现在记录的值,是用过的值
 
 	Weather             atomic.Int64
 	ChildList           *Util.SafeContainer[CardAbstract.Card]
@@ -330,7 +330,7 @@ func (p *PlayerData) GetBt(where BattleData.Where) CardAbstract.Card {
 	}
 }
 
-// 没有做skillcard的鉴定
+// SwitchCard 没有做skillCard的鉴定//鉴定了原来的那个牌是不是空的,空的才会把他换下来
 func (p *PlayerData) SwitchCard(where BattleData.Where, card CardAbstract.Card) {
 	p.dataMutex.Lock()
 	defer p.dataMutex.Unlock()
@@ -343,7 +343,9 @@ func (p *PlayerData) SwitchCard(where BattleData.Where, card CardAbstract.Card) 
 		SwitchedCard = p.ParentCardBT
 		p.ParentCardBT = card
 	}
-	p.CardInHand[SwitchedCard.GetTempId()] = SwitchedCard
+	if SwitchedCard != nil {
+		p.CardInHand[SwitchedCard.GetTempId()] = SwitchedCard
+	}
 }
 
 func NewPlayerData(ID int, CardInHand map[int]CardAbstract.Card) *PlayerData {
@@ -407,8 +409,11 @@ func (c *Ctx) GetBtCardInfo(id int) BattleData.BtCardInfo {
 	return BtCardInfo
 }
 
-//todo
-//region protocol
+// todo
+// region protocol
+func (c *Ctx) CreateTempId() int {
+	return int(c.TempIdCalc.Add(1))
+}
 
 func (c *Ctx) ProtoColPush(e protocol.Effect) {
 	c.EffectsStack.Push(e)
@@ -488,7 +493,7 @@ func (c *Ctx) ProtoColUpdateEnergy(UserId int, offset int) {
 	playerData.UpdateEnergy(offset)
 }
 
-func (c *Ctx) ProtoColCardBtAttack(SendTempId int, UserId int, TargetTempId int, AtkHp float64) {
+func (c *Ctx) ProtoColCardBtAttack(SendTempId int, UserId int, TargetTempId int, AtkHp float64, Category BattleData.ValueChange) {
 	var card CardAbstract.Character
 	var ok bool
 
@@ -496,7 +501,7 @@ func (c *Ctx) ProtoColCardBtAttack(SendTempId int, UserId int, TargetTempId int,
 		fmt.Println("转化失败bug")
 		return
 	}
-	card.Hurt(SendTempId, AtkHp)
+	card.Hurt(SendTempId, AtkHp, Category)
 }
 
 func (c *Ctx) ProtoColCancelInterrupt() {
@@ -562,14 +567,32 @@ func (c *Ctx) ProtoColSetDamageCardBt(UserId int, TargetTempId int, NewDamage fl
 	card.SetAtkNow(NewDamage)
 }
 
-func (c *Ctx) ProtoNotifyValue() {
-	c.StateMachine.SendActionById(c.StateMachine.Id1, BattleDto.NewAction(BattleDto.ValueNotify, BattleDto.Result, c.GetDataAll(c.StateMachine.Id1)))
-	c.StateMachine.SendActionById(c.StateMachine.Id2, BattleDto.NewAction(BattleDto.ValueNotify, BattleDto.Result, c.GetDataAll(c.StateMachine.Id2)))
+func (c *Ctx) ProtoNotifyValue(Category BattleData.ValueChange, Value float64, TempId int) {
+	c.StateMachine.SendActionById(c.StateMachine.Id1, BattleDto.NewAction(BattleDto.ValueNotify, BattleDto.Result, BattleData.CardCalcValueDto{
+		TempId:   TempId,
+		Category: Category,
+		Value:    Value,
+		DataAll:  c.GetDataAll(c.StateMachine.Id1),
+	}))
+	c.StateMachine.SendActionById(c.StateMachine.Id2, BattleDto.NewAction(BattleDto.ValueNotify, BattleDto.Result, BattleData.CardCalcValueDto{
+		TempId:   TempId,
+		Category: Category,
+		Value:    Value,
+		DataAll:  c.GetDataAll(c.StateMachine.Id2),
+	}))
 }
 
-func (c *Ctx) ProtoNotifyCardMove() {
-	c.StateMachine.SendActionById(c.StateMachine.Id1, BattleDto.NewAction(BattleDto.CardMove, BattleDto.Result, c.GetDataAll(c.StateMachine.Id1)))
-	c.StateMachine.SendActionById(c.StateMachine.Id2, BattleDto.NewAction(BattleDto.CardMove, BattleDto.Result, c.GetDataAll(c.StateMachine.Id2)))
+func (c *Ctx) ProtoNotifyCardMove(Object BattleData.Where, TempId int) {
+	c.StateMachine.SendActionById(c.StateMachine.Id1, BattleDto.NewAction(BattleDto.CardMove, BattleDto.Result, BattleData.CardCalcCardMoveDto{
+		Object:  Object,
+		TempId:  TempId,
+		DataAll: c.GetDataAll(c.StateMachine.Id1),
+	}))
+	c.StateMachine.SendActionById(c.StateMachine.Id2, BattleDto.NewAction(BattleDto.CardMove, BattleDto.Result, BattleData.CardCalcCardMoveDto{
+		Object:  Object,
+		TempId:  TempId,
+		DataAll: c.GetDataAll(c.StateMachine.Id2),
+	}))
 }
 
 //endregion
@@ -861,7 +884,7 @@ func (c *Ctx) GetDataAll(UseId int) *BattleData.DataAll {
 func (c *Ctx) GetCharacter() []CardAbstract.Card {
 
 	res := make([]CardAbstract.Card, 0)
-	
+
 	appendPlayer := func(p *PlayerData) {
 		if p == nil {
 			return
@@ -873,7 +896,7 @@ func (c *Ctx) GetCharacter() []CardAbstract.Card {
 			res = append(res, p.ChildCardBT)
 		}
 	}
-	appendCardInHand := func(UserId int){
+	appendCardInHand := func(UserId int) {
 		player := c.PlayerDataMap[UserId]
 		for _, card := range player.CardInHand {
 			if characterCard, ok := card.(CardAbstract.Character); ok {
@@ -881,7 +904,6 @@ func (c *Ctx) GetCharacter() []CardAbstract.Card {
 			}
 		}
 	}
-	
 
 	appendCardInHand(c.StateMachine.Id1)
 	appendCardInHand(c.StateMachine.Id2)

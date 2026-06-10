@@ -21,13 +21,13 @@ func (c *CharacterBaseCard) Attack(TargetId int) {
 
 	c.Notify(BattleData.AnAttack, -1, c.GetTempId(), TargetId)
 
-	c.EffectAttack(TargetId, c.AtkNow)
+	c.EffectAttack(TargetId, c.AtkNow, BattleData.Damage)
 	c.EffectUpdateEnergy(-offset)
 }
 
-func (c *CharacterBaseCard) Hurt(AttackId int, HurtHp float64) {
+func (c *CharacterBaseCard) Hurt(AttackId int, HurtHp float64, category BattleData.ValueChange) {
 	c.Notify(BattleData.AnHurt, -1, AttackId, c.GetTempId())
-	c.EffectHurt(AttackId, HurtHp)
+	c.EffectHurt(AttackId, HurtHp, category)
 }
 
 func (c *CharacterBaseCard) Skill(TargetId int) {
@@ -40,12 +40,14 @@ func (c *CharacterBaseCard) Skill(TargetId int) {
 }
 
 func (c *CharacterBaseCard) Death(AttackId int) {
+	CheckIsInterrupt := true //声明这个指针bool,接受等待弃牌的结果,弃牌完,如果没有出战牌的话,就要中断,默认值随便搞的
 	c.Notify(BattleData.AnDeath, -1, AttackId, c.GetTempId())
 	SelectCharacterCard := make([]int, 0)
-	c.SetCardBt(&SelectCharacterCard)
-	c.DisCard(&[]int{c.GetTempId()}) //反向压入
-	c.Interrupt(&SelectCharacterCard, global.SelectCharacterTime*time.Second, c.BtCtx.ProtoColGetCharacterCard(c.OwnerId), 1)
+	c.SetCardBt(&SelectCharacterCard, &CheckIsInterrupt)
+	c.Interrupt(&SelectCharacterCard, global.SelectCharacterTime*time.Second, c.BtCtx.ProtoColGetCharacterCard(c.OwnerId), 1, &CheckIsInterrupt)
+	c.DisCard(&[]int{c.GetTempId()}, &CheckIsInterrupt) //反向压入
 }
+
 func (c *CharacterBaseCard) BtCry() {
 
 }
@@ -56,11 +58,11 @@ func (c *CharacterBaseCard) RoundEnd() {
 //todo
 //---------二次分装---------
 
-func (c *CharacterBaseCard) EffectAttack(targetTempId int, AtkHp float64) {
-	c.BtCtx.ProtoColPush(protocol.NewAttack(c.OwnerId, c.TempId, targetTempId, AtkHp, c.Dec))
+func (c *CharacterBaseCard) EffectAttack(targetTempId int, AtkHp float64, category BattleData.ValueChange) {
+	c.BtCtx.ProtoColPush(protocol.NewAttack(c.OwnerId, c.TempId, targetTempId, AtkHp, c.Dec, category))
 }
-func (c *CharacterBaseCard) EffectHurt(AttackId int, AtkHp float64) {
-	c.BtCtx.ProtoColPush(protocol.NewHurt(c.OwnerId, AttackId, c.TempId, AtkHp, c.Dec))
+func (c *CharacterBaseCard) EffectHurt(AttackId int, AtkHp float64, Category BattleData.ValueChange) {
+	c.BtCtx.ProtoColPush(protocol.NewHurt(c.OwnerId, AttackId, c.TempId, AtkHp, c.Dec, Category))
 }
 
 func (c *CharacterBaseCard) EffectHeal(targetTempId int, HealHp float64) {
@@ -75,14 +77,15 @@ func (c *CharacterBaseCard) EffectUpdateEnergy(offset int) {
 func (c *CharacterBaseCard) Notify(Beh BattleData.AnimationBehavior, UserID int, CallerId int, AcceptorId int) { //都是tempid
 	c.BtCtx.Notify(BattleData.NewAnimationDto(CallerId, AcceptorId, Beh), UserID)
 }
-func (c *CharacterBaseCard) Interrupt(res *[]int, time time.Duration, TempIdList []int, SelectNum int) { //res一定要塞到effect函数里处理
+func (c *CharacterBaseCard) Interrupt(res *[]int, time time.Duration, TempIdList []int, SelectNum int, CheckIsInterrupt *bool) { //res一定要塞到effect函数里处理
 	resChan := make(chan []int)
 	c.BtCtx.ProtoColPush(&protocol.Interrupt{
-		UserId:     c.OwnerId,
-		Time:       time,
-		TempIdList: TempIdList,
-		SelectNum:  SelectNum,
-		Res:        resChan,
+		UserId:           c.OwnerId,
+		Time:             time,
+		TempIdList:       TempIdList,
+		SelectNum:        SelectNum,
+		Res:              resChan,
+		CheckIsInterrupt: CheckIsInterrupt,
 	})
 	go func() {
 		val := <-resChan
@@ -91,12 +94,12 @@ func (c *CharacterBaseCard) Interrupt(res *[]int, time time.Duration, TempIdList
 	}()
 }
 
-func (c *CharacterBaseCard) DisCard(TempIdList *[]int) {
-	c.BtCtx.ProtoColPush(protocol.NewDisCard(c.OwnerId, TempIdList))
+func (c *CharacterBaseCard) DisCard(TempIdList *[]int, IsInterrupt *bool) {
+	c.BtCtx.ProtoColPush(protocol.NewDisCard(c.OwnerId, TempIdList, IsInterrupt))
 }
 
-func (c *CharacterBaseCard) SetCardBt(TempIdList *[]int) {
-	c.BtCtx.ProtoColPush(protocol.NewSetCardBt(c.OwnerId, TempIdList))
+func (c *CharacterBaseCard) SetCardBt(TempIdList *[]int, IsInterrupt *bool) {
+	c.BtCtx.ProtoColPush(protocol.NewSetCardBt(c.OwnerId, TempIdList, IsInterrupt))
 }
 
 func (c *CharacterBaseCard) GiveBuff(TempId *int, b protocol.Buff) {
