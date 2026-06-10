@@ -1,12 +1,58 @@
 extends Node
 
+@onready var button: TextureButton = $"转换"
+@onready var active_card: HBoxContainer = $active_child_card
+@onready var op_card: Control = $"卡牌显示/敌方牌库"
+@onready var weather_name_label: Label = $weather_name
+@onready var card_manager = $"数据层/card_manager"
 
-# Called when the node enters the scene tree for the first time.
+var _showing_active: bool = false
+
 func _ready() -> void:
 	SignalBus.request_get_self_cards_inhand.emit()
 	SignalBus.request_get_combat_cards.emit()
-	SignalBus.ws_disconnected.connect(_ws_disconnected)
+	
+	Global.fake_death(active_card)
+	
+	if card_manager:
+		card_manager.UI_date_update.connect(_update_active_child_display)
+		card_manager.weather_num_changed.connect(_on_weather_num_changed)
+
 
 func _ws_disconnected():
-	SignalBus.change_scence.emit("tomenu");	
-	SignalBus.change_ui.emit("tomenu");	
+	SignalBus.change_scence.emit("tomenu")
+	SignalBus.change_ui.emit("tomenu")
+
+
+func _on_转换_button_down() -> void:
+	if _showing_active:
+		Global.fake_death(active_card)
+		Global.revive(op_card)
+	else:
+		Global.fake_death(op_card)
+		Global.revive(active_card)
+	_showing_active = not _showing_active
+
+
+func _update_active_child_display() -> void:
+	if card_manager == null:
+		return
+	var active_cards = card_manager.get_cards_by_zone(Global.ZONE_CARD.CHILD_ACTIVE)
+	var children = active_card.get_children()
+	var index = 0
+	for child in children:
+		if not child.has_method("setup"):
+			continue
+		if index < active_cards.size():
+			child.setup(active_cards[index])
+			child.visible = true
+		else:
+			child.visible = false
+		index += 1
+
+
+func _on_weather_num_changed(weather_num: int) -> void:
+	if weather_name_label == null:
+		return
+	weather_name_label.text = Global.WEATHER_NAME.get(weather_num, "未知")
+	weather_name_label.visible = true

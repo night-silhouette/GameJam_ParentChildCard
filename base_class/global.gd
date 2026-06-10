@@ -36,11 +36,49 @@ const ZONE_CARD = {
 	CHILD_HAS_CATCH = 16,    # 子牌已被捕获
 	
 }
-const WEATHER = {
-	PEACE = 0,
-	SALD = 1,
-	RAIN = 2,
-	SUNNY = 3,
+## 天气枚举
+enum Weather {
+	NINGJING = 0,
+	SHABAO = 1,
+	GANMU = 2,
+	MINGYANG = 3,
+	MIWU = 4,
+	DASHU = 5,
+	ZHIPAO = 6,
+	SHUANGJIANG = 7,
+	WUTU = 8,
+	FENGDU = 9,
+	UNABLE_VIEW = 9999,
+}
+
+## 天气中文名字典
+const WEATHER_NAME = {
+	Weather.NINGJING: "宁静",
+	Weather.SHABAO: "沙暴",
+	Weather.GANMU: "甘霖",
+	Weather.MINGYANG: "明阳",
+	Weather.MIWU: "迷雾",
+	Weather.DASHU: "大暑",
+	Weather.ZHIPAO: "执悖",
+	Weather.SHUANGJIANG: "霜降",
+	Weather.WUTU: "戊土",
+	Weather.FENGDU: "酆都",
+	Weather.UNABLE_VIEW: "无法查看",
+}
+
+## 天气描述字典
+const WEATHER_DESC = {
+	Weather.NINGJING: "无",
+	Weather.SHABAO: "每回合结束，对所有上场的角色牌，造成一点真伤",
+	Weather.GANMU: "每回合结束，对所有上场的角色牌，造成一点回血",
+	Weather.MINGYANG: "每次回合判定结束之后，双方都获得1点行动点",
+	Weather.MIWU: "双方攻击有15%的概率miss",
+	Weather.DASHU: "双方每回合获得1层30%的治疗衰减",
+	Weather.ZHIPAO: "回合判定胜者，如果不攻击或者使用技能会受到2点伤害",
+	Weather.SHUANGJIANG: "每回合开始双方获得1层40%易伤",
+	Weather.WUTU: "每回合开始双方获得1层28%虚弱",
+	Weather.FENGDU: "战斗牌死亡时，会变成一只血量为1，伤害为1，没有技能的僵尸，僵尸死亡将不会再次变化",
+	Weather.UNABLE_VIEW: "无法查看对方手牌和能量",
 }
 ## 接口 1：让节点进入【假死】状态
 func fake_death(target_node: Node) -> void:

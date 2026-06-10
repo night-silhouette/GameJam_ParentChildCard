@@ -13,17 +13,17 @@ offset_bottom = 973.0
 scale = Vector2(0.2502101, 0.27473265)
 texture = ExtResource("1_w0x15")
 script = ExtResource("2_3rw3e")
-card = NodePath("card")
+card = NodePath("Control")
 
 [node name="检验区" parent="." instance=ExtResource("2_n1afl")]
 position = Vector2(167.85884, 272.99265)
 scale = Vector2(3.5285423, 5.684344)
 zone = 5
 
-[node name="card" parent="." instance=ExtResource("4_3rw3e")]
-layout_mode = 1
-offset_left = 39.96641
-offset_top = 101.91727
-offset_right = 368.9664
-offset_bottom = 671.91724
-scale = Vector2(0.7311068, 0.6308968)
+[node name="Control" parent="." instance=ExtResource("4_3rw3e")]
+layout_mode = 0
+offset_left = 55.95298
+offset_top = 94.63747
+offset_right = 384.95297
+offset_bottom = 664.63745
+scale = Vector2(0.6709178, 0.6709178)

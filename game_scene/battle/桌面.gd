@@ -3,77 +3,216 @@ extends TextureRect
 @export var card_manager: Node
 @export var in_duration: float = 0.5
 
-# 1. 使用数组将 4 个 Card 节点和 4 个 Zone 顺序列出来
-# 请在编辑器中把对应的节点和 Zone 按相同的顺序拖入/填入数组中
 @export var cards_ui: Array[Control] = []
 @export var zones: Array[int] = []
 @export var data_UI: Array[Control] = []
-# 用来存储从数据层获取的原始卡牌数据（如果需要的话）
-var all_cards_data: Array = [] 
+@export var hand: Sprite2D
+
+var all_cards_data: Array = []
+
+## 当前选中的己方牌信息
+var _selected_temp_id: int = -1
+var _selected_self_where: int = -1
+## 选中的敌方目标位置
+var _selected_opponent_where: int = -1
+
+## 手部手势节点
+@onready var hand_skill: Sprite2D = $"1"
+@onready var hand_attack: Sprite2D = $"2"
+@onready var hand_dir: TextureRect = $"指向"
+@onready var btn_attack: TextureButton = $"战斗"
+@onready var btn_skill: TextureButton = $"法术"
+@onready var btn_reset: TextureButton = $"万能按钮"
+
 
 func _ready() -> void:
 	card_manager.UI_date_update.connect(refresh_ui)
+	card_manager.combat_dto_changed.connect(_on_dto_changed)
 	
-	# 初始时将所有卡片隐藏
 	for card in cards_ui:
 		if card:
 			card.visible = false
+	
+	_connect_combat_signals()
+	
+	# 攻/法按钮：确认为选中+目标后的最终操作
+	btn_attack.pressed.connect(_on_attack_pressed)
+	btn_skill.pressed.connect(_on_skill_pressed)
+	# 重置按钮：清空 DTO，返还能量
+	btn_reset.pressed.connect(_on_reset_pressed)
+	
+	# 初始隐藏确认按钮
+	_hide_confirm_buttons()
+
+
+func _connect_combat_signals() -> void:
+	for card in cards_ui:
+		if not card:
+			continue
+		if card.has_signal("combat_selected"):
+			card.combat_selected.connect(_on_combat_card_selected)
+		if card.has_signal("combat_target_changed"):
+			card.combat_target_changed.connect(_on_combat_target_selected)
+
 
 func refresh_ui():
-
-	# 三个数组取最小值防止越界
-	var loop_count = min(
-		cards_ui.size(),
-		data_UI.size(),
-		zones.size()
-	)
+	var loop_count = min(cards_ui.size(), data_UI.size(), zones.size())
 
 	for i in range(loop_count):
-
 		var current_card_ui = cards_ui[i]
 		var current_data_ui = data_UI[i]
 		var current_zone = zones[i]
 
-		# 安全检查
 		if not current_card_ui or not current_data_ui:
 			continue
 
-		# 获取 zone 数据
 		var zone_cards = card_manager.get_cards_by_zone(current_zone)
 
-		# 有牌
 		if not zone_cards.is_empty():
-
 			var icard = zone_cards[0]
-
-			# 更新数据
 			current_card_ui.update_card_data(icard)
 			current_data_ui.update_card_data(icard)
 
-			# card fade in
 			if not current_card_ui.visible or current_card_ui.modulate.a < 1.0:
 				_fade_in(current_card_ui, in_duration)
-
-			# data fade in
 			if not current_data_ui.visible or current_data_ui.modulate.a < 1.0:
 				_fade_in(current_data_ui, in_duration)
-
-		# 没牌
 		else:
 			current_card_ui.visible = false
 			current_data_ui.visible = false
 
-## 传入指定的 card 节点进行淡入
+
 func _fade_in(target_card: Control, duration: float = 0.5) -> void:
 	if not target_card: return
 	
-	# 1. 确保基础状态正确
 	target_card.visible = true
-	target_card.modulate.a = 0.0  # 先变完全透明
+	target_card.modulate.a = 0.0
 	target_card.process_mode = Node.PROCESS_MODE_INHERIT
 	target_card.mouse_filter = Control.MOUSE_FILTER_STOP
 	
-	# 2. 创建并执行动画
 	var tween = create_tween()
 	tween.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	tween.tween_property(target_card, "modulate:a", 1.0, duration)
+
+
+#region ==================== 战斗选中逻辑 ====================
+
+## 己方牌被选中 → 显示指向手势，隐藏确认按钮
+func _on_combat_card_selected(temp_id: int, self_where: int) -> void:
+	if temp_id == -1:
+		_reset_selection()
+		return
+	
+	_selected_temp_id = temp_id
+	_selected_self_where = self_where
+	_selected_opponent_where = -1
+	_hide_confirm_buttons()
+	
+	if hand_dir:
+		hand_dir.visible = true
+
+
+## 点击敌方牌 → 记录目标，显示攻/法确认按钮
+func _on_combat_target_selected(opponent_where: int) -> void:
+	if _selected_temp_id == -1:
+		return
+	
+	_selected_opponent_where = opponent_where
+	_show_confirm_buttons()
+
+
+## 确认攻击
+func _on_attack_pressed() -> void:
+	if _selected_temp_id == -1 or _selected_opponent_where == -1:
+		return
+	_confirm_action(0)
+
+
+## 确认法术
+func _on_skill_pressed() -> void:
+	if _selected_temp_id == -1 or _selected_opponent_where == -1:
+		return
+	_confirm_action(1)
+
+
+## 执行确认：记录 DTO，标记已行动
+func _confirm_action(behavior: int) -> void:
+	var ok = card_manager.set_combat_dto(_selected_self_where, behavior, _selected_opponent_where, _selected_temp_id, {})
+	if not ok:
+		return  # 能量不足
+	
+	# 标记己方牌为已行动
+	var selected_card = _find_card_by_temp_id(_selected_temp_id)
+	if selected_card and selected_card.has_method("mark_acted"):
+		selected_card.mark_acted()
+	
+	_reset_selection()
+
+
+## 重置按钮：清空所有 DTO，返还能量
+func _on_reset_pressed() -> void:
+	card_manager.clear_all_combat_dto()
+	_reset_selection()
+
+
+## DTO 变更回调：如果清空了，重置对应卡牌
+func _on_dto_changed() -> void:
+	var dp = card_manager.parent_combat_dto
+	var dc = card_manager.child_combat_dto
+	
+	if dp.behavior == -1:
+		_reset_card_by_self_where(0)
+	if dc.behavior == -1:
+		_reset_card_by_self_where(1)
+
+
+func _reset_selection() -> void:
+	_selected_temp_id = -1
+	_selected_self_where = -1
+	_selected_opponent_where = -1
+	_hide_hand()
+	_hide_confirm_buttons()
+
+
+func _reset_card_by_self_where(self_where: int) -> void:
+	for card in cards_ui:
+		if card and card.get("self_where") == self_where and card.has_method("reset_combat"):
+			card.reset_combat()
+
+
+func _find_card_by_temp_id(temp_id: int):
+	for card in cards_ui:
+		if card and card.get("temp_id") == temp_id:
+			return card
+	return null
+
+
+func _hide_hand() -> void:
+	if hand_attack:
+		hand_attack.visible = false
+	if hand_skill:
+		hand_skill.visible = false
+	if hand_dir:
+		hand_dir.visible = false
+
+
+func _show_confirm_buttons() -> void:
+	if btn_attack:
+		btn_attack.visible = true
+	if btn_skill:
+		btn_skill.visible = true
+
+
+func _hide_confirm_buttons() -> void:
+	if btn_attack:
+		btn_attack.visible = false
+	if btn_skill:
+		btn_skill.visible = false
+
+
+func reset_all_combat_cards() -> void:
+	for card in cards_ui:
+		if card and card.has_method("reset_combat"):
+			card.reset_combat()
+	_reset_selection()
+#endregion

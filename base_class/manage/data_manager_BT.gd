@@ -15,13 +15,16 @@ signal change_card_zone(temp_id, new_zone)
 signal energy_changed(self_energy: int, opponent_energy: int)
 
 ## [新增] 天气数据变更信号
-signal weather_changed(weather_data: Dictionary)
+signal weather_num_changed(weather_num: int)
 
 ## [新增] 中断选牌数据变更信号
 signal interrupt_changed(interrupt_data: Dictionary)
 
 ## [新增] 弃牌堆数据变更信号
 signal discard_changed
+
+## [新增] 战斗行动数据变更信号
+signal combat_dto_changed
 #endregion
 
 
@@ -38,11 +41,11 @@ var opponent_energy: int = 0:
 		opponent_energy = value
 		energy_changed.emit(self_energy, opponent_energy)
 
-## [新增] 天气数据（包含 weather 和 weather_list）
-var weather_data: Dictionary = {}:
+## [新增] 当前天气编号
+var weather_num: int = -1:
 	set(value):
-		weather_data = value
-		weather_changed.emit(weather_data)
+		weather_num = value
+		weather_num_changed.emit(weather_num)
 
 ## [新增] 中断选牌数据
 var interrupt_data: Dictionary = {}:
@@ -70,6 +73,7 @@ func _ready() -> void:
 	# ==================== [新增] WS 非卡牌数据导入 ====================
 	SignalBus.energy_updated.connect(_on_energy_updated)
 	SignalBus.discard_list_updated.connect(_on_discard_list_updated)
+	SignalBus.weather_update.connect(_on_weather_update)
 
 	# ==================== 数据变更 → UI ====================
 	energy_changed.connect(_on_energy_changed)
@@ -292,6 +296,10 @@ func _on_energy_changed(_self: int, _opponent: int):
 	if is_instance_valid(oppent_energy_node) and oppent_energy_node.has_method("_update_lab"):
 		oppent_energy_node.num = _opponent
 
+## [新增] 导入：天气数据
+func _on_weather_update(weather_num_data):
+	weather_num = int(weather_num_data)
+
 ## [新增] 导入：子牌堆列表 → 根据 child_state 翻译为对应 zone（state zone, 优先级 100）
 ## 服务器返回 []ChildCardDto，每张子卡带 child_state 字段
 ## child_state 0=Active, 1=NotActive, 2=Died, 3=HasCatch
@@ -401,6 +409,62 @@ func select_card_by_key(value, key_to_match):
 #endregion
 
 
+#region ==================== 战斗行动管理（CombatData） ====================
+
+## 母牌战斗 DTO（behavior=-1 表示无操作）
+var parent_combat_dto: Dictionary = {"behavior": -1, "self_where": 0, "opponent_where": -1, "temp_id": -1, "select_card": {}}
+
+## 子牌战斗 DTO
+var child_combat_dto: Dictionary = {"behavior": -1, "self_where": 1, "opponent_where": -1, "temp_id": -1, "select_card": {}}
+
+const COST_SWITCH: int = 1
+const COST_ATTACK_OR_SKILL: int = 2
+
+
+## 设置某个 DTO 的操作（由 桌面.gd / _deploy_card_to_zone 调用）
+## select_card: 仅换牌(behavior=2)时需要，格式 {where, card_id, card_temp_id}
+## 返回 true 表示设置成功（能量够），false 表示能量不足
+func set_combat_dto(self_where: int, behavior: int, opponent_where: int, temp_id: int, select_card: Dictionary = {}) -> bool:
+	var cost = COST_SWITCH if behavior == 2 else COST_ATTACK_OR_SKILL
+	if self_energy < cost:
+		return false
+	
+	self_energy -= cost
+	
+	if self_where == 0:
+		parent_combat_dto = {"behavior": behavior, "self_where": 0, "opponent_where": opponent_where, "temp_id": temp_id, "select_card": select_card}
+	else:
+		child_combat_dto = {"behavior": behavior, "self_where": 1, "opponent_where": opponent_where, "temp_id": temp_id, "select_card": select_card}
+	
+	combat_dto_changed.emit()
+	return true
+
+
+## 清空某个 DTO 并返还能量
+func clear_combat_dto(self_where: int) -> void:
+	var dto = parent_combat_dto if self_where == 0 else child_combat_dto
+	if dto.behavior == -1:
+		return
+	
+	var cost = COST_SWITCH if dto.behavior == 2 else COST_ATTACK_OR_SKILL
+	self_energy += cost
+	
+	if self_where == 0:
+		parent_combat_dto = {"behavior": -1, "self_where": 0, "opponent_where": -1, "temp_id": -1, "select_card": {}}
+	else:
+		child_combat_dto = {"behavior": -1, "self_where": 1, "opponent_where": -1, "temp_id": -1, "select_card": {}}
+	
+	combat_dto_changed.emit()
+
+
+## 清空全部 DTO 并返还全部能量（桌面万能按钮）
+func clear_all_combat_dto() -> void:
+	if parent_combat_dto.behavior != -1:
+		clear_combat_dto(0)
+	if child_combat_dto.behavior != -1:
+		clear_combat_dto(1)
+
+
 #region ==================== 游戏交互逻辑 ====================
 
 func _enter_freecard(temp_id, zone):
@@ -443,9 +507,19 @@ func _can_deploy_card(icard: Dictionary, target_zone: int) -> bool:
 	return false
 
 func _deploy_card_to_zone(temp_id: int, target_zone: int):
+	# 先把目标位置原有的牌送回牌库
 	for card in get_cards_by_zone(target_zone):
 		card["zone"] = Global.ZONE_CARD.DECK_ZONE
 	_change_card_zone(temp_id, target_zone)
+	
+	# 战斗阶段手牌→战斗区换牌：自动记录 Switch DTO
+	if state_machine and state_machine.current_state == state_machine.GameState.USE_COMBAT_CARD:
+		if free_card_prevzone == Global.ZONE_CARD.DECK_ZONE and target_zone in [Global.ZONE_CARD.PARENT_BATTLE_ZONE, Global.ZONE_CARD.CHILD_BATTLE_ZONE]:
+			var hand_card = select_card_by_key(temp_id, "temp_id")
+			if not hand_card.is_empty():
+				var self_where = 0 if target_zone == Global.ZONE_CARD.PARENT_BATTLE_ZONE else 1
+				var sel = {"where": self_where, "card_id": hand_card.get("id", -1), "card_temp_id": hand_card.get("temp_id", -1)}
+				set_combat_dto(self_where, 2, -1, temp_id, sel)
 
 func _detected_area(zone):
 	free_card_nextzone = zone;

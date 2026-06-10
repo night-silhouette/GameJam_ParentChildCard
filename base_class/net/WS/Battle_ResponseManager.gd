@@ -143,6 +143,10 @@ func _dispatch(action_code: int, action_data: Variant, predicate: int):
 				SignalBus.interrupt_start.emit(action_data)
 			if predicate == NetDef.Predicate.SUCCEED:
 				SignalBus.interrupt_succeed.emit()
+				
+		NetDef.Action.GetWeather:
+			if predicate == NetDef.Predicate.RESULT:
+				SignalBus.weather_update.emit(int(action_data))
 		
 		_:
 			# 未处理的 action

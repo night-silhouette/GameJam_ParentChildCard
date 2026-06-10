@@ -31,7 +31,12 @@ enum Action {
 	GetEnergy = 17,
 	SelectWeather = 18,
 	GetChildCardList = 19,
-	ActiveChildCard = 20
+	ActiveChildCard = 20,
+	GetWeather = 21,           
+	CatchChild = 22,      
+	CardMove =  23,       
+	AnimationNotify = 24,
+	ValueNotify = 25,           
 }
 
 const ACTION_NAME = {
@@ -54,7 +59,12 @@ const ACTION_NAME = {
 	Action.GetEnergy: "查看能量值",
 	Action.SelectWeather: "选择天气",
 	Action.GetChildCardList: "查看子牌堆",
-	Action.ActiveChildCard: "激活子卡牌"
+	Action.ActiveChildCard: "激活子卡牌",
+	Action.GetWeather:            "获取天气",
+	Action.CatchChild:            "捕获子牌",
+	Action.CardMove:              "结算卡牌移动通知",
+	Action.AnimationNotify:       "行为动画通知",
+	Action.ValueNotify:           "数值变化通知",
 }
 
 # 辅助函数：快速获取名字打印日志

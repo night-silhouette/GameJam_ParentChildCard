@@ -104,6 +104,7 @@ signal oppent_inhand_updated(cards)
 signal bt_selfinfo_updated(cards)
 signal bt_oppinfo_updated(cards)
 signal energy_updated(energy_list)
+signal weather_update(weather_num)
 
 # 子卡牌
 signal child_card_list_updated(child_cards)
@@ -156,15 +157,14 @@ signal request_judge(judge_data)
 signal request_get_combat_cards
 signal request_end_animation
 signal request_combat_finish
-signal request_combat_movement(behavoir,self_where,opponent_where)
-
-# 新增请求
+signal request_combat_movement(behavoir,self_where,opponent_where,select_card)
 signal request_get_energy
 signal request_get_child_card_list
 signal request_select_weather(weather)
 signal request_active_child_card(temp_id_list)
 signal request_get_discard_list
 signal request_interrupt_select(temp_id_list)
+signal request_get_weather()
 
 # 调试
 signal request_debug_time

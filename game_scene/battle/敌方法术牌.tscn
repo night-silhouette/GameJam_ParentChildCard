@@ -10,14 +10,15 @@ offset_top = 130.99997
 offset_right = 557.99994
 offset_bottom = 696.0
 scale = Vector2(0.2502101, 0.27473265)
+mouse_filter = 2
 texture = ExtResource("1_p1qws")
 script = ExtResource("2_rm0jm")
-card = NodePath("card")
+card = NodePath("")
 
-[node name="card" parent="." instance=ExtResource("3_ly8a1")]
-layout_mode = 1
-offset_left = 39.96641
-offset_top = 101.91727
-offset_right = 368.9664
-offset_bottom = 671.91724
-scale = Vector2(0.7311068, 0.6308968)
+[node name="Control" parent="." instance=ExtResource("3_ly8a1")]
+layout_mode = 0
+offset_left = 51.956825
+offset_top = 87.35777
+offset_right = 380.95682
+offset_bottom = 657.3578
+scale = Vector2(0.6755602, 0.6755602)
