@@ -134,6 +134,8 @@ type StateMachine struct {
 	Winner         int
 	Loser          int
 	CombatDataChan chan map[string][]BattleData.CombatDto
+
+	LoseMarkMap map[int]int //UserId:num
 }
 
 func NewStateMachine(c *Ctx, id1 int, id2 int, Nt *NotifyManager, ParentNodeCtx context.Context, GoldMoreUserId int) *StateMachine {
@@ -148,6 +150,10 @@ func NewStateMachine(c *Ctx, id1 int, id2 int, Nt *NotifyManager, ParentNodeCtx 
 	StateMachineImpl.CardListCopy = c.CardPool
 	StateMachineImpl.StateStack = make([]State, 0)
 	StateMachineImpl.CombatDataChan = make(chan map[string][]BattleData.CombatDto, 1)
+	StateMachineImpl.LoseMarkMap = make(map[int]int)
+
+	StateMachineImpl.LoseMarkMap[StateMachineImpl.Id1] = 0
+	StateMachineImpl.LoseMarkMap[StateMachineImpl.Id2] = 0
 
 	StateMachineImpl.GoldMoreUserId = GoldMoreUserId
 
@@ -939,6 +945,9 @@ func (J *Judge) EndJudge() {
 			J.SM.Loser = J.Id1
 		}
 
+		J.SM.LoseMarkMap[J.SM.Loser] += 1
+		J.SM.LoseMarkMap[J.SM.Winner] = 0
+
 		J.c.PlayerDataMap[J.SM.Winner].UpdateEnergy(2)
 	}
 
@@ -1227,7 +1236,20 @@ CalcLoop:
 
 		select {
 		case data := <-s.SM.CombatDataChan:
-			//结算换牌
+
+			//-------------给连续输的人增加免伤-------------
+			LoserBtCardList := s.c.GetBtAll(s.SM.Loser)
+			if s.SM.LoseMarkMap[s.SM.Loser] >= 2 { //输两次了,有免伤
+				for _, card := range LoserBtCardList {
+					for range s.SM.LoseMarkMap[s.SM.Loser] - 1 {
+						card.AddBuff(protocol.NewBuffBase(protocol.DamageImmunity, 1, 0.28, s.c.CreateTempId()), s.c)
+					}
+				}
+			}
+
+			//-------------给连续输的人增加免伤-------------
+
+			//--------结算换牌start--------
 
 			//-----记录换牌过程-----
 			SwitchCardMap := make(map[int][]BattleData.SelectCard)

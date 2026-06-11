@@ -28,4 +28,5 @@ type ProtocolCardWithCtx interface {
 	ProtoColCanUpdateEnergy(UserId int, offset int) bool
 	CheckCard(id int) bool //检查是否还有卡出战,看pbt和cbt这两个位置主要是
 	CreateTempId() int     //产生tempId,计数用的
+
 }

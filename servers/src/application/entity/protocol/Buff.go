@@ -37,7 +37,9 @@ func InitBuffRoundEndFuncMap() {
 	BuffRoundEndFuncMap[BonusDamage] = func(pc ProtocolCardWithCtx, value float64) {}
 	BuffRoundEndFuncMap[Powerful] = func(pc ProtocolCardWithCtx, value float64) {}
 	BuffRoundEndFuncMap[Weakness] = func(pc ProtocolCardWithCtx, value float64) {}
-	BuffRoundEndFuncMap[DamageImmunity] = func(pc ProtocolCardWithCtx, value float64) {}
+	BuffRoundEndFuncMap[DamageImmunity] = func(pc ProtocolCardWithCtx, value float64) {
+
+	}
 	BuffRoundEndFuncMap[Vulnerability] = func(pc ProtocolCardWithCtx, value float64) {}
 	BuffRoundEndFuncMap[Block] = func(pc ProtocolCardWithCtx, value float64) {}
 	BuffRoundEndFuncMap[HealingBoost] = func(pc ProtocolCardWithCtx, value float64) {}

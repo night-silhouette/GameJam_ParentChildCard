@@ -912,4 +912,27 @@ func (c *Ctx) GetCharacter() []CardAbstract.Card {
 	return res
 }
 
+// GetBtAll 获取场上所有的出战卡,如果输入-1,就是所有双方的,如果是有id,就是单人的
+func (c *Ctx) GetBtAll(UserId int) []CardAbstract.Card {
+	res := make([]CardAbstract.Card, 0)
+	DiffUserId := func(id int) {
+		player := c.PlayerDataMap[id]
+		player.dataMutex.Lock()
+		if player.ParentCardBT != nil {
+			res = append(res, player.ParentCardBT)
+		}
+		if player.ChildCardBT != nil {
+			res = append(res, player.ChildCardBT)
+		}
+		player.dataMutex.Unlock()
+	}
+	if UserId == -1 {
+		DiffUserId(c.StateMachine.Id1)
+		DiffUserId(c.StateMachine.Id2)
+	} else {
+		DiffUserId(UserId)
+	}
+	return res
+}
+
 //endregion
