@@ -25,6 +25,12 @@ signal discard_changed
 
 ## [新增] 战斗行动数据变更信号
 signal combat_dto_changed
+
+## [新增] 子牌堆数据准备就绪 → 选择子牌 UI 自动填充
+signal child_cards_ready
+
+## [新增] 中断选牌数据准备就绪
+signal interrupt_cards_ready(card_list: Array, select_num: int)
 #endregion
 
 
@@ -52,6 +58,28 @@ var interrupt_data: Dictionary = {}:
 	set(value):
 		interrupt_data = value
 		interrupt_changed.emit(interrupt_data)
+		# 处理中断选牌卡牌数据并通知 UI
+		_on_interrupt_data_received()
+
+## 中断数据到达后：从 hand 匹配 temp_id，发 signal 让 UI 填充
+func _on_interrupt_data_received() -> void:
+	if interrupt_data.is_empty():
+		return
+	var temp_id_list = interrupt_data.get("temp_id_list", [])
+	if not temp_id_list is Array:
+		temp_id_list = []
+	var select_num = int(interrupt_data.get("select_num", 0))
+	
+	# 从手牌(DECK_ZONE)匹配对应的卡牌数据
+	var matched_cards: Array = []
+	var all_cards = get_cards_by_zone(Global.ZONE_CARD.DECK_ZONE)
+	for tid in temp_id_list:
+		for c in all_cards:
+			if int(c.get("temp_id", -1)) == int(tid):
+				matched_cards.append(c)
+				break
+	
+	interrupt_cards_ready.emit(matched_cards, select_num)
 #endregion
 
 
@@ -74,7 +102,9 @@ func _ready() -> void:
 	SignalBus.energy_updated.connect(_on_energy_updated)
 	SignalBus.discard_list_updated.connect(_on_discard_list_updated)
 	SignalBus.weather_update.connect(_on_weather_update)
-
+	SignalBus.child_card_list_updated.connect(_on_child_card_list_updated)
+	SignalBus.oppent_inhand_updated.connect(_on_oppent_inhand_updated)
+	
 	# ==================== 数据变更 → UI ====================
 	energy_changed.connect(_on_energy_changed)
 
@@ -102,6 +132,7 @@ const ZONE_PRIORITY = {
 	
 	# hand zones (中等优先级)
 	Global.ZONE_CARD.DECK_ZONE: 200,
+	Global.ZONE_CARD.ENEMY_HAND_ZONE: 200,
 	
 	# state zones (最低优先级 - 由 child_state 决定)
 	Global.ZONE_CARD.CHILD_ACTIVE: 100,
@@ -250,7 +281,7 @@ func _init_single_card(card_data: Dictionary, zone) -> Dictionary:
 	var resource_data = querry_resoure_by_id(card_id)
 	if resource_data == null:
 		push_error("CardManager: 本地没有对应 [id: " + str(card_id) + "] 的 .tres 资源文件！")
-		return {}
+		# 不拒绝创建，resouce 留 null，UI 层有 fallback 处理
 
 	var new_card = {}
 	new_card["id"] = card_id
@@ -300,15 +331,26 @@ func _on_energy_changed(_self: int, _opponent: int):
 func _on_weather_update(weather_num_data):
 	weather_num = int(weather_num_data)
 
-## [新增] 导入：子牌堆列表 → 根据 child_state 翻译为对应 zone（state zone, 优先级 100）
+## [新增] 导入：子牌堆列表 → 根据 child_state 翻译为对应 zone
 ## 服务器返回 []ChildCardDto，每张子卡带 child_state 字段
-## child_state 0=Active, 1=NotActive, 2=Died, 3=HasCatch
-## 翻译为 zone：CHILD_ACTIVE / CHILD_NOT_ACTIVE / CHILD_DIED / CHILD_HAS_CATCH
-## 注意：优先级规则 combat(300) > hand(200) > state(100)
-## 如果子卡已在 combat zone 或 hand zone，state zone 不会覆盖
+## ChildState: 0=Active, 1=NotActive, 2=Died, 3=HasCatch
+## 翻译为 zone：13(CHILD_ACTIVE) ~ 16(CHILD_HAS_CATCH)，child_state + 13
 func _on_child_card_list_updated(data):
 	if data is Array:
-		_update_cards(data, Global.ZONE_CARD.CHILD_NOT_ACTIVE)  # 默认传入 state zone，但 _sync_card_data 会按优先级判断
+		# 按 child_state 分组，zone = 13 + child_state
+		var zone_batches: Dictionary = {}
+		for card_data in data:
+			var child_state = int(card_data.get("child_state", 1))
+			var zone = Global.ZONE_CARD.CHILD_ACTIVE + child_state  # 13 + 0~3
+			if not zone_batches.has(zone):
+				zone_batches[zone] = []
+			zone_batches[zone].append(card_data)
+		
+		for zone in zone_batches:
+			_update_cards(zone_batches[zone], zone)
+		
+		# 数据更新完毕，通知选择子牌 UI 填充
+		child_cards_ready.emit()
 
 ## [新增] 导入：弃牌堆数据 → DISCARD_ZONE（显示区域，优先级 50）
 ## 服务器返回 []CardDto，zone 只管显示
@@ -317,20 +359,25 @@ func _on_discard_list_updated(data):
 		_update_cards(data, Global.ZONE_CARD.DISCARD_ZONE)
 		discard_changed.emit()
 
+## 导入：敌方手牌 → ENEMY_HAND_ZONE（zone 17）
+func _on_oppent_inhand_updated(data):
+	if data is Array:
+		_update_cards(data, Global.ZONE_CARD.ENEMY_HAND_ZONE)
+
 #endregion
 
 
 #region ==================== 选中触发逻辑（choose_card 类卡牌使用） ====================
 
-## [新增] 选中状态变更信号
-## match_code: 1=出战区, 2=卖出区, 3=子卡激活选择, 4=中断选牌, 5=天气选择
-## temp_id: 卡牌唯一标识
-## is_selected: true=选中, false=取消选中
+
 signal selection_changed(match_code: int, temp_id: int, is_selected: bool)
 
 ## [新增] 维护各匹配码下的选中卡牌集合
 ## key: match_code(int), value: Array[int] (temp_id 列表)
 var selection_pools: Dictionary = {}
+
+## 子卡激活选择上限（match_code=3）
+const MAX_CHILD_SELECT: int = 5
 
 var active_card_list#上限为五张，右键取消左键确认，
 
@@ -342,13 +389,20 @@ func toggle_selection(match_code: int, temp_id: int) -> bool:
 	var index = pool.find(temp_id)
 	
 	if index >= 0:
-		# 已选中 → 取消选中
+		# 已选中 → 取消选中，zone 恢复为 CHILD_NOT_ACTIVE
 		pool.remove_at(index)
+		if match_code == 3:
+			_change_card_zone(temp_id, Global.ZONE_CARD.CHILD_NOT_ACTIVE)
 		selection_changed.emit(match_code, temp_id, false)
 		return false
 	else:
-		# 未选中 → 加入选中
+		# 子卡激活选择有上限
+		if match_code == 3 and pool.size() >= MAX_CHILD_SELECT:
+			return false
+		# 未选中 → 加入选中，zone 改为 CHILD_ACTIVE
 		pool.append(temp_id)
+		if match_code == 3:
+			_change_card_zone(temp_id, Global.ZONE_CARD.CHILD_ACTIVE)
 		selection_changed.emit(match_code, temp_id, true)
 		return true
 
@@ -361,6 +415,14 @@ func get_selected_temp_ids(match_code: int) -> Array[int]:
 ## [新增] 获取子卡激活选择（match_code=3）的选中列表，供提交用
 func get_active_child_list() -> Array:
 	return get_selected_temp_ids(3)
+
+## [新增] 从 CHILD_ACTIVE zone 直接获取 temp_id 列表（万能按钮提交用）
+func get_active_child_temp_ids() -> Array:
+	var result: Array = []
+	for card in card_list:
+		if card != null and card.get("zone") == Global.ZONE_CARD.CHILD_ACTIVE:
+			result.append(card.get("temp_id"))
+	return result
 
 ## [新增] 清空指定 match_code 的选中状态
 func clear_selection(match_code: int) -> void:
@@ -490,17 +552,21 @@ func _exit_freecard(temp_id):
 func _can_deploy_card(icard: Dictionary, target_zone: int) -> bool:
 	if target_zone == Global.ZONE_CARD.DECK_ZONE:
 		return true
+	
+	var res = icard.get("resouce")
+	if res == null:
+		return false
 
-	if icard["is_combat_card"] == false and target_zone == Global.ZONE_CARD.SPELL_ZONE:
+	if not res.is_combat_card and target_zone == Global.ZONE_CARD.SPELL_ZONE:
 		return state_machine.current_state == state_machine.GameState.USE_MAGIC_CARD
 
-	if icard["is_combat_card"] == true and icard["is_sub_card"] == false and target_zone == Global.ZONE_CARD.PARENT_BATTLE_ZONE:
+	if res.is_combat_card and not res.is_sub_card and target_zone == Global.ZONE_CARD.PARENT_BATTLE_ZONE:
 		var valid_states = [state_machine.GameState.USE_COMBAT_CARD, state_machine.GameState.INIT_STATE]
 		if state_machine.current_state == state_machine.GameState.USE_COMBAT_CARD:
 			return state_machine.is_win == 1
 		return state_machine.current_state in valid_states
 
-	if icard["is_combat_card"] == true and icard["is_sub_card"] == true and target_zone == Global.ZONE_CARD.CHILD_BATTLE_ZONE:
+	if res.is_combat_card and res.is_sub_card and target_zone == Global.ZONE_CARD.CHILD_BATTLE_ZONE:
 		var valid_states = [state_machine.GameState.USE_COMBAT_CARD, state_machine.GameState.INIT_STATE]
 		return state_machine.current_state in valid_states
 

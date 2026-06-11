@@ -1,25 +1,28 @@
 extends Node
 
 @onready var button: TextureButton = $"转换"
-@onready var active_card: HBoxContainer = $active_child_card
+@onready var active_card: HBoxContainer = $"active_child_card"
 @onready var op_card: Control = $"卡牌显示/敌方牌库"
-@onready var weather_name_label: Label = $weather_name
-@onready var card_manager = $"数据层/card_manager"
+@onready var weather_name_label: Label = $"weather_name"
+@onready var card_manager: Node = $"数据层/card_manager"
 
 var _showing_active: bool = false
 
 func _ready() -> void:
-	SignalBus.request_get_self_cards_inhand.emit()
-	SignalBus.request_get_combat_cards.emit()
-	
 	Global.fake_death(active_card)
+	Global.fake_death(op_card)
+	
+	# 临时：测试阶段全部允许输入
+	$"block/全局block".allow_input()
+	$"block/战斗牌block".allow_input()
+	$"block/法术牌block".allow_input()
 	
 	if card_manager:
 		card_manager.UI_date_update.connect(_update_active_child_display)
 		card_manager.weather_num_changed.connect(_on_weather_num_changed)
 
 
-func _ws_disconnected():
+func _ws_disconnected() -> void:
 	SignalBus.change_scence.emit("tomenu")
 	SignalBus.change_ui.emit("tomenu")
 

@@ -1,16 +1,16 @@
 extends Node
 class_name GameManager
 
-@export var card_manager = Node
-@export var time = Control
-@export var all_block = Control
-@export var combat_block = Control
-@export var spell_block = Control
+@export var card_manager: Node
+@export var time: Control
+@export var all_block: Control
+@export var combat_block: Control
+@export var spell_block: Control
 
-@export var judge = Control
-@export var jugde_bt = Control
+@export var judge: Control
+@export var jugde_bt: Control
 
-@export var choose_child_card = GridContainer
+@export var choose_child_card: GridContainer
 @export var weather: Node = null
 @export var desk_ui: Node = null
 
@@ -22,14 +22,8 @@ var child_action :int ;
 var child_bt_object: int;
 var current_weather:int;
 
-## 子卡选择阶段：服务器返回的可用子卡列表
-var _child_card_list: Array = []
-
 ## 天气选择阶段：服务器返回的可用天气列表
 var _weather_list: Array = []
-
-## 中断选牌阶段：服务器返回的中断数据
-var _interrupt_data: Dictionary = {}
 var _interrupt_selected: Array = []
 
 # 1. 定义状态枚举
@@ -48,7 +42,6 @@ var current_state: GameState = GameState.INIT_STATE:
 	set(value):
 		_exit_state(current_state)
 		current_state = value
-		print("！！！！！！！！！！！！当前状态为:",current_state)
 		_enter_state(current_state)
 
 # --- 初始化 ---
@@ -72,12 +65,12 @@ func _ready() -> void:
 	SignalBus.interrupt_succeed.connect(_on_interrupt_succeed)
 	
 
-	# 初始化进入第一个状态
-	_enter_state(current_state)
 	Global.fake_death(judge)
 	Global.fake_death(jugde_bt)
 	Global.fake_death(weather)
 	Global.fake_death(choose_child_card)
+	
+	_enter_state(current_state)
 	
 	
 # --- 核心：状态切换逻辑 ---
@@ -119,53 +112,37 @@ func _enter_state(new_state: GameState) -> void:
 	# 每进入一个状态，刷新全部战斗数据
 	_refresh_all_battle_data()
 	
+	# ↓↓↓ 临时：测试阶段，所有状态统一 allow_input ↓↓↓
+	all_block.allow_input()
+	combat_block.allow_input()
+	spell_block.allow_input()
+	# ↑↑↑ 临时结束 ↑↑↑
+	
 	match new_state:
 		GameState.INIT_STATE:
-			time.countdown_time = TimeOffset.get_remaining_seconds(Global.init_battle_time);
-			all_block.allow_input()
-			combat_block.allow_input()
-			spell_block.allow_input()
-			# print("进入初始化状态（看牌阶段）")
+			time.countdown_time = TimeOffset.get_remaining_seconds(Global.init_battle_time)
 		
 		GameState.CHOOSE_CHILD_CARD:
-			all_block.block_input()
 			Global.revive(choose_child_card)
-			_populate_child_cards()
 		
 		GameState.CHOOSE_WEATHER:
-			all_block.block_input()
 			Global.revive(weather)
 			weather.init_all_unpressed()
 			_populate_weather()
 		
-		GameState.USE_MAGIC_CARD:
-			combat_block.block_input();
-			# print("进入魔法卡使用状态")
-		
 		GameState.USE_COMBAT_CARD:
-			spell_block.block_input()
-			if(is_win):
-				combat_block.block_input();
 			card_manager.clear_all_combat_dto()
 			if desk_ui and desk_ui.has_method("reset_all_combat_cards"):
 				desk_ui.reset_all_combat_cards()
-			SignalBus.request_combat_finish.emit();
-			# print("进入战斗卡使用状态")
 		
 		GameState.JUDGEMENT:
 			Global.revive(judge)
 			Global.revive(jugde_bt)
 			judge.init_all_unpressed()
-			combat_block.block_input()
-			spell_block.block_input()
-			# print("进入结算/判定状态")
 		
 		GameState.INTERRUPT:
-			all_block.block_input()
-			combat_block.block_input()
-			spell_block.block_input()
 			Global.revive(choose_child_card)
-			_populate_interrupt_cards()
+			_interrupt_selected.clear()
 
 func _refresh_all_battle_data() -> void:
 	SignalBus.request_get_self_cards_inhand.emit()
@@ -181,7 +158,12 @@ func _populate_weather() -> void:
 	for child in children:
 		if not child is BaseButton:
 			continue
-		var weather_label = child.get_node_or_null("weather")
+		# 找到按钮下的第一个 Label（不管叫什么名字）作为天气名显示
+		var weather_label: Label = null
+		for c in child.get_children():
+			if c is Label:
+				weather_label = c
+				break
 		if weather_label == null:
 			continue
 		if index < _weather_list.size():
@@ -191,57 +173,6 @@ func _populate_weather() -> void:
 		else:
 			child.visible = false
 		index += 1
-
-## 用服务器返回的 child_list 数据填充 choose_child_card 下的每个 choose_card 实例
-func _populate_child_cards() -> void:
-	var container = choose_child_card
-	if not is_instance_valid(container):
-		container = get_node_or_null("../../选择子牌")
-	if container == null:
-		return
-	var children = container.get_children()
-	for i in range(children.size()):
-		var card = children[i]
-		if i < _child_card_list.size():
-			var data = _child_card_list[i]
-			card.match_code = 3  # 子卡激活选择
-			card.setup(data)
-			card.visible = true
-		else:
-			card.visible = false
-
-## 用中断数据填充选择子牌界面
-func _populate_interrupt_cards() -> void:
-	var container = choose_child_card
-	if not is_instance_valid(container):
-		container = get_node_or_null("../../选择子牌")
-	if container == null:
-		return
-	
-	var temp_id_list = _interrupt_data.get("temp_id_list", [])
-	if not temp_id_list is Array:
-		temp_id_list = []
-	var select_num = int(_interrupt_data.get("select_num", 0))
-	
-	var children = container.get_children()
-	# 先把所有卡隐藏
-	for child in children:
-		child.visible = false
-	
-	# 填充可选牌：从 hand 中找到匹配 temp_id 的卡牌数据
-	var all_cards = card_manager.get_cards_by_zone(Global.ZONE_CARD.HAND_ZONE)
-	for i in range(min(temp_id_list.size(), children.size())):
-		var tid = int(temp_id_list[i])
-		var match_data = {}
-		for c in all_cards:
-			if int(c.get("temp_id", -1)) == tid:
-				match_data = c
-				break
-		if not match_data.is_empty():
-			var card = children[i]
-			card.match_code = 99  # 中断选牌
-			card.setup(match_data)
-			card.visible = true
 
 # --- 信号回调（在这里控制状态流转） ---
 func _on_match_success(t) -> void:
@@ -262,7 +193,7 @@ func _judge_start(t) -> void:
 
 # [新增] 子卡选择阶段开始
 func _on_active_child_card_start(t, child_list) -> void:
-	_child_card_list = child_list if child_list is Array else []
+	card_manager._on_child_card_list_updated(child_list)
 	time.start_countdown(TimeOffset.get_remaining_seconds(t));
 	change_state(GameState.CHOOSE_CHILD_CARD)
 
@@ -289,7 +220,7 @@ func _on_card_calc_finish() -> void:
 
 # [新增] 中断选牌阶段开始
 func _on_interrupt_start(interrupt_data) -> void:
-	_interrupt_data = interrupt_data
+	card_manager.interrupt_data = interrupt_data
 	_interrupt_selected.clear()
 	var t = interrupt_data.get("state_wait_time", 60)
 	time.start_countdown(TimeOffset.get_remaining_seconds(t))
@@ -317,9 +248,9 @@ func _on_万能按钮_button_down() -> void:
 				SignalBus.request_deploy_magic_card.emit(card[0].id,card[0].temp_id)
 
 		GameState.CHOOSE_CHILD_CARD:
-			# 子卡选择阶段：提交选中的子卡
+			# 子卡选择阶段：从 CHILD_ACTIVE zone 收集 temp_id
 			time.countdown_time = 0;
-			var selected = card_manager.get_active_child_list()
+			var selected = card_manager.get_active_child_temp_ids()
 			SignalBus.request_active_child_card.emit(selected)
 		
 		GameState.CHOOSE_WEATHER:
@@ -339,7 +270,7 @@ func _on_万能按钮_button_down() -> void:
 		
 		GameState.USE_COMBAT_CARD:
 			time.countdown_time = 0
-			var card = card_manager.get_cards_by_zone(Global.ZONE_CARD.PARENT_BATTLE_ZONE)
+			card = card_manager.get_cards_by_zone(Global.ZONE_CARD.PARENT_BATTLE_ZONE)
 			if not card.is_empty():
 				SignalBus.request_deploy_parent_card.emit(card[0].id, card[0].temp_id)
 			

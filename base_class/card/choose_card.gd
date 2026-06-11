@@ -69,6 +69,10 @@ func setup(data: Dictionary) -> void:
 	# 2. 获取本地配置资源
 	var res: CardResource = data.get("resouce")
 	if res == null:
+		# 没有 resouce 时，尝试从 data 直接读取 card_name
+		card_name = data.get("card_name", "")
+		if ui_name:
+			ui_name.text = card_name
 		return
 
 	# 3. 填充父类静态配置

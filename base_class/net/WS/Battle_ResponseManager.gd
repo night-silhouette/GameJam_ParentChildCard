@@ -12,7 +12,7 @@ func _handle_ws_data(code: int, data: Variant, msg: String):
 	var action_data = data.get("action_data", null)
 	var predicate = int(data.get("predicates", 0)) 
 	
-	print("[WS 接收] -> ", NetDef.get_predicate_name(predicate), "：",NetDef.ACTION_NAME[action_code])
+	#print("[WS 接收] -> ", NetDef.get_predicate_name(predicate), "：",NetDef.ACTION_NAME[action_code])
 	
 	_dispatch(action_code, action_data, predicate)
 
@@ -71,6 +71,7 @@ func _dispatch(action_code: int, action_data: Variant, predicate: int):
 		NetDef.Action.MATCH_SUCCESS:
 			if predicate == NetDef.Predicate.NOTIFY:
 				var t = action_data.state_wait_time;
+				print("init阶段")
 				SignalBus.match_success.emit(t);
 		NetDef.Action.JUDGE:
 			if predicate == NetDef.Predicate.QUERY:
@@ -97,6 +98,8 @@ func _dispatch(action_code: int, action_data: Variant, predicate: int):
 			if predicate == NetDef.Predicate.RESULT:
 				if action_data is Array:
 					SignalBus.child_card_list_updated.emit(action_data)
+					print(action_data)
+					
 				else:
 					push_error("GET_CHILD_CARD_LIST 返回格式错误，期望 Array")
 		

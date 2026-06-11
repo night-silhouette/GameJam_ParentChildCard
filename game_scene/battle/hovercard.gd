@@ -30,7 +30,7 @@ func setup(data: Dictionary) -> void:
 	zone = data.get("zone",0)
 	
 	
-	var res: CardResource = data.get("resource")
+	var res: CardResource = data.get("resouce")
 	if res == null: return
 		
 	# 填充父类数据

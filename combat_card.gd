@@ -31,8 +31,8 @@ signal switch_card_requested(temp_id: int, self_where: int)
 #endregion
 
 #region 视觉节点
-@onready var highlight: ColorRect = $Highlight if has_node("Highlight") else null
-@onready var state_label: Label = $StateLabel if has_node("StateLabel") else null
+@onready var highlight: ColorRect = $"Highlight" if has_node("Highlight") else null
+@onready var state_label: Label = $"StateLabel" if has_node("StateLabel") else null
 #endregion
 
 

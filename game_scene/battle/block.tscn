@@ -1,0 +1,35 @@
+[gd_scene load_steps=2 format=3 uid="uid://ohbcdhdga1d6"]
+
+[ext_resource type="PackedScene" uid="uid://1su868ejv50g" path="res://game_scene/battle/input_blocker.tscn" id="1_vsbrn"]
+
+[node name="block" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="全局block" parent="." instance=ExtResource("1_vsbrn")]
+layout_mode = 1
+offset_left = -2.0
+offset_top = -3.0
+offset_right = -2.0
+offset_bottom = -3.0
+metadata/_edit_lock_ = true
+
+[node name="战斗牌block" parent="." instance=ExtResource("1_vsbrn")]
+layout_mode = 1
+offset_left = 366.0
+offset_top = 349.00003
+offset_right = 560.65857
+offset_bottom = 195.41425
+scale = Vector2(0.32227913, 0.27346236)
+
+[node name="法术牌block" parent="." instance=ExtResource("1_vsbrn")]
+layout_mode = 1
+offset_left = 915.00006
+offset_top = 323.0
+offset_right = 915.0
+offset_bottom = 323.0
+scale = Vector2(0.071112126, 0.23111227)

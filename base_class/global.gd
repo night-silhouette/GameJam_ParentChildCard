@@ -35,6 +35,8 @@ const ZONE_CARD = {
 	CHILD_DIED = 15,         # 子牌已死亡（不进弃牌堆）
 	CHILD_HAS_CATCH = 16,    # 子牌已被捕获
 	
+	ENEMY_HAND_ZONE = 17,    # 敌方手牌区
+	
 }
 ## 天气枚举
 enum Weather {

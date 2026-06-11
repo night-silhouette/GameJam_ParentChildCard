@@ -13,7 +13,7 @@ scale = Vector2(0.2502101, 0.27473265)
 mouse_filter = 2
 texture = ExtResource("1_p1qws")
 script = ExtResource("2_rm0jm")
-card = NodePath("")
+card = NodePath("Control")
 
 [node name="Control" parent="." instance=ExtResource("3_ly8a1")]
 layout_mode = 0

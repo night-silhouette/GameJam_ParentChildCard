@@ -45,8 +45,11 @@ texture = ExtResource("4_ccuap")
 
 [node name="weather" type="Label" parent="1"]
 layout_mode = 0
-offset_right = 40.0
-offset_bottom = 25.0
+offset_left = 84.11645
+offset_top = 386.69315
+offset_right = 124.116455
+offset_bottom = 411.69315
+scale = Vector2(10.619912, 10.619912)
 
 [node name="2" type="TextureButton" parent="."]
 layout_mode = 2
@@ -55,6 +58,14 @@ button_group = SubResource("ButtonGroup_xq164")
 texture_normal = ExtResource("3_8d4ws")
 texture_pressed = ExtResource("3_8d4ws")
 stretch_mode = 3
+
+[node name="weather2" type="Label" parent="2"]
+layout_mode = 0
+offset_left = 105.94806
+offset_top = 394.71585
+offset_right = 145.94806
+offset_bottom = 419.71585
+scale = Vector2(10.619912, 10.619912)
 
 [node name="勾" type="TextureRect" parent="2"]
 visible = false
@@ -67,11 +78,6 @@ offset_bottom = 672.36285
 scale = Vector2(1.1256114, 1.1256114)
 texture = ExtResource("4_ccuap")
 
-[node name="weather" type="Label" parent="2"]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 25.0
-
 [node name="3" type="TextureButton" parent="."]
 layout_mode = 2
 toggle_mode = true
@@ -79,6 +85,14 @@ button_group = SubResource("ButtonGroup_xq164")
 texture_normal = ExtResource("3_8d4ws")
 texture_pressed = ExtResource("3_8d4ws")
 stretch_mode = 3
+
+[node name="weather3" type="Label" parent="3"]
+layout_mode = 0
+offset_left = 93.47977
+offset_top = 394.71585
+offset_right = 133.47977
+offset_bottom = 419.71585
+scale = Vector2(10.619912, 10.619912)
 
 [node name="勾" type="TextureRect" parent="3"]
 visible = false
@@ -91,11 +105,6 @@ offset_bottom = 672.36285
 scale = Vector2(1.1256114, 1.1256114)
 texture = ExtResource("4_ccuap")
 
-[node name="weather" type="Label" parent="3"]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 25.0
-
 [node name="4" type="TextureButton" parent="."]
 layout_mode = 2
 toggle_mode = true
@@ -103,6 +112,14 @@ button_group = SubResource("ButtonGroup_xq164")
 texture_normal = ExtResource("3_8d4ws")
 texture_pressed = ExtResource("3_8d4ws")
 stretch_mode = 3
+
+[node name="weather4" type="Label" parent="4"]
+layout_mode = 0
+offset_left = 107.144775
+offset_top = 383.4841
+offset_right = 147.14478
+offset_bottom = 408.4841
+scale = Vector2(10.619912, 10.619912)
 
 [node name="勾" type="TextureRect" parent="4"]
 visible = false
@@ -114,8 +131,3 @@ offset_right = 601.30005
 offset_bottom = 672.36285
 scale = Vector2(1.1256114, 1.1256114)
 texture = ExtResource("4_ccuap")
-
-[node name="weather" type="Label" parent="4"]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 25.0

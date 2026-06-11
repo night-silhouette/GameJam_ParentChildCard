@@ -22,6 +22,7 @@ func _ready():
 	SignalBus.request_get_discard_list.connect(_request_get_discard_list)
 	SignalBus.request_interrupt_select.connect(_request_interrupt_select)
 	SignalBus.request_get_weather.connect(_request_get_weather)
+	SignalBus.request_get_opponent_cards_inhand.connect(_request_get_opponent_cards_inhand)
 # -----------------
 # 具体的请求处理函数 (可以在这里封装不同结构的 action_data)
 # -----------------
@@ -49,6 +50,9 @@ func _request_end_animation():
 func _request_get_weather():
 	
 	_send_to_server(NetDef.Action.GetWeather,NetDef.Predicate.QUERY,null);
+
+func _request_get_opponent_cards_inhand():
+	_send_to_server(NetDef.Action.GET_SELF_CARDS, NetDef.Predicate.QUERY, null)
 	
 # 带参数的特殊请求：这就是为什么不能用字典循环绑定的原因
 func _on_deploy_card(where,card_id,card_temp_id):

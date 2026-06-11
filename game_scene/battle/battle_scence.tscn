@@ -52,12 +52,37 @@ offset_bottom = 1612.0
 scale = Vector2(0.085008465, 0.085008465)
 script = ExtResource("10_qjvm6")
 
-[node name="freecard" parent="." node_paths=PackedStringArray("card_manager") instance=ExtResource("12_ro313")]
-offset_left = 1232.0001
-offset_top = 119.99997
-offset_right = 1232.0001
-offset_bottom = 119.99997
-card_manager = NodePath("../数据层/card_manager")
+[node name="block" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="全局block" parent="block" instance=ExtResource("17_fpned")]
+layout_mode = 1
+offset_left = -2.0
+offset_top = -3.0
+offset_right = -2.0
+offset_bottom = -3.0
+metadata/_edit_lock_ = true
+
+[node name="战斗牌block" parent="block" instance=ExtResource("17_fpned")]
+layout_mode = 1
+offset_left = 366.0
+offset_top = 349.00003
+offset_right = 560.65857
+offset_bottom = 195.41425
+scale = Vector2(0.32227913, 0.27346236)
+
+[node name="法术牌block" parent="block" instance=ExtResource("17_fpned")]
+layout_mode = 1
+offset_left = 915.00006
+offset_top = 323.0
+offset_right = 915.0
+offset_bottom = 323.0
+scale = Vector2(0.071112126, 0.23111227)
 
 [node name="数据层" type="Node" parent="."]
 
@@ -70,7 +95,7 @@ state_machine = NodePath("../State_machine")
 self_energy_node = NodePath("../../卡牌显示/我方能量")
 oppent_energy_node = NodePath("../../卡牌显示/敌方能量")
 
-[node name="State_machine" type="Node" parent="数据层" node_paths=PackedStringArray("card_manager", "time", "all_block", "combat_block", "spell_block", "judge", "jugde_bt", "weather", "choose_child_card", "desk_ui")]
+[node name="State_machine" type="Node" parent="数据层" node_paths=PackedStringArray("card_manager", "time", "all_block", "combat_block", "spell_block", "judge", "jugde_bt", "choose_child_card", "weather", "desk_ui")]
 script = ExtResource("11_ile2j")
 card_manager = NodePath("../card_manager")
 time = NodePath("../../信息显示/time")
@@ -79,8 +104,8 @@ combat_block = NodePath("../../block/战斗牌block")
 spell_block = NodePath("../../block/法术牌block")
 judge = NodePath("../../judge")
 jugde_bt = NodePath("../../jugde_bt")
-weather = NodePath("../../weather")
 choose_child_card = NodePath("../../选择子牌")
+weather = NodePath("../../weather")
 desk_ui = NodePath("../../卡牌显示/桌面")
 
 [node name="debug" type="Control" parent="."]
@@ -168,6 +193,13 @@ offset_bottom = 490.0
 scale = Vector2(0.13079719, 0.13079719)
 object_pool = NodePath("../../数据层/object_pool")
 card_manager = NodePath("../../数据层/card_manager")
+
+[node name="freecard" parent="." node_paths=PackedStringArray("card_manager") instance=ExtResource("12_ro313")]
+offset_left = 1232.0001
+offset_top = 119.99997
+offset_right = 1232.0001
+offset_bottom = 119.99997
+card_manager = NodePath("../数据层/card_manager")
 
 [node name="信息显示" type="Control" parent="."]
 layout_mode = 3
@@ -266,38 +298,6 @@ offset_top = 61.0
 offset_right = 1450.0
 offset_bottom = 463.0
 scale = Vector2(0.13159403, 0.13159403)
-
-[node name="block" type="Control" parent="."]
-layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="全局block" parent="block" instance=ExtResource("17_fpned")]
-layout_mode = 1
-offset_left = -2.0
-offset_top = -3.0
-offset_right = -2.0
-offset_bottom = -3.0
-metadata/_edit_lock_ = true
-
-[node name="战斗牌block" parent="block" instance=ExtResource("17_fpned")]
-layout_mode = 1
-offset_left = 366.0
-offset_top = 349.00003
-offset_right = 560.65857
-offset_bottom = 195.41425
-scale = Vector2(0.32227913, 0.27346236)
-
-[node name="法术牌block" parent="block" instance=ExtResource("17_fpned")]
-layout_mode = 1
-offset_left = 915.00006
-offset_top = 323.0
-offset_right = 915.0
-offset_bottom = 323.0
-scale = Vector2(0.071112126, 0.23111227)
 
 [connection signal="button_down" from="万能按钮" to="数据层/State_machine" method="_on_万能按钮_button_down"]
 [connection signal="button_down" from="debug/debug_action" to="debug/debug_action2" method="_on_debug_action_button_down"]
