@@ -1,5 +1,7 @@
 package CardMeta
 
+import "pcc_card/application/entity/protocol"
+
 type Decorator struct {
 	AttackSum  float64
 	AttackPord float64 //加算的
@@ -20,11 +22,29 @@ func (c *Decorator) CalcHurt(AttackValue float64) int {
 	return int(AttackValue*c.HurtPord + c.HurtSum)
 }
 
+// 增加攻击比例
 func (c *Decorator) AttackPordAdd(AttackPord float64) {
 	c.AttackPord += AttackPord
 }
+
+// 增加免伤率,输入的是免伤值
 func (c *Decorator) HurtPordAdd(HurtPord float64) {
 	c.HurtPord *= 1 - HurtPord
+}
+
+func (c *Decorator) HealPordAdd(HealPord float64) {
+	c.HealPord += HealPord
+}
+
+func (c *Decorator) AttackSumAdd(AttackSum float64) {
+	c.AttackSum += AttackSum
+}
+func (c *Decorator) HurtSumAdd(HurtSum float64) {
+	c.HurtSum += HurtSum
+}
+
+func (c *Decorator) CalcByBuff(BuffList []protocol.Buff) {
+	
 }
 
 func NewDecorator() *Decorator {

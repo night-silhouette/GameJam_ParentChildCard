@@ -1322,6 +1322,7 @@ CalcLoop:
 func (s *CardCalc) exit() {
 	s.HaveDone.Store(false)
 }
+
 func (s *CardCalc) process(GoCtx context.Context) {
 	fmt.Println("进入cardcal的process了")
 	handleAction := func(id int, action BattleDto.Action, ResponseChan chan<- BattleDto.Action) bool {

@@ -97,7 +97,9 @@ func (c *BaseCard) SetDec(Dec *CardMeta.Decorator) {
 	c.Dec = Dec
 }
 
+//这个函数是进过buff计算的
 func (c *BaseCard) GetDec() *CardMeta.Decorator {
+
 	return c.Dec
 }
 func (c *BaseCard) InitControlSignalMap() {
@@ -106,15 +108,15 @@ func (c *BaseCard) InitControlSignalMap() {
 
 func (c *BaseCard) AddBuff(buff *protocol.Buff, pc protocol.ProtocolCardWithCtx) {
 	c.AppendBuff(buff)
-	protocol.BuffOnApplyFuncMap[buff.BuffId](pc, buff.Value) //执行挂载函数
+	protocol.BuffOnApplyFuncMap[buff.BuffId](pc, buff.Value, c) //执行挂载函数
 }
 
 func (c *BaseCard) BuffRoundEnd(pc protocol.ProtocolCardWithCtx) {
 	for _, b := range c.BuffList { //循环结算当回合所有的buff
-		protocol.BuffRoundEndFuncMap[b.BuffId](pc, b.Value) //每回合执行回合结束函数
-		b.Stacks -= 1                                       //层数减一
+		protocol.BuffRoundEndFuncMap[b.BuffId](pc, b.Value, c) //每回合执行回合结束函数
+		b.Stacks -= 1                                          //层数减一
 		if b.Stacks == 0 {
-			protocol.BuffOnRemoveFuncMap[b.BuffId](pc, b.Value)
+			protocol.BuffOnRemoveFuncMap[b.BuffId](pc, b.Value, c)
 			var targetIdx int
 			for i, v := range c.BuffList {
 				if v.TempId == b.TempId {

@@ -59,14 +59,14 @@ func (c *CharacterBaseCard) RoundEnd() {
 //---------二次分装---------
 
 func (c *CharacterBaseCard) EffectAttack(targetTempId int, AtkHp float64, category BattleData.ValueChange) {
-	c.BtCtx.ProtoColPush(protocol.NewAttack(c.OwnerId, c.TempId, targetTempId, AtkHp, c.Dec, category))
+	c.BtCtx.ProtoColPush(protocol.NewAttack(c.OwnerId, c.TempId, targetTempId, AtkHp, c.GetDec(), category))
 }
 func (c *CharacterBaseCard) EffectHurt(AttackId int, AtkHp float64, Category BattleData.ValueChange) {
-	c.BtCtx.ProtoColPush(protocol.NewHurt(c.OwnerId, AttackId, c.TempId, AtkHp, c.Dec, Category))
+	c.BtCtx.ProtoColPush(protocol.NewHurt(c.OwnerId, AttackId, c.TempId, AtkHp, c.GetDec(), Category))
 }
 
 func (c *CharacterBaseCard) EffectHeal(targetTempId int, HealHp float64) {
-	c.BtCtx.ProtoColPush(protocol.NewHeal(c.OwnerId, &targetTempId, HealHp, c.Dec))
+	c.BtCtx.ProtoColPush(protocol.NewHeal(c.OwnerId, &targetTempId, HealHp, c.GetDec()))
 }
 
 func (c *CharacterBaseCard) EffectUpdateEnergy(offset int) {
