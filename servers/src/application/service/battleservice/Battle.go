@@ -2,6 +2,7 @@ package battleservice
 
 import (
 	"context"
+	"fmt"
 	"pcc_card/application/entity/Card/CardAbstract"
 	"pcc_card/infra/repo/userrepo"
 	"sync"
@@ -71,6 +72,7 @@ var BC BattleContainer
 func (b *BattleContainer) GetBattleData() map[int]*Battle {
 	b.mu.RLock()
 	defer b.mu.RUnlock()
+	fmt.Println("GetBattleContainer", b.Data)
 	return b.Data
 }
 

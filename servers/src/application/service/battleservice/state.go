@@ -50,13 +50,12 @@ func (s *StateMachine) SharedProcess(id int, action BattleDto.Action, ResponseCh
 		res["opponent"] = s.c.GetOpponentId(id)
 		ResponseChan <- BattleDto.NewAction(BattleDto.GetWeather, BattleDto.Result, res)
 	}
-
 	if action.ActionCode == BattleDto.GetWeather && action.Predicates == BattleDto.Query {
 		res := protocol.Weather(s.c.Weather.Load())
 		ResponseChan <- BattleDto.NewAction(BattleDto.GetWeather, BattleDto.Result, res)
+		fmt.Println("前端获取天气为:", res)
 		return true
 	}
-
 	if action.ActionCode == BattleDto.GetEnergy && action.Predicates == BattleDto.Query {
 		res := make(map[string]int)
 		res["self"] = s.c.PlayerDataMap[id].GetEnergy()
@@ -67,9 +66,13 @@ func (s *StateMachine) SharedProcess(id int, action BattleDto.Action, ResponseCh
 	if action.ActionCode == BattleDto.GetChildCardList && action.Predicates == BattleDto.Query {
 		res := s.c.GetChildCardDto()
 		ResponseChan <- BattleDto.NewAction(BattleDto.GetChildCardList, BattleDto.Result, res)
+
+		for _, t := range res {
+			fmt.Println("childState", t)
+		}
+
 		return true
 	}
-
 	if action.ActionCode == BattleDto.GetSelfCardInHard && action.Predicates == BattleDto.Query { //获取自己手牌
 		s.Mutex.Lock()
 		res := s.c.GetCardInHard(id)
@@ -371,7 +374,6 @@ func (s *ShuffleDeal) enter() {
 
 func (s *ShuffleDeal) process(GoCtx context.Context) {
 	handleAction := func(id int, action BattleDto.Action, ResponseChan chan<- BattleDto.Action) bool { //监听上战斗牌
-
 		if action.ActionCode == BattleDto.DeployCard && action.Predicates == BattleDto.Result {
 			var data BattleData.SelectCard
 			err := mapstructure.Decode(action.ActionData, &data)
@@ -479,7 +481,7 @@ type ActiveChildCard struct {
 	DoneMap   map[int]bool
 	ChanStop  chan struct{}
 	ChanCrash chan struct{}
-	Completed bool
+	Completed atomic.Bool
 }
 
 type ActiveChildCardDto struct {
@@ -491,7 +493,7 @@ func (a *ActiveChildCard) SpecialInit() {
 	a.TaskMap[a.Id1] = make([]int, 0)
 	a.TaskMap[a.Id2] = make([]int, 0)
 	a.DoneMap = map[int]bool{a.Id1: false, a.Id2: false}
-	a.Completed = false
+	a.Completed.Store(false)
 }
 
 func (a *ActiveChildCard) enter() {
@@ -510,7 +512,7 @@ func (a *ActiveChildCard) exit() {
 	a.DoneMap = nil
 	a.ChanCrash = nil
 	a.ChanStop = nil
-	a.Completed = false
+	a.Completed.Store(false)
 }
 
 func (a *ActiveChildCard) process(GoCtx context.Context) {
@@ -518,7 +520,7 @@ func (a *ActiveChildCard) process(GoCtx context.Context) {
 		if action.ActionCode == BattleDto.ActiveChildCard && action.Predicates == BattleDto.Result {
 			a.Lock()
 			defer a.Unlock()
-			if a.Completed {
+			if a.Completed.Load() {
 				return true
 			}
 			if a.DoneMap[id] {
@@ -559,17 +561,17 @@ func (a *ActiveChildCard) process(GoCtx context.Context) {
 func (a *ActiveChildCard) SelectEnd() {
 	a.Lock()
 	defer a.Unlock()
-	if a.Completed {
+	if a.Completed.Load() {
 		return
 	}
 	a.finishSelect()
 }
 
 func (a *ActiveChildCard) finishSelect() {
-	if a.Completed {
+	if a.Completed.Load() {
 		return
 	}
-	a.Completed = true
+	a.Completed.Store(true)
 
 	selected := a.computeFinalSelection()
 
@@ -688,9 +690,10 @@ func containsInt(list []int, target int) bool {
 
 type SelectWeather struct {
 	StateTemplate
-	StopChan    chan struct{}
-	CrashChan   chan struct{}
-	WeatherList []int
+	StopChan         chan struct{}
+	CrashChan        chan struct{}
+	WeatherList      []int
+	WeatherListMutex sync.Mutex
 }
 
 type SelectWeatherDto struct {
@@ -726,6 +729,8 @@ func (s *SelectWeather) process(GoCtx context.Context) {
 			s.CrashChan <- struct{}{}
 			s.Change(data.Weather)
 
+			fmt.Println("天气选择前端结果", data)
+
 			go s.SM.finish("SelectSkillCard")
 		}
 
@@ -735,12 +740,15 @@ func (s *SelectWeather) process(GoCtx context.Context) {
 }
 
 func (s *SelectWeather) timeEnding() {
+
+	s.WeatherListMutex.Lock() //上锁处理WeatherList
 	res := Util.GetRandomElements[int](s.WeatherList, 1)[0]
+	s.WeatherListMutex.Unlock()
+
 	s.Change(protocol.Weather(res))
 	s.SM.SendActionById(s.SM.Id1, BattleDto.NewAction(BattleDto.SelectWeather, BattleDto.Succeed, SelectWeatherDto{Weather: protocol.Weather(res)}))
 	s.SM.SendActionById(s.SM.Id2, BattleDto.NewAction(BattleDto.SelectWeather, BattleDto.Succeed, SelectWeatherDto{Weather: protocol.Weather(res)}))
 	go s.SM.finish("SelectSkillCard")
-
 }
 
 func (s *SelectWeather) enter() {
@@ -762,8 +770,12 @@ func (s *SelectWeather) enter() {
 	//-----让钱多的人选天气-----
 	queryMap := make(map[string]any)
 	queryMap["state_wait_time"] = Util.SendTime(global.SelectWeatherTime * time.Second)
+
+	s.WeatherListMutex.Lock() //上锁处理WeatherList
 	s.WeatherList = s.ToSelect()
 	queryMap["weather_list"] = s.WeatherList
+	s.WeatherListMutex.Unlock()
+
 	s.SM.SendActionById(s.SM.GoldMoreUserId, BattleDto.NewAction(BattleDto.SelectWeather, BattleDto.Query, queryMap))
 	//-----让钱多的人选天气-----
 
@@ -900,8 +912,8 @@ type Judge struct {
 	TaskMap           map[int]int
 	ChanStop          chan struct{} //这东西是不用初始化的
 	ChanCrash         chan struct{}
-	IsTie             bool
-	WaitAnimationPlay bool
+	IsTie             atomic.Bool
+	WaitAnimationPlay atomic.Bool
 }
 
 type JudgeData struct {
@@ -910,8 +922,8 @@ type JudgeData struct {
 
 func (J *Judge) SpecialInit() {
 	J.TaskMap = make(map[int]int)
-	J.IsTie = false
-	J.WaitAnimationPlay = false
+	J.IsTie.Store(false)
+	J.WaitAnimationPlay.Store(false)
 }
 
 func JudgeWin(Jd1 int, Jd2 int) int { //输出Jd1是否win
@@ -936,7 +948,7 @@ func (J *Judge) EndJudge() {
 	J.SM.SendActionById(J.Id2, BattleDto.NewAction(BattleDto.Judge, BattleDto.Finish, NewJudgeRes(J.TaskMap[J.Id2], J.TaskMap[J.Id1], JudgeWin(J.TaskMap[J.Id2], J.TaskMap[J.Id1]))))
 
 	if JudgeWin(J.TaskMap[J.Id1], J.TaskMap[J.Id2]) == 0 {
-		J.IsTie = true
+		J.IsTie.Store(true)
 	} else {
 		J.SM.Winner = J.Id1
 		J.SM.Loser = J.Id2
@@ -951,7 +963,7 @@ func (J *Judge) EndJudge() {
 		J.c.PlayerDataMap[J.SM.Winner].UpdateEnergy(2)
 	}
 
-	J.WaitAnimationPlay = true
+	J.WaitAnimationPlay.Store(true)
 
 }
 
@@ -967,12 +979,15 @@ func (J *Judge) enter() {
 	J.SM.SendActionById(J.Id2, BattleDto.NewAction(BattleDto.Judge, BattleDto.Query, NewStateWaitTime(global.JudgeWaitTime)))
 }
 func (J *Judge) exit() {
+	J.Mutex.Lock()
 	J.TaskMap[J.Id1] = 3
 	J.TaskMap[J.Id1] = 3
+	J.Mutex.Unlock()
+
 	J.ChanStop = nil
 	J.ChanCrash = nil
-	J.IsTie = false
-	J.WaitAnimationPlay = false
+	J.IsTie.Store(false)
+	J.WaitAnimationPlay.Store(false)
 }
 
 type JudgeRes struct {
@@ -994,8 +1009,8 @@ func (J *Judge) process(GoCtx context.Context) {
 
 		J.Mutex.Lock()
 
-		if J.WaitAnimationPlay && action.ActionCode == BattleDto.AnimationPlayEnd && action.Predicates == BattleDto.Notify {
-			if !J.IsTie {
+		if J.WaitAnimationPlay.Load() && action.ActionCode == BattleDto.AnimationPlayEnd && action.Predicates == BattleDto.Notify {
+			if !J.IsTie.Load() {
 				go J.SM.finish("Combat")
 			} else {
 				go J.SM.finish("Judge")
