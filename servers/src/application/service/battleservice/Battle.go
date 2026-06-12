@@ -40,7 +40,7 @@ func NewBattle(UserA int, UserB int, CardList map[int][]int, GoldMoreUserId int,
 		}
 	}
 
-	ctx := NewCtx(UserA, UserB, CardListImpl.Copy(), BattleContext, CardInHand, &TempId, cList)
+	ctx := NewCtx(UserA, UserB, BattleContext, CardInHand, &TempId, cList)
 	Nt := NewNotifyManager(UserA, UserB, 32) //初始化bufferSize
 	SM := NewStateMachine(ctx, UserA, UserB, Nt, BattleContext, GoldMoreUserId)
 	go func() {

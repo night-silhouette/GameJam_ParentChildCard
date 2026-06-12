@@ -20,7 +20,7 @@ const (
 	Lev1Category4Num = 8
 
 	SelectWeatherTime   = 10 //s
-	BattleWaitTime      = 15 //s
+	BattleWaitTime      = 30 //s
 	ActiveChildCardTime = 10 //s
 	SelectCharacterTime = 10 //s
 	SelectSkillCardTime = 15 //s

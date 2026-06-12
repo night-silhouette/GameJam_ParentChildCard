@@ -10,75 +10,73 @@ import (
 )
 
 type CardList struct {
-	// 💡 不存实体了，改存“卡牌构造函数”的映射表，作为生产车间
-	creators map[int]func() CardAbstract.Card
-	// 💡 缓存配置表里的 is_parent 状态和基础 info，避免频繁跨服务查询
-	cardInfoCache map[int]map[string]any
+	creators      map[int]func() CardAbstract.Card
+	cardInfoCache map[int]map[string]any // 💡 这里存的是“只读的原始配置图鉴”
 	Mt            sync.Mutex
-	s             BattleService // 把服务实例挂载在工厂里，方便随时初始化新卡
+	s             BattleService
 }
 
 var CardListImpl CardList
 
-// InitCardList 对外全局初始化接口
 func InitCardList(s BattleService) {
 	CardListImpl = CardList{}
 	CardListImpl.init(s)
 }
 
-// GetCardImpl 这是对外的、带锁的、安全的获取一张全新卡牌的方法
+// 根据tempid获取卡牌对象
 func (Cd *CardList) GetCardImpl(CardId int) CardAbstract.Card {
 	Cd.Mt.Lock()
 	defer Cd.Mt.Unlock()
 	return Cd.getCardImpl(CardId)
 }
 
-// getCardImpl 内部核心工厂方法：动态 New 并当场完成所有动态变量注入
+// getCardImpl 内部核心工厂方法（绝对安全版）
 func (Cd *CardList) getCardImpl(CardId int) CardAbstract.Card {
-	// 1. 通过 ID 匹配对应的构造器函数
 	creator, exists := Cd.creators[CardId]
 	if !exists {
 		return nil
 	}
 
-	// 2. ⚡ 啪！直接从零 New 一张崭新、无污染的卡牌实体
+	// 1. 生产独立新卡
 	e := creator()
-
-	// 3. 现场为这给新诞生的卡牌单独注入所有动态运行时数据
 	e.InitBuffList()
 
-	// 从缓存的图鉴配置中拿数据
-	info := Cd.cardInfoCache[CardId]
-	e.SetInfo(info)
+	// 2. 🛡️ 核心防污染安全区：把缓存的只读配置 Map，【深/浅拷贝】一份给新卡牌！
+	cachedInfo := Cd.cardInfoCache[CardId]
+	freshInfo := make(map[string]any) // 开辟完全属于这头新卡的独立 Map 内存
+	for k, v := range cachedInfo {
+		freshInfo[k] = v // 这样新卡牌随便怎么改自己的 freshInfo，全局缓存都绝对不会动！
+	}
 
-	// ✨ 每个人都会拥有自己完全独立的、崭新的全局唯一 Channel，绝对不会多协程撞车打架！
+	// 把拷贝出来的独立 Info 塞给新卡
+	e.SetInfo(freshInfo)
+
+	// 3. 每个人独立的 Channel
 	e.SetStateCodeChan(make(chan protocol.Effect))
 
-	if val, ok := info["initHp"]; ok && val != nil {
-		e.SetHpNow(info["initHp"].(float64))
+	// 4. 用 freshInfo 初始化数值
+	if val, ok := freshInfo["initHp"]; ok && val != nil {
+		e.SetHpNow(freshInfo["initHp"].(float64))
 	}
-	if val, ok := info["damage"]; ok && val != nil {
-		e.SetAtkNow(info["damage"].(float64))
+	if val, ok := freshInfo["damage"]; ok && val != nil {
+		e.SetAtkNow(freshInfo["damage"].(float64))
 	}
 
-	// ✨ 分配全新独立的 Decorator 内存地址
 	e.SetDec(CardMeta.NewDecorator())
-	e.InitControlSignalMap()
+	e.InitControlSignalMap() //------------------有新的初始化,就来这里------------------
 
 	return e
 }
 
-// GetChildCard 输出所有子牌数组（全量生产崭新独立的子牌）
+// 获得子牌数组
 func (Cd *CardList) GetChildCard() []CardAbstract.Card {
 	Cd.Mt.Lock()
 	defer Cd.Mt.Unlock()
 
 	res := make([]CardAbstract.Card, 0)
-	// 遍历缓存，只要发现配置中 is_parent 为 false，说明是子牌，直接现场拉一条生产线
 	for cardId, info := range Cd.cardInfoCache {
 		if info != nil {
 			if isParent, ok := info["is_parent"].(bool); ok && !isParent {
-				// 直接调用 getCardImpl 生产出完全独立的实体
 				if newChildCard := Cd.getCardImpl(cardId); newChildCard != nil {
 					res = append(res, newChildCard)
 				}
@@ -88,26 +86,10 @@ func (Cd *CardList) GetChildCard() []CardAbstract.Card {
 	return res
 }
 
-// Copy 复制当前所有已注册卡牌的崭新列表（通常用于对局开始时初始化玩家的整套图鉴）
-func (Cd *CardList) Copy() *[]CardAbstract.Card {
-	Cd.Mt.Lock()
-	defer Cd.Mt.Unlock()
-
-	newList := make([]CardAbstract.Card, 0, len(Cd.creators))
-	for cardId := range Cd.creators {
-		if newCard := Cd.getCardImpl(cardId); newCard != nil {
-			newList = append(newList, newCard)
-		}
-	}
-	return &newList
-}
-
-// init 图鉴工厂初始化：在这里登記所有卡牌的出生证明
 func (Cd *CardList) init(s BattleService) {
 	Cd.s = s
 	Cd.cardInfoCache = make(map[int]map[string]any)
 
-	// 1. 注册所有的卡牌构造函数映射
 	Cd.creators = map[int]func() CardAbstract.Card{
 		0: func() CardAbstract.Card { return CardImpl.NewCard0000() },
 		1: func() CardAbstract.Card { return CardImpl.NewCard0001() },
@@ -149,9 +131,8 @@ func (Cd *CardList) init(s BattleService) {
 		3007: func() CardAbstract.Card { return CardImpl.NewCard3007() },
 	}
 
-	// 2. 提前把所有卡牌的静态 Info 配置拉取下来做成缓存，避免以后运行时反复请求 context 造成的延迟
+	// 缓存只读的原始图鉴数据
 	for cardId, creator := range Cd.creators {
-		// 实例化一个临时卡牌用来拿它的 ID
 		temp := creator()
 		info := s.GetCardInfoByID(context.Background(), temp.GetID())
 		Cd.cardInfoCache[cardId] = info

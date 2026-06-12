@@ -3,7 +3,6 @@ package battleservice
 import (
 	"context"
 	"fmt"
-	"log"
 	"pcc_card/Util"
 	"pcc_card/application/entity/BattleData"
 	"pcc_card/application/entity/Card/CardAbstract"
@@ -24,9 +23,9 @@ type Ctx struct {
 	CardObserver   *CardObserver
 	PlayerDataMap  map[int]*PlayerData
 	CtxStateNotify *CtxStateNotify
-	CardPool       *[]CardAbstract.Card //和手牌数组里的是同一份对象，都是从总体复制出来的
-	DisCardPool    *Util.SafeContainer[CardAbstract.Card]
-	TempIdCalc     *atomic.Int32 //计算tempid//现在记录的值,是用过的值
+
+	DisCardPool *Util.SafeContainer[CardAbstract.Card]
+	TempIdCalc  *atomic.Int32 //计算tempid//现在记录的值,是用过的值
 
 	Weather             atomic.Int64
 	ChildList           *Util.SafeContainer[CardAbstract.Card]
@@ -35,12 +34,12 @@ type Ctx struct {
 	InterruptListenFunc atomic.Value //func(id int, action BattleDto.Action, ResponseChan chan<- BattleDto.Action) bool
 }
 
-func NewCtx(idA int, idB int, CardPool *[]CardAbstract.Card, ParentContext context.Context, CardList map[int]map[int]CardAbstract.Card, TempIdCalc *atomic.Int32, cList []CardAbstract.Card) *Ctx {
+func NewCtx(idA int, idB int, ParentContext context.Context, CardList map[int]map[int]CardAbstract.Card, TempIdCalc *atomic.Int32, cList []CardAbstract.Card) *Ctx {
 	c := &Ctx{}
 	c.EffectsStack = NewEffectStack()
 	c.entityCounter = 1
 	c.ParentContext = ParentContext
-	c.CardPool = CardPool
+
 	c.PlayerDataMap = make(map[int]*PlayerData, 2)
 	c.PlayerDataMap[idA] = NewPlayerData(idA, CardList[idA])
 	for _, card := range CardList[idA] {
@@ -190,40 +189,6 @@ func (O *CardObserver) DrainCollector() {
 type MetaCardState struct {
 	CardId int
 	Effect protocol.Effect
-}
-
-func NewCardObserver(ParentContext context.Context, ctx *Ctx) *CardObserver {
-	o := &CardObserver{}
-	o.ParentContext = ParentContext
-	o.Collector = make(chan MetaCardState, 128)
-	o.ctx = ctx
-	CardPool := *o.ctx.CardPool
-
-	for _, card := range CardPool {
-
-		go func(card CardAbstract.Card) { //给每一张卡开一个哨兵
-			var CardChan <-chan protocol.Effect
-			CardChan = card.GetStateCodeChan()
-			for {
-				select {
-				case code := <-CardChan:
-					Meta := MetaCardState{card.GetID(), code}
-					select {
-					case o.Collector <- Meta:
-					default:
-
-						ctx.StateMachine.SendActionById(ctx.StateMachine.Id1, BattleDto.NewErrAction(global.BattleEffectStackOverflow))
-						ctx.StateMachine.SendActionById(ctx.StateMachine.Id2, BattleDto.NewErrAction(global.BattleEffectStackOverflow))
-						log.Println("collector channel full")
-					}
-				case <-o.ParentContext.Done():
-					return
-				}
-			}
-		}(card)
-
-	}
-	return o
 }
 
 //__________________________________________CtxStateNotify______________________________________________
@@ -425,7 +390,7 @@ func (c *Ctx) ProtoColMoveDisCardPool(UserId int, TempId int) {
 
 func (c *Ctx) ProtoColSetCardBt(UserId int, TempId int) {
 	card := c.GetCardInHardByCardTempId(UserId, TempId)
-	c.SetCardBt(UserId, card)
+	c.SetCardBt(UserId, card) //这个接口已经上锁了
 }
 
 // Notify 传-1，表全部
@@ -718,6 +683,8 @@ func (c *Ctx) CheckCardByWhere(id int, where BattleData.Where) bool {
 // CheckCard 检查是否有角色牌出战
 func (c *Ctx) CheckCard(id int) bool {
 	playerData := c.PlayerDataMap[id]
+	playerData.dataMutex.Lock()
+	defer playerData.dataMutex.Unlock()
 	flag := false //没有牌
 	if playerData.ParentCardBT != nil {
 		flag = true
@@ -731,6 +698,8 @@ func (c *Ctx) CheckCard(id int) bool {
 // SetCardBt 设置cardBT,已考虑子母Bt问题,从手牌里删除,判断了是否有牌，没牌才可以上
 func (c *Ctx) SetCardBt(id int, card CardAbstract.Card) {
 	playerData := c.PlayerDataMap[id]
+	playerData.dataMutex.Lock()
+	defer playerData.dataMutex.Unlock()
 	if _, ok := card.(CardAbstract.SkillCard); ok {
 		c.SetSkillCardBT(id, card)
 		delete(playerData.CardInHand, card.GetTempId())
@@ -752,7 +721,8 @@ func (c *Ctx) SetCardBt(id int, card CardAbstract.Card) {
 // GetCardBt 根据where获取卡牌对象本体
 func (c *Ctx) GetCardBt(id int, where BattleData.Where) CardAbstract.Card {
 	playerData := c.PlayerDataMap[id]
-
+	playerData.dataMutex.Lock()
+	defer playerData.dataMutex.Unlock()
 	if where == BattleData.SkillCard {
 		return playerData.SkillCardBT
 	}

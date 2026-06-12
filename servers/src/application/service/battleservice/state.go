@@ -150,7 +150,7 @@ func NewStateMachine(c *Ctx, id1 int, id2 int, Nt *NotifyManager, ParentNodeCtx 
 	StateMachineImpl.Id1 = id1
 	StateMachineImpl.Id2 = id2
 	StateMachineImpl.Nt = Nt //Nt的注入
-	StateMachineImpl.CardListCopy = c.CardPool
+
 	StateMachineImpl.StateStack = make([]State, 0)
 	StateMachineImpl.CombatDataChan = make(chan map[string][]BattleData.CombatDto, 1)
 	StateMachineImpl.LoseMarkMap = make(map[int]int)
