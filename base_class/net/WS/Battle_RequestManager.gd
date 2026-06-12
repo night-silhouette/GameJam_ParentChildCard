@@ -95,6 +95,7 @@ func _request_select_weather(weather: int):
 	var action_data = {
 		"weather": weather
 	}
+	print(weather)
 	_send_to_server(NetDef.Action.SelectWeather, NetDef.Predicate.RESULT, action_data)
 
 func _request_active_child_card(temp_id_list: Array):
