@@ -17,9 +17,11 @@ func _refresh_ui():
 		var card = card_manager.select_card_by_key(_temp_id,"temp_id")
 		$hp.text = str(card.get("hp", ""))
 		$damage.text = str(card.get("damage", ""))
-		$"详细".text = str(card.get("spell_des", ""))
+		var res = card.get("resouce")
+		if res:
+			$"详细".text = str(res.get("skill_description") if res.get("skill_description") else res.get("notes", ""))
+			$TextureRect.texture = res.get("card_texture")
 		$Control.update_card_data(card)
-		$TextureRect.texture = card.texture
 		_fade_in(self);
 		
 func _fade_in(target_card: Control, duration: float = 0.5) -> void:

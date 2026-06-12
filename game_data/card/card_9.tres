@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="CardResource" load_steps=3 format=3 uid="uid://bmvdhpm18whtn"]
+
+[ext_resource type="Texture2D" uid="uid://dje375wa2ans7" path="res://素材/使用素材/卡牌/基础卡牌重置素材/卡牌.png" id="1_wf8yt"]
+[ext_resource type="Script" uid="uid://cik6i25pfmxeg" path="res://base_class/card/card_data.gd" id="2_pastd"]
+
+[resource]
+script = ExtResource("2_pastd")
+card_texture = ExtResource("1_wf8yt")
+texture_filename = "17.png"
+name = "豪猪"
+id = 9
+value = 10
+damage = 2
+initial_health = 4
+max_health = 4
+skill_charge = 2
+is_combat_card = true
+skill_description = "主动：使用后获得两层反伤"
+notes = "反伤：造成收到伤害一半的真伤。防御判定之前"

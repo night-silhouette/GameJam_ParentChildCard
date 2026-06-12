@@ -29,8 +29,10 @@ func _ready():
 
 func _request_deploy_parent_card(card_id,card_temp_id):
 	_on_deploy_card(0,card_id,card_temp_id);
+	print("card_id:",card_id,"temp_id:",card_temp_id);
 func _request_deploy_child_card(card_id,card_temp_id):
 	_on_deploy_card(1,card_id,card_temp_id);
+	print("card_id:",card_id,"temp_id:",card_temp_id);
 func _on_request_deploy_magic_card(card_id,card_temp_id):
 	_on_deploy_card(2,card_id,card_temp_id);
 	
@@ -52,7 +54,7 @@ func _request_get_weather():
 	_send_to_server(NetDef.Action.GetWeather,NetDef.Predicate.QUERY,null);
 
 func _request_get_opponent_cards_inhand():
-	_send_to_server(NetDef.Action.GET_SELF_CARDS, NetDef.Predicate.QUERY, null)
+	_send_to_server(NetDef.Action.GET_OPPONENT_CARDS, NetDef.Predicate.QUERY, null)
 	
 # 带参数的特殊请求：这就是为什么不能用字典循环绑定的原因
 func _on_deploy_card(where,card_id,card_temp_id):
@@ -64,7 +66,7 @@ func _on_deploy_card(where,card_id,card_temp_id):
 		"card_id": card_id,
 		"card_temp_id": card_temp_id
 	}
-	_send_to_server(NetDef.Action.DEPLOY_CARD, NetDef.Predicate.QUERY, action_data)	
+	_send_to_server(NetDef.Action.DEPLOY_CARD, NetDef.Predicate.RESULT, action_data)	
 func _request_judge(judge_data):
 	var action_data = {
 		"judge_data" = judge_data

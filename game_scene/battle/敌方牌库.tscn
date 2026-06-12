@@ -1,6 +1,6 @@
 [gd_scene load_steps=6 format=3 uid="uid://ccxtlwqyr1co8"]
 
-[ext_resource type="Script" uid="uid://o22ntqwsm4oj" path="res://game_ui/battle/牌库/牌库.gd" id="1_f2m5i"]
+[ext_resource type="Script" uid="uid://i7q8omkj273u" path="res://game_scene/battle/敌方牌库.gd" id="1_f2m5i"]
 [ext_resource type="Texture2D" uid="uid://dgyqirah3ilvl" path="res://素材/使用素材/战斗内/桌面/卡库栏底版 .png" id="2_7kmlh"]
 [ext_resource type="Script" uid="uid://dt0fvtr10talu" path="res://game_ui/battle/牌库/切换.gd" id="3_1ls02"]
 [ext_resource type="PackedScene" uid="uid://dpfvbx3mhmx8g" path="res://game_ui/battle/牌库/右切换.tscn" id="4_ky64r"]
@@ -14,8 +14,8 @@ card_vector = NodePath("card_vector")
 
 [node name="牌库底板" type="TextureRect" parent="."]
 layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
+offset_right = 3560.0
+offset_bottom = 1177.0
 texture = ExtResource("2_7kmlh")
 metadata/_edit_lock_ = true
 

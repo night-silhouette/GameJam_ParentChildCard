@@ -6,6 +6,7 @@
 [resource]
 script = ExtResource("2_0lwum")
 card_texture = ExtResource("1_v2gji")
+texture_filename = "7.png"
 name = "寻血猎犬"
 id = 2001
 value = 120
@@ -15,6 +16,6 @@ max_health = 4
 skill_charge = 2
 is_combat_card = true
 is_sub_card = true
-skill_description = "被动：攻击附加在场上敌我手牌中的血量不满的战斗牌数量的伤害。"
+skill_description = "被动：攻击附加在场上敌我手牌中的血量不满的战斗牌数量的伤害。附伤的上限为5"
 notes = "召唤条件：首次击败一张卡牌"
 sub_card_trigger_effect = "可以对场上的任意一张牌造成一点真实伤害"

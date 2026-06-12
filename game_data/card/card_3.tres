@@ -6,7 +6,8 @@
 [resource]
 script = ExtResource("2_qukeu")
 card_texture = ExtResource("1_mkk88")
-name = "大狗"
+texture_filename = "Image_1781086681224_965.png"
+name = "海老"
 id = 3
 value = 10
 damage = 1

@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="CardResource" load_steps=3 format=3 uid="uid://y4ebg5gm8vn1"]
+
+[ext_resource type="Texture2D" uid="uid://dje375wa2ans7" path="res://素材/使用素材/卡牌/基础卡牌重置素材/卡牌.png" id="1_m1a7j"]
+[ext_resource type="Script" uid="uid://cik6i25pfmxeg" path="res://base_class/card/card_data.gd" id="2_q58ja"]
+
+[resource]
+script = ExtResource("2_q58ja")
+card_texture = ExtResource("1_m1a7j")
+texture_filename = "19.png"
+name = "虫"
+id = 7
+value = 10
+damage = 200032
+initial_health = 200242
+max_health = 2
+skill_charge = 2
+is_combat_card = true
+skill_description = "主动：只有在虫形态可用，杀死自己，变成蝶形态，倘若被敌方杀死，变成蛾形态，俩种形态数值不同"

@@ -1,7 +1,7 @@
 extends Node
 
 @onready var button: TextureButton = $"转换"
-@onready var active_card: HBoxContainer = $"active_child_card"
+@onready var active_card: HBoxContainer = $"卡牌显示/active_child_card"
 @onready var op_card: Control = $"卡牌显示/敌方牌库"
 @onready var weather_name_label: Label = $"weather_name"
 @onready var card_manager: Node = $"数据层/card_manager"

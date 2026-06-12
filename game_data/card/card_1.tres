@@ -6,12 +6,13 @@
 [resource]
 script = ExtResource("2_xb66q")
 card_texture = ExtResource("1_q7xc6")
+texture_filename = "15.png"
 name = "精灵"
 id = 1
 value = 10
 damage = 2
 initial_health = 4
-max_health = 4
+max_health = 5
 skill_charge = 2
 is_combat_card = true
 skill_description = "主动：指定敌方的某出战卡造成1真实伤害并回复1滴血"

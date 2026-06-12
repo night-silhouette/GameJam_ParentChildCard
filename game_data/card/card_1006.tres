@@ -6,6 +6,7 @@
 [resource]
 script = ExtResource("2_lutk0")
 card_texture = ExtResource("1_rjnio")
+texture_filename = "32.png"
 name = "不许动"
 id = 1006
 value = 10

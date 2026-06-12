@@ -96,6 +96,7 @@ func _ready() -> void:
 	SignalBus.self_inhand_updated.connect(_self_inhand_updated)
 	SignalBus.bt_oppinfo_updated.connect(_bt_oppinfo_updated)
 	SignalBus.bt_selfinfo_updated.connect(_bt_selfinfo_updated)
+	SignalBus.oppent_inhand_updated.connect(_on_oppent_inhand_updated)
 	change_card_zone.connect(_change_card_zone)
 
 	# ==================== [新增] WS 非卡牌数据导入 ====================
@@ -103,7 +104,7 @@ func _ready() -> void:
 	SignalBus.discard_list_updated.connect(_on_discard_list_updated)
 	SignalBus.weather_update.connect(_on_weather_update)
 	SignalBus.child_card_list_updated.connect(_on_child_card_list_updated)
-	SignalBus.oppent_inhand_updated.connect(_on_oppent_inhand_updated)
+	
 	
 	# ==================== 数据变更 → UI ====================
 	energy_changed.connect(_on_energy_changed)
@@ -525,7 +526,7 @@ func clear_all_combat_dto() -> void:
 		clear_combat_dto(0)
 	if child_combat_dto.behavior != -1:
 		clear_combat_dto(1)
-
+#endregion
 
 #region ==================== 游戏交互逻辑 ====================
 
@@ -552,6 +553,9 @@ func _exit_freecard(temp_id):
 func _can_deploy_card(icard: Dictionary, target_zone: int) -> bool:
 	if target_zone == Global.ZONE_CARD.DECK_ZONE:
 		return true
+	
+	if not state_machine:
+		return false
 	
 	var res = icard.get("resouce")
 	if res == null:

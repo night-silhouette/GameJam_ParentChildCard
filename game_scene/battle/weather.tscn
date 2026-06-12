@@ -1,6 +1,6 @@
 [gd_scene load_steps=6 format=3 uid="uid://dpkhaae1mllp5"]
 
-[ext_resource type="Script" uid="uid://ctj4xfih6m8dy" path="res://game_scene/battle/judge.gd" id="1_k2amo"]
+[ext_resource type="Script" uid="uid://ctj4xfih6m8dy" path="res://game_scene/battle/weather.gd" id="1_k2amo"]
 [ext_resource type="Texture2D" uid="uid://dx1ewstebv33h" path="res://素材/使用素材/万能组件.png" id="2_h6ke0"]
 [ext_resource type="Texture2D" uid="uid://dje375wa2ans7" path="res://素材/使用素材/卡牌/基础卡牌重置素材/卡牌.png" id="3_8d4ws"]
 [ext_resource type="Texture2D" uid="uid://bhngjavywsdho" path="res://素材/使用素材/选择/确认/零件/勾.png" id="4_ccuap"]

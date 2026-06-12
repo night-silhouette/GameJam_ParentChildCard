@@ -14,8 +14,11 @@ class_name GameManager
 @export var weather: Node = null
 @export var desk_ui: Node = null
 
-var is_win:int ;
+@export var state_name:Label = null
 
+
+var is_win:int ;
+var is_pass = 0
 var parent_action :int ;
 var parent_bt_object: int;
 var child_action :int ;
@@ -35,14 +38,26 @@ enum GameState {
 	USE_COMBAT_CARD,      # 战斗行动阶段
 	JUDGEMENT,            # 判定阶段（剪刀石头布）
 	INTERRUPT,            # 中断选牌阶段（死亡/技能触发，上牌消耗能量）
+	FREE,
 }
-
+const GAME_STATE_NAME = {
+	GameState.INIT_STATE:         "看牌阶段",
+	GameState.CHOOSE_CHILD_CARD:  "选择子卡",
+	GameState.CHOOSE_WEATHER:     "选择天气",
+	GameState.USE_MAGIC_CARD:     "法术牌阶段",
+	GameState.USE_COMBAT_CARD:    "战斗行动阶段",
+	GameState.JUDGEMENT:          "判定阶段",
+	GameState.INTERRUPT:          "中断选牌阶段",
+	GameState.FREE:               "自由阶段",
+}
 # 2. 状态变量（带类型推导与 setter）
 var current_state: GameState = GameState.INIT_STATE:
 	set(value):
 		_exit_state(current_state)
 		current_state = value
 		_enter_state(current_state)
+		state_name.text = str(GAME_STATE_NAME[current_state])
+		is_pass = 0;
 
 # --- 初始化 ---
 func _ready() -> void:
@@ -54,6 +69,7 @@ func _ready() -> void:
 	SignalBus.deploy_magic_success.connect(_deploy_magic_success)
 	SignalBus.magic_card_finish.connect(_magic_card_finish)
 	SignalBus.judge_finish.connect(_judge_finish)
+	SignalBus.enter_free.connect(_enter_free)
 	
 	# [新增] 0.102 新阶段信号
 	SignalBus.active_child_card_start.connect(_on_active_child_card_start)
@@ -78,6 +94,7 @@ func change_state(new_state: GameState) -> void:
 	current_state = new_state # 触发 setter
 
 func _exit_state(old_state: GameState) -> void:
+	_send_message()
 	match old_state:
 		GameState.INIT_STATE:
 			pass
@@ -107,6 +124,8 @@ func _exit_state(old_state: GameState) -> void:
 		GameState.INTERRUPT:
 			all_block.allow_input()
 			_interrupt_selected.clear()
+		GameState.FREE:
+			pass;
 
 func _enter_state(new_state: GameState) -> void:
 	# 每进入一个状态，刷新全部战斗数据
@@ -143,6 +162,9 @@ func _enter_state(new_state: GameState) -> void:
 		GameState.INTERRUPT:
 			Global.revive(choose_child_card)
 			_interrupt_selected.clear()
+			
+		GameState.FREE:
+			pass;
 
 func _refresh_all_battle_data() -> void:
 	SignalBus.request_get_self_cards_inhand.emit()
@@ -190,13 +212,16 @@ func _on_combat_start_success(t,dis_win) -> void:
 func _judge_start(t) -> void:
 	time.start_countdown(TimeOffset.get_remaining_seconds(t));
 	change_state(GameState.JUDGEMENT) 
+	
 
 # [新增] 子卡选择阶段开始
 func _on_active_child_card_start(t, child_list) -> void:
 	card_manager._on_child_card_list_updated(child_list)
 	time.start_countdown(TimeOffset.get_remaining_seconds(t));
 	change_state(GameState.CHOOSE_CHILD_CARD)
-
+#自由阶段:提前结束的阶段
+func _enter_free():
+	change_state(GameState.FREE);
 # [新增] 子卡选择阶段结束
 func _on_active_child_card_finish(selected_temp_id_list) -> void:
 	# 子卡选择结束，进入天气选择阶段（或根据后端流程调整）
@@ -207,6 +232,7 @@ func _on_active_child_card_finish(selected_temp_id_list) -> void:
 # [新增] 天气选择阶段开始
 func _on_select_weather_start(t, weather_list) -> void:
 	_weather_list = weather_list if weather_list is Array else []
+
 	time.start_countdown(TimeOffset.get_remaining_seconds(t));
 	change_state(GameState.CHOOSE_WEATHER)
 
@@ -231,22 +257,25 @@ func _on_interrupt_succeed() -> void:
 	_interrupt_selected.clear()
 
 func _on_万能按钮_button_down() -> void:
+	_send_message();
+			
+func _send_message():
 	var card:Array;
+	if is_pass == 1:
+		return;
+	is_pass = 1;
 	match current_state :
 
 		GameState.INIT_STATE:
 			time.countdown_time = 0;
 			card = card_manager.get_cards_by_zone(Global.ZONE_CARD.PARENT_BATTLE_ZONE);
-			if card.is_empty():
-				return
-			SignalBus.request_deploy_parent_card.emit(card[0].id,card[0].temp_id)
-			
-			card = card_manager.get_cards_by_zone(Global.ZONE_CARD.SPELL_ZONE);
-			if card.is_empty():
-				SignalBus.request_deploy_magic_card.emit(-1,-1);
-			else:
-				SignalBus.request_deploy_magic_card.emit(card[0].id,card[0].temp_id)
-
+			if !card.is_empty():
+				SignalBus.request_deploy_parent_card.emit(card[0].id,card[0].temp_id)
+		
+			card = card_manager.get_cards_by_zone(Global.ZONE_CARD.CHILD_BATTLE_ZONE)
+			if !card.is_empty():
+				SignalBus.request_deploy_child_card.emit(card[0].id,card[0].temp_id)
+				
 		GameState.CHOOSE_CHILD_CARD:
 			# 子卡选择阶段：从 CHILD_ACTIVE zone 收集 temp_id
 			time.countdown_time = 0;
@@ -254,6 +283,8 @@ func _on_万能按钮_button_down() -> void:
 			SignalBus.request_active_child_card.emit(selected)
 		
 		GameState.CHOOSE_WEATHER:
+			if weather.index_judge == -1:
+				return
 			time.countdown_time = 0
 			var weather_id = -1
 			if weather.index_judge >= 0 and weather.index_judge < _weather_list.size():
@@ -263,9 +294,7 @@ func _on_万能按钮_button_down() -> void:
 		GameState.USE_MAGIC_CARD:
 			time.countdown_time = 0;
 			card = card_manager.get_cards_by_zone(Global.ZONE_CARD.SPELL_ZONE);
-			if card.is_empty():
-				SignalBus.request_deploy_magic_card.emit(-1,-1);
-			else:
+			if !card.is_empty():
 				SignalBus.request_deploy_magic_card.emit(card[0].id,card[0].temp_id)
 		
 		GameState.USE_COMBAT_CARD:
@@ -286,6 +315,8 @@ func _on_万能按钮_button_down() -> void:
 				SignalBus.request_combat_movement.emit(dc.behavior, dc.self_where, dc.opponent_where, dc.get("select_card", {}))
 		
 		GameState.JUDGEMENT:
+			if judge.index_judge == -1:
+				return;
 			time.countdown_time = 0;
 			jugde_bt.update_single_judge_data(0,judge.index_judge)
 			SignalBus.request_judge.emit(judge.index_judge)
@@ -303,9 +334,7 @@ func _on_万能按钮_button_down() -> void:
 					SignalBus.request_interrupt_select.emit(selected)
 				else:
 					SignalBus.request_interrupt_select.emit([])
-			_interrupt_selected.clear()
-			
-			
+			_interrupt_selected.clear()	
 
 func _deploy_magic_success():
 	if current_state == GameState.USE_MAGIC_CARD :

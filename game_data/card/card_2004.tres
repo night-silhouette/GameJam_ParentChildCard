@@ -6,15 +6,16 @@
 [resource]
 script = ExtResource("2_170yl")
 card_texture = ExtResource("1_ulcjq")
-name = "暴沙"
+texture_filename = "37.png"
+name = "铁皮"
 id = 2004
 value = 120
 damage = 3
-initial_health = 4
-max_health = 4
+initial_health = 5
+max_health = 5
 skill_charge = 2
 is_combat_card = true
 is_sub_card = true
-skill_description = "被动：不受到沙暴伤害影响，在沙暴中攻击附加2。血和血量上限提升2"
-notes = "召唤条件：沙暴持续4回合，给与沙暴造成者。若沙暴被中断，给予中断者"
+skill_description = "被动：每次扣除生命值，扣除生命值减一"
+notes = "召唤条件：沙暴持续4回合，给与环境造成者。若环境被中断，给予中断者"
 sub_card_trigger_effect = "随机回复我方一张战斗牌2点生命"

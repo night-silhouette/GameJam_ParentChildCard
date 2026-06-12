@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=3 uid="uid://cuvi8jmlquxkr"]
+[gd_scene load_steps=25 format=3 uid="uid://cuvi8jmlquxkr"]
 
 [ext_resource type="Texture2D" uid="uid://dgyqirah3ilvl" path="res://素材/使用素材/战斗内/桌面/卡库栏底版 .png" id="1_c20ep"]
 [ext_resource type="Script" uid="uid://dsjhgmpb1haaw" path="res://game_ui/match/match_ui.gd" id="1_oqlle"]
@@ -9,6 +9,7 @@
 [ext_resource type="PackedScene" uid="uid://bhfgqoa1s3286" path="res://game_scene/bag/金币显示.tscn" id="6_aq36u"]
 [ext_resource type="Script" uid="uid://nnvjn0vvfsct" path="res://game_ui/match/card_manage_match.gd" id="7_18hej"]
 [ext_resource type="PackedScene" uid="uid://iijoebau858w" path="res://game_scene/街机按钮.tscn" id="8_a5828"]
+[ext_resource type="Script" uid="uid://dce4ddm1d2i5w" path="res://game_ui/match/num.gd" id="8_w2fbq"]
 [ext_resource type="PackedScene" uid="uid://dot3sukqu6su7" path="res://game_scene/标识.tscn" id="9_hgah4"]
 [ext_resource type="Texture2D" uid="uid://ci7ym6d16j3bs" path="res://素材/使用素材/战斗外/游戏初始界面/UI手（左手）.png" id="10_hgah4"]
 [ext_resource type="Texture2D" uid="uid://v6mxhb2ytswh" path="res://素材/使用素材/战斗外/游戏模式选择与匹配/匹配到后的信息显示动画/匹配信息框/信息框.png" id="12_6u7u6"]
@@ -212,6 +213,7 @@ theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_font_sizes/font_size = 76
 theme_override_styles/normal = SubResource("StyleBoxEmpty_a5828")
 max_length = 16
+script = ExtResource("8_w2fbq")
 
 [node name="card_manage_match" type="Node" parent="."]
 script = ExtResource("7_18hej")
@@ -262,5 +264,4 @@ sprite_frames = SubResource("SpriteFrames_n0lx2")
 animation = &"wait"
 frame_progress = 0.7351176
 
-[connection signal="button_down" from="街机按钮" to="." method="_on_街机按钮_button_down"]
 [connection signal="button_down" from="返回" to="." method="_on_返回_button_down"]

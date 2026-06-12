@@ -6,6 +6,7 @@
 [resource]
 script = ExtResource("2_gihw2")
 card_texture = ExtResource("1_40t6d")
+texture_filename = "0000.png"
 name = "皮肉"
 value = 10
 damage = 2

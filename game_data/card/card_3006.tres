@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="CardResource" load_steps=3 format=3 uid="uid://cupod7y7k2wr2"]
+
+[ext_resource type="Texture2D" uid="uid://dje375wa2ans7" path="res://素材/使用素材/卡牌/基础卡牌重置素材/卡牌.png" id="1_ujtrm"]
+[ext_resource type="Script" uid="uid://cik6i25pfmxeg" path="res://base_class/card/card_data.gd" id="2_d25re"]
+
+[resource]
+script = ExtResource("2_d25re")
+card_texture = ExtResource("1_ujtrm")
+texture_filename = "33.png"
+name = "破灭"
+id = 3006
+value = 90
+skill_card_use_num = 1
+is_sub_card = true
+skill_description = "使用效果:双方减5能量"
+notes = "召唤条件:连续两回合结束时能量为空"
+sub_card_trigger_effect = "获得一点行动点"

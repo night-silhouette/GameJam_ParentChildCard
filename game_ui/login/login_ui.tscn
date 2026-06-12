@@ -77,6 +77,7 @@ grow_vertical = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_font_sizes/font_size = 76
 theme_override_styles/normal = SubResource("StyleBoxEmpty_ykqqb")
+text = "Napori"
 max_length = 16
 
 [node name="password" type="LineEdit" parent="页面"]
@@ -93,6 +94,7 @@ grow_vertical = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_font_sizes/font_size = 76
 theme_override_styles/normal = SubResource("StyleBoxEmpty_ykqqb")
+text = "123456789"
 max_length = 16
 
 [node name="登录" parent="页面" node_paths=PackedStringArray("username", "password") instance=ExtResource("4_kyjnp")]

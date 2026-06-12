@@ -6,7 +6,8 @@
 [resource]
 script = ExtResource("2_4kv86")
 card_texture = ExtResource("1_cb8ow")
-name = "神经毒素"
+texture_filename = "31.png"
+name = "藤蔓"
 id = 5
 value = 10
 damage = 2

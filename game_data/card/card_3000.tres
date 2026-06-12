@@ -6,6 +6,7 @@
 [resource]
 script = ExtResource("2_b68om")
 card_texture = ExtResource("1_ojpt7")
+texture_filename = "1.png"
 name = "亡者复生"
 id = 3000
 value = 90

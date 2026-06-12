@@ -11,4 +11,4 @@ name = "尖啸"
 id = 1000
 value = 10
 skill_card_use_num = 1
-skill_description = "对所有母牌产生一点伤害"
+skill_description = "对场上所有战斗牌产生一点伤害"

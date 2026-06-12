@@ -5,9 +5,9 @@ extends Control
 func _ready() -> void:
 	SignalBus.request_bag_card.emit()
 	SignalBus.ws_connected.connect(_ws_connected)
-	$"街机按钮".button_down.connect(_on_街机按钮_button_down, CONNECT_ONE_SHOT)
+	$"街机按钮".button_down.connect(_on_街机按钮_button_down)
 	
-
+var send = 0;
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 
 func _on_街机按钮_button_down() -> void:
@@ -50,11 +50,12 @@ func _on_街机按钮_button_down() -> void:
 			"gold": input_amount
 		}
 	}
-	
+	if send == 0:
 	# 6. 发送信号并播放等待动画
-	SignalBus.to_connect_ws.emit(body)
-	$wait.visible = true;
-	$wait.play("wait")
+		SignalBus.to_connect_ws.emit(body)
+		send = 1;
+		$wait.visible = true;
+		$wait.play("wait")
 
 func _on_返回_button_down() -> void:
 	SignalBus.change_ui.emit("tomenu")

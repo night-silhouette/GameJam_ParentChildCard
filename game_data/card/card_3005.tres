@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="CardResource" load_steps=3 format=3 uid="uid://do4g704scj56q"]
+
+[ext_resource type="Texture2D" uid="uid://dje375wa2ans7" path="res://素材/使用素材/卡牌/基础卡牌重置素材/卡牌.png" id="1_ta71u"]
+[ext_resource type="Script" uid="uid://cik6i25pfmxeg" path="res://base_class/card/card_data.gd" id="2_nujpq"]
+
+[resource]
+script = ExtResource("2_nujpq")
+card_texture = ExtResource("1_ta71u")
+texture_filename = "35.png"
+name = "柔化"
+id = 3005
+value = 90
+skill_card_use_num = 1
+is_sub_card = true
+skill_description = "使用效果:下回合开始,只会收到28%应该收到的伤害,剩下的72%会在两回合后的回合开始时结算"
+notes = "召唤条件:连续回合判定胜利3次"
+sub_card_trigger_effect = "随机回复我方一张战斗牌2点生命"

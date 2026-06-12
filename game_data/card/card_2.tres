@@ -6,7 +6,8 @@
 [resource]
 script = ExtResource("2_m58qk")
 card_texture = ExtResource("1_e8q5d")
-name = "变形水母"
+texture_filename = "10.png"
+name = "癌细胞"
 id = 2
 value = 10
 damage = 3
@@ -14,5 +15,5 @@ initial_health = 3
 max_health = 3
 skill_charge = 2
 is_combat_card = true
-skill_description = "主动:使自己的血量和血量上限翻倍，同时给予自己一层凋零"
-notes = "凋零：每回合结束时，扣一滴血"
+skill_description = "主动: 使自己的血量和血量上限翻倍，同时给予自己永久凋零"
+notes = "凋零：每回合结束时，受到一点真实伤害"

@@ -6,8 +6,9 @@
 [resource]
 script = ExtResource("2_8p8xx")
 card_texture = ExtResource("1_3yvtj")
+texture_filename = "2.png"
 name = "转移"
 id = 1005
 value = 10
 skill_card_use_num = 1
-skill_description = "下回合无敌"
+skill_description = "指定一张牌,下回合无敌"

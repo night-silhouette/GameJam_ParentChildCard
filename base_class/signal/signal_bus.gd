@@ -141,6 +141,7 @@ signal  magic_card_finish
 
 ##判定回合开始信号. 动画开始时间暂停
 signal combat_start_success(t,is_win);
+signal enter_free()
 
 
 # =========================

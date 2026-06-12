@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="CardResource" load_steps=3 format=3 uid="uid://c687bfccwsmme"]
+
+[ext_resource type="Texture2D" uid="uid://dje375wa2ans7" path="res://素材/使用素材/卡牌/基础卡牌重置素材/卡牌.png" id="1_wfbro"]
+[ext_resource type="Script" uid="uid://cik6i25pfmxeg" path="res://base_class/card/card_data.gd" id="2_qxsxo"]
+
+[resource]
+script = ExtResource("2_qxsxo")
+card_texture = ExtResource("1_wfbro")
+texture_filename = "38.png"
+name = "小鬼"
+id = 6
+value = 10
+damage = 2
+initial_health = 4
+max_health = 4
+skill_charge = 2
+is_combat_card = true
+skill_description = "主动：给予四层50%治疗衰减"

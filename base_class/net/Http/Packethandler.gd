@@ -16,6 +16,10 @@ func _handle_raw_api_data(api_name: String, method: int, code: int, data: Varian
 # 登录和token
 	if code != 0 :
 		print("code = ",code,NetError.get_message(code));
+		match code:
+			16:
+				SignalBus.change_scence.emit("tologin");
+				SignalBus.change_ui.emit("tologin")
 		return
 		
 	match api_name:

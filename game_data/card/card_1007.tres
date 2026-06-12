@@ -6,8 +6,9 @@
 [resource]
 script = ExtResource("2_yor3w")
 card_texture = ExtResource("1_ttdo8")
-name = "明阳"
+texture_filename = "1007.png"
+name = "化晴"
 id = 1007
 value = 10
 skill_card_use_num = 1
-skill_description = "获得2两点能量，将天气改为晴天"
+skill_description = "获得2两点能量，将天气改为明阳"

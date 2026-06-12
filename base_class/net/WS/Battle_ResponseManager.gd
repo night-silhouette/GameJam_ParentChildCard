@@ -31,7 +31,6 @@ func _dispatch(action_code: int, action_data: Variant, predicate: int):
 					push_error("GET_SELF_CARDS 返回格式错误，期望 Array")
 		NetDef.Action.GET_OPPONENT_CARDS:
 			if predicate == NetDef.Predicate.RESULT:
-				
 				if action_data is Array:
 					SignalBus.oppent_inhand_updated.emit(action_data)
 					
@@ -71,7 +70,7 @@ func _dispatch(action_code: int, action_data: Variant, predicate: int):
 		NetDef.Action.MATCH_SUCCESS:
 			if predicate == NetDef.Predicate.NOTIFY:
 				var t = action_data.state_wait_time;
-				print("init阶段")
+				#print("init阶段")
 				SignalBus.match_success.emit(t);
 		NetDef.Action.JUDGE:
 			if predicate == NetDef.Predicate.QUERY:
@@ -98,7 +97,7 @@ func _dispatch(action_code: int, action_data: Variant, predicate: int):
 			if predicate == NetDef.Predicate.RESULT:
 				if action_data is Array:
 					SignalBus.child_card_list_updated.emit(action_data)
-					print(action_data)
+					#print(action_data)
 					
 				else:
 					push_error("GET_CHILD_CARD_LIST 返回格式错误，期望 Array")
@@ -123,6 +122,7 @@ func _dispatch(action_code: int, action_data: Variant, predicate: int):
 			if predicate == NetDef.Predicate.QUERY:
 				var t = action_data.get("state_wait_time", 0)
 				var weather_list = action_data.get("weather_list", [])
+				print(action_data)
 				SignalBus.select_weather_start.emit(t, weather_list)
 			if predicate == NetDef.Predicate.SUCCEED:
 				SignalBus.select_weather_succeed.emit(action_data)

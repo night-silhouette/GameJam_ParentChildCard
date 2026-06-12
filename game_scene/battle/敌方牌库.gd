@@ -17,16 +17,12 @@ func _ready() -> void:
 	for i in range(page_size):
 		var child = object_pool.get_card()
 		child.hide()
+		child.scale.y = - child.scale.y 
 		card_vector.add_child(child)
-		
-		## 连接子节点的信号：当子节点被玩家“抓起”时
-		## 注意：子节点只需传出它持有的 card_data 即可
-		if child.has_signal("request_drag"):
-			child.request_drag.connect(_on_card_request_drag)
 
 func refresh_ui():
 	# 从数据层重新拉取当前 Zone 的所有卡牌数据
-	cards = card_manager.get_cards_by_zone(Global.ZONE_CARD.DECK_ZONE)
+	cards = card_manager.get_cards_by_zone(Global.ZONE_CARD.ENEMY_HAND_ZONE)
 	_update_view()
 
 func _update_view():
@@ -47,15 +43,6 @@ func get_current_page() -> Array:
 	return cards.slice(start_index, end_index)
 
 # ================= 核心：配合“游荡对象”的逻辑 =================
-
-func _on_card_request_drag(card_data):
-	# 1. 激活全局游荡对象（DragProxy）
-	# 假设你有一个全局单例 DragManager 
-	#DragManager.start_drag(card_data/)
-	
-	# 2. 核心操作：修改数据层！
-	# 告诉 card_manager：这张牌现在离开 DECK_ZONE 了，进入临时状态
-	card_manager._change_card_zone(card_data.get("temp_id"), Global.ZONE_CARD.FREE_ZONE)
 
 # ================= 翻页逻辑（保持不变） =================
 

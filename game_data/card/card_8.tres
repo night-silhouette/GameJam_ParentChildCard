@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="CardResource" load_steps=3 format=3 uid="uid://bob61ft4lyr7m"]
+
+[ext_resource type="Texture2D" uid="uid://dje375wa2ans7" path="res://素材/使用素材/卡牌/基础卡牌重置素材/卡牌.png" id="1_0sk01"]
+[ext_resource type="Script" uid="uid://cik6i25pfmxeg" path="res://base_class/card/card_data.gd" id="2_lllma"]
+
+[resource]
+script = ExtResource("2_lllma")
+card_texture = ExtResource("1_0sk01")
+texture_filename = "2004.png"
+name = "矿工"
+id = 8
+value = 10
+damage = 2
+initial_health = 5
+max_health = 5
+skill_charge = 2
+is_combat_card = true
+skill_description = "主动:下回合开始获得3点能量"

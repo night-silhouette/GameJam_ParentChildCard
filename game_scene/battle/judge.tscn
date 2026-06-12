@@ -1,6 +1,6 @@
 [gd_scene load_steps=8 format=3 uid="uid://bdiipd0anxspc"]
 
-[ext_resource type="Script" uid="uid://ctj4xfih6m8dy" path="res://game_scene/battle/judge.gd" id="1_jd4vg"]
+[ext_resource type="Script" uid="uid://ddl03otff3qnj" path="res://game_scene/battle/judge.gd" id="1_jd4vg"]
 [ext_resource type="Texture2D" uid="uid://dx1ewstebv33h" path="res://素材/使用素材/万能组件.png" id="2_dt2ld"]
 [ext_resource type="Texture2D" uid="uid://b46shojf52tgq" path="res://素材/使用素材/战斗内/判定/1.png" id="2_k5qlo"]
 [ext_resource type="Texture2D" uid="uid://pu7jg52o37qj" path="res://素材/使用素材/战斗内/判定/3.png" id="4_ju23d"]

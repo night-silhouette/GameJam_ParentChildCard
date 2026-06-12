@@ -1,13 +1,7 @@
-[gd_scene load_steps=5 format=3 uid="uid://bhfgqoa1s3286"]
+[gd_scene load_steps=3 format=3 uid="uid://bhfgqoa1s3286"]
 
 [ext_resource type="Texture2D" uid="uid://b0350k12k2v6n" path="res://素材/使用素材/战斗外/游戏模式选择与匹配/硬币/1.png" id="1_epfeu"]
 [ext_resource type="Script" uid="uid://di8xblt4eo613" path="res://game_scene/bag/金币显示.gd" id="2_7ifn5"]
-[ext_resource type="FontFile" uid="uid://bj1pdtvpfop4a" path="res://素材/使用素材/YaoSuiXinShouXieTi-2.ttf" id="3_tvius"]
-
-[sub_resource type="LabelSettings" id="LabelSettings_3yhvv"]
-font = ExtResource("3_tvius")
-font_size = 150
-font_color = Color(0.9137255, 0.80784315, 0.11372549, 1)
 
 [node name="金币显示" type="TextureRect"]
 offset_left = 9.0
@@ -17,13 +11,3 @@ offset_bottom = 267.0
 scale = Vector2(0.2707973, 0.2707973)
 texture = ExtResource("1_epfeu")
 script = ExtResource("2_7ifn5")
-
-[node name="Label" type="Label" parent="."]
-layout_mode = 0
-offset_left = 291.7311
-offset_top = 48.006386
-offset_right = 513.2991
-offset_bottom = 199.00638
-text = "1"
-label_settings = SubResource("LabelSettings_3yhvv")
-horizontal_alignment = 1

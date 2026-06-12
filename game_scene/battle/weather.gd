@@ -1,14 +1,14 @@
 extends Container
 
 var index_judge = -1;
-@onready var gou1 = $"剪刀/勾"
-@onready var gou2 = $"包袱/勾"
-@onready var gou3 = $"石头/勾"
-
+@onready var gou1 = $"1/勾"
+@onready var gou2 = $"2/勾"
+@onready var gou3 = $"3/勾"
+@onready var gou4 = $"4/勾"
 
 func _ready() -> void:
 	for child in get_children():
-		if child is TextureButton:
+		if child is  TextureButton:
 			child.toggled.connect(_on_button_toggled.bind(child))
 	init_all_unpressed()
 
@@ -32,12 +32,14 @@ func _on_button_toggled(is_pressed: bool, button_node: TextureButton) -> void:
 
 func _set_gou_visible(button_node: TextureButton, visible: bool) -> void:
 	match button_node.name:
-		"剪刀":
+		"1":
 			gou1.visible = visible
-		"包袱":
+		"2":
 			gou2.visible = visible
-		"石头":
+		"3":
 			gou3.visible = visible
+		"4":
+			gou4.visible = visible
 
 func _update_gou_visibility(selected_button: TextureButton) -> void:
 	for child in get_children():
@@ -49,9 +51,11 @@ func _update_gou_visibility(selected_button: TextureButton) -> void:
 
 func _switch_game_logic(button_name: String) -> void:
 	match button_name:
-		"剪刀":
+		"1":
 			index_judge = 0
-		"包袱":
+		"2":
 			index_judge = 1
-		"石头":
+		"3":
 			index_judge = 2
+		"4":
+			index_judge = 3

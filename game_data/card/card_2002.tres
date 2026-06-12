@@ -6,6 +6,7 @@
 [resource]
 script = ExtResource("2_fqfvw")
 card_texture = ExtResource("1_uqdse")
+texture_filename = "20.png"
 name = "拳击手"
 id = 2002
 value = 120
