@@ -382,6 +382,7 @@ func (s *ShuffleDeal) process(GoCtx context.Context) {
 				s.SM.SendActionById(id, BattleDto.NewErrAction(global.ResponseInvalidReqParams))
 				return true
 			}
+			fmt.Println("初始上牌阶段", data)
 			if data.Where != BattleData.SkillCard {
 				cardTempId := data.CardTempId
 				if s.c.CheckCardByWhere(id, data.Where) { //判定这个上牌的位置是不是有牌了
