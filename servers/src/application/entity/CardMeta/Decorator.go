@@ -25,7 +25,7 @@ func (c *Decorator) AttackPordAdd(AttackPord float64) {
 	c.AttackPord += AttackPord
 }
 
-// 增加免伤率,输入的是免伤值
+// 增加免伤率,输入的是免伤值,可正可负
 func (c *Decorator) HurtPordAdd(HurtPord float64) {
 	c.HurtPord *= 1 - HurtPord
 }
@@ -37,6 +37,8 @@ func (c *Decorator) HealPordAdd(HealPord float64) {
 func (c *Decorator) AttackSumAdd(AttackSum float64) {
 	c.AttackSum += AttackSum
 }
+
+// 增加格挡值
 func (c *Decorator) HurtSumAdd(HurtSum float64) {
 	c.HurtSum += HurtSum
 }

@@ -51,12 +51,17 @@ func (s *StateMachine) SharedProcess(id int, action BattleDto.Action, ResponseCh
 		ResponseChan <- BattleDto.NewAction(BattleDto.GetWeather, BattleDto.Result, res)
 	}
 	if action.ActionCode == BattleDto.ReConnect && action.Predicates == BattleDto.Query {
-		CurStateName := s.CurrentState.GetName()
+		//CurStateName := s.CurrentState.GetName()
+		//这个是软重连,如果请求这个,就先给他一个dto,一个字段是CurStateName,还有一个是,告诉他用户有不有响应过,(直接在statemachine里面,搞两个原子bool就好了,idaflag)
+		//然后,再把对应state的query给他
+
+		//还有硬重连的问题
 
 	}
 
 	if action.ActionCode == BattleDto.Ping && action.Predicates == BattleDto.Query {
 		ResponseChan <- BattleDto.NewAction(BattleDto.Ping, BattleDto.Result, "pong")
+		return true
 	}
 
 	if action.ActionCode == BattleDto.GetWeather && action.Predicates == BattleDto.Query {
@@ -971,6 +976,7 @@ func (J *Judge) EndJudge() {
 		J.SM.LoseMarkMap[J.SM.Winner] = 0
 
 		J.c.PlayerDataMap[J.SM.Winner].UpdateEnergy(2)
+
 	}
 
 	J.WaitAnimationPlay.Store(true)
@@ -1273,7 +1279,6 @@ CalcLoop:
 					}
 				}
 			}
-
 			//-------------给连续输的人增加免伤-------------
 
 			//--------结算换牌start--------

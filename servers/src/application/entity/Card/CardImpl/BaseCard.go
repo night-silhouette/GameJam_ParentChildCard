@@ -97,11 +97,37 @@ func (c *BaseCard) SetDec(Dec *CardMeta.Decorator) {
 	c.Dec = Dec
 }
 
-//这个函数是进过buff计算的
+// 这个函数是进过buff计算的
 func (c *BaseCard) GetDec() *CardMeta.Decorator {
-
-	return c.Dec
+	NewDec := c.CalcDecByBuff(*c.Dec)
+	return &NewDec
 }
+
+func (c *BaseCard) CalcDecByBuff(Dec CardMeta.Decorator) CardMeta.Decorator {
+	for _, buff := range *c.GetBuffList() {
+		switch buff.BuffId {
+		case protocol.Vulnerability: //易伤
+			Dec.HurtPordAdd(-buff.Value)
+		case protocol.DamageImmunity: //免伤
+			Dec.HurtPordAdd(buff.Value)
+		case protocol.Block:
+			Dec.HurtSumAdd(buff.Value)
+		case protocol.HealingBoost: //治疗增强
+			Dec.HealPordAdd(buff.Value)
+		case protocol.HealingDecay: //治疗减弱
+			Dec.HealPordAdd(-buff.Value)
+		case protocol.BonusDamage:
+			Dec.AttackSumAdd(buff.Value)
+		case protocol.Powerful:
+			Dec.AttackPordAdd(buff.Value)
+		case protocol.Weakness:
+			Dec.AttackPordAdd(-buff.Value)
+		}
+
+	}
+	return Dec
+}
+
 func (c *BaseCard) InitControlSignalMap() {
 	c.ControlSignalMap = make(map[string]CardMeta.ControlSignal)
 }

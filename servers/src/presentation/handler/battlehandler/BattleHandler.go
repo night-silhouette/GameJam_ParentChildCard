@@ -94,6 +94,9 @@ func (u *BattleHandlerImpl) BattleWs() gin.HandlerFunc {
 			return
 		}
 		//升级逻辑完成
+		//----------ws设置----------
+
+		//----------ws设置----------
 
 		id := c.GetInt("id")
 		//----------------------生命周期管理----------------------
