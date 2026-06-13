@@ -14,8 +14,14 @@ var all_cards_data: Array = []
 var _selected_temp_id: int = -1
 var _selected_self_where: int = -1
 ## 选中的敌方目标位置
-var _selected_opponent_where: int = -1
-
+var _selected_opponent_where: int = -1:
+	set(value):
+		match value:
+			0:
+				hand_dir.flip_h = true;
+			1:
+				hand_dir.flip_h = false;
+		_selected_opponent_where = value
 ## 手部手势节点
 @onready var hand_skill: Sprite2D = $"1"
 @onready var hand_attack: Sprite2D = $"2"
@@ -108,15 +114,13 @@ func _on_combat_card_selected(temp_id: int, self_where: int) -> void:
 	_selected_opponent_where = -1
 	_hide_confirm_buttons()
 	
-	if hand_dir:
-		hand_dir.visible = true
 
 
 ## 点击敌方牌 → 记录目标，显示攻/法确认按钮
 func _on_combat_target_selected(opponent_where: int) -> void:
 	if _selected_temp_id == -1:
 		return
-	
+	hand_dir.visible = true;
 	_selected_opponent_where = opponent_where
 	_show_confirm_buttons()
 
@@ -140,7 +144,7 @@ func _confirm_action(behavior: int) -> void:
 	var ok = card_manager.set_combat_dto(_selected_self_where, behavior, _selected_opponent_where, _selected_temp_id, {})
 	if not ok:
 		return  # 能量不足
-	
+	hand_dir.visible = false;
 	# 标记己方牌为已行动
 	var selected_card = _find_card_by_temp_id(_selected_temp_id)
 	if selected_card and selected_card.has_method("mark_acted"):

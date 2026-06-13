@@ -98,12 +98,6 @@ func _on_enemy_click() -> void:
 	combat_target_changed.emit(opponent_where)
 
 
-## 确认行动后变为 ACTED
-func mark_acted() -> void:
-	combat_state = CombatState.ACTED
-	_update_visual()
-
-
 ## 播放战斗动画
 func play_combat_anim(anim: CombatAnim) -> void:
 	combat_anim = anim

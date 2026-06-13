@@ -54,7 +54,6 @@ mouse_filter = 2
 color = Color(1, 0.8, 0, 0.4)
 
 [node name="StateLabel" type="Label" parent="."]
-visible = false
 layout_mode = 0
 offset_top = 216.0
 offset_right = 329.0
