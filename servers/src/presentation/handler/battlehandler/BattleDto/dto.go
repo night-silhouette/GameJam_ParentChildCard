@@ -39,6 +39,8 @@ const (
 	CardMove        //-----------------------------------
 	AnimationNotify //-----------------------------------
 	ValueNotify     //-----------------------------------
+	Ping
+	ReConnect
 )
 
 var ActionName = map[ActionCode]string{
@@ -68,6 +70,8 @@ var ActionName = map[ActionCode]string{
 	CardMove:              "结算卡牌移动通知",
 	AnimationNotify:       "行为动画通知",
 	ValueNotify:           "数值变化通知",
+	Ping:                  "ping",
+	ReConnect:             "断线重连",
 }
 
 type Predicates int

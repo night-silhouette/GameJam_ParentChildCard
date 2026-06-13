@@ -50,6 +50,15 @@ func (s *StateMachine) SharedProcess(id int, action BattleDto.Action, ResponseCh
 		res["opponent"] = s.c.GetOpponentId(id)
 		ResponseChan <- BattleDto.NewAction(BattleDto.GetWeather, BattleDto.Result, res)
 	}
+	if action.ActionCode == BattleDto.ReConnect && action.Predicates == BattleDto.Query {
+		CurStateName := s.CurrentState.GetName()
+
+	}
+
+	if action.ActionCode == BattleDto.Ping && action.Predicates == BattleDto.Query {
+		ResponseChan <- BattleDto.NewAction(BattleDto.Ping, BattleDto.Result, "pong")
+	}
+
 	if action.ActionCode == BattleDto.GetWeather && action.Predicates == BattleDto.Query {
 		res := protocol.Weather(s.c.Weather.Load())
 		ResponseChan <- BattleDto.NewAction(BattleDto.GetWeather, BattleDto.Result, res)
@@ -808,8 +817,8 @@ func (s *SelectSkillCard) SpecialInit() {
 }
 
 func (s *SelectSkillCard) SelectEnd() {
-	//s.Mutex.Lock()
-	//defer s.Mutex.Unlock() //先不用上锁，毕竟没有race操作
+	s.Mutex.Lock()
+	defer s.Mutex.Unlock() //先不用上锁，毕竟没有race操作
 	s.SM.SendActionById(s.Id1, BattleDto.NewAction(BattleDto.DeployCard, BattleDto.Finish, "技能牌全部选择完毕"))
 	s.SM.SendActionById(s.Id2, BattleDto.NewAction(BattleDto.DeployCard, BattleDto.Finish, "技能牌全部选择完毕"))
 	go s.SM.finish("Judge")
@@ -969,6 +978,8 @@ func (J *Judge) EndJudge() {
 }
 
 func (J *Judge) enter() {
+	J.Mutex.Lock()
+	defer J.Mutex.Unlock()
 	J.TaskMap[J.Id1] = 3 //设为一个不可能值作为检查是否返回了
 	J.TaskMap[J.Id2] = 3
 
