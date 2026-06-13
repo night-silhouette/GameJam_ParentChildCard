@@ -18,7 +18,8 @@ class_name GameManager
 
 
 var is_win:int ;
-var is_pass = 0
+var is_pass :int = 0
+
 var parent_action :int ;
 var parent_bt_object: int;
 var child_action :int ;
@@ -73,9 +74,7 @@ func _ready() -> void:
 	
 	# [新增] 0.102 新阶段信号
 	SignalBus.active_child_card_start.connect(_on_active_child_card_start)
-	SignalBus.active_child_card_finish.connect(_on_active_child_card_finish)
 	SignalBus.select_weather_start.connect(_on_select_weather_start)
-	SignalBus.select_weather_succeed.connect(_on_select_weather_succeed)
 	SignalBus.card_calc_finish.connect(_on_card_calc_finish)
 	SignalBus.interrupt_start.connect(_on_interrupt_start)
 	SignalBus.interrupt_succeed.connect(_on_interrupt_succeed)
@@ -125,12 +124,11 @@ func _exit_state(old_state: GameState) -> void:
 			all_block.allow_input()
 			_interrupt_selected.clear()
 		GameState.FREE:
+			time.visible = true
 			pass;
 
 func _enter_state(new_state: GameState) -> void:
 	# 每进入一个状态，刷新全部战斗数据
-
-	
 	# ↓↓↓ 临时：测试阶段，所有状态统一 allow_input ↓↓↓
 	all_block.allow_input()
 	combat_block.allow_input()
@@ -140,7 +138,6 @@ func _enter_state(new_state: GameState) -> void:
 	match new_state:
 		GameState.INIT_STATE:
 			_refresh_all_battle_data()
-			time.countdown_time = TimeOffset.get_remaining_seconds(Global.init_battle_time)
 		
 		GameState.CHOOSE_CHILD_CARD:
 			_refresh_all_battle_data()
@@ -221,32 +218,21 @@ func _judge_start(t) -> void:
 	time.start_countdown(TimeOffset.get_remaining_seconds(t));
 	change_state(GameState.JUDGEMENT) 
 	
-
-# [新增] 子卡选择阶段开始
 func _on_active_child_card_start(t, child_list) -> void:
 	card_manager._on_child_card_list_updated(child_list)
 	time.start_countdown(TimeOffset.get_remaining_seconds(t));
 	change_state(GameState.CHOOSE_CHILD_CARD)
-#自由阶段:提前结束的阶段
-func _enter_free():
-	change_state(GameState.FREE);
-# [新增] 子卡选择阶段结束
-func _on_active_child_card_finish(selected_temp_id_list) -> void:
-	# 子卡选择结束，进入天气选择阶段（或根据后端流程调整）
-	# print("子卡选择结束，选中: ", selected_temp_id_list)
-	# 注意：实际状态切换应由后端信号触发，这里只是日志
-	pass
-
-# [新增] 天气选择阶段开始
+	
 func _on_select_weather_start(t, weather_list) -> void:
 	_weather_list = weather_list if weather_list is Array else []
 
 	time.start_countdown(TimeOffset.get_remaining_seconds(t));
 	change_state(GameState.CHOOSE_WEATHER)
-
-# [新增] 天气选择成功
-func _on_select_weather_succeed(weather_data) -> void:
-	pass
+	
+#自由阶段:提前结束的阶段
+func _enter_free():
+	change_state(GameState.FREE);
+# [新增] 子卡选择阶段结束
 
 # [新增] 卡牌结算完成
 func _on_card_calc_finish() -> void:
@@ -269,7 +255,8 @@ func _on_万能按钮_button_down() -> void:
 		return;
 	is_pass = 1;
 	SignalBus.enter_free.emit();
-			
+	
+	
 func _send_message():
 	var card:Array;
 	match current_state :
