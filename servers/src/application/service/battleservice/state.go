@@ -717,6 +717,7 @@ type SelectWeatherDto struct {
 
 // Change !!天气变化主函数
 func (s *SelectWeather) Change(w protocol.Weather) {
+	fmt.Println("天气被改动")
 	s.c.Weather.Store(int64(w))
 }
 
@@ -831,7 +832,7 @@ func (s *SelectSkillCard) SelectEnd() {
 }
 
 func (s *SelectSkillCard) enter() {
-
+	fmt.Println("Skill__Enter")
 	chanStop, chanCrash := Util.CreateTimer(time.Second*global.SelectSkillCardTime, s.SelectEnd)
 	s.ChanCrash = chanCrash
 	s.ChanStop = chanStop

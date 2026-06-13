@@ -8,7 +8,7 @@ type Character interface {
 
 	Attack(TargetId int)
 	Hurt(AttackTempId int, HurtHp float64, category BattleData.ValueChange) //id是谁打的他
-	Skill(TargetId int)
+	Skill(TargetId int) bool
 	Death(AttackTempId int)
 	RoundEnd()
 }

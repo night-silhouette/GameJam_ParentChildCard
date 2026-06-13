@@ -30,13 +30,15 @@ func (c *CharacterBaseCard) Hurt(AttackId int, HurtHp float64, category BattleDa
 	c.EffectHurt(AttackId, HurtHp, category)
 }
 
-func (c *CharacterBaseCard) Skill(TargetId int) {
+// 父类的skill函数,消耗了能量,通知前端,true表示,能量已经扣了
+func (c *CharacterBaseCard) Skill(TargetId int) bool {
 	offset := int(c.GetInfo()["skillCharge"].(float64))
 	if !c.BtCtx.ProtoColCanUpdateEnergy(c.OwnerId, -offset) {
-		return
+		return false
 	}
 	c.Notify(BattleData.AnSkill, -1, c.GetTempId(), TargetId)
 	c.EffectUpdateEnergy(-offset)
+	return true
 }
 
 func (c *CharacterBaseCard) Death(AttackId int) {
@@ -104,4 +106,31 @@ func (c *CharacterBaseCard) SetCardBt(TempIdList *[]int, IsInterrupt *bool) {
 
 func (c *CharacterBaseCard) GiveBuff(TempId *int, b protocol.Buff) {
 	c.BtCtx.ProtoColPush(protocol.NewGiveBuff(TempId, b))
+}
+
+func (c *CharacterBaseCard) ReMoveBuffByTempId(BuffTempId int) {
+	if c.BuffList == nil || len(c.BuffList) == 0 {
+		return
+	}
+	oldList := c.BuffList
+	newList := make([]*protocol.Buff, 0, len(oldList))
+	for _, buff := range oldList {
+		if buff == nil {
+			continue
+		}
+		if buff.TempId == BuffTempId {
+			// 如果你需要在 Buff 销毁时通知前端播放特效（比如消失动画），可以在这里做：
+			continue // 跳过它，不把它装进新切片，达到删除的效果
+		}
+
+		// 没匹配上的正常保留
+		newList = append(newList, buff)
+	}
+
+	// 3.  将过滤后的全新切片指针重新赋给卡牌
+	c.BuffList = newList
+}
+
+func (c *CharacterBaseCard) NewCustom(ExecFunc func(pc protocol.ProtocolCardWithCtx)) {
+	c.BtCtx.ProtoColPush(protocol.NewCustom(ExecFunc))
 }

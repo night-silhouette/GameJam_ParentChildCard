@@ -171,7 +171,8 @@ func (u *BattleHandlerImpl) BattleWs() gin.HandlerFunc {
 
 func (u *BattleHandlerImpl) ListenResquest(conn *websocket.Conn, id int, goctx context.Context, trans chan battleservice.PlayerChannel, cancelFunc context.CancelFunc) {
 	var playerC chan BattleDto.Action
-	Interceptor := Util.NewInterceptor(global.WsInterceptorTime * time.Millisecond)
+	//拦截器
+	//Interceptor := Util.NewInterceptor(global.WsInterceptorTime * time.Millisecond)
 	for {
 		_, p, err := conn.ReadMessage()
 		if err != nil {
@@ -183,10 +184,11 @@ func (u *BattleHandlerImpl) ListenResquest(conn *websocket.Conn, id int, goctx c
 			playerC = playerChan.AcceptChan
 		default:
 		}
-		if Interceptor.ShouldBlock(p) {
-			fmt.Println("被拦截啦")
-			continue
-		}
+		
+		//todo 拦截器
+		//if Interceptor.ShouldBlock(p) {
+		//	continue
+		//}
 
 		decoder := json.NewDecoder(bytes.NewReader(p))
 		decoder.DisallowUnknownFields() // 开启严苛模式
