@@ -14,7 +14,7 @@ func _battle_over():
 	# print("退出战斗")
 	pass
 func _ws_disconnected():
-	animatedSprite2D.visible = false;
+	pass
 	
 
 
