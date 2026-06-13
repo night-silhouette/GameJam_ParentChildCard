@@ -129,7 +129,7 @@ func _exit_state(old_state: GameState) -> void:
 
 func _enter_state(new_state: GameState) -> void:
 	# 每进入一个状态，刷新全部战斗数据
-	_refresh_all_battle_data()
+
 	
 	# ↓↓↓ 临时：测试阶段，所有状态统一 allow_input ↓↓↓
 	all_block.allow_input()
@@ -139,32 +139,40 @@ func _enter_state(new_state: GameState) -> void:
 	
 	match new_state:
 		GameState.INIT_STATE:
+			_refresh_all_battle_data()
 			time.countdown_time = TimeOffset.get_remaining_seconds(Global.init_battle_time)
 		
 		GameState.CHOOSE_CHILD_CARD:
+			_refresh_all_battle_data()
 			Global.revive(choose_child_card)
 		
 		GameState.CHOOSE_WEATHER:
+			_refresh_all_battle_data()
 			Global.revive(weather)
 			weather.init_all_unpressed()
 			_populate_weather()
 		
 		GameState.USE_COMBAT_CARD:
+			_refresh_all_battle_data()
 			card_manager.clear_all_combat_dto()
 			if desk_ui and desk_ui.has_method("reset_all_combat_cards"):
 				desk_ui.reset_all_combat_cards()
-		
+		GameState.USE_MAGIC_CARD:
+			_refresh_all_battle_data()
+			
 		GameState.JUDGEMENT:
+			_refresh_all_battle_data()
 			Global.revive(judge)
 			Global.revive(jugde_bt)
 			judge.init_all_unpressed()
 		
 		GameState.INTERRUPT:
+			_refresh_all_battle_data()
 			Global.revive(choose_child_card)
 			_interrupt_selected.clear()
 			
 		GameState.FREE:
-			pass;
+			time.visible = false;
 
 func _refresh_all_battle_data() -> void:
 	SignalBus.request_get_self_cards_inhand.emit()
@@ -257,17 +265,16 @@ func _on_interrupt_succeed() -> void:
 	_interrupt_selected.clear()
 
 func _on_万能按钮_button_down() -> void:
-	_send_message();
-			
-func _send_message():
-	var card:Array;
 	if is_pass == 1:
 		return;
 	is_pass = 1;
+	SignalBus.enter_free.emit();
+			
+func _send_message():
+	var card:Array;
 	match current_state :
 
 		GameState.INIT_STATE:
-			time.countdown_time = 0;
 			card = card_manager.get_cards_by_zone(Global.ZONE_CARD.PARENT_BATTLE_ZONE);
 			if !card.is_empty():
 				SignalBus.request_deploy_parent_card.emit(card[0].id,card[0].temp_id)
@@ -278,35 +285,33 @@ func _send_message():
 				
 		GameState.CHOOSE_CHILD_CARD:
 			# 子卡选择阶段：从 CHILD_ACTIVE zone 收集 temp_id
-			time.countdown_time = 0;
 			var selected = card_manager.get_active_child_temp_ids()
 			SignalBus.request_active_child_card.emit(selected)
 		
 		GameState.CHOOSE_WEATHER:
-			if weather.index_judge == -1:
-				return
-			time.countdown_time = 0
 			var weather_id = -1
 			if weather.index_judge >= 0 and weather.index_judge < _weather_list.size():
 				weather_id = int(_weather_list[weather.index_judge])
 			SignalBus.request_select_weather.emit(weather_id)
 			
 		GameState.USE_MAGIC_CARD:
-			time.countdown_time = 0;
 			card = card_manager.get_cards_by_zone(Global.ZONE_CARD.SPELL_ZONE);
 			if !card.is_empty():
 				SignalBus.request_deploy_magic_card.emit(card[0].id,card[0].temp_id)
+			else :
+				SignalBus.request_deploy_magic_card.emit(-1,-1)
 		
 		GameState.USE_COMBAT_CARD:
-			time.countdown_time = 0
 			card = card_manager.get_cards_by_zone(Global.ZONE_CARD.PARENT_BATTLE_ZONE)
 			if not card.is_empty():
 				SignalBus.request_deploy_parent_card.emit(card[0].id, card[0].temp_id)
-			
+			else:
+				SignalBus.request_deploy_parent_card.emit(-1,-1)
 			card = card_manager.get_cards_by_zone(Global.ZONE_CARD.CHILD_BATTLE_ZONE)
 			if not card.is_empty():
 				SignalBus.request_deploy_child_card.emit(card[0].id, card[0].temp_id)
-			
+			else:
+				SignalBus.request_deploy_child_card.emit(-1,-1)
 			var dp = card_manager.parent_combat_dto
 			var dc = card_manager.child_combat_dto
 			if dp.behavior != -1:
@@ -317,12 +322,10 @@ func _send_message():
 		GameState.JUDGEMENT:
 			if judge.index_judge == -1:
 				return;
-			time.countdown_time = 0;
 			jugde_bt.update_single_judge_data(0,judge.index_judge)
 			SignalBus.request_judge.emit(judge.index_judge)
 		
 		GameState.INTERRUPT:
-			time.countdown_time = 0
 			var selected = card_manager.get_selected_temp_ids(99)
 			if selected.is_empty():
 				SignalBus.request_interrupt_select.emit([])
