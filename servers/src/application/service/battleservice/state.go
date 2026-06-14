@@ -566,6 +566,8 @@ func (a *ActiveChildCard) process(GoCtx context.Context) {
 			if a.DoneMap[a.Id1] && a.DoneMap[a.Id2] {
 				go a.finishSelect()
 			}
+
+			a.ChanCrash <- struct{}{}
 			return true
 		}
 		return false
