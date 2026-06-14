@@ -92,8 +92,8 @@ func RegisterMailRoute(h userhandler.User_handler) {
 	R.POST("/v1/mail/status/", h.ChangeMailStatus())
 	R.GET("/v1/mail/status/", h.GetMailStatus())
 	R.POST("v1/mail/friendships/", h.ChangeFriendshipsRequest())
-
 }
+
 func RegisterFriendshipsRoutes(h userhandler.User_handler) {
 	R.GET("v1/friendships/", h.GetFriendships())
 	R.POST("v1/friendships/", h.CreateFriendship())

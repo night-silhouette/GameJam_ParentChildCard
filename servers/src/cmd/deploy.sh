@@ -13,6 +13,7 @@ CURRENT_NUM=${VERSION#v}
 PREV_NUM=$((CURRENT_NUM - 1))
 PREV_VERSION="v${PREV_NUM}"
 
+
 echo "开始构建项目版本: ${VERSION}..."
 
 

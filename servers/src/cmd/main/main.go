@@ -39,6 +39,8 @@ func main() {
 	Battle(DB, RD, User_repo, user_service)
 	protocol.InitWeatherFuncMap()
 	protocol.InitBuff()
+	fmt.Println("这是新版本")
+
 	route.Run()
 
 }
