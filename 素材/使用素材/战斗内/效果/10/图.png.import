@@ -4,6 +4,8 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://cryvtp62gc506"
 path="res://.godot/imported/图.png-c61746a4f9b9080d2a000a24717a68ae.ctex"
+uid="uid://00pau4ljwci2"
+path="res://.godot/imported/七层模型.png-aa69d7d1daab8dc470289405a09cf80f.ctex"
 metadata={
 "vram_texture": false
 }
@@ -12,6 +14,8 @@ metadata={
 
 source_file="res://素材/使用素材/战斗内/效果/10/图.png"
 dest_files=["res://.godot/imported/图.png-c61746a4f9b9080d2a000a24717a68ae.ctex"]
+source_file="res://servers/开发文档/参考图/七层模型.png"
+dest_files=["res://.godot/imported/七层模型.png-aa69d7d1daab8dc470289405a09cf80f.ctex"]
 
 [params]
 
