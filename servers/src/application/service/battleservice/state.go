@@ -717,8 +717,10 @@ type SelectWeatherDto struct {
 
 // Change !!天气变化主函数
 func (s *SelectWeather) Change(w protocol.Weather) {
+
 	fmt.Println("天气被改动")
 	s.c.Weather.Store(int64(w))
+
 }
 
 // ToSelect 随机出3个天气,加上宁静
@@ -740,12 +742,33 @@ func (s *SelectWeather) process(GoCtx context.Context) {
 		if action.ActionCode == BattleDto.SelectWeather && action.Predicates == BattleDto.Result {
 			var data SelectWeatherDto
 			s.SM.DataDecode(action, &data, id)
+			s.WeatherListMutex.Lock() //上锁处理WeatherList
+			defer s.WeatherListMutex.Unlock()
+
+			fmt.Println("天气选择前端结果", data)
+			var res int
+			if data.Weather == -1 { //如果传-1,随机
+				res = Util.GetRandomElements[int](s.WeatherList, 1)[0]
+			} else {
+				Is_have := false
+				//检查他是不是给定选择内的
+				for _, Value := range s.WeatherList {
+					if Value == int(data.Weather) {
+						Is_have = true
+					}
+				}
+				if !Is_have {
+					s.SM.SendActionById(id, BattleDto.NewErrAction(global.ResponseDataNotFound))
+					return false
+				} else { //有的话,就把传的给res
+					res = int(data.Weather)
+				}
+			}
+
 			s.SM.SendActionById(id, BattleDto.NewAction(BattleDto.SelectWeather, BattleDto.Succeed, data))
 			s.SM.SendActionById(s.c.GetOpponentId(id), BattleDto.NewAction(BattleDto.SelectWeather, BattleDto.Succeed, data))
 			s.CrashChan <- struct{}{}
-			s.Change(data.Weather)
-
-			fmt.Println("天气选择前端结果", data)
+			s.Change(protocol.Weather(res)) //改res
 
 			go s.SM.finish("SelectSkillCard")
 		}
