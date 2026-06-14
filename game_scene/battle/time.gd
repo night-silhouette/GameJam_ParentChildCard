@@ -9,13 +9,12 @@ func _ready():
 	timer.one_shot = true
 	timer.timeout.connect(_on_timeout)
 	timer.stop()
-	label.visible = false
+
 
 
 func start_countdown(server_duration: int):
 	if server_duration <= 0:
 		timer.stop()
-		label.visible = false
 		return
 
 	timer.stop()
@@ -29,12 +28,9 @@ func _process(_delta: float):
 		var remaining = timer.time_left
 		_update_label(remaining)
 		_play_tick_effect(remaining)
-	else:
-		label.visible = false
 
 
 func _on_timeout():
-	label.visible = false
 	SignalBus.enter_free.emit()
 
 

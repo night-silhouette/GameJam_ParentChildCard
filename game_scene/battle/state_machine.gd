@@ -87,7 +87,6 @@ func _ready() -> void:
 	
 	_enter_state(current_state)
 	
-	
 # --- 核心：状态切换逻辑 ---
 func change_state(new_state: GameState) -> void:
 	current_state = new_state # 触发 setter
@@ -137,6 +136,7 @@ func _enter_state(new_state: GameState) -> void:
 	
 	match new_state:
 		GameState.INIT_STATE:
+			time.start_countdown.call_deferred(TimeOffset.get_remaining_seconds(Global.init_battle_time))
 			_refresh_all_battle_data()
 		
 		GameState.CHOOSE_CHILD_CARD:

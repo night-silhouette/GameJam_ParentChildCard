@@ -1,7 +1,7 @@
 [gd_scene load_steps=10 format=3 uid="uid://fgsyyjjbkfvm"]
 
 [ext_resource type="Texture2D" uid="uid://8tl4lolrrkqd" path="res://素材/使用素材/战斗外/登录界面/框UI .png" id="1_ykqqb"]
-[ext_resource type="Script" uid="uid://cb62jus2rhe04" path="res://game_ui/login/边框.gd" id="2_vbx44"]
+[ext_resource type="Script" uid="uid://c4fqyhy3evame" path="res://game_ui/login/边框.gd" id="2_vbx44"]
 [ext_resource type="Texture2D" uid="uid://dosona3iwp418" path="res://素材/使用素材/战斗外/登录界面/账号UI .png" id="3_i6r6h"]
 [ext_resource type="Texture2D" uid="uid://cdmmmn8wc03lv" path="res://素材/使用素材/战斗外/登录界面/密码UI .png" id="4_emvpi"]
 [ext_resource type="PackedScene" uid="uid://0c577rnp585t" path="res://game_ui/login/登录.tscn" id="4_kyjnp"]

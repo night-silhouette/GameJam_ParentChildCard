@@ -37,7 +37,6 @@ const ZONE_CARD = {
 	CHILD_HAS_CATCH = 16,    # 子牌已被捕获
 	
 	ENEMY_HAND_ZONE = 17,    # 敌方手牌区
-	
 }
 ## 天气枚举
 enum Weather {
@@ -53,7 +52,6 @@ enum Weather {
 	FENGDU = 9,
 	UNABLE_VIEW = 9999,
 }
-
 ## 天气中文名字典
 const WEATHER_NAME = {
 	Weather.NINGJING: "宁静",
@@ -68,7 +66,6 @@ const WEATHER_NAME = {
 	Weather.FENGDU: "酆都",
 	Weather.UNABLE_VIEW: "无法查看",
 }
-
 ## 天气描述字典
 const WEATHER_DESC = {
 	Weather.NINGJING: "无",
@@ -102,8 +99,6 @@ func fake_death(target_node: Node) -> void:
 	
 	# 4. 强行关闭碰撞体（防止假死物体还能挡住网络弹道或卡牌拖拽判定）
 	_set_all_collisions(target_node, false)
-	
-
 
 ## 接口 2：把节点从假死中【救活】
 func revive(target_node: Node) -> void:
@@ -124,8 +119,6 @@ func revive(target_node: Node) -> void:
 	# 4. 最后一步：接回逻辑心跳。强制恢复和父节点一样的处理模式（通常是 INHERIT 恢复正常）
 	target_node.process_mode = Node.PROCESS_MODE_INHERIT
 	
-
-
 ## 辅助函数：递归开启/关闭节点下所有的物理碰撞体（如果有的话）
 func _set_all_collisions(root_node: Node, enabled: bool) -> void:
 	# 遍历目标节点下的所有子节点，把碰撞体全部禁用/启用

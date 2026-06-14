@@ -102,7 +102,7 @@ combat_block = NodePath("../../block/战斗牌block")
 spell_block = NodePath("../../block/法术牌block")
 judge = NodePath("../../judge")
 jugde_bt = NodePath("../../jugde_bt")
-choose_child_card = NodePath("../../选择子牌")
+choose_child_card = NodePath("../../卡牌显示/选择子牌")
 weather = NodePath("../../weather")
 desk_ui = NodePath("../../卡牌显示/桌面")
 state_name = NodePath("../../信息显示/状态栏")
@@ -149,11 +149,9 @@ scale = Vector2(0.16098198, 0.16098198)
 
 [node name="敌方牌库" parent="卡牌显示" node_paths=PackedStringArray("object_pool", "card_manager") instance=ExtResource("4_f0my5")]
 layout_mode = 0
-offset_left = 583.99994
-offset_top = 8.0
-offset_right = 583.99994
-offset_bottom = 8.0
-scale = Vector2(0.12341149, 0.12341149)
+offset_left = 662.00006
+offset_right = 662.00006
+scale = Vector2(0.095786594, 0.095786594)
 object_pool = NodePath("../../数据层/object_pool")
 card_manager = NodePath("../../数据层/card_manager")
 
@@ -176,30 +174,40 @@ metadata/_edit_lock_ = true
 
 [node name="牌库" parent="卡牌显示" node_paths=PackedStringArray("object_pool", "card_manager") instance=ExtResource("3_8qm6s")]
 layout_mode = 0
-offset_left = 124.0
-offset_top = 490.0
-offset_right = 124.0
-offset_bottom = 490.0
-scale = Vector2(0.13079719, 0.13079719)
+offset_left = 104.0
+offset_top = 530.0
+offset_right = 104.0
+offset_bottom = 530.0
+scale = Vector2(0.096, 0.096)
 object_pool = NodePath("../../数据层/object_pool")
 card_manager = NodePath("../../数据层/card_manager")
 
 [node name="桌面" parent="卡牌显示" node_paths=PackedStringArray("card_manager") instance=ExtResource("12_3krv3")]
 layout_mode = 0
-offset_left = 298.0
-offset_top = 158.0
-offset_right = 2469.0
-offset_bottom = 1437.0
+offset_left = 249.0
+offset_top = 137.0
+offset_right = 2420.0
+offset_bottom = 1416.0
+scale = Vector2(0.3082767, 0.29954422)
 card_manager = NodePath("../../数据层/card_manager")
 
 [node name="active_child_card" parent="卡牌显示" instance=ExtResource("23_b7tvc")]
 visible = false
 layout_mode = 1
-offset_left = 611.0
-offset_top = 16.0
-offset_right = 2232.0
-offset_bottom = 546.0
-scale = Vector2(0.2187003, 0.2226248)
+offset_left = 688.0
+offset_top = 7.999999
+offset_right = 2309.0
+offset_bottom = 538.0
+scale = Vector2(0.16834557, 0.17136647)
+
+[node name="选择子牌" parent="卡牌显示" instance=ExtResource("22_f0my5")]
+visible = false
+layout_mode = 0
+offset_left = 302.0
+offset_top = 163.00002
+offset_right = 2391.3506
+offset_bottom = 1603.4711
+scale = Vector2(0.31050953, 0.26654428)
 
 [node name="freecard" parent="." node_paths=PackedStringArray("card_manager") instance=ExtResource("12_ro313")]
 offset_left = 1232.0001
@@ -293,13 +301,6 @@ offset_top = 105.0
 offset_right = 113.0
 offset_bottom = 130.0
 scale = Vector2(1.946481, 1.946481)
-
-[node name="选择子牌" parent="." instance=ExtResource("22_f0my5")]
-visible = false
-offset_left = 192.0
-offset_top = 57.999996
-offset_right = 2281.3506
-offset_bottom = 1498.4711
 
 [node name="万能按钮" parent="." instance=ExtResource("13_3krv3")]
 offset_left = 1018.0001

@@ -59,6 +59,6 @@ func _on_街机按钮_button_down() -> void:
 
 func _on_返回_button_down() -> void:
 	SignalBus.change_ui.emit("tomenu")
-	
+
 func _ws_connected():
 	pass

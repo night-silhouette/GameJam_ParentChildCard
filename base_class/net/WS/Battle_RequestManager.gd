@@ -37,11 +37,11 @@ func _on_request_deploy_magic_card(card_id,card_temp_id):
 	_on_deploy_card(2,card_id,card_temp_id);
 	
 func _on_request_cancel_match():
-	#print("[WS 发送] 取消匹配")
+	print("[WS 发送] 取消匹配")
 	_send_to_server(NetDef.Action.CANCEL_MATCH, NetDef.Predicate.QUERY, null)
 
 func _request_get_self_cards_inhand():
-	#print("[WS 发送] 获取手牌")
+	print("[WS 发送] 获取手牌")
 	_send_to_server(NetDef.Action.GET_SELF_CARDS, NetDef.Predicate.QUERY, null)
 func _request_get_combat_cards():
 	_send_to_server(NetDef.Action.GET_BT_INFO,NetDef.Predicate.QUERY,null);
@@ -58,7 +58,7 @@ func _request_get_opponent_cards_inhand():
 	
 # 带参数的特殊请求：这就是为什么不能用字典循环绑定的原因
 func _on_deploy_card(where,card_id,card_temp_id):
-	#print("[WS 发送] 部署卡牌: ", card_id)
+	print("[WS 发送] 部署卡牌: ", card_id)
 	
 	# 自定义中间组装逻辑
 	var action_data = {
@@ -83,15 +83,15 @@ func _request_combat_movement(behavoir,self_where,opponent_where,select_card):
 	_send_to_server(NetDef.Action.COMBAT,NetDef.Predicate.RESULT,action_data)
 	
 func _request_get_energy():
-	#print("[WS 发送] 查看能量值")
+	print("[WS 发送] 查看能量值")
 	_send_to_server(NetDef.Action.GetEnergy, NetDef.Predicate.QUERY, null)
 
 func _request_get_child_card_list():
-	#print("[WS 发送] 查看子牌堆")
+	print("[WS 发送] 查看子牌堆")
 	_send_to_server(NetDef.Action.GetChildCardList, NetDef.Predicate.QUERY, null)
 
 func _request_select_weather(weather: int):
-	#print("[WS 发送] 选择天气: ", weather)
+	print("[WS 发送] 选择天气: ", weather)
 	var action_data = {
 		"weather": weather
 	}
@@ -99,18 +99,18 @@ func _request_select_weather(weather: int):
 	_send_to_server(NetDef.Action.SelectWeather, NetDef.Predicate.RESULT, action_data)
 
 func _request_active_child_card(temp_id_list: Array):
-	##print("[WS 发送] 激活子卡牌: ", temp_id_list)
+	print("[WS 发送] 激活子卡牌: ", temp_id_list)
 	var action_data = {
 		"temp_id_list": temp_id_list
 	}
 	_send_to_server(NetDef.Action.ActiveChildCard, NetDef.Predicate.RESULT, action_data)
 
 func _request_get_discard_list():
-	#print("[WS 发送] 查看弃牌堆")
+	print("[WS 发送] 查看弃牌堆")
 	_send_to_server(NetDef.Action.GetDisCard, NetDef.Predicate.QUERY, null)
 
 func _request_interrupt_select(temp_id_list: Array):
-	#print("[WS 发送] 中断选牌: ", temp_id_list)
+	print("[WS 发送] 中断选牌: ", temp_id_list)
 	var action_data = {
 		"temp_id_list": temp_id_list
 	}
