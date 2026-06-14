@@ -7,6 +7,7 @@
     <list default="true" id="760cea56-5efb-4b56-8acc-717cb714ebef" name="更改" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/application/service/battleservice/state.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/service/battleservice/state.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/global/setting.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/global/setting.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -51,7 +52,7 @@
     "DefaultGoTemplateProperty": "Go File",
     "Go 构建.go build GoTest/main.executor": "Run",
     "Go 构建.go build main.go -race -gcflags=\"-l\" -gcflags=\"-m\".executor": "Run",
-    "Go 构建.go build main.go -race -gcflags=\"-l\".executor": "Debug",
+    "Go 构建.go build main.go -race -gcflags=\"-l\".executor": "Run",
     "Go 构建.go build main.go.executor": "Run",
     "Go 构建.go build pcc_card/cmd/main.executor": "Run",
     "ModuleVcsDetector.initialDetectionPerformed": "true",

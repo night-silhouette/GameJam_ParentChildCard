@@ -19,11 +19,11 @@ const (
 	Lev1Category3Num = 8
 	Lev1Category4Num = 8
 
-	SelectWeatherTime   = 10 //s
-	BattleWaitTime      = 10 //s
-	ActiveChildCardTime = 10 //s
-	SelectCharacterTime = 10 //s
-	SelectSkillCardTime = 10 //s
-	JudgeWaitTime       = 10 //s
+	SelectWeatherTime   = 5  //s
+	BattleWaitTime      = 5  //s
+	ActiveChildCardTime = 5  //s
+	SelectCharacterTime = 5  //s
+	SelectSkillCardTime = 5  //s
+	JudgeWaitTime       = 5  //s
 	CombatWaitTime      = 25 //s
 )

@@ -381,7 +381,7 @@ func (s *ShuffleDeal) enter() {
 
 		s.SM.SendActionById(s.Id1, BattleDto.NewAction(BattleDto.StartBattle, BattleDto.Notify, ""))
 		s.SM.SendActionById(s.Id2, BattleDto.NewAction(BattleDto.StartBattle, BattleDto.Notify, ""))
-		go s.SM.finish("ActiveChildCard")
+		s.SM.finish("ActiveChildCard")
 		s.SM.Mutex.Unlock()
 	}) //定时开始战斗
 }
@@ -564,7 +564,7 @@ func (a *ActiveChildCard) process(GoCtx context.Context) {
 			a.DoneMap[id] = true
 			a.SM.SendActionById(id, BattleDto.NewAction(BattleDto.ActiveChildCard, BattleDto.Succeed, "选择已接收"))
 			if a.DoneMap[a.Id1] && a.DoneMap[a.Id2] {
-				go a.finishSelect()
+				a.finishSelect()
 			}
 			return true
 		}
@@ -596,7 +596,7 @@ func (a *ActiveChildCard) finishSelect() {
 	a.SM.SendActionById(a.Id1, BattleDto.NewAction(BattleDto.ActiveChildCard, BattleDto.Finish, result))
 	a.SM.SendActionById(a.Id2, BattleDto.NewAction(BattleDto.ActiveChildCard, BattleDto.Finish, result))
 
-	go a.SM.finish("SelectWeather")
+	a.SM.finish("SelectWeather")
 }
 
 func (a *ActiveChildCard) computeFinalSelection() []int {
@@ -770,7 +770,7 @@ func (s *SelectWeather) process(GoCtx context.Context) {
 			s.CrashChan <- struct{}{}
 			s.Change(protocol.Weather(res)) //改res
 
-			go s.SM.finish("SelectSkillCard")
+			s.SM.finish("SelectSkillCard")
 		}
 
 		return false
@@ -787,7 +787,7 @@ func (s *SelectWeather) timeEnding() {
 	s.Change(protocol.Weather(res))
 	s.SM.SendActionById(s.SM.Id1, BattleDto.NewAction(BattleDto.SelectWeather, BattleDto.Succeed, SelectWeatherDto{Weather: protocol.Weather(res)}))
 	s.SM.SendActionById(s.SM.Id2, BattleDto.NewAction(BattleDto.SelectWeather, BattleDto.Succeed, SelectWeatherDto{Weather: protocol.Weather(res)}))
-	go s.SM.finish("SelectSkillCard")
+	s.SM.finish("SelectSkillCard")
 }
 
 func (s *SelectWeather) enter() {
@@ -850,7 +850,7 @@ func (s *SelectSkillCard) SelectEnd() {
 	defer s.Mutex.Unlock() //先不用上锁，毕竟没有race操作
 	s.SM.SendActionById(s.Id1, BattleDto.NewAction(BattleDto.DeployCard, BattleDto.Finish, "技能牌全部选择完毕"))
 	s.SM.SendActionById(s.Id2, BattleDto.NewAction(BattleDto.DeployCard, BattleDto.Finish, "技能牌全部选择完毕"))
-	go s.SM.finish("Judge")
+	s.SM.finish("Judge")
 
 }
 
@@ -1053,9 +1053,9 @@ func (J *Judge) process(GoCtx context.Context) {
 
 		if J.WaitAnimationPlay.Load() && action.ActionCode == BattleDto.AnimationPlayEnd && action.Predicates == BattleDto.Notify {
 			if !J.IsTie.Load() {
-				go J.SM.finish("Combat")
+				J.SM.finish("Combat")
 			} else {
-				go J.SM.finish("Judge")
+				J.SM.finish("Judge")
 			}
 			J.Mutex.Unlock()
 			return true
@@ -1183,7 +1183,7 @@ func (c *Combat) process(GoCtx context.Context) {
 			if c.WaitNum == 2 {
 				c.SM.CombatDataChan <- c.CombatMap
 				c.ChanCrash <- struct{}{}
-				go c.SM.finish("CardCalc")
+				c.SM.finish("CardCalc")
 				return true
 			}
 			return true
@@ -1383,7 +1383,7 @@ func (s *CardCalc) process(GoCtx context.Context) {
 	fmt.Println("进入cardcal的process了")
 	handleAction := func(id int, action BattleDto.Action, ResponseChan chan<- BattleDto.Action) bool {
 		if action.ActionCode == BattleDto.AnimationPlayEnd && action.Predicates == BattleDto.Notify && s.HaveDone.Load() {
-			go s.SM.finish("SelectSkillCard")
+			s.SM.finish("SelectSkillCard")
 			return true
 		}
 		return false
