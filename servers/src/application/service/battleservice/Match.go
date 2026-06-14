@@ -3,16 +3,23 @@ package battleservice
 import (
 	"math"
 	"math/rand/v2"
+	"pcc_card/Util"
+	"pcc_card/application/entity/BattleData"
+	"pcc_card/application/entity/Card/CardAbstract"
 	"pcc_card/global"
+	"pcc_card/infra/repo/userrepo"
 	"sync"
 	"time"
 )
 
-type MatchManager struct{}
+type MatchManager struct {
+	repo userrepo.User_repo
+}
 
 type MatchPlayerData struct {
 	ID       int       `json:"id"`
 	JoinTime time.Time `json:"join_time"`
+	data     BattleData.EnterBtData
 }
 type Match_pool struct {
 	rwLock         sync.RWMutex
@@ -37,10 +44,10 @@ func (q *Match_pool) GetSize() int {
 	return len(q.data)
 }
 
-func (q *Match_pool) Add(id int) {
+func (q *Match_pool) Add(id int, data BattleData.EnterBtData) {
 	q.rwLock.Lock()
 	defer q.rwLock.Unlock()
-	p := MatchPlayerData{ID: id, JoinTime: time.Now()}
+	p := MatchPlayerData{ID: id, JoinTime: time.Now(), data: data}
 	q.data = append(q.data, p)
 }
 
@@ -82,9 +89,10 @@ func (q *Match_pool) DebugGetMachData() []MatchPlayerData {
 
 var MM MatchManager
 
-func NewMatchManager() { //对外接口
+func NewMatchManager(repo userrepo.User_repo) { //对外接口
 	ImplMatchPool()
 	m := MatchManager{}
+	m.repo = repo
 	go m.StartMatchLoop()
 	MM = m
 }
@@ -94,11 +102,12 @@ func (m *MatchManager) StartMatchLoop() {
 	for {
 		select {
 		case <-MatchCheck.C:
-			Ok, id1, id2 := m.TryMatch()
+			Ok, id1, id2, CardIdMap, GoldMoreUserId, cList := m.TryMatch()
 			if !Ok {
 				continue
 			} else {
-				BTID := BC.AddBattle(id1, id2)
+
+				BTID := BC.AddBattle(id1, id2, CardIdMap, GoldMoreUserId, cList)
 				if v, ok := MatchSignals.Load(id1); ok {
 					v.(chan MatchResult) <- MatchResult{BattleID: BTID, Opponent: id2}
 				}
@@ -111,18 +120,22 @@ func (m *MatchManager) StartMatchLoop() {
 	}
 }
 
-func (m *MatchManager) AddPool(id int) {
-	MatchPool.Add(id)
+func (m *MatchManager) AddPool(id int, data BattleData.EnterBtData) {
+	MatchPool.Add(id, data)
 }
 
-func (m *MatchManager) TryMatch() (bool, int, int) {
+// 这才是匹配算法的集中地,判定是否要把他抓进去
+func (m *MatchManager) TryMatch() (bool, int, int, map[int][]int, int, []CardAbstract.Card) {
 	NeedNum := m.GetRequiredNum()
 	NowNum := MatchPool.GetSize()
 	if NowNum >= NeedNum {
-		_, id1, id2 := m.MatchCatch()
-		return true, id1, id2
+		_, id1, id2, res, GoldMoreUserId := m.MatchCatch() //这一步是在抓了
+		cList := RandChildList()
+
+		return true, id1, id2, res, GoldMoreUserId, cList
 	}
-	return false, -1, -1
+
+	return false, -1, -1, nil, -1, make([]CardAbstract.Card, 0)
 }
 
 func (m *MatchManager) GetRequiredNum() int {
@@ -144,13 +157,14 @@ func (m *MatchManager) UpdateMatchTimeRadio(MaxHadWaitTime float64) {
 	MatchPool.UpdateMatchTimeRadio(r)
 }
 
-func (m *MatchManager) MatchCatch() (bool, int, int) {
+// MatchCatch 确认了的，抓取的函数
+func (m *MatchManager) MatchCatch() (bool, int, int, map[int][]int, int) { //最后一个输出是金币多的那个人的id
 	MatchPool.rwLock.Lock()
 	defer MatchPool.rwLock.Unlock()
 
 	poolSize := len(MatchPool.data)
 	if poolSize < 2 {
-		return false, -1, -1
+		return false, -1, -1, nil, -1
 	}
 
 	weightList := make([]int, poolSize)
@@ -187,8 +201,42 @@ func (m *MatchManager) MatchCatch() (bool, int, int) {
 		}
 	}
 
+	//取确定的人的id
 	id1 := MatchPool.data[idx1].ID
 	id2 := MatchPool.data[idx2].ID
+
+	//-------返回玩家手牌数据--------
+
+	res := make(map[int][]int)
+	for _, e := range MatchPool.data[idx1].data.CardList {
+		res[id1] = append(res[id1], e.CardId)
+	}
+	for _, e := range MatchPool.data[idx2].data.CardList {
+		res[id2] = append(res[id2], e.CardId)
+	}
+	//-------返回玩家手牌数据--------
+
+	//------判别那个人带入的gold更大---
+	GoldMoreUserId := id1
+	if MatchPool.data[idx1].data.Gold < MatchPool.data[idx2].data.Gold {
+		GoldMoreUserId = id2
+	}
+	//------判别那个人带入的gold更大---
+
+	//------删除带入的卡牌---------
+	//for _, dto := range MatchPool.data[idx1].data.CardList {
+	//	m.repo.DeleteStuff(context.Background(), m.repo.Get_db(), id1, dto.StuffId)
+	//}
+	//for _, dto := range MatchPool.data[idx2].data.CardList {
+	//	m.repo.DeleteStuff(context.Background(), m.repo.Get_db(), id2, dto.StuffId)
+	//}
+	//------删除带入的卡牌---------
+
+	//删除带入的金币
+	//m.repo.UpdateAssetGold(context.Background(), m.repo.Get_db(),id1,MatchPool.data[idx1].data.Gold)
+	//m.repo.UpdateAssetGold(context.Background(), m.repo.Get_db(),id2,MatchPool.data[idx2].data.Gold)
+
+	//删除匹配池子里的元数据
 	if idx1 < idx2 {
 		MatchPool.data = append(MatchPool.data[:idx2], MatchPool.data[idx2+1:]...)
 		MatchPool.data = append(MatchPool.data[:idx1], MatchPool.data[idx1+1:]...)
@@ -197,7 +245,7 @@ func (m *MatchManager) MatchCatch() (bool, int, int) {
 		MatchPool.data = append(MatchPool.data[:idx2], MatchPool.data[idx2+1:]...)
 	}
 
-	return true, id1, id2
+	return true, id1, id2, res, GoldMoreUserId
 }
 
 func (m *MatchManager) IsHasID(id int) bool {
@@ -209,6 +257,14 @@ func (m *MatchManager) IsHasID(id int) bool {
 		}
 	}
 	return false
+}
+
+func RandChildList() []CardAbstract.Card {
+	CList := CardListImpl.GetChildCard()
+	res := Util.GetRandomElements[CardAbstract.Card](CList, 10)
+
+	//fmt.Println("随机后的子牌堆:", res)
+	return res
 }
 
 //----------------------------------异步通知handler-----------------------------------

@@ -6,8 +6,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
 	"pcc_card/Util"
+	"pcc_card/application/entity/BattleData"
 	"pcc_card/application/service"
+	"pcc_card/application/service/UserService"
 	"pcc_card/application/service/battleservice"
 	"pcc_card/global"
 	"pcc_card/presentation/handler"
@@ -27,14 +30,13 @@ type BattleHandler interface {
 	DebugBattleContainer() gin.HandlerFunc
 }
 type BattleHandlerImpl struct {
-	s           battleservice.BattleService
-	writeMu     sync.Mutex
-	Interceptor *Util.RequestInterceptor
+	s       battleservice.BattleService
+	User_s  UserService.User_service
+	writeMu sync.Mutex
 }
 
 func (u *BattleHandlerImpl) Set_service(svc service.Service) {
 	u.s = svc.(battleservice.BattleService)
-	u.Interceptor = Util.NewInterceptor(global.WsInterceptorTime * time.Millisecond)
 }
 
 func (u *BattleHandlerImpl) DebugGetMachData() gin.HandlerFunc {
@@ -51,10 +53,10 @@ func (u *BattleHandlerImpl) DebugBattleContainer() gin.HandlerFunc {
 	}
 }
 
-func (u *BattleHandlerImpl) AddMatch(c *gin.Context, conn *websocket.Conn, goctx context.Context, res chan battleservice.PlayerChannel) {
+func (u *BattleHandlerImpl) AddMatch(c *gin.Context, conn *websocket.Conn, goctx context.Context, res chan battleservice.PlayerChannel, data BattleData.EnterBtData) {
 	id := c.GetInt("id")
 	if !u.s.IsHasID(id) {
-		u.s.AddMatch(id)
+		u.s.AddMatch(id, data)
 		matchSignals := u.s.GetMatchSignals()
 		myChan := make(chan battleservice.MatchResult, 1)
 		matchSignals.Store(id, myChan)
@@ -91,7 +93,13 @@ func (u *BattleHandlerImpl) BattleWs() gin.HandlerFunc {
 			fmt.Println("升级失败:", err)
 			return
 		}
+		//升级逻辑完成
+		//----------ws设置----------
+
+		//----------ws设置----------
+
 		id := c.GetInt("id")
+		//----------------------生命周期管理----------------------
 		goctx, cancel := context.WithCancel(c.Request.Context())
 		defer func() {
 			u.writeMu.Lock()
@@ -107,11 +115,37 @@ func (u *BattleHandlerImpl) BattleWs() gin.HandlerFunc {
 			battleservice.BC.GetBattleByUserID(id).Cancel()
 
 		}()
+		//----------------------生命周期管理----------------------
 
-		//升级逻辑完成
+		//-------------------对带入的card和gold信息解析---------------------
+		BtData := c.Query("btData")
+		decodedJson, err := url.QueryUnescape(BtData)
+		if err != nil {
+			fmt.Println(err)
+			response.WsFail(conn, global.ResponseInvalidReqParams)
+			return
+		}
+		var data BattleData.EnterBtData
+
+		err = json.Unmarshal([]byte(decodedJson), &data)
+		if err != nil {
+			fmt.Println(err)
+			response.WsFail(conn, global.ResponseInvalidReqParams)
+			return
+		}
+		fmt.Println(data)
+		//检验data合法性
+		ok := u.User_s.CheckBtDataIsValid(goctx, id, data.CardList, data.Gold)
+		if ok != global.ResponseSuccess {
+			fmt.Println(ok)
+			response.WsFail(conn, ok)
+			return
+		}
+		//-------------------对带入的card和gold信息解析---------------------
+		fmt.Println("数据合法")
 
 		transformAddMatchWithThis := make(chan battleservice.PlayerChannel, 2)
-		go u.AddMatch(c, conn, goctx, transformAddMatchWithThis)
+		go u.AddMatch(c, conn, goctx, transformAddMatchWithThis, data)
 		go u.ListenResquest(conn, id, goctx, transformAddMatchWithThis, cancel)
 
 		var OverGameChan chan bool = make(chan bool, 1)
@@ -137,6 +171,8 @@ func (u *BattleHandlerImpl) BattleWs() gin.HandlerFunc {
 
 func (u *BattleHandlerImpl) ListenResquest(conn *websocket.Conn, id int, goctx context.Context, trans chan battleservice.PlayerChannel, cancelFunc context.CancelFunc) {
 	var playerC chan BattleDto.Action
+	//拦截器
+	//Interceptor := Util.NewInterceptor(global.WsInterceptorTime * time.Millisecond)
 	for {
 		_, p, err := conn.ReadMessage()
 		if err != nil {
@@ -148,10 +184,11 @@ func (u *BattleHandlerImpl) ListenResquest(conn *websocket.Conn, id int, goctx c
 			playerC = playerChan.AcceptChan
 		default:
 		}
-		if !u.Interceptor.ShouldBlock(p) {
-			fmt.Println("被拦截啦")
-			continue
-		}
+		
+		//todo 拦截器
+		//if Interceptor.ShouldBlock(p) {
+		//	continue
+		//}
 
 		decoder := json.NewDecoder(bytes.NewReader(p))
 		decoder.DisallowUnknownFields() // 开启严苛模式
@@ -159,12 +196,14 @@ func (u *BattleHandlerImpl) ListenResquest(conn *websocket.Conn, id int, goctx c
 		var action BattleDto.Action
 		err = decoder.Decode(&action)
 		if err != nil {
+			u.writeMu.Lock()
 			response.WsFailWithErr(conn, global.ResponseInvalidReqParams, err)
+			u.writeMu.Unlock()
 			continue
 		}
 
 		//action解析完成
-		if action.ActionCode == BattleDto.CancelMatch {
+		if action.ActionCode == BattleDto.CancelMatch && action.Predicates == BattleDto.Notify {
 			battleservice.MatchSignals.Delete(id)
 			battleservice.MatchPool.Delete(id)
 			response.WsSuccess(conn, "取消成功")

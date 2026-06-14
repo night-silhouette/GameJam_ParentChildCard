@@ -20,12 +20,19 @@ const (
 	ResponseRepeatRequest
 	ResponseUnknownError
 	ResponseTokenHasUpdate
+	ResponseBagsUnknownError
+	ResponseGoldNotEnough
 
+	BattleEnterDataInvalid
 	BattleInvalidTiming
 	BattleEffectStackOverflow
 	BattleCardCategoryError
 	BattleCardNotFound
 	BattleNotInYourRound
+	BattleHasCard
+	BattleCardNumErr
+	BattleEnergyNotEnough
+	BattleCantSwitch
 )
 
 var StatusMsg = map[ResponseStatusCode]string{
@@ -51,4 +58,9 @@ var StatusMsg = map[ResponseStatusCode]string{
 	BattleCardCategoryError:       "卡牌种类有误",
 	BattleCardNotFound:            "此牌没有被找到",
 	BattleNotInYourRound:          "此时不在你的回合",
+	BattleHasCard:                 "此位置有牌了",
+	BattleCardNumErr:              "卡牌数量有误",
+	BattleEnterDataInvalid:        "非法入场卡牌",
+	BattleEnergyNotEnough:         "能量不够",
+	BattleCantSwitch:              "不可以换牌",
 }

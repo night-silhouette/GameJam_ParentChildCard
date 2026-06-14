@@ -5,3 +5,4 @@ servers/src/bin/*
 pm2 重命名 pm2 restart servers --name "物理碰撞小球web小游戏"
 
 sh "/www/server/nodejs/v22.12.0/lib/node_modules/pm2/bin/pm2 log pcc_card_v1 --lines 10000"
+sh "/www/server/nodejs/v22.12.0/lib/node_modules/pm2/bin/pm2 status"

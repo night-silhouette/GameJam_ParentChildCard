@@ -12,4 +12,7 @@ const (
 	ParentCard Where = iota
 	ChildCard
 	SkillCard
+	DisCardPool
+	ChildCardPool
+	InHand
 )

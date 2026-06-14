@@ -2,6 +2,9 @@ package battleservice
 
 import (
 	"context"
+	"fmt"
+	"pcc_card/application/entity/Card/CardAbstract"
+	"pcc_card/infra/repo/userrepo"
 	"sync"
 	"sync/atomic"
 )
@@ -18,15 +21,28 @@ type Battle struct {
 	SM       *StateMachine
 	Ctx      *Ctx
 	Nt       *NotifyManager
+
+	TempId atomic.Int32
 }
 
-func NewBattle(UserA int, UserB int) *Battle {
+func NewBattle(UserA int, UserB int, CardList map[int][]int, GoldMoreUserId int, cList []CardAbstract.Card) *Battle {
+	var TempId atomic.Int32
+	TempId.Store(int32(0))
 	rootContext := context.Background()
 	BattleContext, cancel := context.WithCancel(rootContext)
 	id := int(atomic.AddInt64(&battleIDCounter, 1))
-	ctx := NewCtx(UserA, UserB, CardListImpl.Copy(), BattleContext)
+
+	//clone手牌,给userid到ownerId
+	CardInHand := CloneByCardListImpl(CardList, &TempId)
+	for UserId, CardMap := range CardInHand {
+		for _, Card := range CardMap {
+			Card.SetOwnerId(UserId)
+		}
+	}
+
+	ctx := NewCtx(UserA, UserB, BattleContext, CardInHand, &TempId, cList)
 	Nt := NewNotifyManager(UserA, UserB, 32) //初始化bufferSize
-	SM := NewStateMachine(ctx, UserA, UserB, Nt, BattleContext)
+	SM := NewStateMachine(ctx, UserA, UserB, Nt, BattleContext, GoldMoreUserId)
 	go func() {
 		select {
 		case <-BattleContext.Done():
@@ -48,6 +64,7 @@ type BattleContainer struct {
 	mu         sync.RWMutex
 	Data       map[int]*Battle
 	UserToBTID map[int]int
+	User_repo  userrepo.User_repo
 }
 
 var BC BattleContainer
@@ -55,19 +72,40 @@ var BC BattleContainer
 func (b *BattleContainer) GetBattleData() map[int]*Battle {
 	b.mu.RLock()
 	defer b.mu.RUnlock()
+	fmt.Println("GetBattleContainer", b.Data)
 	return b.Data
 }
 
-func InitBattleContainer() {
+func InitBattleContainer(repo userrepo.User_repo) {
 	BC = BattleContainer{}
+	BC.User_repo = repo
 	BC.Data = make(map[int]*Battle)
 	BC.UserToBTID = make(map[int]int)
 	battleIDCounter = 1
 
 }
 
-func (bc *BattleContainer) AddBattle(id1 int, id2 int) int { //启动接口
-	Bt := NewBattle(id1, id2)
+// CloneByCardListImpl 传来的卡的id。出来的是充血对象(填充tempid了的)
+func CloneByCardListImpl(cardIdList map[int][]int, NumCalc *atomic.Int32) map[int]map[int]CardAbstract.Card {
+	res := make(map[int]map[int]CardAbstract.Card)
+	for key, value := range cardIdList {
+		res[key] = make(map[int]CardAbstract.Card)
+		for _, CardId := range value {
+			card := CardListImpl.GetCardImpl(CardId)
+
+			tempId := (*NumCalc).Add(1)
+			card.SetTempId(int(tempId))
+			res[key][card.GetTempId()] = card
+		}
+
+	}
+	return res
+}
+
+// AddBattle 传来的卡的id。
+func (bc *BattleContainer) AddBattle(id1 int, id2 int, cardIdList map[int][]int, GoldMoreUserId int, cList []CardAbstract.Card) int { //启动接口
+
+	Bt := NewBattle(id1, id2, cardIdList, GoldMoreUserId, cList)
 	bc.mu.Lock()
 	defer bc.mu.Unlock()
 

@@ -5,6 +5,8 @@ import (
 	"database/sql"
 	"encoding/json"
 	"log"
+	"pcc_card/application/entity/BattleData"
+
 	"pcc_card/infra/repo"
 
 	"github.com/redis/go-redis/v9"
@@ -32,8 +34,20 @@ func (r *BattleRepoImpl) Set_db(db *sql.DB, rd *redis.Client) {
 func (r *BattleRepoImpl) ReadCardByID(ctx context.Context, db repo.SQLQueryer, ID int) map[string]any {
 	var info []byte
 	var res map[string]any
-	query := "select info from cards where id = $1"
-	// 使用 QueryRowContext 传递 ctx
+
+	// 仅仅修改了 query，利用 json_build_object 把字段打包
+	// 这样数据库返回的就是一个完整的 JSON 字符串，刚好能塞进你的 info []byte
+	query := `select json_build_object(
+        'damage', damage, 
+        'initHp', "initHp", 
+        'maxHp', "maxHp", 
+        'price', price, 
+        'skillCharge', "skillCharge", 
+        'skillcardUseNum', "skillcardUseNum", 
+        'category', category,
+       'level', level
+    ) from newcards where id = $1`
+
 	data := db.QueryRowContext(ctx, query, ID)
 	err := data.Scan(&info)
 	if err != nil {
@@ -43,5 +57,14 @@ func (r *BattleRepoImpl) ReadCardByID(ctx context.Context, db repo.SQLQueryer, I
 	if err != nil {
 		log.Println(err)
 	}
+	if cat, ok := res["category"].(float64); ok {
+		if cat == 1 || cat == 2 {
+			res["is_parent"] = true
+		} else if cat == 3 || cat == 4 {
+			res["is_parent"] = false
+			res["ChildState"] = BattleData.NotActive
+		}
+	}
+
 	return res
 }

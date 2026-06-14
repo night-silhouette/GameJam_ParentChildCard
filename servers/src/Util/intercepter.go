@@ -3,6 +3,7 @@ package Util
 import (
 	"crypto/md5"
 	"encoding/hex"
+	"fmt"
 	"sync"
 	"time"
 )
@@ -38,11 +39,11 @@ func (l *RequestInterceptor) ShouldBlock(msg []byte) bool {
 
 	if lastTime, exists := l.history[fingerprint]; exists {
 		if now.Sub(lastTime) < l.threshold {
+			fmt.Printf("[拦截拦截器] 发现高频重复消息，已成功拦截！原始文本: %s\n", string(msg))
 			return true
 		}
 	}
 
-	// 4. 记录这一次的消息
 	l.history[fingerprint] = now
 	return false
 }

@@ -2,7 +2,8 @@ package CardAbstract
 
 import (
 	"pcc_card/application/entity/BattleData"
-	"pcc_card/application/entity/protocolCardWithCtx"
+	"pcc_card/application/entity/CardMeta"
+	"pcc_card/application/entity/protocol"
 )
 
 type Card interface {
@@ -10,8 +11,8 @@ type Card interface {
 	SetInfo(info map[string]any)
 	GetInfo() map[string]any
 	Clone() Card
-	GetStateCodeChan() chan protocolCardWithCtx.Effect
-	SetStateCodeChan(chan protocolCardWithCtx.Effect)
+	GetStateCodeChan() chan protocol.Effect
+	SetStateCodeChan(chan protocol.Effect)
 	GetTempId() int
 	SetTempId(id int)
 	GetOwnerId() int
@@ -20,7 +21,16 @@ type Card interface {
 	SetHpNow(hpNow float64)
 	GetAtkNow() float64
 	SetAtkNow(atkNow float64)
-	SetBtCtx(btCtx protocolCardWithCtx.ProtocolCardWithCtx)
+	SetBtCtx(btCtx protocol.ProtocolCardWithCtx)
+	ReInitialize()
+	GetBuffList() *[]*protocol.Buff
+	AppendBuff(b *protocol.Buff)
+	InitBuffList()
+	SetDec(Dec *CardMeta.Decorator)
+	GetDec() *CardMeta.Decorator
+	InitControlSignalMap()
+	AddBuff(buff *protocol.Buff, pc protocol.ProtocolCardWithCtx)
+	BuffRoundEnd(pc protocol.ProtocolCardWithCtx)
 }
 
 func GetCardDto(c Card) BattleData.CardDto {
@@ -29,5 +39,10 @@ func GetCardDto(c Card) BattleData.CardDto {
 	res.TempId = c.GetTempId()
 	res.Hp = c.GetHpNow()
 	res.Damage = c.GetAtkNow()
+	BuffDtoList := make([]BattleData.BuffDto, 0, 8)
+	for _, buff := range *c.GetBuffList() {
+		BuffDtoList = append(BuffDtoList, buff.GetBuffDto())
+	}
+	res.BuffDtoList = BuffDtoList
 	return res
 }

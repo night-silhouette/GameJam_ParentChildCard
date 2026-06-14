@@ -3,6 +3,8 @@ package UserService
 import (
 	"context"
 	"fmt"
+	"pcc_card/Util"
+	"pcc_card/application/entity/BattleData"
 	"pcc_card/application/entity/User_entity"
 	"pcc_card/application/entity/mail"
 	"pcc_card/application/service"
@@ -36,6 +38,14 @@ type User_service interface {
 	FindFriendships(ctx context.Context, id int) (global.ResponseStatusCode, map[int]string)
 	AddFriendshipsRequest(ctx context.Context, userId int, requestId int) global.ResponseStatusCode
 	ChangeFriendshipsRequest(ctx context.Context, RequestId int, IsFriend bool, mailId int) global.ResponseStatusCode
+
+	GiveCardByCardId(ctx context.Context, UserId int, CardId int) global.ResponseStatusCode        //给指定卡，没有保护，不可以用没有的cardId
+	GiveInitCardBag(ctx context.Context, UserId int) global.ResponseStatusCode                     //给1级初始卡包
+	GetBags(ctx context.Context, UserId int) ([]BattleData.BagStuffDto, global.ResponseStatusCode) //背包渲染
+
+	GetUserGold(ctx context.Context, userId int) (int, global.ResponseStatusCode)
+	SellCard(ctx context.Context, userId int, stuffIdList []int) global.ResponseStatusCode
+	CheckBtDataIsValid(ctx context.Context, userId int, data []BattleData.BagStuffDto, gold int) global.ResponseStatusCode
 }
 
 type User_service_impl struct {
@@ -87,9 +97,35 @@ func (u *User_service_impl) Check_password(ctx context.Context, id int, password
 }
 
 func (u *User_service_impl) Create_user(ctx context.Context, user *User_entity.User) global.ResponseStatusCode {
+	tx, errDb := u.repo.Get_db().BeginTx(ctx, nil)
+	if errDb != nil {
+		return global.ResponseInternalServersError
+	}
+	defer tx.Rollback()
+
 	user.Password = u.hash_password(user.Password)
-	// 传入 ctx 和 u.repo.Get_db()
-	return u.repo.Create(ctx, u.repo.Get_db(), user)
+	err := u.repo.Create(ctx, tx, user)
+	if err != global.ResponseSuccess {
+
+		return err
+	}
+
+	temp, _ := u.repo.Get_by_name(ctx, tx, user.Name)
+
+	UserId := temp.Id
+
+	err = u.repo.CreateAsset(ctx, tx, UserId)
+	if err != global.ResponseSuccess {
+
+		return err
+	}
+	err = u.repo.UpdateAssetGold(ctx, tx, UserId, 500)
+	if err != global.ResponseSuccess {
+
+		return err
+	}
+	tx.Commit()
+	return global.ResponseSuccess
 }
 
 func (u *User_service_impl) Delete_user(ctx context.Context, id int) global.ResponseStatusCode {
@@ -187,5 +223,121 @@ func (u *User_service_impl) ChangeFriendshipsRequest(ctx context.Context, Reques
 	} else {
 		return u.repo.DeleteFriendships(ctx, u.repo.Get_db(), RequestId, SendId)
 	}
+}
 
+func (u *User_service_impl) GiveCardByCardId(ctx context.Context, UserId int, CardId int) global.ResponseStatusCode {
+	return u.repo.AddCardInBags(ctx, u.repo.Get_db(), CardId, UserId)
+}
+
+func (u *User_service_impl) GiveInitCardBag(ctx context.Context, UserId int) global.ResponseStatusCode {
+	CardIdList := make([]int, 0, 5)
+	CardIdList = append(CardIdList, 0+Util.RandomRange(0, global.Lev1Category1Num-1))
+	CardIdList = append(CardIdList, 0+Util.RandomRange(0, global.Lev1Category1Num-1))    //两张母战
+	CardIdList = append(CardIdList, 1000+Util.RandomRange(0, global.Lev1Category2Num-1)) //一张母法
+	CardIdList = append(CardIdList, 2000+Util.RandomRange(0, global.Lev1Category3Num-1)) //一张子战
+	CardIdList = append(CardIdList, 3000+Util.RandomRange(0, global.Lev1Category4Num-1)) //一张子法
+	fmt.Println(CardIdList)
+	tx, errDb := u.repo.Get_db().BeginTx(ctx, nil)
+	if errDb != nil {
+		return global.ResponseInternalServersError
+
+	}
+	defer tx.Rollback()
+	for _, cardId := range CardIdList {
+		err := u.repo.AddCardInBags(ctx, tx, cardId, UserId)
+		if err != global.ResponseSuccess {
+			return err
+		}
+	}
+	tx.Commit()
+	return global.ResponseSuccess
+
+}
+
+func (u *User_service_impl) GetBags(ctx context.Context, UserId int) ([]BattleData.BagStuffDto, global.ResponseStatusCode) {
+	res, err := u.repo.GetBagsByUserId(ctx, u.repo.Get_db(), UserId)
+	return res, err
+}
+
+func (u *User_service_impl) GetUserGold(ctx context.Context, userId int) (int, global.ResponseStatusCode) {
+	err, res := u.repo.GetAssetGold(ctx, u.repo.Get_db(), userId)
+	return res, err
+}
+
+func (u *User_service_impl) SellCard(ctx context.Context, userId int, stuffIdList []int) global.ResponseStatusCode {
+	tx, errDb := u.repo.Get_db().BeginTx(ctx, nil)
+	if errDb != nil {
+		return global.ResponseInternalServersError
+
+	}
+	defer tx.Rollback()
+	for _, stuffId := range stuffIdList {
+		err, temp := u.repo.GetStuffByStuffId(ctx, tx, userId, stuffId)
+		if err != global.ResponseSuccess {
+			return err
+		}
+		price := temp.Price
+		err = u.repo.UpdateAssetGold(ctx, tx, userId, price)
+		if err != global.ResponseSuccess {
+			return err
+		}
+		err = u.repo.DeleteStuff(ctx, tx, userId, stuffId)
+		if err != global.ResponseSuccess {
+			return err
+		}
+	}
+
+	tx.Commit()
+	return global.ResponseSuccess
+}
+
+func (u *User_service_impl) CheckBtDataIsValid(ctx context.Context, userId int, data []BattleData.BagStuffDto, gold int) global.ResponseStatusCode {
+	if len(data) != 5 {
+		return global.BattleCardNumErr
+	}
+	for _, e := range data {
+		err, _ := u.repo.GetStuffByStuffId(ctx, u.repo.Get_db(), userId, e.StuffId)
+		if err != global.ResponseSuccess {
+			return err
+		}
+	}
+
+	child_num := 0
+	character_num := 0
+	for _, e := range data {
+		err1, flag1 := u.repo.JudgeCardIsParent(ctx, u.repo.Get_db(), e.CardId)
+		if err1 != global.ResponseSuccess {
+			return err1
+		}
+		if !flag1 {
+			child_num++
+		}
+		err2, flag2 := u.repo.JudgeCardIsCharacter(ctx, u.repo.Get_db(), e.CardId)
+		if err2 != global.ResponseSuccess {
+			return err2
+		}
+		if flag2 {
+			character_num++
+		}
+
+	}
+	//最多2子
+	if child_num > 2 {
+		return global.BattleEnterDataInvalid
+	}
+	//三战二法
+	if character_num != 3 {
+		return global.BattleEnterDataInvalid
+	}
+
+	//判定钱够不够
+	err3, gold_num := u.repo.GetAssetGold(ctx, u.repo.Get_db(), userId)
+	if err3 != global.ResponseSuccess {
+		return err3
+	}
+	if gold_num-gold < 0 {
+		return global.ResponseGoldNotEnough
+	}
+
+	return global.ResponseSuccess
 }

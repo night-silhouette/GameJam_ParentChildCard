@@ -57,9 +57,15 @@ func Register_user_routes(h userhandler.User_handler) {
 	v1_user.DELETE("/", h.Delete())
 	v1_user.PUT("/", h.Put())
 	v1_user.GET("/vague/", h.UserVagueSearch())
+	v1_user.GET("/gold/", h.GoldGet())
 
 	R.GET("/v1/time/", h.TimeSync())
 	R.GET("/v1/debug/time/", h.TimeDebug())
+
+	R.GET("v1/start_pack/", h.StarterPack())
+	R.POST("v1/debug/Card/", h.DebugGiveCardByCardId())
+	R.GET("v1/bags/", h.BagGet())
+	R.POST("v1/bags/sell/", h.CardSell())
 }
 
 func Register_token_routes(h tokenhandler.Token_handler) {

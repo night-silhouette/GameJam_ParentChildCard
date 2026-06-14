@@ -1,6 +1,9 @@
 package Util
 
-import "time"
+import (
+	"fmt"
+	"time"
+)
 
 func SendTime(offset time.Duration) int64 {
 	return time.Now().Add(offset).UnixMilli()
@@ -19,6 +22,7 @@ func CreateTimer(duration time.Duration, callback func()) (chan struct{}, chan s
 		case <-StopChan:
 			callback()
 		case <-CrashChan:
+			fmt.Println("被触发crash了")
 		}
 
 	}()

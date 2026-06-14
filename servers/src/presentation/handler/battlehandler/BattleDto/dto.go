@@ -24,20 +24,54 @@ const (
 	MatchSuccess
 	AnimationPlayEnd
 	Combat
+	CardCalc
+	Debug
+	Interrupt //-----------------------------------
+	GetDisCard
+	SkillCardCalc
+	GetEnergy
+	SelectWeather
+	GetChildCardList
+	ActiveChildCard
+	GetWeather
+	CatchChild //-----------------------------------
+	GetUserId
+	CardMove        //-----------------------------------
+	AnimationNotify //-----------------------------------
+	ValueNotify     //-----------------------------------
+	Ping
+	ReConnect
 )
 
 var ActionName = map[ActionCode]string{
+	Fault:                 "错误",
 	CancelMatch:           "取消匹配",
 	GetSelfCardInHard:     "获取自己的卡牌信息",
 	GetOpponentCardInHard: "获取对手的卡牌信息",
 	GetBtCardInfo:         "获取场上的战斗信息",
 	OverBattle:            "结束战斗",
 	StartBattle:           "开始战斗",
-	DeployCard:            "部署一张牌",
+	DeployCard:            "部署牌",
 	Judge:                 "战斗回合判断",
 	MatchSuccess:          "匹配成功",
 	AnimationPlayEnd:      "动画结束",
 	Combat:                "执行战斗行动",
+	CardCalc:              "卡牌效果结算",
+	Debug:                 "测试",
+	Interrupt:             "中断选牌",
+	GetDisCard:            "查看弃牌堆",
+	SkillCardCalc:         "法术牌计算",
+	GetEnergy:             "查看能量值",
+	SelectWeather:         "天气选择",
+	GetChildCardList:      "查看子牌堆",
+	ActiveChildCard:       "子牌激活选择",
+	GetWeather:            "获取天气",
+	CatchChild:            "捕获子牌",
+	CardMove:              "结算卡牌移动通知",
+	AnimationNotify:       "行为动画通知",
+	ValueNotify:           "数值变化通知",
+	Ping:                  "ping",
+	ReConnect:             "断线重连",
 }
 
 type Predicates int
