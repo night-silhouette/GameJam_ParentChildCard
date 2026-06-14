@@ -7,6 +7,7 @@ extends Node
 @export var self_energy_node : Control
 @export var oppent_energy_node :Control
 
+
 #region 数据变更信号
 signal UI_date_update
 signal change_card_zone(temp_id, new_zone)
@@ -60,6 +61,7 @@ var interrupt_data: Dictionary = {}:
 		interrupt_changed.emit(interrupt_data)
 		# 处理中断选牌卡牌数据并通知 UI
 		_on_interrupt_data_received()
+		
 
 ## 中断数据到达后：从 hand 匹配 temp_id，发 signal 让 UI 填充
 func _on_interrupt_data_received() -> void:
@@ -80,6 +82,8 @@ func _on_interrupt_data_received() -> void:
 				break
 	
 	interrupt_cards_ready.emit(matched_cards, select_num)
+	
+var combat_list: Array = []; 
 #endregion
 
 
@@ -88,6 +92,17 @@ var free_card_nextzone = null;
 var free_card_prevzone = null;
 var hover_card :int   =  -1;
 var card_list :Array = [];#这里的card只掌握数据，不拥有任何的实体
+var action_list:Array = [];
+var switch_list:Array = [];
+var switch_child = false;
+var switch_parent = false;
+var active_child = false;
+var active_parent = false;
+const behavior = {
+	attack = 0,
+	skill = 1,
+	switch = 2,
+}
 #endregion
 
 
@@ -480,6 +495,8 @@ var parent_combat_dto: Dictionary = {"behavior": -1, "self_where": 0, "opponent_
 ## 子牌战斗 DTO
 var child_combat_dto: Dictionary = {"behavior": -1, "self_where": 1, "opponent_where": -1, "temp_id": -1, "select_card": {}}
 
+var swtich_combat_dto:Dictionary = {"behavior": -1, "self_where": -1, "opponent_where": -1, "temp_id": -1, "select_card": {}}
+
 const COST_SWITCH: int = 1
 const COST_ATTACK_OR_SKILL: int = 2
 
@@ -496,36 +513,21 @@ func set_combat_dto(self_where: int, behavior: int, opponent_where: int, temp_id
 	
 	if self_where == 0:
 		parent_combat_dto = {"behavior": behavior, "self_where": 0, "opponent_where": opponent_where, "temp_id": temp_id, "select_card": select_card}
+		action_list.append(parent_combat_dto)
+		active_parent = true
 	else:
 		child_combat_dto = {"behavior": behavior, "self_where": 1, "opponent_where": opponent_where, "temp_id": temp_id, "select_card": select_card}
-	
+		action_list.append(child_combat_dto)
+		active_child = true
 	combat_dto_changed.emit()
 	return true
 
 
-## 清空某个 DTO 并返还能量
-func clear_combat_dto(self_where: int) -> void:
-	var dto = parent_combat_dto if self_where == 0 else child_combat_dto
-	if dto.behavior == -1:
-		return
-	
-	var cost = COST_SWITCH if dto.behavior == 2 else COST_ATTACK_OR_SKILL
-	self_energy += cost
-	
-	if self_where == 0:
-		parent_combat_dto = {"behavior": -1, "self_where": 0, "opponent_where": -1, "temp_id": -1, "select_card": {}}
-	else:
-		child_combat_dto = {"behavior": -1, "self_where": 1, "opponent_where": -1, "temp_id": -1, "select_card": {}}
-	
-	combat_dto_changed.emit()
-
 
 ## 清空全部 DTO 并返还全部能量（桌面万能按钮）
 func clear_all_combat_dto() -> void:
-	if parent_combat_dto.behavior != -1:
-		clear_combat_dto(0)
-	if child_combat_dto.behavior != -1:
-		clear_combat_dto(1)
+	action_list = [];
+	
 #endregion
 
 #region ==================== 游戏交互逻辑 ====================
@@ -551,29 +553,72 @@ func _exit_freecard(temp_id):
 		_change_card_zone(temp_id, free_card_prevzone)
 
 func _can_deploy_card(icard: Dictionary, target_zone: int) -> bool:
-	if target_zone == Global.ZONE_CARD.DECK_ZONE:
-		return true
-	
 	if not state_machine:
 		return false
 	
 	var res = icard.get("resouce")
 	if res == null:
 		return false
-
-	if not res.is_combat_card and target_zone == Global.ZONE_CARD.SPELL_ZONE:
-		return state_machine.current_state == state_machine.GameState.USE_MAGIC_CARD
-
-	if res.is_combat_card and not res.is_sub_card and target_zone == Global.ZONE_CARD.PARENT_BATTLE_ZONE:
-		var valid_states = [state_machine.GameState.USE_COMBAT_CARD, state_machine.GameState.INIT_STATE]
-		if state_machine.current_state == state_machine.GameState.USE_COMBAT_CARD:
-			return state_machine.is_win == 1
-		return state_machine.current_state in valid_states
-
-	if res.is_combat_card and res.is_sub_card and target_zone == Global.ZONE_CARD.CHILD_BATTLE_ZONE:
-		var valid_states = [state_machine.GameState.USE_COMBAT_CARD, state_machine.GameState.INIT_STATE]
-		return state_machine.current_state in valid_states
-
+	
+	match state_machine.current_state:
+		state_machine.GameState.INIT_STATE:
+			if target_zone == Global.ZONE_CARD.DECK_ZONE:
+				return true
+			if res.is_combat_card :
+				if target_zone == Global.ZONE_CARD.CHILD_BATTLE_ZONE and res.is_sub_card:
+					return true
+				elif target_zone == Global.ZONE_CARD.PARENT_BATTLE_ZONE and !res.is_sub_card:
+					return true
+			else:		
+				return false
+		
+		state_machine.GameState.USE_MAGIC_CARD:
+			if target_zone == Global.ZONE_CARD.DECK_ZONE:
+				return true
+			if not res.is_combat_card and target_zone == Global.ZONE_CARD.SPELL_ZONE:
+				return true
+			return false
+		
+		state_machine.GameState.USE_COMBAT_CARD:
+			if res.is_combat_card:
+				if target_zone == Global.ZONE_CARD.DECK_ZONE:
+					if res.is_sub_card:
+						if active_child:
+							return false
+						if  switch_child :
+							return true
+						if self_energy >= 1 :
+							self_energy -= 1
+							switch_child = true
+							return true
+					else:
+						if active_parent:
+							return false
+						if  switch_parent :
+							return true
+						if self_energy >= 1 :
+							self_energy -= 1
+							switch_parent = true
+							return true
+				if target_zone == Global.ZONE_CARD.CHILD_BATTLE_ZONE and res.is_sub_card :
+					if active_child:
+						return false
+					if  switch_child :
+						return true
+					if self_energy >= 1 :
+						self_energy -= 1
+						switch_child = true
+						return true
+				elif target_zone == Global.ZONE_CARD.PARENT_BATTLE_ZONE and !res.is_sub_card:
+					if active_parent:
+						return false
+					if  switch_parent :
+						return true
+					if self_energy >= 1 :
+						self_energy -= 1
+						switch_parent = true
+						return true
+			return false
 	return false
 
 func _deploy_card_to_zone(temp_id: int, target_zone: int):
@@ -584,13 +629,29 @@ func _deploy_card_to_zone(temp_id: int, target_zone: int):
 	
 	# 战斗阶段手牌→战斗区换牌：自动记录 Switch DTO
 	if state_machine and state_machine.current_state == state_machine.GameState.USE_COMBAT_CARD:
-		if free_card_prevzone == Global.ZONE_CARD.DECK_ZONE and target_zone in [Global.ZONE_CARD.PARENT_BATTLE_ZONE, Global.ZONE_CARD.CHILD_BATTLE_ZONE]:
-			var hand_card = select_card_by_key(temp_id, "temp_id")
-			if not hand_card.is_empty():
-				var self_where = 0 if target_zone == Global.ZONE_CARD.PARENT_BATTLE_ZONE else 1
-				var sel = {"where": self_where, "card_id": hand_card.get("id", -1), "card_temp_id": hand_card.get("temp_id", -1)}
-				set_combat_dto(self_where, 2, -1, temp_id, sel)
-
+		var icard = select_card_by_key(temp_id,"temp_id")
+		var res = icard.get("resouce")
+		var select_card:Dictionary = {
+			"where": -1,
+			"card_id" : -1 ,
+			"card_temp_id" : -1,
+		}
+		
+		if res.is_sub_card:
+			if target_zone == Global.ZONE_CARD.DECK_ZONE:
+				select_card = {"where": Global.WHERE.InHand,"card_id" : int(res.id) ,"card_temp_id" : int(temp_id)}
+			elif target_zone == Global.ZONE_CARD.CHILD_BATTLE_ZONE:
+				select_card = {"where": Global.WHERE.ChildCard,"card_id" : int(res.id) ,"card_temp_id" : int(temp_id)}
+			swtich_combat_dto = {"behavior": behavior.switch, "self_where": -1, "opponent_where": -1, "temp_id": -1, "select_card": select_card}
+			switch_list[1] = swtich_combat_dto;
+		else:
+			if target_zone == Global.ZONE_CARD.DECK_ZONE:
+				select_card = {"where": Global.WHERE.InHand,"card_id" : int(res.id) ,"card_temp_id" : int(temp_id)}
+			elif target_zone == Global.ZONE_CARD.CHILD_BATTLE_ZONE:
+				select_card = {"where": Global.WHERE.ChildCard,"card_id" : int(res.id) ,"card_temp_id" : int(temp_id)}
+			swtich_combat_dto = {"behavior": behavior.switch, "self_where": -1, "opponent_where": -1, "temp_id": -1, "select_card": select_card}
+			switch_list[0] = swtich_combat_dto;
+			
 func _detected_area(zone):
 	free_card_nextzone = zone;
 

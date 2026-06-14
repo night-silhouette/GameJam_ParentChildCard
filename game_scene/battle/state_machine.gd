@@ -289,16 +289,6 @@ func _send_message():
 				SignalBus.request_deploy_magic_card.emit(-1,-1)
 		
 		GameState.USE_COMBAT_CARD:
-			card = card_manager.get_cards_by_zone(Global.ZONE_CARD.PARENT_BATTLE_ZONE)
-			if not card.is_empty():
-				SignalBus.request_deploy_parent_card.emit(card[0].id, card[0].temp_id)
-			else:
-				SignalBus.request_deploy_parent_card.emit(-1,-1)
-			card = card_manager.get_cards_by_zone(Global.ZONE_CARD.CHILD_BATTLE_ZONE)
-			if not card.is_empty():
-				SignalBus.request_deploy_child_card.emit(card[0].id, card[0].temp_id)
-			else:
-				SignalBus.request_deploy_child_card.emit(-1,-1)
 			var dp = card_manager.parent_combat_dto
 			var dc = card_manager.child_combat_dto
 			if dp.behavior != -1:

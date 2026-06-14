@@ -2,10 +2,15 @@ extends TextureButton
 @export var username := LineEdit;
 @export var password := LineEdit;
 
+var _blocked: bool = false
+
 func _ready() -> void:
 	SignalBus.user_registered_success.connect(_on_button_down)
 
 func _on_button_down() -> void:
+	if _blocked:
+		return
+	_blocked = true
 	var _username:String = username.text;
 	var _password:String = password.text;
 	if validate_name(_username) && validate_password(_password) :

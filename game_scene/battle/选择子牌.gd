@@ -24,18 +24,20 @@ func _on_child_cards_ready() -> void:
 	for z in range(Global.ZONE_CARD.CHILD_ACTIVE, Global.ZONE_CARD.CHILD_HAS_CATCH + 1):
 		child_cards.append_array(card_manager.get_cards_by_zone(z))
 	
-	for i in range(children.size()):
-		var card_node = children[i]
-		if i < child_cards.size():
-			var data = child_cards[i].duplicate()
-			# 如果 data 没有 resouce，尝试从 card_manager 查询
+	var slot_index = 0
+	for card_node in children:
+		if not card_node.has_method("setup"):
+			continue
+		if slot_index < child_cards.size():
+			var data = child_cards[slot_index].duplicate()
 			if data.get("resouce") == null:
 				var card_id = int(data.get("id", -1))
 				if card_id != -1:
 					data["resouce"] = card_manager.querry_resoure_by_id(card_id)
-			card_node.match_code = 3  # 子卡激活选择
+			card_node.match_code = 3
 			card_node.setup(data)
 			card_node.visible = true
+			slot_index += 1
 		else:
 			card_node.visible = false
 
@@ -46,12 +48,15 @@ func _on_interrupt_cards_ready(card_list: Array, _select_num: int) -> void:
 	if children.is_empty():
 		return
 	
-	for i in range(children.size()):
-		var card_node = children[i]
-		if i < card_list.size():
-			var data = card_list[i]
-			card_node.match_code = 99  # 中断选牌
+	var slot_index = 0
+	for card_node in children:
+		if not card_node.has_method("setup"):
+			continue
+		if slot_index < card_list.size():
+			var data = card_list[slot_index]
+			card_node.match_code = 99
 			card_node.setup(data)
 			card_node.visible = true
+			slot_index += 1
 		else:
 			card_node.visible = false

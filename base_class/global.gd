@@ -80,6 +80,13 @@ const WEATHER_DESC = {
 	Weather.FENGDU: "战斗牌死亡时，会变成一只血量为1，伤害为1，没有技能的僵尸，僵尸死亡将不会再次变化",
 	Weather.UNABLE_VIEW: "无法查看对方手牌和能量",
 }
+const WHERE={
+	ChildCard = 0,
+	SkillCard = 1,
+	DisCardPool = 2,
+	ChildCardPool = 3,
+	InHand = 4,
+}
 ## 接口 1：让节点进入【假死】状态
 func fake_death(target_node: Node) -> void:
 	if not is_instance_valid(target_node):

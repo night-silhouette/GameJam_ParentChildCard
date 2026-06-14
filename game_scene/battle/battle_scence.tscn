@@ -200,14 +200,14 @@ offset_right = 2309.0
 offset_bottom = 538.0
 scale = Vector2(0.16834557, 0.17136647)
 
-[node name="选择子牌" parent="卡牌显示" instance=ExtResource("22_f0my5")]
-visible = false
+[node name="选择子牌" parent="卡牌显示" node_paths=PackedStringArray("card_manager") instance=ExtResource("22_f0my5")]
 layout_mode = 0
 offset_left = 302.0
 offset_top = 163.00002
 offset_right = 2391.3506
 offset_bottom = 1603.4711
 scale = Vector2(0.31050953, 0.26654428)
+card_manager = NodePath("../../数据层/card_manager")
 
 [node name="freecard" parent="." node_paths=PackedStringArray("card_manager") instance=ExtResource("12_ro313")]
 offset_left = 1232.0001
