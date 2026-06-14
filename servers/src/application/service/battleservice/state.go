@@ -1049,18 +1049,14 @@ func NewJudgeRes(self int, opponent int, IsWin int) *JudgeRes {
 func (J *Judge) process(GoCtx context.Context) {
 	handleAction := func(id int, action BattleDto.Action, ResponseChan chan<- BattleDto.Action) bool {
 
-		J.Mutex.Lock()
-
 		if J.WaitAnimationPlay.Load() && action.ActionCode == BattleDto.AnimationPlayEnd && action.Predicates == BattleDto.Notify {
 			if !J.IsTie.Load() {
 				J.SM.finish("Combat")
 			} else {
 				J.SM.finish("Judge")
 			}
-			J.Mutex.Unlock()
 			return true
 		}
-		J.Mutex.Unlock()
 
 		if action.ActionCode == BattleDto.Judge && action.Predicates == BattleDto.Result {
 			J.Mutex.Lock()
