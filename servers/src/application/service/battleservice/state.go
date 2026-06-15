@@ -1360,27 +1360,28 @@ CalcLoop:
 			s.c.ChildCardCheck()
 
 			//结算法术(s.c.ChildCardCheck()在里面了)
-			s.SkillCalc()
+
 			s.SM.SendActionById(s.SM.Id2, BattleDto.NewAction(BattleDto.SkillCardNotify, BattleDto.Notify, ""))
 			s.SM.SendActionById(s.SM.Id1, BattleDto.NewAction(BattleDto.SkillCardNotify, BattleDto.Notify, ""))
+			s.SkillCalc()
 
 			//结算天气
+			s.SM.SendActionById(s.SM.Id2, BattleDto.NewAction(BattleDto.WeatherNotify, BattleDto.Notify, ""))
+			s.SM.SendActionById(s.SM.Id1, BattleDto.NewAction(BattleDto.WeatherNotify, BattleDto.Notify, ""))
 			cardBts := s.c.GetBtAll(-1)
 			buffNeeds := make([]protocol.BuffNeed, len(cardBts)) //转化数组类型,数组没法隐式转化的
 			for i, card := range cardBts {
 				buffNeeds[i] = card
 			}
 			protocol.WeatherFuncMap[protocol.Weather(s.c.Weather.Load())](s.c, buffNeeds) //从天气执行函数map储存种取出来执行
-			s.SM.SendActionById(s.SM.Id2, BattleDto.NewAction(BattleDto.WeatherNotify, BattleDto.Notify, ""))
-			s.SM.SendActionById(s.SM.Id1, BattleDto.NewAction(BattleDto.WeatherNotify, BattleDto.Notify, ""))
 
 			//结算buff
+			s.SM.SendActionById(s.SM.Id2, BattleDto.NewAction(BattleDto.BuffCalcNotify, BattleDto.Notify, ""))
+			s.SM.SendActionById(s.SM.Id1, BattleDto.NewAction(BattleDto.BuffCalcNotify, BattleDto.Notify, ""))
 			CharacterCardList := s.c.GetCharacter()
 			for _, Card := range CharacterCardList {
 				Card.BuffRoundEnd(s.c)
 			}
-			s.SM.SendActionById(s.SM.Id2, BattleDto.NewAction(BattleDto.BuffCalcNotify, BattleDto.Notify, ""))
-			s.SM.SendActionById(s.SM.Id1, BattleDto.NewAction(BattleDto.BuffCalcNotify, BattleDto.Notify, ""))
 
 			//全部结算完成,发个通知
 			s.SM.SendActionById(s.SM.Id2, BattleDto.NewAction(BattleDto.CardCalc, BattleDto.Finish, ""))

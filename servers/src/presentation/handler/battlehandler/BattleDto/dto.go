@@ -19,7 +19,7 @@ const (
 	GetBtCardInfo
 	OverBattle
 	StartBattle
-	DeployCard
+	DeployCard //-------------------------------------
 	Judge
 	MatchSuccess
 	AnimationPlayEnd
@@ -41,8 +41,8 @@ const (
 	ValueNotify     //-----------------------------------
 	Ping
 	ReConnect
-	WeatherNotify //-------------------------
-	BuffCalcNotify
+	WeatherNotify  //-------------------------
+	BuffCalcNotify //-------------------------
 )
 
 var ActionName = map[ActionCode]string{

@@ -100,12 +100,18 @@ func (c *Ctx) ChildCatch(card CardAbstract.ChildCard, UserId int) {
 	defer OpPlayerData.dataMutex.Unlock()
 
 	Notify := func(Origin int) {
-		Dto := BattleData.ChildCardCatchDto{ //通知
-			Origin: Origin,
-			Object: UserId,
+		DtoSelf := BattleData.ChildCardCatchDto{ //通知
+			Origin:  Origin,
+			Object:  UserId,
+			DataAll: c.GetDataAll(UserId),
 		}
-		c.StateMachine.SendActionById(UserId, BattleDto.NewAction(BattleDto.CatchChild, BattleDto.Result, Dto))
-		c.StateMachine.SendActionById(OpponentId, BattleDto.NewAction(BattleDto.CatchChild, BattleDto.Result, Dto))
+		DtoOp := BattleData.ChildCardCatchDto{ //通知
+			Origin:  Origin,
+			Object:  UserId,
+			DataAll: c.GetDataAll(OpponentId),
+		}
+		c.StateMachine.SendActionById(UserId, BattleDto.NewAction(BattleDto.CatchChild, BattleDto.Result, DtoSelf))
+		c.StateMachine.SendActionById(OpponentId, BattleDto.NewAction(BattleDto.CatchChild, BattleDto.Result, DtoOp))
 	}
 	if card.GetInfo()["ChildState"] == BattleData.Active {
 		playerData.CardInHand[card.GetTempId()] = card     //底层数据改牌
@@ -445,7 +451,7 @@ func (c *Ctx) ProtoColInterrupt(UserId int, InterruptDto *BattleData.InterruptDt
 	var DataIsOK atomic.Bool
 	DataIsOK.Store(false)
 
-	TimeEnding := func() { //结束回调
+	TimeEnding := func() {    //结束回调
 		if !DataIsOK.Load() { //随机取
 			dataMutex.Lock()
 			data.TempIdList = Util.GetRandomElements(InterruptDto.TempIdList, InterruptDto.SelectNum)
