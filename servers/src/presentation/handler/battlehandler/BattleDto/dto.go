@@ -76,6 +76,7 @@ var ActionName = map[ActionCode]string{
 	WeatherNotify:         "天气结算通知",
 	SkillCardNotify:       "法术牌结算通知",
 	BuffCalcNotify:        "buff结算通知",
+	GetUserId:             "获取双方id",
 }
 
 type Predicates int
