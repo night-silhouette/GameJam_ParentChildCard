@@ -1,6 +1,9 @@
 package protocol
 
-import "pcc_card/application/entity/CardMeta"
+import (
+	"pcc_card/application/entity/BattleData"
+	"pcc_card/application/entity/CardMeta"
+)
 
 func InitBuff() {
 	InitBuffRoundEndFuncMap()
@@ -41,13 +44,15 @@ func InitBuffRoundEndFuncMap() {
 	BuffRoundEndFuncMap[Powerful] = func(pc ProtocolCardWithCtx, value float64, card BuffNeed) {}
 	BuffRoundEndFuncMap[Weakness] = func(pc ProtocolCardWithCtx, value float64, card BuffNeed) {}
 	BuffRoundEndFuncMap[DamageImmunity] = func(pc ProtocolCardWithCtx, value float64, card BuffNeed) {}
-	BuffRoundEndFuncMap[Vulnerability] = func(pc ProtocolCardWithCtx, value float64, card BuffNeed) {
-
-	}
+	BuffRoundEndFuncMap[Vulnerability] = func(pc ProtocolCardWithCtx, value float64, card BuffNeed) {}
 	BuffRoundEndFuncMap[Block] = func(pc ProtocolCardWithCtx, value float64, card BuffNeed) {}
 	BuffRoundEndFuncMap[HealingBoost] = func(pc ProtocolCardWithCtx, value float64, card BuffNeed) {}
 	BuffRoundEndFuncMap[HealingDecay] = func(pc ProtocolCardWithCtx, value float64, card BuffNeed) {}
-	BuffRoundEndFuncMap[Wither] = func(pc ProtocolCardWithCtx, value float64, card BuffNeed) {}
+	BuffRoundEndFuncMap[Wither] = func(pc ProtocolCardWithCtx, value float64, card BuffNeed) {
+		pc.ProtoColPush(NewCustom(func(pc ProtocolCardWithCtx) {
+			pc.ProtoColAttackNoHurt(card.GetTempId(), int(value), BattleData.Damage)
+		}))
+	}
 	BuffRoundEndFuncMap[Binding] = func(pc ProtocolCardWithCtx, value float64, card BuffNeed) {}
 	BuffRoundEndFuncMap[Retaliate] = func(pc ProtocolCardWithCtx, value float64, card BuffNeed) {}
 	BuffRoundEndFuncMap[Confine] = func(pc ProtocolCardWithCtx, value float64, card BuffNeed) {}
@@ -109,4 +114,5 @@ func InitBuffOnRemoveFuncMap() {
 type BuffNeed interface {
 	SetDec(Dec *CardMeta.Decorator)
 	GetDec() *CardMeta.Decorator
+	GetTempId() int
 }

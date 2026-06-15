@@ -20,3 +20,11 @@ func (c *Card0002) Clone() CardAbstract.Card {
 	newCard := *c
 	return &newCard
 }
+
+func (c *Card0002) Skill(TargetId int) bool {
+	if !c.CharacterBaseCard.Skill(TargetId) {
+		return false
+	}
+
+	return true
+}

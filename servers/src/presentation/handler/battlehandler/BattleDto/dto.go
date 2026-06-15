@@ -28,7 +28,7 @@ const (
 	Debug
 	Interrupt //-----------------------------------
 	GetDisCard
-	SkillCardCalc
+	SkillCardNotify //-----------------------------
 	GetEnergy
 	SelectWeather
 	GetChildCardList
@@ -41,6 +41,8 @@ const (
 	ValueNotify     //-----------------------------------
 	Ping
 	ReConnect
+	WeatherNotify //-------------------------
+	BuffCalcNotify
 )
 
 var ActionName = map[ActionCode]string{
@@ -60,7 +62,6 @@ var ActionName = map[ActionCode]string{
 	Debug:                 "测试",
 	Interrupt:             "中断选牌",
 	GetDisCard:            "查看弃牌堆",
-	SkillCardCalc:         "法术牌计算",
 	GetEnergy:             "查看能量值",
 	SelectWeather:         "天气选择",
 	GetChildCardList:      "查看子牌堆",
@@ -72,6 +73,9 @@ var ActionName = map[ActionCode]string{
 	ValueNotify:           "数值变化通知",
 	Ping:                  "ping",
 	ReConnect:             "断线重连",
+	WeatherNotify:         "天气结算通知",
+	SkillCardNotify:       "法术牌结算通知",
+	BuffCalcNotify:        "buff结算通知",
 }
 
 type Predicates int

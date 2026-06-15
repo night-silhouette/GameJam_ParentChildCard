@@ -40,7 +40,7 @@ type Hurt struct {
 	SendTempId   int
 	TargetTempId int
 	AtkValue     float64
-	Dec          *CardMeta.Decorator
+	Dec          *CardMeta.Decorator //这已经是被buff增益过的了
 	Category     BattleData.ValueChange
 }
 
@@ -52,7 +52,7 @@ func (A *Hurt) Execute(pc ProtocolCardWithCtx) {
 		FinalAtkValue = int(A.AtkValue)
 	}
 
-	pc.ProtoColReduceCardBtHp(A.SendTempId, A.UserId, A.TargetTempId, float64(FinalAtkValue))
+	pc.ProtoColReduceCardBtHp(A.SendTempId, A.TargetTempId, float64(FinalAtkValue))
 	pc.ProtoNotifyValue(A.Category, float64(FinalAtkValue), A.TargetTempId)
 }
 
@@ -70,7 +70,6 @@ func NewHurt(UserId int, SendTempId int, TargetTempId int, AtkValue float64, Dec
 //-----------------------------------------------------------------------------------------------------------------------------------------
 
 type Heal struct {
-	UserId       int
 	TargetTempId *int
 	HealValue    float64
 	Dec          *CardMeta.Decorator
@@ -83,13 +82,13 @@ func (H *Heal) Execute(pc ProtocolCardWithCtx) {
 	}
 	originValue := H.HealValue
 	FinalHeal := H.Dec.CalcHeal(originValue)
-	pc.ProtoColHealCardBt(H.UserId, target, float64(FinalHeal))
+	pc.ProtoColHealCardBt(target, float64(FinalHeal))
 	pc.ProtoNotifyValue(BattleData.Heal, H.HealValue, *H.TargetTempId)
 }
 
-func NewHeal(UserId int, TargetTempId *int, HealValue float64, Dec *CardMeta.Decorator) *Heal {
+func NewHeal(TargetTempId *int, HealValue float64, Dec *CardMeta.Decorator) *Heal {
 	res := Heal{}
-	res.UserId = UserId
+
 	res.TargetTempId = TargetTempId
 	res.HealValue = HealValue
 	res.Dec = Dec
@@ -219,5 +218,23 @@ func (c *Custom) Execute(pc ProtocolCardWithCtx) {
 func NewCustom(ExecFunc func(pc ProtocolCardWithCtx)) *Custom {
 	res := Custom{}
 	res.ExecFunc = ExecFunc
+	return &res
+}
+
+//----------------------------------------
+
+type ChangeMaxHp struct {
+	TargetTempId int
+	MaxHp        float64
+}
+
+func (c *ChangeMaxHp) Execute(pc ProtocolCardWithCtx) {
+	pc.ProtoColSetMaxHp(c.TargetTempId, c.MaxHp)
+}
+
+func NewChangeMaxHp(TargetTempId int, MaxHp float64) *ChangeMaxHp {
+	res := ChangeMaxHp{}
+	res.MaxHp = MaxHp
+	res.TargetTempId = TargetTempId
 	return &res
 }

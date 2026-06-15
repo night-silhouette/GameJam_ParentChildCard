@@ -14,8 +14,8 @@ type ProtocolCardWithCtx interface {
 	ProtoColGetCharacterCard(UserId int) []int
 	// ProtoColSetCardBt 上牌(要BT上没牌才可以上)
 	ProtoColSetCardBt(UserId int, TempId int)
-	ProtoColReduceCardBtHp(SendTempId int, UserId int, TargetTempId int, ReduceHp float64) //死啦，会触发card的death//这些方法都是优先找BT然后找手牌,传递sendid是为了给死亡传递杀死者
-	ProtoColHealCardBt(UserId int, TargetTempId int, HealHp float64)                       //设置了不可以恢复到上限
+	ProtoColReduceCardBtHp(SendTempId int, TargetTempId int, ReduceHp float64) //死啦，会触发card的death//这些方法都是优先找BT然后找手牌,传递sendid是为了给死亡传递杀死者
+	ProtoColHealCardBt(TargetTempId int, HealHp float64)                       //设置了不可以恢复到上限
 	ProtoColSetDamageCardBt(UserId int, TargetTempId int, NewDamage float64)
 	ProtoColCardBtAttack(SendTempId int, UserId int, TargetTempId int, AtkHp float64, Category BattleData.ValueChange)
 	ProtoColInterrupt(UserId int, InterruptDto *BattleData.InterruptDto, res chan []int, InterruptWaitTime time.Duration) //异步中断，让前端从一定范围内需选牌，结果是tempId的数组，用res管道接受
@@ -26,7 +26,9 @@ type ProtocolCardWithCtx interface {
 	ProtoNotifyCardMove(Object BattleData.Where, TempId int)
 	ProtoColUpdateEnergy(UserId int, offset int)
 	ProtoColCanUpdateEnergy(UserId int, offset int) bool
-	CheckCard(id int) bool //检查是否还有卡出战,看pbt和cbt这两个位置主要是
-	CreateTempId() int     //产生tempId,计数用的
-
+	CheckCard(id int) bool                                                           //检查是否还有卡出战,看pbt和cbt这两个位置主要是
+	CreateTempId() int                                                               //产生tempId,计数用的
+	ProtoColAttackNoHurt(CardTempId int, Value int, Category BattleData.ValueChange) //无主攻击
+	ProtoColSetMaxHp(TargetTempId int, MaxHp float64)                                //设置最大生命
+	GetIds() []int                                                                   //获取用户id数组
 }

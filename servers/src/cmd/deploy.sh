@@ -13,6 +13,7 @@ CURRENT_NUM=${VERSION#v}
 PREV_NUM=$((CURRENT_NUM - 1))
 PREV_VERSION="v${PREV_NUM}"
 
+
 echo "开始构建项目版本: ${VERSION}..."
 
 
@@ -25,8 +26,8 @@ fi
 
 echo "编译成功: $OUTPUT_BIN"
 
-ssh root@120.26.145.68 "${PM2} stop pcc_card_${PREV_VERSION}" || true
-ssh root@120.26.145.68 "${PM2} stop pcc_card_${VERSION}" || true
+
+ssh root@120.26.145.68 "${PM2} delete pcc_card_${VERSION}" || true
 scp -r ../bin/${VERSION} root@120.26.145.68:/root/pcc_servers
 ssh root@120.26.145.68 "${PM2} start ./pcc_servers/${VERSION}/pcc_card_${VERSION}"
 

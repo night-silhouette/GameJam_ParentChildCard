@@ -265,6 +265,7 @@ func (s *StateMachine) AcceptAction(goCtx context.Context, handleAction func(id 
 			if s.SharedProcess(s.Id1, action, s.Nt.ChanMap[s.Id1].ResponseChan) {
 				continue
 			}
+			fmt.Println("战斗时机不对的原始字段", action)
 			s.SendActionById(s.Id1, BattleDto.NewErrAction(global.BattleInvalidTiming))
 		case action := <-s.Nt.ChanMap[s.Id2].AcceptChan:
 			InterruptListenFunc := s.c.InterruptListenFunc.Load().(func(id int, action BattleDto.Action, ResponseChan chan<- BattleDto.Action) bool)
@@ -278,6 +279,7 @@ func (s *StateMachine) AcceptAction(goCtx context.Context, handleAction func(id 
 			if s.SharedProcess(s.Id2, action, s.Nt.ChanMap[s.Id2].ResponseChan) {
 				continue
 			}
+			fmt.Println("战斗时机不对的原始字段", action)
 			s.SendActionById(s.Id2, BattleDto.NewErrAction(global.BattleInvalidTiming))
 		}
 	}
@@ -525,8 +527,7 @@ func (a *ActiveChildCard) exit() {
 	a.StateTemplate.exit()
 	a.TaskMap = nil
 	a.DoneMap = nil
-	a.ChanCrash = nil
-	a.ChanStop = nil
+
 	a.Completed.Store(false)
 }
 
@@ -566,6 +567,8 @@ func (a *ActiveChildCard) process(GoCtx context.Context) {
 			if a.DoneMap[a.Id1] && a.DoneMap[a.Id2] {
 				a.finishSelect()
 			}
+
+			a.ChanCrash <- struct{}{}
 			return true
 		}
 		return false
@@ -850,12 +853,11 @@ func (s *SelectSkillCard) SelectEnd() {
 	defer s.Mutex.Unlock() //先不用上锁，毕竟没有race操作
 	s.SM.SendActionById(s.Id1, BattleDto.NewAction(BattleDto.DeployCard, BattleDto.Finish, "技能牌全部选择完毕"))
 	s.SM.SendActionById(s.Id2, BattleDto.NewAction(BattleDto.DeployCard, BattleDto.Finish, "技能牌全部选择完毕"))
-	s.SM.finish("Judge")
-
+	go s.SM.finish("Judge")
 }
 
 func (s *SelectSkillCard) enter() {
-	fmt.Println("Skill__Enter")
+
 	chanStop, chanCrash := Util.CreateTimer(time.Second*global.SelectSkillCardTime, s.SelectEnd)
 	s.ChanCrash = chanCrash
 	s.ChanStop = chanStop
@@ -1026,10 +1028,8 @@ func (J *Judge) exit() {
 	J.TaskMap[J.Id1] = 3
 	J.Mutex.Unlock()
 
-	J.ChanStop = nil
-	J.ChanCrash = nil
 	J.IsTie.Store(false)
-	J.WaitAnimationPlay.Store(false)
+
 }
 
 type JudgeRes struct {
@@ -1050,6 +1050,7 @@ func (J *Judge) process(GoCtx context.Context) {
 	handleAction := func(id int, action BattleDto.Action, ResponseChan chan<- BattleDto.Action) bool {
 
 		if J.WaitAnimationPlay.Load() && action.ActionCode == BattleDto.AnimationPlayEnd && action.Predicates == BattleDto.Notify {
+			J.WaitAnimationPlay.Store(false)
 			if !J.IsTie.Load() {
 				J.SM.finish("Combat")
 			} else {
@@ -1065,6 +1066,7 @@ func (J *Judge) process(GoCtx context.Context) {
 			if err != nil {
 				fmt.Println(err)
 				J.SM.SendActionById(id, BattleDto.NewErrAction(global.ResponseInvalidReqParams))
+
 				J.Mutex.Unlock()
 				return true
 			}
@@ -1157,6 +1159,7 @@ func (c *Combat) process(GoCtx context.Context) {
 				c.SM.SendActionById(id, BattleDto.NewErrAction(global.ResponseInvalidReqParams))
 				return true
 			}
+			fmt.Println("combat阶段前端发送的data:", data)
 			//-----------把结果存入map,并且防止反复提交------------
 			if id == c.SM.Winner {
 				if _, ok := c.CombatMap["Winner"]; ok {
@@ -1229,9 +1232,16 @@ func (s *CardCalc) Switch(_data BattleData.CombatDto, UserId int) bool {
 	if data.Where != BattleData.SkillCard {
 		cardTempId := data.CardTempId
 		if card, ok := s.c.PlayerDataMap[UserId].CardInHand[cardTempId]; ok { //手牌里有不有
-			if _, ok := card.(CardAbstract.SkillCard); !ok {
+			if _, ok := card.(CardAbstract.SkillCard); !ok { //不是技能牌
 
 				playerData := s.c.PlayerDataMap[UserId]
+
+				if _data.SelectCard.Where == BattleData.InHand { //检查是不是最后一张战斗牌
+					if !playerData.CheckIs2Bt() {
+						s.SM.SendActionById(UserId, BattleDto.NewErrAction(global.ResponseForbidden))
+						return false
+					}
+				}
 				if !playerData.IsCanUpdateEnergy(-1) { //减少能量
 					s.SM.SendActionById(UserId, BattleDto.NewErrAction(global.BattleEnergyNotEnough))
 					return false
@@ -1241,7 +1251,6 @@ func (s *CardCalc) Switch(_data BattleData.CombatDto, UserId int) bool {
 				//-----------------------换牌正文-----------------------
 
 				playerData.SwitchCard(data.Where, card)
-				s.SM.SendActionById(UserId, BattleDto.NewAction(BattleDto.DeployCard, BattleDto.Succeed, "换牌成功"))
 				return true
 				//-----------------------换牌正文-----------------------
 
@@ -1289,6 +1298,7 @@ CalcLoop:
 
 		select {
 		case data := <-s.SM.CombatDataChan:
+			fmt.Println("卡牌结算字典:", data)
 
 			//-------------给连续输的人增加免伤-------------
 			LoserBtCardList := s.c.GetBtAll(s.SM.Loser)
@@ -1328,8 +1338,8 @@ CalcLoop:
 			//----执行换牌----
 
 			//通知换牌结算完成
-			s.SM.SendActionById(s.SM.Id2, BattleDto.NewAction(BattleDto.DeployCard, BattleDto.Finish, transformToSelfAndOpponent[BattleData.SelectCard, []BattleData.SelectCard](SwitchCardMap, s.SM.Id2)))
-			s.SM.SendActionById(s.SM.Id1, BattleDto.NewAction(BattleDto.DeployCard, BattleDto.Finish, transformToSelfAndOpponent[BattleData.SelectCard, []BattleData.SelectCard](SwitchCardMap, s.SM.Id1)))
+			s.SM.SendActionById(s.SM.Id2, BattleDto.NewAction(BattleDto.DeployCard, BattleDto.Notify, transformToSelfAndOpponent[BattleData.SelectCard, []BattleData.SelectCard](SwitchCardMap, s.SM.Id2)))
+			s.SM.SendActionById(s.SM.Id1, BattleDto.NewAction(BattleDto.DeployCard, BattleDto.Notify, transformToSelfAndOpponent[BattleData.SelectCard, []BattleData.SelectCard](SwitchCardMap, s.SM.Id1)))
 
 			//结算攻击或者技能
 			Calc := func(User string, UserId int) {
@@ -1349,15 +1359,26 @@ CalcLoop:
 
 			//结算法术(s.c.ChildCardCheck()在里面了)
 			s.SkillCalc()
+			s.SM.SendActionById(s.SM.Id2, BattleDto.NewAction(BattleDto.SkillCardNotify, BattleDto.Notify, ""))
+			s.SM.SendActionById(s.SM.Id1, BattleDto.NewAction(BattleDto.SkillCardNotify, BattleDto.Notify, ""))
 
 			//结算天气
-			protocol.WeatherFuncMap[protocol.Weather(s.c.Weather.Load())](s.c) //从天气执行函数map储存种取出来执行
+			cardBts := s.c.GetBtAll(-1)
+			buffNeeds := make([]protocol.BuffNeed, len(cardBts)) //转化数组类型,数组没法隐式转化的
+			for i, card := range cardBts {
+				buffNeeds[i] = card
+			}
+			protocol.WeatherFuncMap[protocol.Weather(s.c.Weather.Load())](s.c, buffNeeds) //从天气执行函数map储存种取出来执行
+			s.SM.SendActionById(s.SM.Id2, BattleDto.NewAction(BattleDto.WeatherNotify, BattleDto.Notify, ""))
+			s.SM.SendActionById(s.SM.Id1, BattleDto.NewAction(BattleDto.WeatherNotify, BattleDto.Notify, ""))
 
 			//结算buff
 			CharacterCardList := s.c.GetCharacter()
 			for _, Card := range CharacterCardList {
 				Card.BuffRoundEnd(s.c)
 			}
+			s.SM.SendActionById(s.SM.Id2, BattleDto.NewAction(BattleDto.BuffCalcNotify, BattleDto.Notify, ""))
+			s.SM.SendActionById(s.SM.Id1, BattleDto.NewAction(BattleDto.BuffCalcNotify, BattleDto.Notify, ""))
 
 			//全部结算完成,发个通知
 			s.SM.SendActionById(s.SM.Id2, BattleDto.NewAction(BattleDto.CardCalc, BattleDto.Finish, ""))
@@ -1366,9 +1387,7 @@ CalcLoop:
 		default:
 			break CalcLoop
 		}
-
 	}
-
 }
 
 func (s *CardCalc) exit() {

@@ -6,6 +6,9 @@ type SelectCard struct {
 	CardTempId int   `json:"card_temp_id" mapstructure:"card_temp_id"`
 }
 
+//下牌之后,是否还有战斗牌
+//
+
 type Where int
 
 const (

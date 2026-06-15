@@ -2,9 +2,7 @@ package main
 
 import (
 	"database/sql"
-	"encoding/gob"
 	"fmt"
-	"pcc_card/application/entity/CardMeta"
 	"pcc_card/application/entity/protocol"
 	"pcc_card/application/service"
 	"pcc_card/application/service/UserService"
@@ -39,6 +37,8 @@ func main() {
 	Battle(DB, RD, User_repo, user_service)
 	protocol.InitWeatherFuncMap()
 	protocol.InitBuff()
+	fmt.Println("这是新版本hahaha")
+
 	route.Run()
 
 }
@@ -69,8 +69,4 @@ func Battle(DB *sql.DB, RD *redis.Client, User_repo userrepo.User_repo, user_ser
 	battleservice.InitCardList(BattleService)
 	route.RegisterBattleWS(BattleHandler)
 
-}
-
-func Initgob() {
-	gob.Register(&CardMeta.Decorator{})
 }
