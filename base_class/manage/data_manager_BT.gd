@@ -93,7 +93,7 @@ var free_card_prevzone = null;
 var hover_card :int   =  -1;
 var card_list :Array = [];#这里的card只掌握数据，不拥有任何的实体
 var action_list:Array = [];
-var switch_list:Array = [];
+var switch_list:Array = [{},{}];
 var switch_child = false;
 var switch_parent = false;
 var active_child = false;
@@ -484,6 +484,14 @@ func select_card_by_key(value, key_to_match):
 			return card
 	return {}
 
+## 过滤掉数组中的空字典
+func filter_empty_dicts(arr: Array) -> Array:
+	var result: Array = []
+	for item in arr:
+		if item is Dictionary and not item.is_empty():
+			result.append(item)
+	return result
+
 #endregion
 
 
@@ -527,6 +535,14 @@ func set_combat_dto(self_where: int, behavior: int, opponent_where: int, temp_id
 ## 清空全部 DTO 并返还全部能量（桌面万能按钮）
 func clear_all_combat_dto() -> void:
 	action_list = [];
+	switch_list = [{},{}];
+	switch_child = false;
+	switch_parent = false;
+	active_child = false;
+	active_parent = false;
+	SignalBus.request_get_combat_cards.emit();
+	SignalBus.request_get_energy.emit();
+	SignalBus.request_get_self_cards_inhand.emit()
 	
 #endregion
 
@@ -647,8 +663,8 @@ func _deploy_card_to_zone(temp_id: int, target_zone: int):
 		else:
 			if target_zone == Global.ZONE_CARD.DECK_ZONE:
 				select_card = {"where": Global.WHERE.InHand,"card_id" : int(res.id) ,"card_temp_id" : int(temp_id)}
-			elif target_zone == Global.ZONE_CARD.CHILD_BATTLE_ZONE:
-				select_card = {"where": Global.WHERE.ChildCard,"card_id" : int(res.id) ,"card_temp_id" : int(temp_id)}
+			elif target_zone == Global.ZONE_CARD.PARENT_BATTLE_ZONE:
+				select_card = {"where": Global.WHERE.ParentCard,"card_id" : int(res.id) ,"card_temp_id" : int(temp_id)}
 			swtich_combat_dto = {"behavior": behavior.switch, "self_where": -1, "opponent_where": -1, "temp_id": -1, "select_card": select_card}
 			switch_list[0] = swtich_combat_dto;
 			

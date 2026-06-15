@@ -40,6 +40,7 @@ enum GameState {
 	JUDGEMENT,            # 判定阶段（剪刀石头布）
 	INTERRUPT,            # 中断选牌阶段（死亡/技能触发，上牌消耗能量）
 	FREE,
+	CARDCALC,
 }
 const GAME_STATE_NAME = {
 	GameState.INIT_STATE:         "看牌阶段",
@@ -50,6 +51,7 @@ const GAME_STATE_NAME = {
 	GameState.JUDGEMENT:          "判定阶段",
 	GameState.INTERRUPT:          "中断选牌阶段",
 	GameState.FREE:               "自由阶段",
+	GameState.CARDCALC:           "卡牌效果结算"
 }
 # 2. 状态变量（带类型推导与 setter）
 var current_state: GameState = GameState.INIT_STATE:
@@ -160,7 +162,6 @@ func _enter_state(new_state: GameState) -> void:
 		GameState.JUDGEMENT:
 			_refresh_all_battle_data()
 			Global.revive(judge)
-			Global.revive(jugde_bt)
 			judge.init_all_unpressed()
 		
 		GameState.INTERRUPT:
@@ -178,6 +179,7 @@ func _refresh_all_battle_data() -> void:
 	SignalBus.request_get_energy.emit()
 	SignalBus.request_get_child_card_list.emit()
 	SignalBus.request_get_weather.emit()
+	SignalBus.request_
 
 func _populate_weather() -> void:
 	var children = weather.get_children()
@@ -289,12 +291,9 @@ func _send_message():
 				SignalBus.request_deploy_magic_card.emit(-1,-1)
 		
 		GameState.USE_COMBAT_CARD:
-			var dp = card_manager.parent_combat_dto
-			var dc = card_manager.child_combat_dto
-			if dp.behavior != -1:
-				SignalBus.request_combat_movement.emit(dp.behavior, dp.self_where, dp.opponent_where, dp.get("select_card", {}))
-			if dc.behavior != -1:
-				SignalBus.request_combat_movement.emit(dc.behavior, dc.self_where, dc.opponent_where, dc.get("select_card", {}))
+			var combat_list = DataManagerBt.filter_empty_dicts(DataManagerBt.switch_list + DataManagerBt.action_list)
+			SignalBus.request_combat_movement.emit(combat_list)
+	
 		
 		GameState.JUDGEMENT:
 			if judge.index_judge == -1:
@@ -326,4 +325,5 @@ func _judge_finish(data):
 	if current_state == GameState.JUDGEMENT:
 		Global.fake_death(judge)
 		jugde_bt.judge_data = [int(data.self), int(data.opponent)]
+		Global.revive(jugde_bt)
 		jugde_bt.is_win = int(data.is_win)

@@ -123,6 +123,7 @@ signal card_calc_switch_card(self_cards, opponent_cards)
 signal card_calc_animation(animation_data)
 signal interrupt_start(interrupt_data)
 signal interrupt_succeed
+signal combat_action_success
 
 # 弃牌堆
 signal discard_list_updated(cards)
@@ -158,7 +159,7 @@ signal request_judge(judge_data)
 signal request_get_combat_cards
 signal request_end_animation
 signal request_combat_finish
-signal request_combat_movement(behavoir,self_where,opponent_where,select_card)
+signal request_combat_movement(combat_list)
 signal request_get_energy
 signal request_get_child_card_list
 signal request_select_weather(weather)

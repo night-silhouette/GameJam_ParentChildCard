@@ -4,6 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://cfmasar4a3kho" path="res://game_scene/battle/hovercard.tscn" id="2_ynd0e"]
 
 [node name="active_child_card" type="HBoxContainer"]
+visible = false
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0

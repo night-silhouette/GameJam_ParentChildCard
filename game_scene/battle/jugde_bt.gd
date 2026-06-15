@@ -15,6 +15,14 @@ var tween_1 : Tween
 var tween_2 : Tween
 var label_tween : Tween # 专门控制 Label 的动画器
 
+var _pending_anim_count: int = 0
+
+func _on_anim_finished():
+	_pending_anim_count -= 1
+	if _pending_anim_count <= 0:
+		_pending_anim_count = 0
+		SignalBus.request_end_animation.emit()
+
 ## 定义带 setter 的变量。当外部执行 `judge_data = [...]` 时会自动触发下面的代码
 var judge_data : Array = []:
 	set(new_value):
@@ -48,9 +56,14 @@ func _refresh_ui_by_data() -> void:
 	var val_1 : int = judge_data[0]
 	var val_2 : int = judge_data[1]
 	
+	_pending_anim_count = 0
+	
 	# 分别更新两个子节点的纹理、显示状态与浮现动画
 	_update_node_state(texture_rect_1, val_1, 1)
 	_update_node_state(texture_rect_2, val_2, 2)
+	
+	if _pending_anim_count == 0:
+		SignalBus.request_end_animation.emit()
 
 ## 专门用来安全修改单个数据的方法
 func update_single_judge_data(index: int, value: int) -> void:
@@ -171,13 +184,14 @@ func _update_node_state(target_rect: TextureRect, value: int, index: int) -> voi
 		# 保存引用以便后续清理
 		if index == 1: tween_1 = new_tween
 		if index == 2: tween_2 = new_tween
+		
+		_pending_anim_count += 1
+		new_tween.finished.connect(_on_anim_finished)
 	else:
 		# 如果节点本来就是可见的，只是换了个皮肤，那就直接显示，不重复放动画
 		target_rect.visible = true
 		target_rect.modulate.a = 1.0
 		target_rect.scale = Vector2.ONE
-	
-	SignalBus.request_end_animation.emit();
 
 # 内部辅助：瞬间隐藏节点并归零动画状态
 func _hide_node_instantly(target_rect: TextureRect) -> void:

@@ -81,12 +81,16 @@ func _dispatch(action_code: int, action_data: Variant, predicate: int):
 			if predicate == NetDef.Predicate.SUCCEED:
 				SignalBus.judge_put.emit()
 		NetDef.Action.COMBAT:
-			var t = action_data.state_wait_time;
 			if predicate == NetDef.Predicate.QUERY:
+				var t = action_data.state_wait_time;
 				SignalBus.combat_start_success.emit(t,1);
 			if predicate == NetDef.Predicate.NOTIFY:
+				var t = action_data.state_wait_time;
 				SignalBus.combat_start_success.emit(t,0);
-		
+			if predicate == NetDef.Predicate.SUCCEED:
+				SignalBus.combat_action_success.emit()
+				print("success!!!!!!!!!!!!!")
+	
 		# 新增：能量值
 		NetDef.Action.GetEnergy:
 			if predicate == NetDef.Predicate.RESULT:
