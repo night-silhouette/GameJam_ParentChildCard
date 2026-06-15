@@ -40,7 +40,13 @@ func InitWeatherFuncMap() {
 			pc.ProtoColPush(NewHeal(&TempId, 1, c.GetDec()))
 		}
 	}
-	WeatherFuncMap[mingyang] = func(pc ProtocolCardWithCtx, card []BuffNeed) {}
+	WeatherFuncMap[mingyang] = func(pc ProtocolCardWithCtx, card []BuffNeed) {
+		UserIdList := pc.GetIds()
+		for _, UserId := range UserIdList {
+			pc.ProtoColPush(NewUpdateEnergy(UserId, 1))
+		}
+
+	}
 	WeatherFuncMap[miwu] = func(pc ProtocolCardWithCtx, card []BuffNeed) {}
 	WeatherFuncMap[dashu] = func(pc ProtocolCardWithCtx, card []BuffNeed) {}
 	WeatherFuncMap[zhipou] = func(pc ProtocolCardWithCtx, card []BuffNeed) {}

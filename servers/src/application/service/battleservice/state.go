@@ -1159,6 +1159,7 @@ func (c *Combat) process(GoCtx context.Context) {
 				c.SM.SendActionById(id, BattleDto.NewErrAction(global.ResponseInvalidReqParams))
 				return true
 			}
+			fmt.Println("combat阶段前端发送的data:", data)
 			//-----------把结果存入map,并且防止反复提交------------
 			if id == c.SM.Winner {
 				if _, ok := c.CombatMap["Winner"]; ok {
@@ -1378,7 +1379,7 @@ CalcLoop:
 			}
 			s.SM.SendActionById(s.SM.Id2, BattleDto.NewAction(BattleDto.BuffCalcNotify, BattleDto.Notify, ""))
 			s.SM.SendActionById(s.SM.Id1, BattleDto.NewAction(BattleDto.BuffCalcNotify, BattleDto.Notify, ""))
-			
+
 			//全部结算完成,发个通知
 			s.SM.SendActionById(s.SM.Id2, BattleDto.NewAction(BattleDto.CardCalc, BattleDto.Finish, ""))
 			s.SM.SendActionById(s.SM.Id1, BattleDto.NewAction(BattleDto.CardCalc, BattleDto.Finish, ""))

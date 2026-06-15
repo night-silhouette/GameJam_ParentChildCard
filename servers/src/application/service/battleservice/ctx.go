@@ -940,5 +940,11 @@ func (c *Ctx) GetBtAll(UserId int) []CardAbstract.Card {
 	}
 	return res
 }
+func (c *Ctx) GetIds() []int {
+	res := make([]int, 0)
+	res = append(res, c.StateMachine.Id1)
+	res = append(res, c.StateMachine.Id2)
+	return res
+}
 
 //endregion

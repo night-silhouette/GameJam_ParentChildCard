@@ -30,4 +30,5 @@ type ProtocolCardWithCtx interface {
 	CreateTempId() int                                                               //产生tempId,计数用的
 	ProtoColAttackNoHurt(CardTempId int, Value int, Category BattleData.ValueChange) //无主攻击
 	ProtoColSetMaxHp(TargetTempId int, MaxHp float64)                                //设置最大生命
+	GetIds() []int                                                                   //获取用户id数组
 }
