@@ -27,16 +27,21 @@ enum Action {
 	Debug = 13,
 	Interrupt = 14,
 	GetDisCard = 15,
-	SkillCardCalc = 16,
+	SkillCardNotify = 16,
 	GetEnergy = 17,
 	SelectWeather = 18,
 	GetChildCardList = 19,
 	ActiveChildCard = 20,
 	GetWeather = 21,           
 	CatchChild = 22,      
-	CardMove =  23,       
-	AnimationNotify = 24,
-	ValueNotify = 25,           
+	GetUserId = 23,
+	CardMove =  24,       
+	AnimationNotify = 25,
+	ValueNotify = 26,
+	Ping        = 27,
+	ReConnect   = 28,
+	WeatherNotify = 29, 
+	BuffCalcNotify  = 30,        
 }
 
 const ACTION_NAME = {
@@ -55,7 +60,6 @@ const ACTION_NAME = {
 	Action.Debug: "测试",
 	Action.Interrupt: "中断选牌",
 	Action.GetDisCard: "查看弃牌堆",
-	Action.SkillCardCalc: "法术牌的计算",
 	Action.GetEnergy: "查看能量值",
 	Action.SelectWeather: "选择天气",
 	Action.GetChildCardList: "查看子牌堆",
@@ -65,6 +69,7 @@ const ACTION_NAME = {
 	Action.CardMove:              "结算卡牌移动通知",
 	Action.AnimationNotify:       "行为动画通知",
 	Action.ValueNotify:           "数值变化通知",
+	Action.GetUserId:             "获取玩家ID"
 	
 }
 
