@@ -15,7 +15,7 @@ type ProtocolCardWithCtx interface {
 	// ProtoColSetCardBt 上牌(要BT上没牌才可以上)
 	ProtoColSetCardBt(UserId int, TempId int)
 	ProtoColReduceCardBtHp(SendTempId int, TargetTempId int, ReduceHp float64) //死啦，会触发card的death//这些方法都是优先找BT然后找手牌,传递sendid是为了给死亡传递杀死者
-	ProtoColHealCardBt(UserId int, TargetTempId int, HealHp float64)           //设置了不可以恢复到上限
+	ProtoColHealCardBt(TargetTempId int, HealHp float64)                       //设置了不可以恢复到上限
 	ProtoColSetDamageCardBt(UserId int, TargetTempId int, NewDamage float64)
 	ProtoColCardBtAttack(SendTempId int, UserId int, TargetTempId int, AtkHp float64, Category BattleData.ValueChange)
 	ProtoColInterrupt(UserId int, InterruptDto *BattleData.InterruptDto, res chan []int, InterruptWaitTime time.Duration) //异步中断，让前端从一定范围内需选牌，结果是tempId的数组，用res管道接受

@@ -70,7 +70,6 @@ func NewHurt(UserId int, SendTempId int, TargetTempId int, AtkValue float64, Dec
 //-----------------------------------------------------------------------------------------------------------------------------------------
 
 type Heal struct {
-	UserId       int
 	TargetTempId *int
 	HealValue    float64
 	Dec          *CardMeta.Decorator
@@ -83,13 +82,13 @@ func (H *Heal) Execute(pc ProtocolCardWithCtx) {
 	}
 	originValue := H.HealValue
 	FinalHeal := H.Dec.CalcHeal(originValue)
-	pc.ProtoColHealCardBt(H.UserId, target, float64(FinalHeal))
+	pc.ProtoColHealCardBt(target, float64(FinalHeal))
 	pc.ProtoNotifyValue(BattleData.Heal, H.HealValue, *H.TargetTempId)
 }
 
-func NewHeal(UserId int, TargetTempId *int, HealValue float64, Dec *CardMeta.Decorator) *Heal {
+func NewHeal(TargetTempId *int, HealValue float64, Dec *CardMeta.Decorator) *Heal {
 	res := Heal{}
-	res.UserId = UserId
+
 	res.TargetTempId = TargetTempId
 	res.HealValue = HealValue
 	res.Dec = Dec

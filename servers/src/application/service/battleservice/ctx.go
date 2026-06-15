@@ -526,7 +526,7 @@ func (c *Ctx) ProtoColReduceCardBtHp(SendTempId int, TargetTempId int, ReduceHp 
 	card.SetHpNow(NowHp - ReduceHp)
 
 }
-func (c *Ctx) ProtoColHealCardBt(UserId int, TargetTempId int, HealHp float64) {
+func (c *Ctx) ProtoColHealCardBt(TargetTempId int, HealHp float64) {
 	var card CardAbstract.Character
 	var ok bool
 	if card, ok = c.FindCard(TargetTempId).(CardAbstract.Character); !ok {
