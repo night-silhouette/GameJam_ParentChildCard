@@ -30,7 +30,6 @@ func (A *Attack) Execute(pc ProtocolCardWithCtx) {
 	originValue := A.AtkValue
 	FinalAtkValue := A.Dec.CalcAttack(originValue)
 	pc.ProtoColCardBtAttack(A.SendTempId, A.UserId, A.TargetTempId, float64(FinalAtkValue), A.Category)
-	pc.ProtoNotifyValue(A.Category, float64(FinalAtkValue), A.TargetTempId)
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------
@@ -53,7 +52,7 @@ func (A *Hurt) Execute(pc ProtocolCardWithCtx) {
 	}
 
 	pc.ProtoColReduceCardBtHp(A.SendTempId, A.TargetTempId, float64(FinalAtkValue))
-	pc.ProtoNotifyValue(A.Category, float64(FinalAtkValue), A.TargetTempId)
+	pc.ProtoNotifyValue(A.Category, -float64(FinalAtkValue), A.TargetTempId)
 }
 
 func NewHurt(UserId int, SendTempId int, TargetTempId int, AtkValue float64, Dec *CardMeta.Decorator, Category BattleData.ValueChange) *Hurt {

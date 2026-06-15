@@ -383,7 +383,7 @@ func (s *ShuffleDeal) enter() {
 
 		s.SM.SendActionById(s.Id1, BattleDto.NewAction(BattleDto.StartBattle, BattleDto.Notify, ""))
 		s.SM.SendActionById(s.Id2, BattleDto.NewAction(BattleDto.StartBattle, BattleDto.Notify, ""))
-		s.SM.finish("ActiveChildCard")
+		go s.SM.finish("ActiveChildCard")
 		s.SM.Mutex.Unlock()
 	}) //定时开始战斗
 }
@@ -525,8 +525,9 @@ func (a *ActiveChildCard) enter() {
 
 func (a *ActiveChildCard) exit() {
 	a.StateTemplate.exit()
-	a.TaskMap = nil
-	a.DoneMap = nil
+	a.TaskMap[a.Id1] = make([]int, 0)
+	a.TaskMap[a.Id2] = make([]int, 0)
+	a.DoneMap = map[int]bool{a.Id1: false, a.Id2: false}
 
 	a.Completed.Store(false)
 }
@@ -565,10 +566,10 @@ func (a *ActiveChildCard) process(GoCtx context.Context) {
 			a.DoneMap[id] = true
 			a.SM.SendActionById(id, BattleDto.NewAction(BattleDto.ActiveChildCard, BattleDto.Succeed, "选择已接收"))
 			if a.DoneMap[a.Id1] && a.DoneMap[a.Id2] {
-				a.finishSelect()
+				a.ChanCrash <- struct{}{}
+				go a.finishSelect()
 			}
 
-			a.ChanCrash <- struct{}{}
 			return true
 		}
 		return false
@@ -599,7 +600,7 @@ func (a *ActiveChildCard) finishSelect() {
 	a.SM.SendActionById(a.Id1, BattleDto.NewAction(BattleDto.ActiveChildCard, BattleDto.Finish, result))
 	a.SM.SendActionById(a.Id2, BattleDto.NewAction(BattleDto.ActiveChildCard, BattleDto.Finish, result))
 
-	a.SM.finish("SelectWeather")
+	go a.SM.finish("SelectWeather")
 }
 
 func (a *ActiveChildCard) computeFinalSelection() []int {
@@ -616,7 +617,8 @@ func (a *ActiveChildCard) computeFinalSelection() []int {
 	validIds := a.validChildTempIds()
 	rest := excludeIntSlice(validIds, intersection)
 	need := 5 - len(intersection)
-	randoms := Util.GetRandomElements(rest, need)
+	randoms := Util.GetRandomElements(rest, need) //这是需要随机的,补充用户选不够的情况
+
 	return append(intersection, randoms...)
 }
 
@@ -773,7 +775,7 @@ func (s *SelectWeather) process(GoCtx context.Context) {
 			s.CrashChan <- struct{}{}
 			s.Change(protocol.Weather(res)) //改res
 
-			s.SM.finish("SelectSkillCard")
+			go s.SM.finish("SelectSkillCard")
 		}
 
 		return false
@@ -790,7 +792,7 @@ func (s *SelectWeather) timeEnding() {
 	s.Change(protocol.Weather(res))
 	s.SM.SendActionById(s.SM.Id1, BattleDto.NewAction(BattleDto.SelectWeather, BattleDto.Succeed, SelectWeatherDto{Weather: protocol.Weather(res)}))
 	s.SM.SendActionById(s.SM.Id2, BattleDto.NewAction(BattleDto.SelectWeather, BattleDto.Succeed, SelectWeatherDto{Weather: protocol.Weather(res)}))
-	s.SM.finish("SelectSkillCard")
+	go s.SM.finish("SelectSkillCard")
 }
 
 func (s *SelectWeather) enter() {
@@ -1052,9 +1054,9 @@ func (J *Judge) process(GoCtx context.Context) {
 		if J.WaitAnimationPlay.Load() && action.ActionCode == BattleDto.AnimationPlayEnd && action.Predicates == BattleDto.Notify {
 			J.WaitAnimationPlay.Store(false)
 			if !J.IsTie.Load() {
-				J.SM.finish("Combat")
+				go J.SM.finish("Combat")
 			} else {
-				J.SM.finish("Judge")
+				go J.SM.finish("Judge")
 			}
 			return true
 		}
@@ -1182,7 +1184,7 @@ func (c *Combat) process(GoCtx context.Context) {
 			if c.WaitNum == 2 {
 				c.SM.CombatDataChan <- c.CombatMap
 				c.ChanCrash <- struct{}{}
-				c.SM.finish("CardCalc")
+				go c.SM.finish("CardCalc")
 				return true
 			}
 			return true
@@ -1398,7 +1400,7 @@ func (s *CardCalc) process(GoCtx context.Context) {
 	fmt.Println("进入cardcal的process了")
 	handleAction := func(id int, action BattleDto.Action, ResponseChan chan<- BattleDto.Action) bool {
 		if action.ActionCode == BattleDto.AnimationPlayEnd && action.Predicates == BattleDto.Notify && s.HaveDone.Load() {
-			s.SM.finish("SelectSkillCard")
+			go s.SM.finish("SelectSkillCard")
 			return true
 		}
 		return false
