@@ -665,8 +665,10 @@ func _deploy_card_to_zone(temp_id: int, target_zone: int):
 				select_card = {"where": Global.WHERE.InHand,"card_id" : int(res.id) ,"card_temp_id" : int(temp_id)}
 			elif target_zone == Global.ZONE_CARD.PARENT_BATTLE_ZONE:
 				select_card = {"where": Global.WHERE.ParentCard,"card_id" : int(res.id) ,"card_temp_id" : int(temp_id)}
+				
 			swtich_combat_dto = {"behavior": behavior.switch, "self_where": -1, "opponent_where": -1, "temp_id": -1, "select_card": select_card}
 			switch_list[0] = swtich_combat_dto;
+			print(switch_list[0])
 			
 func _detected_area(zone):
 	free_card_nextzone = zone;

@@ -25,7 +25,9 @@ enum ResponseStatusCode {
 	BattleCardNotFound,
 	BattleNotInYourRound,
 	BattleHasCard,
-	BattleCardNumErr
+	BattleCardNumErr,
+	BattleEnergyNotEnough,
+	BattleCantSwitch,
 }
 
 var error_message := {
@@ -65,7 +67,9 @@ var error_message := {
 	ResponseStatusCode.BattleCardNotFound:            "此牌没有被找到",
 	ResponseStatusCode.BattleNotInYourRound:          "此时不在你的回合",
 	ResponseStatusCode.BattleHasCard:                 "此位置有牌了",
-	ResponseStatusCode.BattleCardNumErr:              "卡牌数量有误"
+	ResponseStatusCode.BattleCardNumErr:              "卡牌数量有误",
+	ResponseStatusCode.BattleEnergyNotEnough:         "能量交换",
+	ResponseStatusCode.BattleCantSwitch:              "卡牌不可交换"
 
 }
 

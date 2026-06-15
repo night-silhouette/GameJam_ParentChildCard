@@ -179,7 +179,7 @@ func _refresh_all_battle_data() -> void:
 	SignalBus.request_get_energy.emit()
 	SignalBus.request_get_child_card_list.emit()
 	SignalBus.request_get_weather.emit()
-	SignalBus.request_
+	#SignalBus.request_
 
 func _populate_weather() -> void:
 	var children = weather.get_children()
@@ -292,6 +292,9 @@ func _send_message():
 		
 		GameState.USE_COMBAT_CARD:
 			var combat_list = DataManagerBt.filter_empty_dicts(DataManagerBt.switch_list + DataManagerBt.action_list)
+			print(DataManagerBt.switch_list)
+			print(DataManagerBt.action_list)
+			print(combat_list)
 			SignalBus.request_combat_movement.emit(combat_list)
 	
 		
@@ -326,4 +329,3 @@ func _judge_finish(data):
 		Global.fake_death(judge)
 		jugde_bt.judge_data = [int(data.self), int(data.opponent)]
 		Global.revive(jugde_bt)
-		jugde_bt.is_win = int(data.is_win)

@@ -65,6 +65,7 @@ const ACTION_NAME = {
 	Action.CardMove:              "结算卡牌移动通知",
 	Action.AnimationNotify:       "行为动画通知",
 	Action.ValueNotify:           "数值变化通知",
+	
 }
 
 # 辅助函数：快速获取名字打印日志
