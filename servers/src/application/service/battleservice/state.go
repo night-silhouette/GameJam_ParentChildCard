@@ -525,8 +525,9 @@ func (a *ActiveChildCard) enter() {
 
 func (a *ActiveChildCard) exit() {
 	a.StateTemplate.exit()
-	a.TaskMap = nil
-	a.DoneMap = nil
+	a.TaskMap[a.Id1] = make([]int, 0)
+	a.TaskMap[a.Id2] = make([]int, 0)
+	a.DoneMap = map[int]bool{a.Id1: false, a.Id2: false}
 
 	a.Completed.Store(false)
 }
@@ -565,10 +566,10 @@ func (a *ActiveChildCard) process(GoCtx context.Context) {
 			a.DoneMap[id] = true
 			a.SM.SendActionById(id, BattleDto.NewAction(BattleDto.ActiveChildCard, BattleDto.Succeed, "选择已接收"))
 			if a.DoneMap[a.Id1] && a.DoneMap[a.Id2] {
+				a.ChanCrash <- struct{}{}
 				go a.finishSelect()
 			}
 
-			a.ChanCrash <- struct{}{}
 			return true
 		}
 		return false
@@ -616,7 +617,8 @@ func (a *ActiveChildCard) computeFinalSelection() []int {
 	validIds := a.validChildTempIds()
 	rest := excludeIntSlice(validIds, intersection)
 	need := 5 - len(intersection)
-	randoms := Util.GetRandomElements(rest, need)
+	randoms := Util.GetRandomElements(rest, need) //这是需要随机的,补充用户选不够的情况
+
 	return append(intersection, randoms...)
 }
 
