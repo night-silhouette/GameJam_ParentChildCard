@@ -165,8 +165,8 @@ vframes = 2
 
 [node name="万能按钮" parent="." instance=ExtResource("13_4vh08")]
 layout_mode = 0
-offset_left = 1857.3433
-offset_top = 967.35297
-offset_right = 3006.3433
-offset_bottom = 2044.353
+offset_left = 48.877563
+offset_top = 971.22235
+offset_right = 1197.8776
+offset_bottom = 2048.2224
 scale = Vector2(0.23148932, 0.23148932)

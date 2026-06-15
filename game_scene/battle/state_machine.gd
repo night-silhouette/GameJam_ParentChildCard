@@ -10,6 +10,7 @@ class_name GameManager
 @export var judge: Control
 @export var jugde_bt: Control
 
+@export var dis_card = Control
 @export var choose_child_card: GridContainer
 @export var weather: Node = null
 @export var desk_ui: Node = null
@@ -86,6 +87,7 @@ func _ready() -> void:
 	Global.fake_death(jugde_bt)
 	Global.fake_death(weather)
 	Global.fake_death(choose_child_card)
+	
 	
 	_enter_state(current_state)
 	

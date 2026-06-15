@@ -88,6 +88,41 @@ const WHERE={
 	ChildCardPool = 5,
 	InHand = 6,
 }
+
+enum  BUFF  {
+	BonusDamage = 1,
+	Powerful = 2,
+	Weakness = 3,
+	DamageImmunity = 4,
+	Vulnerability = 5,
+	Block = 6,
+	HealingBoost = 8,
+	HealingDecay = 9,
+	Wither = 10,
+	Binding = 11,
+	Retaliate = 12,
+	Confine = 13,
+	Giant = 14,
+	Disarm = 15,
+	XuFeng = 16,
+}
+const BUFF_NAME = {
+	BUFF.BonusDamage : "额外伤害",
+	BUFF.Powerful : "强盛",
+	BUFF.Weakness : "虚弱",
+	BUFF.DamageImmunity : "免伤",
+	BUFF.Vulnerability : "易伤",
+	BUFF.Block : "格挡",
+	BUFF.HealingBoost : "治疗增强",
+	BUFF.HealingDecay : "治疗衰减",
+	BUFF.Wither : "凋零",
+	BUFF.Binding : "束缚",
+	BUFF.Retaliate : "反击",
+	BUFF.Confine : "禁锢",
+	BUFF.Giant : "巨人化",
+	BUFF.Disarm : "缴械",
+	BUFF.XuFeng : "续风",
+}
 ## 接口 1：让节点进入【假死】状态
 func fake_death(target_node: Node) -> void:
 	if not is_instance_valid(target_node):

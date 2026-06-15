@@ -1,0 +1,92 @@
+[gd_scene load_steps=7 format=3 uid="uid://b425wu12i7u75"]
+
+[ext_resource type="Texture2D" uid="uid://dx1ewstebv33h" path="res://素材/使用素材/万能组件.png" id="1_eq8w3"]
+[ext_resource type="Script" uid="uid://hetaa57o73eo" path="res://game_scene/battle/弃牌堆.gd" id="1_nbjlc"]
+[ext_resource type="PackedScene" uid="uid://cfmasar4a3kho" path="res://game_scene/battle/hovercard.tscn" id="2_22ncx"]
+[ext_resource type="Script" uid="uid://dt0fvtr10talu" path="res://game_ui/battle/牌库/切换.gd" id="4_d3ghq"]
+[ext_resource type="PackedScene" uid="uid://dpfvbx3mhmx8g" path="res://game_ui/battle/牌库/右切换.tscn" id="5_fykxp"]
+[ext_resource type="PackedScene" uid="uid://crktwrkpkruf6" path="res://game_ui/battle/牌库/左切换.tscn" id="6_6dxhj"]
+
+[node name="弃牌堆" type="Control" node_paths=PackedStringArray("card_vector")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_nbjlc")
+card_vector = NodePath("GridContainer")
+
+[node name="TextureRect" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = -61.0
+offset_top = -62.000004
+offset_right = 1705.0
+offset_bottom = 1229.0
+scale = Vector2(1.0909474, 1.0890194)
+texture = ExtResource("1_eq8w3")
+
+[node name="GridContainer" type="GridContainer" parent="."]
+layout_mode = 0
+offset_left = 69.0
+offset_top = 69.0
+offset_right = 1060.0
+offset_bottom = 674.0
+columns = 5
+
+[node name="hovercard" parent="GridContainer" instance=ExtResource("2_22ncx")]
+layout_mode = 2
+
+[node name="hovercard2" parent="GridContainer" instance=ExtResource("2_22ncx")]
+layout_mode = 2
+
+[node name="hovercard3" parent="GridContainer" instance=ExtResource("2_22ncx")]
+layout_mode = 2
+
+[node name="hovercard4" parent="GridContainer" instance=ExtResource("2_22ncx")]
+layout_mode = 2
+
+[node name="hovercard5" parent="GridContainer" instance=ExtResource("2_22ncx")]
+layout_mode = 2
+
+[node name="hovercard6" parent="GridContainer" instance=ExtResource("2_22ncx")]
+layout_mode = 2
+
+[node name="hovercard7" parent="GridContainer" instance=ExtResource("2_22ncx")]
+layout_mode = 2
+
+[node name="hovercard8" parent="GridContainer" instance=ExtResource("2_22ncx")]
+layout_mode = 2
+
+[node name="hovercard9" parent="GridContainer" instance=ExtResource("2_22ncx")]
+layout_mode = 2
+
+[node name="hovercard10" parent="GridContainer" instance=ExtResource("2_22ncx")]
+layout_mode = 2
+
+[node name="切换" type="Control" parent="."]
+anchors_preset = 0
+offset_left = 635.0
+offset_top = 142.0
+offset_right = 675.0
+offset_bottom = 182.0
+rotation = 1.5707964
+script = ExtResource("4_d3ghq")
+
+[node name="右切换" parent="切换" instance=ExtResource("5_fykxp")]
+layout_mode = 0
+offset_left = 680.0
+offset_top = 792.0
+offset_right = 1074.0
+offset_bottom = 1413.0
+scale = Vector2(0.5, 0.5)
+metadata/_edit_lock_ = true
+
+[node name="左切换" parent="切换" instance=ExtResource("6_6dxhj")]
+layout_mode = 0
+offset_left = 184.0
+offset_top = 800.0
+offset_right = 578.0
+offset_bottom = 1421.0
+scale = Vector2(0.5, 0.5)
+metadata/_edit_lock_ = true

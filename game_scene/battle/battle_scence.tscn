@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=3 uid="uid://c85a1ra55sbk0"]
+[gd_scene load_steps=30 format=3 uid="uid://c85a1ra55sbk0"]
 
 [ext_resource type="Script" uid="uid://dw1q80ff6ue4v" path="res://game_scene/battle/battle_scence.gd" id="1_51ed8"]
 [ext_resource type="Texture2D" uid="uid://dng874p0igvq" path="res://素材/使用素材/转换.png" id="1_chjg7"]
@@ -16,15 +16,21 @@
 [ext_resource type="PackedScene" uid="uid://cf218n73yp1t0" path="res://game_scene/battle/万能按钮.tscn" id="13_3krv3"]
 [ext_resource type="PackedScene" uid="uid://c1exceqgab5ww" path="res://game_scene/battle/energy.tscn" id="13_xnxs8"]
 [ext_resource type="PackedScene" uid="uid://cqmay6c2lkrk7" path="res://game_scene/battle/time.tscn" id="16_ijq1m"]
+[ext_resource type="PackedScene" uid="uid://b425wu12i7u75" path="res://game_scene/battle/弃牌堆.tscn" id="17_25d8u"]
 [ext_resource type="PackedScene" uid="uid://1su868ejv50g" path="res://game_scene/battle/input_blocker.tscn" id="17_fpned"]
 [ext_resource type="FontFile" uid="uid://bj1pdtvpfop4a" path="res://素材/使用素材/YaoSuiXinShouXieTi-2.ttf" id="19_0fl1f"]
 [ext_resource type="PackedScene" uid="uid://bda2rak4wq7xg" path="res://game_scene/battle/jugde_bt.tscn" id="19_ka56j"]
 [ext_resource type="PackedScene" uid="uid://dpkhaae1mllp5" path="res://game_scene/battle/weather.tscn" id="21_0v75n"]
 [ext_resource type="PackedScene" uid="uid://b7jmj76y81h3g" path="res://game_scene/battle/敌方法术牌.tscn" id="22_1hcvr"]
 [ext_resource type="PackedScene" uid="uid://cd5cqk0qbc0vj" path="res://game_scene/battle/选择子牌.tscn" id="22_f0my5"]
+[ext_resource type="PackedScene" uid="uid://dony3jbfluw3j" path="res://game_scene/battle/弃牌按钮.tscn" id="22_qxhen"]
 [ext_resource type="Script" uid="uid://by3tvpfm7iyls" path="res://base_class/debug/deug_action.gd" id="23_1hcvr"]
 [ext_resource type="PackedScene" uid="uid://csfb5yccdy0eg" path="res://game_scene/battle/active_child_card.tscn" id="23_b7tvc"]
 [ext_resource type="PackedScene" uid="uid://c6euaia4cenn0" path="res://game_scene/battle/转换.tscn" id="24_b7tvc"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_qxhen"]
+font_size = 48
+font_color = Color(0, 0, 0, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_25d8u"]
 font = ExtResource("19_0fl1f")
@@ -93,17 +99,18 @@ state_machine = NodePath("../State_machine")
 self_energy_node = NodePath("../../卡牌显示/我方能量")
 oppent_energy_node = NodePath("../../卡牌显示/敌方能量")
 
-[node name="State_machine" type="Node" parent="数据层" node_paths=PackedStringArray("card_manager", "time", "all_block", "combat_block", "spell_block", "judge", "jugde_bt", "choose_child_card", "weather", "desk_ui", "state_name")]
+[node name="State_machine" type="Node" parent="数据层" node_paths=PackedStringArray("card_manager", "time", "all_block", "combat_block", "spell_block", "judge", "jugde_bt", "dis_card", "choose_child_card", "weather", "desk_ui", "state_name")]
 script = ExtResource("11_ile2j")
 card_manager = NodePath("../card_manager")
 time = NodePath("../../信息显示/time")
 all_block = NodePath("../../block/全局block")
 combat_block = NodePath("../../block/战斗牌block")
 spell_block = NodePath("../../block/法术牌block")
-judge = NodePath("../../judge")
-jugde_bt = NodePath("../../jugde_bt")
+judge = NodePath("../../卡牌显示/judge")
+jugde_bt = NodePath("../../信息显示/jugde_bt")
+dis_card = NodePath("../../卡牌显示/弃牌堆")
 choose_child_card = NodePath("../../卡牌显示/选择子牌")
-weather = NodePath("../../weather")
+weather = NodePath("../../卡牌显示/weather")
 desk_ui = NodePath("../../卡牌显示/桌面")
 state_name = NodePath("../../信息显示/状态栏")
 
@@ -157,37 +164,38 @@ card_manager = NodePath("../../数据层/card_manager")
 
 [node name="法术放置" parent="卡牌显示" node_paths=PackedStringArray("card_manager") instance=ExtResource("11_ro313")]
 layout_mode = 0
-offset_left = 916.99994
-offset_top = 323.0
-offset_right = 1260.0
-offset_bottom = 888.0
+offset_left = 914.0
+offset_top = 368.0
+offset_right = 1257.0
+offset_bottom = 933.0
+scale = Vector2(0.2832393, 0.2832393)
 card_manager = NodePath("../../数据层/card_manager")
 
 [node name="敌方法术牌" parent="卡牌显示" node_paths=PackedStringArray("card_manager") instance=ExtResource("22_1hcvr")]
 layout_mode = 0
-offset_left = 160.99998
-offset_top = 70.0
-offset_right = 504.00006
-offset_bottom = 635.0
+offset_left = 911.0
+offset_top = 112.0
+offset_right = 1254.0
+offset_bottom = 677.0
+scale = Vector2(0.283, 0.283)
 card_manager = NodePath("../../数据层/card_manager")
-metadata/_edit_lock_ = true
 
 [node name="牌库" parent="卡牌显示" node_paths=PackedStringArray("object_pool", "card_manager") instance=ExtResource("3_8qm6s")]
 layout_mode = 0
-offset_left = 104.0
-offset_top = 530.0
-offset_right = 104.0
-offset_bottom = 530.0
+offset_left = 178.0
+offset_top = 538.0
+offset_right = 178.0
+offset_bottom = 538.0
 scale = Vector2(0.096, 0.096)
 object_pool = NodePath("../../数据层/object_pool")
 card_manager = NodePath("../../数据层/card_manager")
 
 [node name="桌面" parent="卡牌显示" node_paths=PackedStringArray("card_manager") instance=ExtResource("12_3krv3")]
 layout_mode = 0
-offset_left = 249.0
-offset_top = 137.0
-offset_right = 2420.0
-offset_bottom = 1416.0
+offset_left = 246.00002
+offset_top = 110.0
+offset_right = 2417.0
+offset_bottom = 1389.0
 scale = Vector2(0.3082767, 0.29954422)
 card_manager = NodePath("../../数据层/card_manager")
 
@@ -199,14 +207,43 @@ offset_right = 2309.0
 offset_bottom = 538.0
 scale = Vector2(0.16834557, 0.17136647)
 
-[node name="选择子牌" parent="卡牌显示" node_paths=PackedStringArray("card_manager") instance=ExtResource("22_f0my5")]
-layout_mode = 0
-offset_left = 302.0
-offset_top = 163.00002
-offset_right = 2391.3506
-offset_bottom = 1603.4711
-scale = Vector2(0.31050953, 0.26654428)
+[node name="弃牌堆" parent="卡牌显示" node_paths=PackedStringArray("card_manager") instance=ExtResource("17_25d8u")]
+visible = false
+layout_mode = 1
+offset_left = 388.0
+offset_top = 131.0
+offset_right = 388.0
+offset_bottom = 131.0
+scale = Vector2(0.273108, 0.273108)
 card_manager = NodePath("../../数据层/card_manager")
+
+[node name="选择子牌" parent="卡牌显示" node_paths=PackedStringArray("card_manager") instance=ExtResource("22_f0my5")]
+visible = false
+layout_mode = 0
+offset_left = 416.0
+offset_top = 157.99998
+offset_right = 2505.3506
+offset_bottom = 1598.4711
+scale = Vector2(0.24940391, 0.24940391)
+card_manager = NodePath("../../数据层/card_manager")
+
+[node name="judge" parent="卡牌显示" instance=ExtResource("9_kfivi")]
+visible = false
+layout_mode = 1
+offset_left = 377.0
+offset_top = 214.0
+offset_right = 2154.0
+offset_bottom = 1212.0
+scale = Vector2(0.20882691, 0.21257426)
+
+[node name="weather" parent="卡牌显示" instance=ExtResource("21_0v75n")]
+visible = false
+layout_mode = 1
+offset_left = 357.0
+offset_top = 208.00002
+offset_right = 2741.0
+offset_bottom = 1206.0
+scale = Vector2(0.1821678, 0.18543674)
 
 [node name="freecard" parent="." node_paths=PackedStringArray("card_manager") instance=ExtResource("12_ro313")]
 offset_left = 1232.0001
@@ -243,14 +280,50 @@ grow_horizontal = 1
 grow_vertical = 1
 scale = Vector2(0.19120544, 0.19120544)
 
-[node name="状态栏" type="Label" parent="信息显示"]
+[node name="weather_name" type="Label" parent="信息显示"]
+visible = false
 layout_mode = 0
-offset_left = 76.0
-offset_top = 227.00002
-offset_right = 175.0
-offset_bottom = 276.0
+offset_left = 264.0
+offset_top = 70.0
+offset_right = 360.0
+offset_bottom = 119.0
+scale = Vector2(1.1358575, 1.1358575)
+label_settings = SubResource("LabelSettings_qxhen")
+
+[node name="状态栏" type="Label" parent="信息显示"]
+visible = false
+layout_mode = 0
+offset_left = 80.0
+offset_top = 88.000015
+offset_right = 179.0
+offset_bottom = 137.00002
 scale = Vector2(1.168982, 1.1733543)
 label_settings = SubResource("LabelSettings_25d8u")
+
+[node name="jugde_bt" parent="信息显示" instance=ExtResource("19_ka56j")]
+visible = false
+layout_mode = 0
+offset_left = 394.0
+offset_top = 290.0
+offset_right = 394.0
+offset_bottom = 290.0
+scale = Vector2(0.26664147, 0.26664147)
+
+[node name="弃牌按钮" parent="." node_paths=PackedStringArray("dis_card") instance=ExtResource("22_qxhen")]
+offset_left = 69.00001
+offset_top = 544.0
+offset_right = -377.22217
+offset_bottom = 293.0
+scale = Vector2(0.0890102, 0.0890102)
+dis_card = NodePath("../卡牌显示/弃牌堆")
+
+[node name="万能按钮" parent="." instance=ExtResource("13_3krv3")]
+offset_left = 1043.0
+offset_top = 542.00006
+offset_right = 2192.0
+offset_bottom = 1619.0
+scale = Vector2(0.085008465, 0.085008465)
+script = ExtResource("10_qjvm6")
 
 [node name="遮挡" type="ColorRect" parent="."]
 visible = false
@@ -262,30 +335,6 @@ grow_vertical = 2
 mouse_filter = 2
 color = Color(0.69550276, 0.6955033, 0.6955028, 0.7058824)
 
-[node name="jugde_bt" parent="." instance=ExtResource("19_ka56j")]
-visible = false
-offset_left = 495.99997
-offset_top = 302.0
-offset_right = 495.99997
-offset_bottom = 302.0
-scale = Vector2(0.13922173, 0.13922173)
-
-[node name="judge" parent="." instance=ExtResource("9_kfivi")]
-visible = false
-offset_left = 377.0
-offset_top = 214.0
-offset_right = 1042.0
-offset_bottom = 604.0
-scale = Vector2(0.20882691, 0.21257426)
-
-[node name="weather" parent="." instance=ExtResource("21_0v75n")]
-visible = false
-offset_left = 352.99994
-offset_top = 236.99997
-offset_right = 1625.0
-offset_bottom = 627.0
-scale = Vector2(0.1821678, 0.18543674)
-
 [node name="突发按钮" parent="." instance=ExtResource("13_3krv3")]
 visible = false
 offset_left = 901.0
@@ -293,21 +342,6 @@ offset_top = 255.0
 offset_right = 2050.0
 offset_bottom = 1332.0
 scale = Vector2(0.13377215, 0.13377215)
-
-[node name="weather_name" type="Label" parent="."]
-offset_left = 73.0
-offset_top = 105.0
-offset_right = 113.0
-offset_bottom = 130.0
-scale = Vector2(1.946481, 1.946481)
-
-[node name="万能按钮" parent="." instance=ExtResource("13_3krv3")]
-offset_left = 1018.0001
-offset_top = 535.0
-offset_right = 2167.0
-offset_bottom = 1612.0
-scale = Vector2(0.085008465, 0.085008465)
-script = ExtResource("10_qjvm6")
 
 [node name="转换" parent="." instance=ExtResource("24_b7tvc")]
 offset_left = 1015.0
@@ -317,6 +351,6 @@ offset_bottom = 463.0
 scale = Vector2(0.13159403, 0.13159403)
 
 [connection signal="button_down" from="debug/debug_action" to="debug/debug_action2" method="_on_debug_action_button_down"]
-[connection signal="button_down" from="突发按钮" to="数据层/State_machine" method="_on_万能按钮_button_down"]
 [connection signal="button_down" from="万能按钮" to="数据层/State_machine" method="_on_万能按钮_button_down"]
+[connection signal="button_down" from="突发按钮" to="数据层/State_machine" method="_on_万能按钮_button_down"]
 [connection signal="button_down" from="转换" to="." method="_on_转换_button_down"]
