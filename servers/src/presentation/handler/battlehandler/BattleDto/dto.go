@@ -41,6 +41,7 @@ const (
 	ValueNotify     //-----------------------------------
 	Ping
 	ReConnect
+	WeatherNotify //-------------------------
 )
 
 var ActionName = map[ActionCode]string{
@@ -72,6 +73,7 @@ var ActionName = map[ActionCode]string{
 	ValueNotify:           "数值变化通知",
 	Ping:                  "ping",
 	ReConnect:             "断线重连",
+	WeatherNotify:         "天气结算通知",
 }
 
 type Predicates int

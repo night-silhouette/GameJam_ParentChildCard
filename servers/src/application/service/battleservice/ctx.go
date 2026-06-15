@@ -253,6 +253,21 @@ func (p *PlayerData) GetEnergy() int {
 	return p.Energy
 }
 
+// 是不是有两张出战卡,返回bool
+func (p *PlayerData) CheckIs2Bt() bool {
+
+	p.dataMutex.Lock()
+	defer p.dataMutex.Unlock()
+	flag := true
+
+	if p.ParentCardBT == nil {
+		flag = false
+	}
+	if p.ChildCardBT == nil {
+		flag = false
+	}
+	return flag
+}
 func (p *PlayerData) UpdateEnergy(offset int) {
 	p.dataMutex.Lock()
 	defer p.dataMutex.Unlock()
@@ -295,7 +310,7 @@ func (p *PlayerData) GetBt(where BattleData.Where) CardAbstract.Card {
 	}
 }
 
-// SwitchCard 没有做skillCard的鉴定//鉴定了原来的那个牌是不是空的,空的才会把他换下来
+// SwitchCard 没有做skillCard的鉴定//鉴定了原来的那个牌是不是空的,空的才会把他换下来//还有,纯下牌的情况也写进去了
 func (p *PlayerData) SwitchCard(where BattleData.Where, card CardAbstract.Card) {
 	p.dataMutex.Lock()
 	defer p.dataMutex.Unlock()
@@ -307,6 +322,9 @@ func (p *PlayerData) SwitchCard(where BattleData.Where, card CardAbstract.Card) 
 	if where == BattleData.ParentCard {
 		SwitchedCard = p.ParentCardBT
 		p.ParentCardBT = card
+	}
+	if where == BattleData.InHand { //下牌
+		SwitchedCard = card
 	}
 	if SwitchedCard != nil {
 		p.CardInHand[SwitchedCard.GetTempId()] = SwitchedCard
@@ -406,6 +424,18 @@ func (c *Ctx) Notify(AnimationDto BattleData.AnimationDto, UserId int) {
 
 }
 
+// 不走卡牌hurt虚函数的攻击,也可以叫做无主攻击
+func (c *Ctx) ProtoColAttackNoHurt(CardTempId int, Value int, Category BattleData.ValueChange) {
+	Card := c.FindCard(CardTempId)
+	var FinalAtkValue int
+	if Category == BattleData.Damage { //判断是否是真伤,是的话,就不走装饰器
+		FinalAtkValue = Card.GetDec().CalcHurt(float64(Value))
+	} else if Category == BattleData.TrueDamage {
+		FinalAtkValue = Value
+	}
+	c.ProtoColReduceCardBtHp(-1, CardTempId, float64(FinalAtkValue))
+}
+
 func (c *Ctx) ProtoColInterrupt(UserId int, InterruptDto *BattleData.InterruptDto, res chan []int, InterruptWaitTime time.Duration) {
 	c.NeedInterrupt.Store(true)
 	c.StateMachine.SendActionById(UserId, BattleDto.NewAction(BattleDto.Interrupt, BattleDto.Query, InterruptDto))
@@ -473,7 +503,13 @@ func (c *Ctx) ProtoColCancelInterrupt() {
 	c.InterruptChan <- struct{}{}
 }
 
-func (c *Ctx) ProtoColReduceCardBtHp(SendTempId int, UserId int, TargetTempId int, ReduceHp float64) { //最后的底层方法
+func (c *Ctx) ProtoColSetMaxHp(TargetTempId int, MaxHp float64) {
+	Card := c.FindCard(TargetTempId)
+	Card.GetInfo()["maxHp"] = MaxHp
+}
+
+// 扣血的底层方法
+func (c *Ctx) ProtoColReduceCardBtHp(SendTempId int, TargetTempId int, ReduceHp float64) { //最后的底层方法
 	var card CardAbstract.Character
 	var ok bool
 	if card, ok = c.FindCard(TargetTempId).(CardAbstract.Character); !ok {

@@ -134,3 +134,7 @@ func (c *CharacterBaseCard) ReMoveBuffByTempId(BuffTempId int) {
 func (c *CharacterBaseCard) NewCustom(ExecFunc func(pc protocol.ProtocolCardWithCtx)) {
 	c.BtCtx.ProtoColPush(protocol.NewCustom(ExecFunc))
 }
+
+func (c *CharacterBaseCard) ChangeMaxHp(TargetTempId int, MaxHp float64) {
+	c.BtCtx.ProtoColPush(protocol.NewChangeMaxHp(TargetTempId, MaxHp))
+}
