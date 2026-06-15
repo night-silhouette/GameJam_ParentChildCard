@@ -16,6 +16,7 @@ var zone: int = 0
 # 拖拽判定距离（防止误触，按住鼠标移动超过这个像素才算拖拽，不需要可以设为 0）
 const DRAG_THRESHOLD = 5.0
 var mouse_start_pos = Vector2.ZERO
+var _is_pressing: bool = false
 
 
 var is_selectable: bool = false
@@ -131,8 +132,13 @@ func _on_mouse_exited():
 func _gui_input(event):
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
 		if event.pressed:
-			if is_selectable:
-				card_selected.emit(temp_id)
-			else:
-				change_state(CardState.DRAGGING)
-	
+			mouse_start_pos = event.global_position
+			_is_pressing = true
+		else:
+			_is_pressing = false
+
+	if _is_pressing and event is InputEventMouseMotion:
+		var distance = event.global_position.distance_to(mouse_start_pos)
+		if distance >= DRAG_THRESHOLD:
+			_is_pressing = false
+			change_state(CardState.DRAGGING)

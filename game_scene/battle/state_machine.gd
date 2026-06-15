@@ -179,7 +179,7 @@ func _refresh_all_battle_data() -> void:
 	SignalBus.request_get_energy.emit()
 	SignalBus.request_get_child_card_list.emit()
 	SignalBus.request_get_weather.emit()
-	#SignalBus.request_
+	SignalBus.request_get_discard_list.emit()
 
 func _populate_weather() -> void:
 	var children = weather.get_children()
@@ -291,9 +291,9 @@ func _send_message():
 				SignalBus.request_deploy_magic_card.emit(-1,-1)
 		
 		GameState.USE_COMBAT_CARD:
-			var combat_list = DataManagerBt.filter_empty_dicts(DataManagerBt.switch_list + DataManagerBt.action_list)
-			print(DataManagerBt.switch_list)
-			print(DataManagerBt.action_list)
+			var combat_list = card_manager.filter_empty_dicts(card_manager.switch_list + card_manager.action_list)
+			print(card_manager.switch_list)
+			print(card_manager.action_list)
 			print(combat_list)
 			SignalBus.request_combat_movement.emit(combat_list)
 	

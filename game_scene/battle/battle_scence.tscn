@@ -192,7 +192,6 @@ scale = Vector2(0.3082767, 0.29954422)
 card_manager = NodePath("../../数据层/card_manager")
 
 [node name="active_child_card" parent="卡牌显示" instance=ExtResource("23_b7tvc")]
-visible = false
 layout_mode = 1
 offset_left = 688.0
 offset_top = 7.999999

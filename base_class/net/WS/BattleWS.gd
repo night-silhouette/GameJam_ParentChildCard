@@ -49,11 +49,10 @@ func _process(delta):
 # 收消息（只转发，不解析业务）
 func _on_message(msg: String):
 	var res = JSON.parse_string(msg)
-	# print(res)
+	print(res)
 	if res == null:
 		print("WS解析失败")
 		return
-	
 	var code = res["code"]
 	var data = res["data"] if res.has("data") else null
 	var msg_str = res["msg"]

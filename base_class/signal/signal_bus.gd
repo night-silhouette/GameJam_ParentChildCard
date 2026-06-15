@@ -164,7 +164,7 @@ signal request_get_energy
 signal request_get_child_card_list
 signal request_select_weather(weather)
 signal request_active_child_card(temp_id_list)
-signal request_get_discard_list
+signal request_get_discard_list()
 signal request_interrupt_select(temp_id_list)
 signal request_get_weather()
 
