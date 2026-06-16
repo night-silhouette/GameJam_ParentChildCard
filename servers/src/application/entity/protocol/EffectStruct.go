@@ -83,7 +83,7 @@ func (H *Heal) Execute(pc ProtocolCardWithCtx) {
 	originValue := H.HealValue
 	FinalHeal := H.Dec.CalcHeal(originValue)
 	pc.ProtoColHealCardBt(target, float64(FinalHeal))
-	pc.ProtoNotifyValue(BattleData.Heal, H.HealValue, *H.TargetTempId)
+	pc.ProtoNotifyValue(BattleData.Heal, H.HealValue, *H.TargetTempId, false)
 }
 
 func NewHeal(TargetTempId *int, HealValue float64, Dec *CardMeta.Decorator) *Heal {

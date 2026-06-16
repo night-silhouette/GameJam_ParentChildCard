@@ -38,12 +38,13 @@ const (
 	GetUserId
 	CardMove        //-----------------------------------
 	AnimationNotify //-----------------------------------
-	ValueNotify     //-----------------------------------
+	HpChange        //-----------------------------------
 	Ping
 	ReConnect
 	WeatherNotify  //-------------------------
 	BuffCalcNotify //-------------------------
 	GetRoundNum
+	BuffChange
 )
 
 var ActionName = map[ActionCode]string{
@@ -71,7 +72,7 @@ var ActionName = map[ActionCode]string{
 	CatchChild:            "捕获子牌",
 	CardMove:              "结算卡牌移动通知",
 	AnimationNotify:       "行为动画通知",
-	ValueNotify:           "数值变化通知",
+	HpChange:              "数值变化通知",
 	Ping:                  "ping",
 	ReConnect:             "断线重连",
 	WeatherNotify:         "天气结算通知",
@@ -79,6 +80,7 @@ var ActionName = map[ActionCode]string{
 	BuffCalcNotify:        "buff结算通知",
 	GetUserId:             "获取双方id",
 	GetRoundNum:           "获取回合数",
+	BuffChange:            "buff发生改变",
 }
 
 type Predicates int

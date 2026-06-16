@@ -18,12 +18,14 @@ const (
 	BonusDamage BuffId = iota
 	Powerful
 	Weakness
-
+	//免伤
 	DamageImmunity
-	Vulnerability //免伤
+	//易伤
+	Vulnerability
 	Block
 
 	HealingBoost
+	//治疗衰减
 	HealingDecay
 
 	Wither

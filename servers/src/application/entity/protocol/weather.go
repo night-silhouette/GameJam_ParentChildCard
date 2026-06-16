@@ -48,16 +48,35 @@ func InitWeatherFuncMap() {
 
 	}
 	WeatherFuncMap[Miwu] = func(pc ProtocolCardWithCtx, card []BuffNeed) { //每个人有闪避
-		//for _, c := range card {
-		//	TempId := c.GetTempId()
-		//	pc.ProtoColPush(NewGiveBuff(TempId, NewBuffBase()))
-		//}
+		for _, c := range card {
+			TempId := c.GetTempId()
+			pc.ProtoColPush(NewGiveBuff(&TempId, *NewBuffBase(XuFeng, 1, 0.15, pc.CreateTempId())))
+		}
 	}
-	WeatherFuncMap[Dashu] = func(pc ProtocolCardWithCtx, card []BuffNeed) {}
-	WeatherFuncMap[Zhipou] = func(pc ProtocolCardWithCtx, card []BuffNeed) {}
-	WeatherFuncMap[Shuangjiang] = func(pc ProtocolCardWithCtx, card []BuffNeed) {}
-	WeatherFuncMap[Shutu] = func(pc ProtocolCardWithCtx, card []BuffNeed) {}
-	WeatherFuncMap[Fengdu] = func(pc ProtocolCardWithCtx, card []BuffNeed) {}
+	WeatherFuncMap[Dashu] = func(pc ProtocolCardWithCtx, card []BuffNeed) {
+		for _, c := range card {
+			TempId := c.GetTempId()
+			pc.ProtoColPush(NewGiveBuff(&TempId, *NewBuffBase(HealingDecay, 1, 0.3, pc.CreateTempId())))
+		}
+	}
+	WeatherFuncMap[Zhipou] = func(pc ProtocolCardWithCtx, card []BuffNeed) {
+
+	}
+	WeatherFuncMap[Shuangjiang] = func(pc ProtocolCardWithCtx, card []BuffNeed) {
+		for _, c := range card {
+			TempId := c.GetTempId()
+			pc.ProtoColPush(NewGiveBuff(&TempId, *NewBuffBase(Vulnerability, 1, 0.4, pc.CreateTempId())))
+		}
+	}
+	WeatherFuncMap[Shutu] = func(pc ProtocolCardWithCtx, card []BuffNeed) {
+		for _, c := range card {
+			TempId := c.GetTempId()
+			pc.ProtoColPush(NewGiveBuff(&TempId, *NewBuffBase(DamageImmunity, 1, 0.28, pc.CreateTempId())))
+		}
+	}
+	WeatherFuncMap[Fengdu] = func(pc ProtocolCardWithCtx, card []BuffNeed) {
+		
+	}
 }
 
 type ExecPosition int
@@ -69,8 +88,8 @@ const (
 
 var WeatherExecPositionMap map[Weather]ExecPosition = map[Weather]ExecPosition{
 	Ningjing:    RoundStart,
-	Shabao:      RoundStart,
-	Ganmu:       RoundStart,
+	Shabao:      RoundEnd,
+	Ganmu:       RoundEnd,
 	Mingyang:    RoundStart,
 	Miwu:        RoundStart,
 	Dashu:       RoundStart,

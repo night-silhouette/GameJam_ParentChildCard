@@ -454,7 +454,7 @@ func (c *Ctx) ProtoColInterrupt(UserId int, InterruptDto *BattleData.InterruptDt
 	var DataIsOK atomic.Bool
 	DataIsOK.Store(false)
 
-	TimeEnding := func() {    //结束回调
+	TimeEnding := func() { //结束回调
 		if !DataIsOK.Load() { //随机取
 			dataMutex.Lock()
 			data.TempIdList = Util.GetRandomElements(InterruptDto.TempIdList, InterruptDto.SelectNum)
@@ -578,14 +578,14 @@ func (c *Ctx) ProtoColSetDamageCardBt(UserId int, TargetTempId int, NewDamage fl
 }
 
 func (c *Ctx) ProtoNotifyValue(Category BattleData.ValueChange, Value float64, TempId int, IsMiss bool) {
-	c.StateMachine.SendActionById(c.StateMachine.Id1, BattleDto.NewAction(BattleDto.ValueNotify, BattleDto.Result, BattleData.CardCalcValueDto{
+	c.StateMachine.SendActionById(c.StateMachine.Id1, BattleDto.NewAction(BattleDto.HpChange, BattleDto.Result, BattleData.CardCalcValueDto{
 		TempId:   TempId,
 		Category: Category,
 		IsMiss:   IsMiss,
 		Value:    Value,
 		DataAll:  c.GetDataAll(c.StateMachine.Id1),
 	}))
-	c.StateMachine.SendActionById(c.StateMachine.Id2, BattleDto.NewAction(BattleDto.ValueNotify, BattleDto.Result, BattleData.CardCalcValueDto{
+	c.StateMachine.SendActionById(c.StateMachine.Id2, BattleDto.NewAction(BattleDto.HpChange, BattleDto.Result, BattleData.CardCalcValueDto{
 		TempId:   TempId,
 		Category: Category,
 		IsMiss:   IsMiss,

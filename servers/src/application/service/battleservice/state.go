@@ -53,7 +53,7 @@ func (s *StateMachine) ReduceWeatherLasting() {
 	if res < 0 {
 		res = 0
 	}
-	
+
 	s.WeatherLasting = res
 }
 
