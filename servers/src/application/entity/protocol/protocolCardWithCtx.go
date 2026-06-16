@@ -22,7 +22,7 @@ type ProtocolCardWithCtx interface {
 	ProtoColMoveDisCardPool(UserId int, TempId int)                                                                       // ProtoColMoveDisCardPool 把卡删掉，并且移动到discardpool
 	GetBtCardInfo(id int) BattleData.BtCardInfo
 	ProtoColCancelInterrupt()
-	ProtoNotifyValue(Category BattleData.ValueChange, Value float64, TempId int) //数值变化的时候的通知
+	ProtoNotifyValue(Category BattleData.ValueChange, Value float64, TempId int, IsMiss bool) //数值变化的时候的通知
 	ProtoNotifyCardMove(Object BattleData.Where, TempId int)
 	ProtoColUpdateEnergy(UserId int, offset int)
 	ProtoColCanUpdateEnergy(UserId int, offset int) bool

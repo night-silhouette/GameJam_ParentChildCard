@@ -417,7 +417,7 @@ func (c *Ctx) ProtoColSetCardBt(UserId int, TempId int) {
 	c.SetCardBt(UserId, card) //这个接口已经上锁了
 }
 
-// Notify 传-1，表全部
+// Notify 传-1，表全部,这是动画dto的通知
 func (c *Ctx) Notify(AnimationDto BattleData.AnimationDto, UserId int) {
 	if UserId == -1 {
 		c.StateMachine.SendActionById(c.StateMachine.Id2, BattleDto.NewAction(BattleDto.AnimationNotify, BattleDto.Notify, AnimationDto))
@@ -434,12 +434,14 @@ func (c *Ctx) Notify(AnimationDto BattleData.AnimationDto, UserId int) {
 func (c *Ctx) ProtoColAttackNoHurt(CardTempId int, Value int, Category BattleData.ValueChange) {
 	Card := c.FindCard(CardTempId)
 	var FinalAtkValue int
+	IsMiss := false
 	if Category == BattleData.Damage { //判断是否是真伤,是的话,就不走装饰器
-		FinalAtkValue = Card.GetDec().CalcHurt(float64(Value))
+		FinalAtkValue, IsMiss = Card.GetDec().CalcHurt(float64(Value))
 	} else if Category == BattleData.TrueDamage {
 		FinalAtkValue = Value
 	}
 	c.ProtoColReduceCardBtHp(-1, CardTempId, float64(FinalAtkValue))
+	c.ProtoNotifyValue(Category, float64(Value), CardTempId, IsMiss)
 }
 
 func (c *Ctx) ProtoColInterrupt(UserId int, InterruptDto *BattleData.InterruptDto, res chan []int, InterruptWaitTime time.Duration) {
@@ -451,7 +453,7 @@ func (c *Ctx) ProtoColInterrupt(UserId int, InterruptDto *BattleData.InterruptDt
 	var DataIsOK atomic.Bool
 	DataIsOK.Store(false)
 
-	TimeEnding := func() {    //结束回调
+	TimeEnding := func() { //结束回调
 		if !DataIsOK.Load() { //随机取
 			dataMutex.Lock()
 			data.TempIdList = Util.GetRandomElements(InterruptDto.TempIdList, InterruptDto.SelectNum)
@@ -574,16 +576,18 @@ func (c *Ctx) ProtoColSetDamageCardBt(UserId int, TargetTempId int, NewDamage fl
 	card.SetAtkNow(NewDamage)
 }
 
-func (c *Ctx) ProtoNotifyValue(Category BattleData.ValueChange, Value float64, TempId int) {
+func (c *Ctx) ProtoNotifyValue(Category BattleData.ValueChange, Value float64, TempId int, IsMiss bool) {
 	c.StateMachine.SendActionById(c.StateMachine.Id1, BattleDto.NewAction(BattleDto.ValueNotify, BattleDto.Result, BattleData.CardCalcValueDto{
 		TempId:   TempId,
 		Category: Category,
+		IsMiss:   IsMiss,
 		Value:    Value,
 		DataAll:  c.GetDataAll(c.StateMachine.Id1),
 	}))
 	c.StateMachine.SendActionById(c.StateMachine.Id2, BattleDto.NewAction(BattleDto.ValueNotify, BattleDto.Result, BattleData.CardCalcValueDto{
 		TempId:   TempId,
 		Category: Category,
+		IsMiss:   IsMiss,
 		Value:    Value,
 		DataAll:  c.GetDataAll(c.StateMachine.Id2),
 	}))

@@ -122,6 +122,8 @@ func (c *BaseCard) CalcDecByBuff(Dec CardMeta.Decorator) CardMeta.Decorator {
 			Dec.AttackPordAdd(buff.Value)
 		case protocol.Weakness:
 			Dec.AttackPordAdd(-buff.Value)
+		case protocol.XuFeng:
+			Dec.EvadeAdd(buff.Value)
 		}
 
 	}
