@@ -43,6 +43,20 @@ func (s *StateMachine) RegisterState() {
 		element.SetName(key)
 	}
 }
+
+//减少现在的天气的持续时间,如果刚好减到0,那么就改为宁静,
+func (s *StateMachine) ReduceWeatherLasting() {
+	res := s.WeatherLasting - 1
+	if res == 0 {
+		s.c.Weather.Store(int64(protocol.Ningjing))
+	}
+	if res < 0 {
+		res = 0
+	}
+	
+	s.WeatherLasting = res
+}
+
 func (s *StateMachine) SharedProcess(id int, action BattleDto.Action, ResponseChan chan<- BattleDto.Action) bool {
 	if action.ActionCode == BattleDto.GetUserId && action.Predicates == BattleDto.Query {
 		res := make(map[string]int)
@@ -50,6 +64,10 @@ func (s *StateMachine) SharedProcess(id int, action BattleDto.Action, ResponseCh
 		res["opponent"] = s.c.GetOpponentId(id)
 		ResponseChan <- BattleDto.NewAction(BattleDto.GetWeather, BattleDto.Result, res)
 	}
+	if action.ActionCode == BattleDto.GetRoundNum && action.Predicates == BattleDto.Query {
+		ResponseChan <- BattleDto.NewAction(BattleDto.GetRoundNum, BattleDto.Result, s.RoundNum.Load())
+	}
+
 	if action.ActionCode == BattleDto.ReConnect && action.Predicates == BattleDto.Query {
 		//CurStateName := s.CurrentState.GetName()
 		//这个是软重连,如果请求这个,就先给他一个dto,一个字段是CurStateName,还有一个是,告诉他用户有不有响应过,(直接在statemachine里面,搞两个原子bool就好了,idaflag)
@@ -144,6 +162,7 @@ type StateMachine struct {
 	Nt           *NotifyManager
 	CardListCopy *[]CardAbstract.Card
 	cancelFunc   context.CancelFunc
+	RoundNum     atomic.Int32
 
 	GoldMoreUserId int
 
@@ -153,6 +172,8 @@ type StateMachine struct {
 	CombatDataChan chan map[string][]BattleData.CombatDto
 
 	LoseMarkMap map[int]int //UserId:num
+
+	WeatherLasting int //天气持续时间
 }
 
 func NewStateMachine(c *Ctx, id1 int, id2 int, Nt *NotifyManager, ParentNodeCtx context.Context, GoldMoreUserId int) *StateMachine {
@@ -173,8 +194,9 @@ func NewStateMachine(c *Ctx, id1 int, id2 int, Nt *NotifyManager, ParentNodeCtx 
 	StateMachineImpl.LoseMarkMap[StateMachineImpl.Id2] = 0
 
 	StateMachineImpl.GoldMoreUserId = GoldMoreUserId
-
+	StateMachineImpl.RoundNum.Store(int32(0))
 	StateMachineImpl.RegisterState()
+	StateMachineImpl.WeatherLasting = 0
 	for _, element := range StateMachineImpl.StateList {
 		element.Init(id1, id2, c, Nt, StateMachineImpl, element)
 	}
@@ -723,7 +745,7 @@ type SelectWeatherDto struct {
 // Change !!天气变化主函数
 func (s *SelectWeather) Change(w protocol.Weather) {
 
-	fmt.Println("天气被改动")
+	s.SM.WeatherLasting = 6
 	s.c.Weather.Store(int64(w))
 
 }
@@ -860,6 +882,7 @@ func (s *SelectSkillCard) SelectEnd() {
 
 func (s *SelectSkillCard) enter() {
 
+	s.SM.RoundNum.Store(s.SM.RoundNum.Add(1))
 	chanStop, chanCrash := Util.CreateTimer(time.Second*global.SelectSkillCardTime, s.SelectEnd)
 	s.ChanCrash = chanCrash
 	s.ChanStop = chanStop
@@ -1313,6 +1336,11 @@ CalcLoop:
 			}
 			//-------------给连续输的人增加免伤-------------
 
+			//回合开始结算天气//通知在里面了
+			if protocol.WeatherExecPositionMap[protocol.Weather(s.c.Weather.Load())] == protocol.RoundStart {
+				s.ExecWeather()
+			}
+
 			//--------结算换牌start--------
 
 			//-----记录换牌过程-----
@@ -1365,15 +1393,10 @@ CalcLoop:
 			s.SM.SendActionById(s.SM.Id1, BattleDto.NewAction(BattleDto.SkillCardNotify, BattleDto.Notify, ""))
 			s.SkillCalc()
 
-			//结算天气
-			s.SM.SendActionById(s.SM.Id2, BattleDto.NewAction(BattleDto.WeatherNotify, BattleDto.Notify, ""))
-			s.SM.SendActionById(s.SM.Id1, BattleDto.NewAction(BattleDto.WeatherNotify, BattleDto.Notify, ""))
-			cardBts := s.c.GetBtAll(-1)
-			buffNeeds := make([]protocol.BuffNeed, len(cardBts)) //转化数组类型,数组没法隐式转化的
-			for i, card := range cardBts {
-				buffNeeds[i] = card
+			//回合结束结算天气//通知在里面了
+			if protocol.WeatherExecPositionMap[protocol.Weather(s.c.Weather.Load())] == protocol.RoundEnd {
+				s.ExecWeather()
 			}
-			protocol.WeatherFuncMap[protocol.Weather(s.c.Weather.Load())](s.c, buffNeeds) //从天气执行函数map储存种取出来执行
 
 			//结算buff
 			s.SM.SendActionById(s.SM.Id2, BattleDto.NewAction(BattleDto.BuffCalcNotify, BattleDto.Notify, ""))
@@ -1393,8 +1416,21 @@ CalcLoop:
 	}
 }
 
+// 结算天气//通知也在这个函数里面了的
+func (s *CardCalc) ExecWeather() {
+	s.SM.SendActionById(s.SM.Id2, BattleDto.NewAction(BattleDto.WeatherNotify, BattleDto.Notify, ""))
+	s.SM.SendActionById(s.SM.Id1, BattleDto.NewAction(BattleDto.WeatherNotify, BattleDto.Notify, ""))
+	cardBts := s.c.GetBtAll(-1)
+	buffNeeds := make([]protocol.BuffNeed, len(cardBts)) //转化数组类型,数组没法隐式转化的
+	for i, card := range cardBts {
+		buffNeeds[i] = card
+	}
+	protocol.WeatherFuncMap[protocol.Weather(s.c.Weather.Load())](s.c, buffNeeds) //从天气执行函数map储存种取出来执行
+}
+
 func (s *CardCalc) exit() {
 	s.HaveDone.Store(false)
+	s.SM.ReduceWeatherLasting()
 }
 
 func (s *CardCalc) process(GoCtx context.Context) {

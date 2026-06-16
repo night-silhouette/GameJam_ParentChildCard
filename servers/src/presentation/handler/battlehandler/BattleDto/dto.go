@@ -43,6 +43,7 @@ const (
 	ReConnect
 	WeatherNotify  //-------------------------
 	BuffCalcNotify //-------------------------
+	GetRoundNum
 )
 
 var ActionName = map[ActionCode]string{
@@ -77,6 +78,7 @@ var ActionName = map[ActionCode]string{
 	SkillCardNotify:       "法术牌结算通知",
 	BuffCalcNotify:        "buff结算通知",
 	GetUserId:             "获取双方id",
+	GetRoundNum:           "获取回合数",
 }
 
 type Predicates int

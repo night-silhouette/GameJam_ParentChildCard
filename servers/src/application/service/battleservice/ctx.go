@@ -32,6 +32,7 @@ type Ctx struct {
 	NeedInterrupt       atomic.Bool
 	InterruptChan       chan struct{}
 	InterruptListenFunc atomic.Value //func(id int, action BattleDto.Action, ResponseChan chan<- BattleDto.Action) bool
+
 }
 
 func NewCtx(idA int, idB int, ParentContext context.Context, CardList map[int]map[int]CardAbstract.Card, TempIdCalc *atomic.Int32, cList []CardAbstract.Card) *Ctx {
@@ -453,7 +454,7 @@ func (c *Ctx) ProtoColInterrupt(UserId int, InterruptDto *BattleData.InterruptDt
 	var DataIsOK atomic.Bool
 	DataIsOK.Store(false)
 
-	TimeEnding := func() { //结束回调
+	TimeEnding := func() {    //结束回调
 		if !DataIsOK.Load() { //随机取
 			dataMutex.Lock()
 			data.TempIdList = Util.GetRandomElements(InterruptDto.TempIdList, InterruptDto.SelectNum)
