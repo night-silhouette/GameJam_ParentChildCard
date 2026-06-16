@@ -25,7 +25,7 @@ func _update_view():
 	for i in range(ui_nodes.size()):
 		var child = ui_nodes[i]
 		if i < page_cards.size():
-			child.update_card_data(page_cards[i])
+			child.setup(page_cards[i])
 			child.show()
 			child.modulate.a = 1.0 
 		else:

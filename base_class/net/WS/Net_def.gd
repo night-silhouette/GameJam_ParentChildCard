@@ -33,15 +33,17 @@ enum Action {
 	GetChildCardList = 19,
 	ActiveChildCard = 20,
 	GetWeather = 21,           
-	CatchChild = 22,      
+	ChildBelongChange = 22,      
 	GetUserId = 23,
-	CardMove =  24,       
+	PositionChange =  24,       
 	AnimationNotify = 25,
-	ValueNotify = 26,
+	HpChange = 26,
 	Ping        = 27,
 	ReConnect   = 28,
 	WeatherNotify = 29, 
-	BuffCalcNotify  = 30,        
+	BuffCalcNotify  = 30,
+	GetRoundNum =  31,
+	BUffChange = 32,       
 }
 
 const ACTION_NAME = {
@@ -65,10 +67,10 @@ const ACTION_NAME = {
 	Action.GetChildCardList: "查看子牌堆",
 	Action.ActiveChildCard: "激活子卡牌",
 	Action.GetWeather:            "获取天气",
-	Action.CatchChild:            "捕获子牌",
-	Action.CardMove:              "结算卡牌移动通知",
+	Action.ChildBelongChange:            "捕获子牌",
+	Action.PositionChange:              "上下牌",
 	Action.AnimationNotify:       "行为动画通知",
-	Action.ValueNotify:           "数值变化通知",
+	Action.HpChange:           "生命数值变化",
 	Action.GetUserId:             "获取玩家ID"
 	
 }

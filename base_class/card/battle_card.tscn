@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3 uid="uid://diwsy4ebydgfx"]
+[gd_scene load_steps=6 format=3 uid="uid://diwsy4ebydgfx"]
 
 [ext_resource type="Script" uid="uid://ddj8qfcb6lpsk" path="res://base_class/card/battle_card.gd" id="1_xdlnp"]
 [ext_resource type="Texture2D" uid="uid://dje375wa2ans7" path="res://素材/使用素材/卡牌/基础卡牌重置素材/卡牌.png" id="2_8a1n0"]
@@ -8,6 +8,11 @@
 font = ExtResource("3_0o2o1")
 font_size = 55
 font_color = Color(0.3254902, 0.09411765, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_0o2o1"]
+font = ExtResource("3_0o2o1")
+font_size = 30
+font_color = Color(0, 0, 0, 1)
 
 [node name="Control" type="Control"]
 custom_minimum_size = Vector2(329, 570)
@@ -37,5 +42,16 @@ offset_right = 246.12561
 offset_bottom = 290.14435
 scale = Vector2(1.4425231, 1.4425231)
 label_settings = SubResource("LabelSettings_6xbm0")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="buff" type="Label" parent="."]
+layout_mode = 0
+offset_left = -17.108261
+offset_top = 325.05698
+offset_right = 246.8669
+offset_bottom = 395.05698
+scale = Vector2(1.4425231, 1.4425231)
+label_settings = SubResource("LabelSettings_0o2o1")
 horizontal_alignment = 1
 vertical_alignment = 1

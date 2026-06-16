@@ -6,11 +6,12 @@ var current_state: CardState = CardState.IDLE
 const HOVER_ALLOWED_ZONES = [Global.ZONE_CARD.DECK_ZONE,Global.ZONE_CARD.SPELL_ZONE] 
 @onready var display: TextureRect = $"卡牌纹理"
 @onready var name_diapaly: Label = $name
+@onready var buff_label: Label = $"buff"
 
 var temp_id: int = 0
 var hp: int = 0
 var damage: int = 0
-var buff_id: Array = []
+var buff_list: Array = []
 var zone: int = 0
 
 # 拖拽判定距离（防止误触，按住鼠标移动超过这个像素才算拖拽，不需要可以设为 0）
@@ -36,7 +37,7 @@ func update_card_data(base_res: Dictionary) -> void:
 	#   "temp_id": int,      # 运行时唯一标识
 	#   "hp": int,           # 当前生命值
 	#   "damage": int,       # 当前伤害值
-	#   "buff_id": Array,    # Buff列表
+	#   "buff_list": Array[Dictionary],    # BuffDto数组 [{buff_id, buff_stacks, buff_value}]
 	#   "zone": int,         # 显示区域
 	#   "child_state": int,   # 子牌状态（可选）
 	#   "resouce": CardResource  # 本地配置资源
@@ -54,7 +55,8 @@ func update_card_data(base_res: Dictionary) -> void:
 	# 2. 填充运行时数据（从 Dictionary 获取）
 	temp_id = base_res.get("temp_id")
 	zone = base_res.get("zone")
-	buff_id = base_res.get("buff_id", [])
+	buff_list = base_res.get("buff_list", [])
+	_update_buff_display()
 	
 	# 战斗数据：如果这张卡在战场上，hp/damage 才有意义
 	if res.is_combat_card:
@@ -84,8 +86,24 @@ func free_card():
 	hp = 0;
 	damage = 0;
 	temp_id = 0;
-	buff_id = [];
+	buff_list = [];
 	
+
+func _update_buff_display() -> void:
+	if not buff_label:
+		return
+	var lines: Array[String] = []
+	for b in buff_list:
+		if b is Dictionary:
+			var bid = b.get("buff_id", 0)
+			var name = Global.BUFF_NAME.get(bid, "???")
+			var stacks = b.get("buff_stacks", 1)
+			var value = b.get("buff_value")
+			lines.append("%s(%d) x%d" % [name,value, stacks])
+	buff_label.text = "\n".join(lines)
+	buff_label.visible = not lines.is_empty()
+
+
 func change_state(new_state: CardState):
 	if current_state == new_state:
 		return

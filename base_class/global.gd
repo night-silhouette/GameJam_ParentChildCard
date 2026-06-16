@@ -123,6 +123,8 @@ const BUFF_NAME = {
 	BUFF.Disarm : "缴械",
 	BUFF.XuFeng : "续风",
 }
+#enum ACTION_ANIMATION = {}
+
 ## 接口 1：让节点进入【假死】状态
 func fake_death(target_node: Node) -> void:
 	if not is_instance_valid(target_node):

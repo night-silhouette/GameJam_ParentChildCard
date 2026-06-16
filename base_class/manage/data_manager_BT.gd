@@ -113,12 +113,14 @@ func _ready() -> void:
 	SignalBus.bt_selfinfo_updated.connect(_bt_selfinfo_updated)
 	SignalBus.oppent_inhand_updated.connect(_on_oppent_inhand_updated)
 	change_card_zone.connect(_change_card_zone)
-
+	SignalBus.discard_list_updated.connect(_on_discard_list_updated)
+	SignalBus.child_card_list_updated.connect(_on_child_card_list_updated)
+	
 	# ==================== [新增] WS 非卡牌数据导入 ====================
 	SignalBus.energy_updated.connect(_on_energy_updated)
-	SignalBus.discard_list_updated.connect(_on_discard_list_updated)
+
 	SignalBus.weather_update.connect(_on_weather_update)
-	SignalBus.child_card_list_updated.connect(_on_child_card_list_updated)
+
 	
 	
 	# ==================== 数据变更 → UI ====================
@@ -258,14 +260,19 @@ func _update_card_stats(card: Dictionary, new_data: Dictionary):
 	card["hp"] = int(new_data.get("hp", 0))
 	card["damage"] = int(new_data.get("damage", 0))
 
-	# 支持 buff_list 格式（0.102 新增 BuffDto）
+	# 支持 buff_list 格式（BuffDto: buff_id, buff_stacks, value）
 	var raw_buff = new_data.get("buff_list", new_data.get("buff_id", []))
 	if raw_buff is float or raw_buff is int:
-		card["buff_id"] = [int(raw_buff)]
+		card["buff_list"] = [{"buff_id": int(raw_buff), "buff_stacks": 1, "buff_value": 0.0}]
 	elif raw_buff is Array:
-		card["buff_id"] = Array(raw_buff).map(func(x): return int(x.get("buff_id", x) if x is Dictionary else x))
+		card["buff_list"] = Array(raw_buff).map(func(x):
+			if x is Dictionary:
+				return {"buff_id": int(x.get("buff_id", 0)), "buff_stacks": int(x.get("buff_stacks", 1)), "buff_value": float(x.get("value", 0.0))}
+			else:
+				return {"buff_id": int(x), "buff_stacks": 1, "buff_value": 0.0}
+		)
 	else:
-		card["buff_id"] = []
+		card["buff_list"] = []
 	
 	# [新增] 保存 child_state（用于后续优先级判断和 UI 显示）
 	if new_data.has("child_state"):
@@ -304,15 +311,21 @@ func _init_single_card(card_data: Dictionary, zone) -> Dictionary:
 	new_card["temp_id"] = int(card_data.get("temp_id", -1))
 	new_card["hp"] = int(card_data.get("hp", 0))
 	new_card["damage"] = int(card_data.get("damage", 0))
+	new_card["form"]= int(card_data.get("form",0))
 
-	# 支持 buff_list 格式
+	# 支持 buff_list 格式（BuffDto: buff_id, buff_stacks, value）
 	var raw_buff = card_data.get("buff_list", card_data.get("buff_id", []))
 	if raw_buff is float or raw_buff is int:
-		new_card["buff_id"] = [int(raw_buff)]
+		new_card["buff_list"] = [{"buff_id": int(raw_buff), "buff_stacks": 1, "buff_value": 0.0}]
 	elif raw_buff is Array:
-		new_card["buff_id"] = Array(raw_buff).map(func(x): return int(x.get("buff_id", x) if x is Dictionary else x))
+		new_card["buff_list"] = Array(raw_buff).map(func(x):
+			if x is Dictionary:
+				return {"buff_id": int(x.get("buff_id", 0)), "buff_stacks": int(x.get("buff_stacks", 1)), "buff_value": float(x.get("value", 0.0))}
+			else:
+				return {"buff_id": int(x), "buff_stacks": 1, "buff_value": 0.0}
+		)
 	else:
-		new_card["buff_id"] = []
+		new_card["buff_list"] = []
 
 	# [新增] 保存 child_state（如果存在）
 	if card_data.has("child_state"):
