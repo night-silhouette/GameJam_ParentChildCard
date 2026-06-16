@@ -44,7 +44,7 @@ func (s *StateMachine) RegisterState() {
 	}
 }
 
-//减少现在的天气的持续时间,如果刚好减到0,那么就改为宁静,
+// 减少现在的天气的持续时间,如果刚好减到0,那么就改为宁静,
 func (s *StateMachine) ReduceWeatherLasting() {
 	res := s.WeatherLasting - 1
 	if res == 0 {
@@ -1302,7 +1302,7 @@ func (s *CardCalc) CalcNotSwitch(data BattleData.CombatDto, UserId int) {
 	s.c.StackSettle() //执行效果堆栈
 }
 
-// SkillCalc 双方的法术牌结算都在这了
+// SkillCalc 双方的法术牌结算都在这了//有执行
 func (s *CardCalc) SkillCalc() {
 	if s.c.PlayerDataMap[s.SM.Winner].SkillCardBT != nil {
 		s.c.PlayerDataMap[s.SM.Winner].SkillCardBT.(CardAbstract.SkillCard).PlayMagic() //触发法术，然后，在法术这个函数里面，用和ctx的协议，把通知前端的action传出来
@@ -1339,6 +1339,8 @@ CalcLoop:
 			//回合开始结算天气//通知在里面了
 			if protocol.WeatherExecPositionMap[protocol.Weather(s.c.Weather.Load())] == protocol.RoundStart {
 				s.ExecWeather()
+				s.c.StackSettle()
+				s.c.ChildCardCheck()
 			}
 
 			//--------结算换牌start--------
@@ -1392,10 +1394,13 @@ CalcLoop:
 			s.SM.SendActionById(s.SM.Id2, BattleDto.NewAction(BattleDto.SkillCardNotify, BattleDto.Notify, ""))
 			s.SM.SendActionById(s.SM.Id1, BattleDto.NewAction(BattleDto.SkillCardNotify, BattleDto.Notify, ""))
 			s.SkillCalc()
+			s.c.ChildCardCheck()
 
 			//回合结束结算天气//通知在里面了
 			if protocol.WeatherExecPositionMap[protocol.Weather(s.c.Weather.Load())] == protocol.RoundEnd {
 				s.ExecWeather()
+				s.c.StackSettle()
+				s.c.ChildCardCheck()
 			}
 
 			//结算buff
@@ -1404,7 +1409,9 @@ CalcLoop:
 			CharacterCardList := s.c.GetCharacter()
 			for _, Card := range CharacterCardList {
 				Card.BuffRoundEnd(s.c)
+				s.c.StackSettle()
 			}
+			s.c.ChildCardCheck()
 
 			//全部结算完成,发个通知
 			s.SM.SendActionById(s.SM.Id2, BattleDto.NewAction(BattleDto.CardCalc, BattleDto.Finish, ""))
@@ -1426,6 +1433,7 @@ func (s *CardCalc) ExecWeather() {
 		buffNeeds[i] = card
 	}
 	protocol.WeatherFuncMap[protocol.Weather(s.c.Weather.Load())](s.c, buffNeeds) //从天气执行函数map储存种取出来执行
+
 }
 
 func (s *CardCalc) exit() {

@@ -5,21 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="760cea56-5efb-4b56-8acc-717cb714ebef" name="更改" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/626966bd-e130-4f5a-83d5-704f5f250146.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/626966bd-e130-4f5a-83d5-704f5f250146/storage_v2/_src_/database/pccard.g1fAxA/schema/public.abK9xQ.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/626966bd-e130-4f5a-83d5-704f5f250146/storage_v2/_src_/database/pccard.g1fAxA/schema/public.abK9xQ.zip" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/626966bd-e130-4f5a-83d5-704f5f250146/storage_v2/_src_/database/postgres.edMnLQ/schema/public.abK9xQ.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/data_source_mapping.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/application/entity/protocol/Buff.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/entity/protocol/Buff.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/application/entity/protocol/BuffStruct.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/entity/protocol/BuffStruct.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/application/entity/protocol/EffectStruct.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/entity/protocol/EffectStruct.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/application/entity/protocol/weather.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/entity/protocol/weather.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/application/service/battleservice/ctx.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/service/battleservice/ctx.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/entity/BattleData/CardDto.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/entity/BattleData/CardDto.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/entity/Card/CardAbstract/card.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/entity/Card/CardAbstract/card.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/entity/Card/CardImpl/BaseCard.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/entity/Card/CardImpl/BaseCard.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/service/battleservice/cardlist.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/service/battleservice/cardlist.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/application/service/battleservice/state.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/service/battleservice/state.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/presentation/handler/battlehandler/BattleDto/dto.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/presentation/handler/battlehandler/BattleDto/dto.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/开发文档/接口文档/CardCalc文档.txt" beforeDir="false" afterPath="$PROJECT_DIR$/开发文档/接口文档/CardCalc文档.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/global/setting.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/global/setting.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

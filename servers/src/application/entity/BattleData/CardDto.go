@@ -10,4 +10,5 @@ type CardDto struct {
 	Damage      float64   `json:"damage"`
 	BuffDtoList []BuffDto `json:"buff_list"`
 	TempId      int       `json:"temp_id"`
+	Form        Form      `json:"form"`
 }

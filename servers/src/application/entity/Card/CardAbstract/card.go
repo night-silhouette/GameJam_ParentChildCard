@@ -31,6 +31,8 @@ type Card interface {
 	InitControlSignalMap()
 	AddBuff(buff *protocol.Buff, pc protocol.ProtocolCardWithCtx)
 	BuffRoundEnd(pc protocol.ProtocolCardWithCtx)
+	GetForm() BattleData.Form
+	SetForm(BattleData.Form)
 }
 
 func GetCardDto(c Card) BattleData.CardDto {
@@ -44,5 +46,6 @@ func GetCardDto(c Card) BattleData.CardDto {
 		BuffDtoList = append(BuffDtoList, buff.GetBuffDto())
 	}
 	res.BuffDtoList = BuffDtoList
+	res.Form = c.GetForm()
 	return res
 }

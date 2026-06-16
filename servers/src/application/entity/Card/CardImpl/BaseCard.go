@@ -2,6 +2,7 @@ package CardImpl
 
 import (
 	_ "embed"
+	"pcc_card/application/entity/BattleData"
 	"pcc_card/application/entity/CardMeta"
 	"pcc_card/application/entity/protocol"
 )
@@ -19,6 +20,7 @@ type BaseCard struct {
 	BuffList         []*protocol.Buff
 	Dec              *CardMeta.Decorator
 	ControlSignalMap map[string]CardMeta.ControlSignal
+	Form             BattleData.Form
 }
 
 func (c *BaseCard) SetBtCtx(btCtx protocol.ProtocolCardWithCtx) {
@@ -158,4 +160,11 @@ func (c *BaseCard) BuffRoundEnd(pc protocol.ProtocolCardWithCtx) {
 			}
 		} //buff结束了,执行buff结束函数
 	}
+}
+func (c *BaseCard) GetForm() BattleData.Form {
+	return c.Form
+}
+
+func (c *BaseCard) SetForm(form BattleData.Form) {
+	c.Form = form
 }

@@ -2,6 +2,7 @@ package battleservice
 
 import (
 	"context"
+	"pcc_card/application/entity/BattleData"
 	"pcc_card/application/entity/Card/CardAbstract"
 	"pcc_card/application/entity/Card/CardImpl"
 	"pcc_card/application/entity/CardMeta"
@@ -64,7 +65,7 @@ func (Cd *CardList) getCardImpl(CardId int) CardAbstract.Card {
 
 	e.SetDec(CardMeta.NewDecorator())
 	e.InitControlSignalMap() //------------------有新的初始化,就来这里------------------
-
+	e.SetForm(BattleData.NormalForm)
 	return e
 }
 

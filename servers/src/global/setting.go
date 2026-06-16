@@ -24,6 +24,6 @@ const (
 	ActiveChildCardTime = 2   //s
 	SelectCharacterTime = 2   //s
 	SelectSkillCardTime = 2   //s
-	JudgeWaitTime       = 10  //s
+	JudgeWaitTime       = 3   //s
 	CombatWaitTime      = 100 //s
 )
