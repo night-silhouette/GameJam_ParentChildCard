@@ -13,16 +13,17 @@ type CharacterBaseCard struct {
 	Card CardAbstract.Card
 }
 
-func (c *CharacterBaseCard) Attack(TargetId int) {
+func (c *CharacterBaseCard) Attack(TargetId int) bool {
 	offset := int(c.GetInfo()["skillCharge"].(float64))
 	if !c.BtCtx.ProtoColCanUpdateEnergy(c.OwnerId, -offset) {
-		return
+		return false
 	}
 
 	c.Notify(BattleData.AnAttack, -1, c.GetTempId(), TargetId)
 
 	c.EffectAttack(TargetId, c.AtkNow, BattleData.Damage)
-	c.EffectUpdateEnergy(-offset)
+	c.EffectUpdateEnergy(-offset) //反向压入,先扣能量,再伤害
+	return true
 }
 
 func (c *CharacterBaseCard) Hurt(AttackId int, HurtHp float64, category BattleData.ValueChange) {

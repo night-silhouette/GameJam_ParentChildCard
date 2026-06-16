@@ -3,6 +3,7 @@ package protocol
 import (
 	"pcc_card/application/entity/BattleData"
 	"pcc_card/application/entity/CardMeta"
+	"pcc_card/presentation/handler/battlehandler/BattleDto"
 	"time"
 )
 
@@ -178,6 +179,12 @@ type GiveBuff struct {
 
 func (G *GiveBuff) Execute(pc ProtocolCardWithCtx) {
 	pc.GiveBuff(*G.TempId, &G.Buff)
+	for _, UserId := range pc.GetIds() { //做buff改动的通知
+		pc.ProtoSendAction(UserId, BattleDto.NewAction(BattleDto.BuffChange, BattleDto.Result, map[string]any{
+			"data_all": pc.GetDataAll(UserId),
+		}))
+	}
+
 }
 
 func NewGiveBuff(TempId *int, Buff Buff) *GiveBuff {

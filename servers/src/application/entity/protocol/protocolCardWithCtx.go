@@ -2,6 +2,7 @@ package protocol
 
 import (
 	"pcc_card/application/entity/BattleData"
+	"pcc_card/presentation/handler/battlehandler/BattleDto"
 	"time"
 )
 
@@ -31,4 +32,8 @@ type ProtocolCardWithCtx interface {
 	ProtoColAttackNoHurt(CardTempId int, Value int, Category BattleData.ValueChange) //无主攻击
 	ProtoColSetMaxHp(TargetTempId int, MaxHp float64)                                //设置最大生命
 	GetIds() []int                                                                   //获取用户id数组
+	GetWinnerIsAction() bool                                                         //给那个执悖天气用的
+	GetWinnerId() int
+	ProtoSendAction(UserId int, action BattleDto.Action)
+	GetDataAll(UseId int) *BattleData.DataAll
 }

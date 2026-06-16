@@ -121,4 +121,5 @@ type BuffNeed interface {
 	SetDec(Dec *CardMeta.Decorator)
 	GetDec() *CardMeta.Decorator
 	GetTempId() int
+	GetOwnerId() int
 }

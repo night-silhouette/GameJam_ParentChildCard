@@ -34,9 +34,9 @@ const (
 	GetChildCardList
 	ActiveChildCard
 	GetWeather
-	CatchChild //-----------------------------------
+	ChildBelongChange //-----------------------------------
 	GetUserId
-	CardMove        //-----------------------------------
+	PositionChange  //-----------------------------------
 	AnimationNotify //-----------------------------------
 	HpChange        //-----------------------------------
 	Ping
@@ -69,10 +69,10 @@ var ActionName = map[ActionCode]string{
 	GetChildCardList:      "查看子牌堆",
 	ActiveChildCard:       "子牌激活选择",
 	GetWeather:            "获取天气",
-	CatchChild:            "捕获子牌",
-	CardMove:              "结算卡牌移动通知",
+	ChildBelongChange:     "捕获子牌",
+	PositionChange:        "结算卡牌移动通知",
 	AnimationNotify:       "行为动画通知",
-	HpChange:              "数值变化通知",
+	HpChange:              "hp变化通知",
 	Ping:                  "ping",
 	ReConnect:             "断线重连",
 	WeatherNotify:         "天气结算通知",

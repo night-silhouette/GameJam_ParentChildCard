@@ -111,8 +111,8 @@ func (c *Ctx) ChildCatch(card CardAbstract.ChildCard, UserId int) {
 			Object:  UserId,
 			DataAll: c.GetDataAll(OpponentId),
 		}
-		c.StateMachine.SendActionById(UserId, BattleDto.NewAction(BattleDto.CatchChild, BattleDto.Result, DtoSelf))
-		c.StateMachine.SendActionById(OpponentId, BattleDto.NewAction(BattleDto.CatchChild, BattleDto.Result, DtoOp))
+		c.StateMachine.SendActionById(UserId, BattleDto.NewAction(BattleDto.ChildBelongChange, BattleDto.Result, DtoSelf))
+		c.StateMachine.SendActionById(OpponentId, BattleDto.NewAction(BattleDto.ChildBelongChange, BattleDto.Result, DtoOp))
 	}
 	if card.GetInfo()["ChildState"] == BattleData.Active {
 		playerData.CardInHand[card.GetTempId()] = card     //底层数据改牌
@@ -564,6 +564,10 @@ func (c *Ctx) ProtoColCanUpdateEnergy(UserId int, offset int) bool {
 	return playData.isCanUpdateEnergy(offset)
 }
 
+func (c *Ctx) ProtoSendAction(UserId int, action BattleDto.Action) {
+	c.StateMachine.SendActionById(UserId, action)
+}
+
 func (c *Ctx) ProtoColSetDamageCardBt(UserId int, TargetTempId int, NewDamage float64) {
 	var card CardAbstract.Character
 	var ok bool
@@ -595,12 +599,12 @@ func (c *Ctx) ProtoNotifyValue(Category BattleData.ValueChange, Value float64, T
 }
 
 func (c *Ctx) ProtoNotifyCardMove(Object BattleData.Where, TempId int) {
-	c.StateMachine.SendActionById(c.StateMachine.Id1, BattleDto.NewAction(BattleDto.CardMove, BattleDto.Result, BattleData.CardCalcCardMoveDto{
+	c.StateMachine.SendActionById(c.StateMachine.Id1, BattleDto.NewAction(BattleDto.PositionChange, BattleDto.Result, BattleData.CardCalcCardMoveDto{
 		Object:  Object,
 		TempId:  TempId,
 		DataAll: c.GetDataAll(c.StateMachine.Id1),
 	}))
-	c.StateMachine.SendActionById(c.StateMachine.Id2, BattleDto.NewAction(BattleDto.CardMove, BattleDto.Result, BattleData.CardCalcCardMoveDto{
+	c.StateMachine.SendActionById(c.StateMachine.Id2, BattleDto.NewAction(BattleDto.PositionChange, BattleDto.Result, BattleData.CardCalcCardMoveDto{
 		Object:  Object,
 		TempId:  TempId,
 		DataAll: c.GetDataAll(c.StateMachine.Id2),
@@ -956,6 +960,13 @@ func (c *Ctx) GetIds() []int {
 	res = append(res, c.StateMachine.Id1)
 	res = append(res, c.StateMachine.Id2)
 	return res
+}
+
+func (c *Ctx) GetWinnerIsAction() bool {
+	return c.StateMachine.WinnerIsAction.Load()
+}
+func (c *Ctx) GetWinnerId() int {
+	return c.StateMachine.Winner
 }
 
 //endregion

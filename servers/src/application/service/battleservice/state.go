@@ -173,7 +173,8 @@ type StateMachine struct {
 
 	LoseMarkMap map[int]int //UserId:num
 
-	WeatherLasting int //天气持续时间
+	WeatherLasting int         //天气持续时间
+	WinnerIsAction atomic.Bool //赢的人是否行动
 }
 
 func NewStateMachine(c *Ctx, id1 int, id2 int, Nt *NotifyManager, ParentNodeCtx context.Context, GoldMoreUserId int) *StateMachine {
@@ -197,6 +198,7 @@ func NewStateMachine(c *Ctx, id1 int, id2 int, Nt *NotifyManager, ParentNodeCtx 
 	StateMachineImpl.RoundNum.Store(int32(0))
 	StateMachineImpl.RegisterState()
 	StateMachineImpl.WeatherLasting = 0
+	StateMachineImpl.WinnerIsAction.Store(false)
 	for _, element := range StateMachineImpl.StateList {
 		element.Init(id1, id2, c, Nt, StateMachineImpl, element)
 	}
@@ -1291,15 +1293,18 @@ func (s *CardCalc) Switch(_data BattleData.CombatDto, UserId int) bool {
 	return false
 }
 
-func (s *CardCalc) CalcNotSwitch(data BattleData.CombatDto, UserId int) {
+// 返回值是,是否使用技能或者攻击
+func (s *CardCalc) CalcNotSwitch(data BattleData.CombatDto, UserId int) bool {
 	opponentCardId := s.c.GetCardBt(UserId, data.OpponentWhere).GetTempId()
+	res := false
 	if data.Behavior == BattleData.Attack { //执行前端传过来的行为
-		s.c.GetCardBt(UserId, data.SelfWhere).(CardAbstract.Character).Attack(opponentCardId)
+		res = s.c.GetCardBt(UserId, data.SelfWhere).(CardAbstract.Character).Attack(opponentCardId)
 	} else if data.Behavior == BattleData.Skill {
-		s.c.GetCardBt(UserId, data.SelfWhere).(CardAbstract.Character).Skill(opponentCardId)
+		res = s.c.GetCardBt(UserId, data.SelfWhere).(CardAbstract.Character).Skill(opponentCardId)
 	}
 
 	s.c.StackSettle() //执行效果堆栈
+	return res
 }
 
 // SkillCalc 双方的法术牌结算都在这了//有执行
@@ -1330,10 +1335,12 @@ CalcLoop:
 			if s.SM.LoseMarkMap[s.SM.Loser] >= 2 { //输两次了,有免伤
 				for _, card := range LoserBtCardList {
 					for range s.SM.LoseMarkMap[s.SM.Loser] - 1 {
-						card.AddBuff(protocol.NewBuffBase(protocol.DamageImmunity, 1, 0.28, s.c.CreateTempId()), s.c)
+						TempId := card.GetTempId()
+						s.c.ProtoColPush(protocol.NewGiveBuff(&TempId, *protocol.NewBuffBase(protocol.DamageImmunity, 1, 0.28, s.c.CreateTempId())))
 					}
 				}
 			}
+			s.c.StackSettle()
 			//-------------给连续输的人增加免伤-------------
 
 			//回合开始结算天气//通知在里面了
@@ -1373,21 +1380,29 @@ CalcLoop:
 			s.SM.SendActionById(s.SM.Id2, BattleDto.NewAction(BattleDto.DeployCard, BattleDto.Notify, transformToSelfAndOpponent[BattleData.SelectCard, []BattleData.SelectCard](SwitchCardMap, s.SM.Id2)))
 			s.SM.SendActionById(s.SM.Id1, BattleDto.NewAction(BattleDto.DeployCard, BattleDto.Notify, transformToSelfAndOpponent[BattleData.SelectCard, []BattleData.SelectCard](SwitchCardMap, s.SM.Id1)))
 
-			//结算攻击或者技能
-			Calc := func(User string, UserId int) {
+			//-----------结算攻击或者技能-----------------
+
+			//输出值是是否使用过攻击和技能
+			Calc := func(User string, UserId int) bool {
 				DtoList := data[User]
+				res := false
 				for _, Dto := range DtoList {
 					if Dto.Behavior == BattleData.SwitchCard {
 						s.SM.SendActionById(UserId, BattleDto.NewErrAction(global.BattleCantSwitch))
 						continue
 					}
-					s.CalcNotSwitch(Dto, UserId)
+					if s.CalcNotSwitch(Dto, UserId) {
+						res = true
+					}
 				}
+				return res
 			}
-			Calc("Winner", s.SM.Winner)
+			WinnerIsAction := Calc("Winner", s.SM.Winner) //获取赢的人是否使用过攻击和技能
+			s.SM.WinnerIsAction.Store(WinnerIsAction)
 			s.c.ChildCardCheck()
 			Calc("Loser", s.SM.Loser)
 			s.c.ChildCardCheck()
+			//-----------结算攻击或者技能-----------------
 
 			//结算法术(s.c.ChildCardCheck()在里面了)
 
@@ -1439,6 +1454,7 @@ func (s *CardCalc) ExecWeather() {
 func (s *CardCalc) exit() {
 	s.HaveDone.Store(false)
 	s.SM.ReduceWeatherLasting()
+	s.SM.WinnerIsAction.Store(false)
 }
 
 func (s *CardCalc) process(GoCtx context.Context) {

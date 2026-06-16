@@ -25,7 +25,7 @@ var WeatherFuncMap map[Weather]func(pc ProtocolCardWithCtx, card []BuffNeed) //�
 func InitWeatherFuncMap() {
 	WeatherFuncMap = make(map[Weather]func(pc ProtocolCardWithCtx, card []BuffNeed), WeatherCanSelectNum+1)
 	WeatherFuncMap[Ningjing] = func(pc ProtocolCardWithCtx, card []BuffNeed) {} //无效果
-	WeatherFuncMap[Shabao] = func(pc ProtocolCardWithCtx, card []BuffNeed) { //所有人收到一点真伤
+	WeatherFuncMap[Shabao] = func(pc ProtocolCardWithCtx, card []BuffNeed) {    //所有人收到一点真伤
 
 		for _, c := range card {
 			pc.ProtoColPush(NewCustom(func(pc ProtocolCardWithCtx) {
@@ -60,7 +60,17 @@ func InitWeatherFuncMap() {
 		}
 	}
 	WeatherFuncMap[Zhipou] = func(pc ProtocolCardWithCtx, card []BuffNeed) {
+		if !pc.GetWinnerIsAction() {
+			for _, c := range card {
+				if c.GetOwnerId() != pc.GetWinnerId() { //跳掉输的人的牌
+					continue
+				}
 
+				pc.ProtoColPush(NewCustom(func(pc ProtocolCardWithCtx) {
+					pc.ProtoColAttackNoHurt(c.GetTempId(), 2, BattleData.Damage)
+				}))
+			}
+		}
 	}
 	WeatherFuncMap[Shuangjiang] = func(pc ProtocolCardWithCtx, card []BuffNeed) {
 		for _, c := range card {
@@ -75,7 +85,7 @@ func InitWeatherFuncMap() {
 		}
 	}
 	WeatherFuncMap[Fengdu] = func(pc ProtocolCardWithCtx, card []BuffNeed) {
-		
+
 	}
 }
 
