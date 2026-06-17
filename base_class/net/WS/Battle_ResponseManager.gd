@@ -49,9 +49,8 @@ func _dispatch(action_code: int, action_data: Variant, predicate: int):
 		NetDef.Action.DEPLOY_CARD:
 			if predicate == NetDef.Predicate.NOTIFY:
 				if action_data is Dictionary:
-					var card_id = action_data.get("card_id", "")
-					var pos = action_data.get("position", Vector2.ZERO)
-					SignalBus.enemy_card_deployed.emit(card_id, pos)
+					var action = SignalBus.enemy_card_deployed.emit.bind(action_data)
+					
 			if predicate == NetDef.Predicate.QUERY:
 				var t = action_data.state_wait_time;
 				var where = int(action_data.where);
@@ -138,23 +137,69 @@ func _dispatch(action_code: int, action_data: Variant, predicate: int):
 					SignalBus.discard_list_updated.emit(action_data)
 				else:
 					push_error("GET_DISCARD 返回格式错误，期望 Array")
+					
+		NetDef.Action.GetWeather:
+			if predicate == NetDef.Predicate.RESULT:
+				SignalBus.weather_update.emit(int(action_data))
 		
 		# 新增：卡牌结算
 		NetDef.Action.CardCalc:
 			if predicate == NetDef.Predicate.FINISH:
 				SignalBus.card_calc_finish.emit()
-		
+			if predicate == NetDef.Predicate.NOTIFY:
+				SignalBus.card_calc_start.emit()
+				
 		# 新增：中断选牌
 		NetDef.Action.Interrupt:
 			if predicate == NetDef.Predicate.NOTIFY:
-				SignalBus.interrupt_start.emit(action_data)
+				var action = SignalBus.interrupt_start.emit.bind()
+				Global.cardcalc_animaiton_list.push_back(action)
 			if predicate == NetDef.Predicate.SUCCEED:
 				SignalBus.interrupt_succeed.emit()
 				
-		NetDef.Action.GetWeather:
-			if predicate == NetDef.Predicate.RESULT:
-				SignalBus.weather_update.emit(int(action_data))
-		
+		NetDef.Action.SkillCardNotify:
+			var action = SignalBus.skill_card_notify.emit.bind()
+			Global.cardcalc_animaiton_list.push_back(action)
+		NetDef.Action.WeatherNotify:
+			var action = SignalBus.weather_notify.emit.bind()
+			Global.cardcalc_animaiton_list.push_back(action)
+		NetDef.Action.BuffCalcNotify:
+			var action = SignalBus.buff_notify.emit.bind()
+			Global.cardcalc_animaiton_list.push_back(action)
+		NetDef.Action.AnimationNotify:
+			var caller = action_data.get("caller")
+			var acceptor = action_data.get("acceptor") #都是tempid
+			var behavior = action_data.get("animation_behavior")
+			var action = SignalBus.action_card_notify.emit.bind(caller,acceptor,behavior)
+			Global.cardcalc_animaiton_list.push_back(action)
+		NetDef.Action.ChildBelongChange:
+			var origin = action_data.get("origin") ##来源，三种来源，子牌堆，我方手牌，敌方手牌的枚举
+			var object = action_data.get("object")
+			var action = SignalBus.child_belong_change.emit.bind(origin,object)
+			Global.cardcalc_animaiton_list.push_back(action)
+			_add_refresh(action_data)
+		NetDef.Action.PositionChange:
+			var object = action_data.get("object") #where
+			var temp_id = int(action_data.get("temp_id"))
+			var action = SignalBus.card_pos_change.emit.bind(object,temp_id)
+			Global.cardcalc_animaiton_list.push_back(action)
+			_add_refresh(action_data)
+		NetDef.Action.HpChange:
+			var temp_id = int(action_data.get("temp_id"))
+			var category = int(action_data.get("category"))#HP_category
+			var value = int(action_data.get("value"))
+			var action = SignalBus.hp_change.emit.bind(temp_id,category,value)
+			Global.cardcalc_animaiton_list.push_back(action)
+			_add_refresh(action_data)
+			
+		NetDef.Action.BUffChange:
+			_add_refresh(action_data)
+			
 		_:
 			# 未处理的 action
 			push_warning("New", NetDef.get_action_name(action_code),action_data,predicate)
+
+func _add_refresh(action_data):
+	var data_all = action_data.get("data_all")
+	var action = SignalBus.refresh_all.emit.bind(data_all)
+	Global.cardcalc_animaiton_list.push_back(action)

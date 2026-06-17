@@ -105,6 +105,8 @@ signal bt_selfinfo_updated(cards)
 signal bt_oppinfo_updated(cards)
 signal energy_updated(energy_list)
 signal weather_update(weather_num)
+signal get_user_id(self_id:int,oppent:int)
+signal get_round_num()
 
 # 子卡牌
 signal child_card_list_updated(child_cards)
@@ -118,9 +120,22 @@ signal select_weather_start(t, weather_list)
 signal select_weather_succeed(weather_data)
 
 # 卡牌结算
+
+signal card_calc_start 
+
+signal skill_card_notify()
+signal weather_notify
+signal buff_notify
+signal action_card_notify(caller,acceptor,behavior)
+signal deploy_card_notify()
+
+signal child_belong_change(origin,object)
+signal card_pos_change()
+signal hp_change()
+signal buff_change()
+signal refresh_all(All_data)
 signal card_calc_finish
-signal card_calc_switch_card(self_cards, opponent_cards)
-signal card_calc_animation(animation_data)
+
 signal interrupt_start(interrupt_data)
 signal interrupt_succeed
 signal combat_action_success
@@ -173,7 +188,6 @@ signal request_debug_time
 signal request_debug_matchpool
 
 #endregion
-
 
 #region card
 signal enter_freecard(temp_id,zone)

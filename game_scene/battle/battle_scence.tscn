@@ -1,4 +1,4 @@
-[gd_scene load_steps=30 format=3 uid="uid://c85a1ra55sbk0"]
+[gd_scene load_steps=31 format=3 uid="uid://c85a1ra55sbk0"]
 
 [ext_resource type="Script" uid="uid://dw1q80ff6ue4v" path="res://game_scene/battle/battle_scence.gd" id="1_51ed8"]
 [ext_resource type="Texture2D" uid="uid://dng874p0igvq" path="res://素材/使用素材/转换.png" id="1_chjg7"]
@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://lr0vlyrlvftn" path="res://game_scene/battle/进度条.tscn" id="4_330rk"]
 [ext_resource type="Script" uid="uid://ctldl5kprxqch" path="res://game_ui/battle/object_pool.gd" id="4_cqcp3"]
 [ext_resource type="PackedScene" uid="uid://ccxtlwqyr1co8" path="res://game_scene/battle/敌方牌库.tscn" id="4_f0my5"]
+[ext_resource type="Script" uid="uid://g0u1xwtyikam" path="res://game_scene/battle/ani_state_machine.gd" id="7_uxigx"]
 [ext_resource type="PackedScene" uid="uid://bdiipd0anxspc" path="res://game_scene/battle/judge.tscn" id="9_kfivi"]
 [ext_resource type="Script" uid="uid://cy15d728nlkst" path="res://base_class/manage/data_manager_BT.gd" id="9_oo4tg"]
 [ext_resource type="Script" uid="uid://nh4u5p1dmxgy" path="res://game_scene/battle/万能按钮.gd" id="10_qjvm6"]
@@ -113,6 +114,9 @@ choose_child_card = NodePath("../../卡牌显示/选择子牌")
 weather = NodePath("../../卡牌显示/weather")
 desk_ui = NodePath("../../卡牌显示/桌面")
 state_name = NodePath("../../信息显示/状态栏")
+
+[node name="calc_state_machine" type="Node" parent="数据层"]
+script = ExtResource("7_uxigx")
 
 [node name="debug" type="Control" parent="."]
 visible = false
