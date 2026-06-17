@@ -45,6 +45,7 @@ const (
 	BuffCalcNotify //-------------------------
 	GetRoundNum
 	BuffChange
+	FormChange
 )
 
 var ActionName = map[ActionCode]string{
@@ -81,6 +82,7 @@ var ActionName = map[ActionCode]string{
 	GetUserId:             "获取双方id",
 	GetRoundNum:           "获取回合数",
 	BuffChange:            "buff发生改变",
+	FormChange:            "形态变化",
 }
 
 type Predicates int

@@ -25,7 +25,7 @@ var WeatherFuncMap map[Weather]func(pc ProtocolCardWithCtx, card []BuffNeed) //�
 func InitWeatherFuncMap() {
 	WeatherFuncMap = make(map[Weather]func(pc ProtocolCardWithCtx, card []BuffNeed), WeatherCanSelectNum+1)
 	WeatherFuncMap[Ningjing] = func(pc ProtocolCardWithCtx, card []BuffNeed) {} //无效果
-	WeatherFuncMap[Shabao] = func(pc ProtocolCardWithCtx, card []BuffNeed) {    //所有人收到一点真伤
+	WeatherFuncMap[Shabao] = func(pc ProtocolCardWithCtx, card []BuffNeed) { //所有人收到一点真伤
 
 		for _, c := range card {
 			pc.ProtoColPush(NewCustom(func(pc ProtocolCardWithCtx) {

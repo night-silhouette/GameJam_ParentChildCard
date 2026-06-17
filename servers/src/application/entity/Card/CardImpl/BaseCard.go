@@ -21,6 +21,14 @@ type BaseCard struct {
 	Dec              *CardMeta.Decorator
 	ControlSignalMap map[string]CardMeta.ControlSignal
 	Form             BattleData.Form
+	ChangeFormList   []BattleData.Form //变形目标的数组
+}
+
+func (c *BaseCard) InitChangeFormList() {
+	c.ChangeFormList = make([]BattleData.Form, 0)
+}
+func (c *BaseCard) GetChangeFormList() *[]BattleData.Form {
+	return &c.ChangeFormList
 }
 
 func (c *BaseCard) SetBtCtx(btCtx protocol.ProtocolCardWithCtx) {
@@ -167,4 +175,8 @@ func (c *BaseCard) GetForm() BattleData.Form {
 
 func (c *BaseCard) SetForm(form BattleData.Form) {
 	c.Form = form
+}
+
+func (c *BaseCard) AddForm(form BattleData.Form) {
+	c.ChangeFormList = append(c.ChangeFormList, form)
 }

@@ -744,11 +744,10 @@ type SelectWeatherDto struct {
 	Weather protocol.Weather `json:"weather" mapstructure:"weather"`
 }
 
-// Change !!天气变化主函数
-func (s *SelectWeather) Change(w protocol.Weather) {
-
-	s.SM.WeatherLasting = 6
-	s.c.Weather.Store(int64(w))
+// ChangeWeather !!天气变化主函数
+func ChangeWeather(w protocol.Weather, SM *StateMachine) {
+	SM.WeatherLasting = 6
+	SM.c.Weather.Store(int64(w))
 
 }
 
@@ -797,7 +796,7 @@ func (s *SelectWeather) process(GoCtx context.Context) {
 			s.SM.SendActionById(id, BattleDto.NewAction(BattleDto.SelectWeather, BattleDto.Succeed, data))
 			s.SM.SendActionById(s.c.GetOpponentId(id), BattleDto.NewAction(BattleDto.SelectWeather, BattleDto.Succeed, data))
 			s.CrashChan <- struct{}{}
-			s.Change(protocol.Weather(res)) //改res
+			ChangeWeather(protocol.Weather(res), s.SM) //改res
 
 			go s.SM.finish("SelectSkillCard")
 		}
@@ -813,7 +812,7 @@ func (s *SelectWeather) timeEnding() {
 	res := Util.GetRandomElements[int](s.WeatherList, 1)[0]
 	s.WeatherListMutex.Unlock()
 
-	s.Change(protocol.Weather(res))
+	ChangeWeather(protocol.Weather(res), s.SM)
 	s.SM.SendActionById(s.SM.Id1, BattleDto.NewAction(BattleDto.SelectWeather, BattleDto.Succeed, SelectWeatherDto{Weather: protocol.Weather(res)}))
 	s.SM.SendActionById(s.SM.Id2, BattleDto.NewAction(BattleDto.SelectWeather, BattleDto.Succeed, SelectWeatherDto{Weather: protocol.Weather(res)}))
 	go s.SM.finish("SelectSkillCard")
