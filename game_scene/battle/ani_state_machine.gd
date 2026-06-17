@@ -12,13 +12,13 @@ const HP_category = {
 
 # 动画状态枚举
 enum CalcState {
-	DEAD,
-	READ,
+	IDLE,
+	READ,##读取list，pop弹出，read到没有自动变成idle
 	
 }
 
 # 状态变量（带 setter）
-var current_state: CalcState = CalcState.DEAD:
+var current_state: CalcState = CalcState.IDLE:
 	set(value):
 		_exit_state(current_state)
 		current_state = value

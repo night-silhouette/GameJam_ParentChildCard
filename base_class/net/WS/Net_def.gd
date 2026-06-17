@@ -43,7 +43,7 @@ enum Action {
 	WeatherNotify = 29, 
 	BuffCalcNotify  = 30,
 	GetRoundNum =  31,
-	BUffChange = 32,       
+	BuffChange = 32,       
 }
 
 const ACTION_NAME = {

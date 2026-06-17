@@ -151,9 +151,17 @@ func _dispatch(action_code: int, action_data: Variant, predicate: int):
 				
 		# 新增：中断选牌
 		NetDef.Action.Interrupt:
-			if predicate == NetDef.Predicate.NOTIFY:
-				var action = SignalBus.interrupt_start.emit.bind()
+			if predicate == NetDef.Predicate.QUERY:
+				var t = action_data.get("state_wait_time")
+				var temp_id_list = action_data.get("temp_id_list")#可以选的牌
+				var select_num = action_data.get("select_num")#需要选几张
+				var action = SignalBus.interrupt_start.emit.bind(t,temp_id_list,select_num,1)
 				Global.cardcalc_animaiton_list.push_back(action)
+			if predicate == NetDef.Predicate.NOTIFY:
+				var t = action_data.get("state_wait_time")
+				var temp_id_list = action_data.get("temp_id_list")#可以选的牌
+				var select_num = action_data.get("select_num")#需要选几张
+				var action = SignalBus.interrupt_start.emit.bind(t,temp_id_list,select_num,0)				
 			if predicate == NetDef.Predicate.SUCCEED:
 				SignalBus.interrupt_succeed.emit()
 				
@@ -192,7 +200,7 @@ func _dispatch(action_code: int, action_data: Variant, predicate: int):
 			Global.cardcalc_animaiton_list.push_back(action)
 			_add_refresh(action_data)
 			
-		NetDef.Action.BUffChange:
+		NetDef.Action.BuffChange:
 			_add_refresh(action_data)
 			
 		_:

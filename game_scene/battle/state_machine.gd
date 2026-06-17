@@ -39,9 +39,9 @@ enum GameState {
 	USE_MAGIC_CARD,       # 选择技能牌阶段
 	USE_COMBAT_CARD,      # 战斗行动阶段
 	JUDGEMENT,            # 判定阶段（剪刀石头布）
-	INTERRUPT,            # 中断选牌阶段（死亡/技能触发，上牌消耗能量）
+	INTERRUPT,            # 中断选牌阶段（死亡/技能触发，上牌消耗能量）作为尾部，但是自动跳转到CARDCALC，然后进行read
 	FREE,
-	CARDCALC,
+	CARDCALC,			#确定起始和尾部，接收到尾部后进行read
 }
 const GAME_STATE_NAME = {
 	GameState.INIT_STATE:         "看牌阶段",

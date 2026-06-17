@@ -136,7 +136,7 @@ signal buff_change()
 signal refresh_all(All_data)
 signal card_calc_finish
 
-signal interrupt_start(interrupt_data)
+signal interrupt_start(t,temp_id_list,select_num,is_need)
 signal interrupt_succeed
 signal combat_action_success
 
@@ -182,7 +182,6 @@ signal request_active_child_card(temp_id_list)
 signal request_get_discard_list()
 signal request_interrupt_select(temp_id_list)
 signal request_get_weather()
-
 # 调试
 signal request_debug_time
 signal request_debug_matchpool
