@@ -2,6 +2,11 @@ package protocol
 
 import "pcc_card/application/entity/BattleData"
 
+func InitWeather() {
+	InitWeatherOnaApplyMap()
+	InitWeatherFuncMap()
+}
+
 type Weather int
 
 const (
@@ -20,12 +25,28 @@ const (
 // 每次有新天气,改一下这个值,否则不好做随机
 const WeatherCanSelectNum = 9
 
+var WeatherOnaApplyMap map[Weather]func(pc ProtocolCardWithCtx, card []BuffNeed)
+
+func InitWeatherOnaApplyMap() {
+	WeatherOnaApplyMap = make(map[Weather]func(pc ProtocolCardWithCtx, card []BuffNeed))
+	WeatherOnaApplyMap[Ningjing] = func(pc ProtocolCardWithCtx, card []BuffNeed) {}
+	WeatherOnaApplyMap[Shabao] = func(pc ProtocolCardWithCtx, card []BuffNeed) {}
+	WeatherOnaApplyMap[Ganmu] = func(pc ProtocolCardWithCtx, card []BuffNeed) {}
+	WeatherOnaApplyMap[Miwu] = func(pc ProtocolCardWithCtx, card []BuffNeed) {}
+	WeatherOnaApplyMap[Dashu] = func(pc ProtocolCardWithCtx, card []BuffNeed) {}
+	WeatherOnaApplyMap[Zhipou] = func(pc ProtocolCardWithCtx, card []BuffNeed) {}
+	WeatherOnaApplyMap[Shuangjiang] = func(pc ProtocolCardWithCtx, card []BuffNeed) {}
+	WeatherOnaApplyMap[Shutu] = func(pc ProtocolCardWithCtx, card []BuffNeed) {}
+	WeatherOnaApplyMap[Fengdu] = func(pc ProtocolCardWithCtx, card []BuffNeed) {}
+
+}
+
 var WeatherFuncMap map[Weather]func(pc ProtocolCardWithCtx, card []BuffNeed) //传入在战斗的卡的数组
 
 func InitWeatherFuncMap() {
 	WeatherFuncMap = make(map[Weather]func(pc ProtocolCardWithCtx, card []BuffNeed), WeatherCanSelectNum+1)
 	WeatherFuncMap[Ningjing] = func(pc ProtocolCardWithCtx, card []BuffNeed) {} //无效果
-	WeatherFuncMap[Shabao] = func(pc ProtocolCardWithCtx, card []BuffNeed) { //所有人收到一点真伤
+	WeatherFuncMap[Shabao] = func(pc ProtocolCardWithCtx, card []BuffNeed) {    //所有人收到一点真伤
 
 		for _, c := range card {
 			pc.ProtoColPush(NewCustom(func(pc ProtocolCardWithCtx) {

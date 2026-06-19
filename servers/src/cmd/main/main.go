@@ -35,7 +35,7 @@ func main() {
 	route.Init()
 	User_repo, user_service := user(DB, RD)
 	Battle(DB, RD, User_repo, user_service)
-	protocol.InitWeatherFuncMap()
+	protocol.InitWeather()
 	protocol.InitBuff()
 	fmt.Println("这是新版本hahaha")
 

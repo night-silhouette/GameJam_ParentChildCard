@@ -48,7 +48,7 @@ func (s *StateMachine) RegisterState() {
 func (s *StateMachine) ReduceWeatherLasting() {
 	res := s.WeatherLasting - 1
 	if res == 0 {
-		s.c.Weather.Store(int64(protocol.Ningjing))
+		ChangeWeather(protocol.Ningjing, s)
 	}
 	if res < 0 {
 		res = 0
@@ -749,6 +749,13 @@ func ChangeWeather(w protocol.Weather, SM *StateMachine) {
 	SM.WeatherLasting = 6
 	SM.c.Weather.Store(int64(w))
 
+	//执行天气部署函数
+	cardBts := SM.c.GetBtAll(-1)
+	buffNeeds := make([]protocol.BuffNeed, len(cardBts)) //转化数组类型,数组没法隐式转化的
+	for i, card := range cardBts {
+		buffNeeds[i] = card
+	}
+	protocol.WeatherOnaApplyMap[protocol.Weather(SM.c.Weather.Load())](SM.c, buffNeeds) //执行天气部署函数
 }
 
 // ToSelect 随机出3个天气,加上宁静
