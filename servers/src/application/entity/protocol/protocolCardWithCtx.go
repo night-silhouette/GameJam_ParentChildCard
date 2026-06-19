@@ -35,5 +35,6 @@ type ProtocolCardWithCtx interface {
 	GetWinnerIsAction() bool                                                         //给那个执悖天气用的
 	GetWinnerId() int
 	ProtoSendAction(UserId int, action BattleDto.Action)
+	GetWeather() Weather
 	GetDataAll(UseId int) *BattleData.DataAll
 }

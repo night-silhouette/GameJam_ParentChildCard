@@ -444,6 +444,9 @@ func (c *Ctx) ProtoColAttackNoHurt(CardTempId int, Value int, Category BattleDat
 	c.ProtoColReduceCardBtHp(-1, CardTempId, float64(FinalAtkValue))
 	c.ProtoNotifyValue(Category, float64(Value), CardTempId, IsMiss)
 }
+func (c *Ctx) GetWeather() protocol.Weather {
+	return protocol.Weather(c.Weather.Load())
+}
 
 func (c *Ctx) ProtoColInterrupt(UserId int, InterruptDto *BattleData.InterruptDto, res chan []int, InterruptWaitTime time.Duration) {
 	c.NeedInterrupt.Store(true)

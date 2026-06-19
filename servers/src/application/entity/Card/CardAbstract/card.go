@@ -33,9 +33,6 @@ type Card interface {
 	BuffRoundEnd(pc protocol.ProtocolCardWithCtx)
 	GetForm() BattleData.Form
 	SetForm(BattleData.Form)
-	InitChangeFormList()
-	GetChangeFormList() *[]BattleData.Form
-	AddForm(form BattleData.Form) //增加要变化的形态,变化一次之后,就在list里面没有了
 }
 
 func GetCardDto(c Card) BattleData.CardDto {

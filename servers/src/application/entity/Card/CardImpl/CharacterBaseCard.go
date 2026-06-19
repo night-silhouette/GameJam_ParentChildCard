@@ -6,7 +6,6 @@ import (
 	"pcc_card/application/entity/protocol"
 	"pcc_card/global"
 	"pcc_card/presentation/handler/battlehandler/BattleDto"
-	"sort"
 	"time"
 )
 
@@ -46,10 +45,11 @@ func (c *CharacterBaseCard) Skill(TargetId int) bool {
 
 func (c *CharacterBaseCard) Death(AttackId int) {
 
-	if c.ChangeForm() {
-		return //变成功,就不用死了
+	if c.BtCtx.GetWeather() == protocol.Fengdu { //如果天气是这个,就变僵尸
+		c.ChangeForm(BattleData.JiangShi)
+		return //如果变僵尸了,就不用死了
 	}
-	
+
 	c.Notify(BattleData.AnDeath, -1, AttackId, c.GetTempId())
 	CheckIsInterrupt := true //声明这个指针bool,接受等待弃牌的结果,弃牌完,如果没有出战牌的话,就要中断,默认值随便搞的
 	SelectCharacterCard := make([]int, 0)
@@ -147,34 +147,15 @@ func (c *CharacterBaseCard) ChangeMaxHp(TargetTempId int, MaxHp float64) {
 	c.BtCtx.ProtoColPush(protocol.NewChangeMaxHp(TargetTempId, MaxHp))
 }
 
-// 按照优先级排序form
-func (c *CharacterBaseCard) RankForm() {
-	listPtr := c.GetChangeFormList()
-	if listPtr == nil || len(*listPtr) == 0 {
-		return
-	}
-	list := *listPtr
-	sort.Slice(*listPtr, func(i, j int) bool {
-		return BattleData.FormValuesMap[list[i]].Priority > BattleData.FormValuesMap[list[j]].Priority
-	})
-}
-
-// 把卡设置成新的form的状态,如果没有要变的,就会直接退出(就是,list里没有form),包含通知
-func (c *CharacterBaseCard) ChangeForm() bool {
-	c.RankForm() //先排序
-	listPtr := c.GetChangeFormList()
-	if listPtr == nil || len(*listPtr) == 0 {
-		return false
-	}
-	firstForm := (*listPtr)[0]
-	*listPtr = (*listPtr)[1:] //删掉第一个数
-	v := BattleData.FormValuesMap[firstForm]
+// 把卡设置成新的form的状态,包含通知
+func (c *CharacterBaseCard) ChangeForm(Form BattleData.Form) bool {
+	v := BattleData.FormValuesMap[Form]
 	c.SetHpNow(v.Hp)
-	c.SetAtkNow(v.Damage)
+	c.SetAtkNow(v.Damage) //取出value
 
 	//-------------------通知form数值变化-------------------
 	for _, UserId := range c.BtCtx.GetIds() {
-		data := BattleData.NewFormChangeDto(firstForm, c.GetTempId(), *c.BtCtx.GetDataAll(UserId))
+		data := BattleData.NewFormChangeDto(Form, c.GetTempId(), *c.BtCtx.GetDataAll(UserId))
 		c.BtCtx.ProtoSendAction(UserId, BattleDto.NewAction(BattleDto.FormChange, BattleDto.Result, data))
 	}
 	return true
