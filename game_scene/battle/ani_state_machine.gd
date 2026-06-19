@@ -24,7 +24,6 @@ enum CalcState {
 	HP_CHANGE,
 	BUFF_CHANGE,
 	REFRESH_ALL,
-	CARD_CALC_FINISH,
 }
 
 func _ready() -> void:
@@ -38,7 +37,7 @@ func _ready() -> void:
 	SignalBus.hp_change.connect(_hp_change)
 	SignalBus.buff_change.connect(_buff_change)
 	SignalBus.refresh_all.connect(_refresh_all)
-	SignalBus.card_calc_finish.connect(_card_calc_finish)
+	SignalBus.ani_end.connect(_ani_end)
 	# 状态变量（带 setter）
 
 var current_state: CalcState = CalcState.IDLE:
@@ -76,10 +75,10 @@ func _exit_state(old_state: CalcState) -> void:
 			pass
 		CalcState.REFRESH_ALL:
 			pass
-		CalcState.CARD_CALC_FINISH:
-			pass
+
 
 func _enter_state(new_state: CalcState) -> void:
+	print("cardcalc")
 	match new_state:
 		CalcState.IDLE:
 			SignalBus.enter_free.emit()
@@ -91,26 +90,35 @@ func _enter_state(new_state: CalcState) -> void:
 				change_state(CalcState.IDLE)
 		CalcState.SKILL_CARD_NOTIFY:
 			print("进入法术实施")
+			change_state(CalcState.READ)
 		CalcState.WEATHER_NOTIFY:
 			print("进入天气通知")
+			change_state(CalcState.READ)
 		CalcState.BUFF_NOTIFY:
 			print("进入Buff通知")
+			change_state(CalcState.READ)
 		CalcState.ACTION_CARD_NOTIFY:
 			print("进入行动卡通知")
+			change_state(CalcState.READ)
 		CalcState.DEPLOY_CARD_NOTIFY:
 			print("进入部署卡通知")
+			change_state(CalcState.READ)
 		CalcState.CHILD_BELONG_CHANGE:
 			print("进入子牌归属变更")
+			change_state(CalcState.READ)
 		CalcState.CARD_POS_CHANGE:
 			print("进入卡牌位置变更")
+			change_state(CalcState.READ)
 		CalcState.HP_CHANGE:
 			print("进入HP变更")
+			change_state(CalcState.READ)
 		CalcState.BUFF_CHANGE:
 			print("进入Buff变更")
+			change_state(CalcState.READ)
 		CalcState.REFRESH_ALL:
 			print("进入全量刷新")
-		CalcState.CARD_CALC_FINISH:
-			print("进入卡牌结算完成")
+			change_state(CalcState.READ)
+
 
 func _skill_card_notify():
 	change_state(CalcState.SKILL_CARD_NOTIFY)
@@ -142,5 +150,5 @@ func _buff_change():
 func _refresh_all(All_data):
 	change_state(CalcState.REFRESH_ALL)
 
-func _card_calc_finish():
-	change_state(CalcState.CARD_CALC_FINISH)
+func _ani_end():
+	change_state(CalcState.READ)

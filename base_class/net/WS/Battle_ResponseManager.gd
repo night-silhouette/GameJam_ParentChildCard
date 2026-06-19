@@ -49,7 +49,8 @@ func _dispatch(action_code: int, action_data: Variant, predicate: int):
 		NetDef.Action.DEPLOY_CARD:
 			if predicate == NetDef.Predicate.NOTIFY:
 				if action_data is Dictionary:
-					var action = SignalBus.enemy_card_deployed.emit.bind(action_data)
+					var action = SignalBus.deploy_card_notify.emit.bind(action_data)
+					Global.cardcalc_animaiton_list.push_back(action)
 					
 			if predicate == NetDef.Predicate.QUERY:
 				var t = action_data.state_wait_time;
