@@ -66,7 +66,7 @@ func (Cd *CardList) getCardImpl(CardId int) CardAbstract.Card {
 	e.SetDec(CardMeta.NewDecorator())
 	e.InitControlSignalMap() //------------------有新的初始化,就来这里------------------
 	e.SetForm(BattleData.NormalForm)
-	e.InitChangeFormList()
+
 	return e
 }
 

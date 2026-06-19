@@ -105,13 +105,15 @@ type Interrupt struct {
 	SelectNum        int
 	Res              chan []int
 	CheckIsInterrupt *bool
+	CallTempId       int
+	InterruptType    BattleData.InterruptType
 }
 
 func (I *Interrupt) Execute(pc ProtocolCardWithCtx) {
 	if !(*I.CheckIsInterrupt) {
 		return
 	}
-	dto := BattleData.NewInterruptDto(I.Time, I.TempIdList, I.SelectNum)
+	dto := BattleData.NewInterruptDto(I.Time, I.TempIdList, I.SelectNum, I.InterruptType, I.CallTempId)
 	pc.ProtoColInterrupt(I.UserId, dto, I.Res, I.Time)
 }
 

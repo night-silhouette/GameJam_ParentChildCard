@@ -15,8 +15,13 @@ func NewCard0003() *Card0003 {
 func (c *Card0003) GetID() int {
 	return 3
 }
-
 func (c *Card0003) Clone() CardAbstract.Card {
 	newCard := *c
 	return &newCard
+}
+func (c *Card0003) Skill(TargetId int) bool {
+	if !c.CharacterBaseCard.Skill(TargetId) {
+		return false
+	}
+	return true
 }

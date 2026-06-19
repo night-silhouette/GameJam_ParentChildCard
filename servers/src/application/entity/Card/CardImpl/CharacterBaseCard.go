@@ -19,6 +19,9 @@ func (c *CharacterBaseCard) Attack(TargetId int) bool {
 	if !c.BtCtx.ProtoColCanUpdateEnergy(c.OwnerId, -offset) {
 		return false
 	}
+	if c.CheckIsHaveBuff(protocol.Binding) {
+		return false
+	}
 
 	c.Notify(BattleData.AnAttack, -1, c.GetTempId(), TargetId)
 
@@ -38,6 +41,9 @@ func (c *CharacterBaseCard) Skill(TargetId int) bool {
 	if !c.BtCtx.ProtoColCanUpdateEnergy(c.OwnerId, -offset) {
 		return false
 	}
+	if c.CheckIsHaveBuff(protocol.Binding) {
+		return false
+	}
 	c.Notify(BattleData.AnSkill, -1, c.GetTempId(), TargetId)
 	c.EffectUpdateEnergy(-offset)
 	return true
@@ -54,13 +60,14 @@ func (c *CharacterBaseCard) Death(AttackId int) {
 	CheckIsInterrupt := true //声明这个指针bool,接受等待弃牌的结果,弃牌完,如果没有出战牌的话,就要中断,默认值随便搞的
 	SelectCharacterCard := make([]int, 0)
 	c.SetCardBt(&SelectCharacterCard, &CheckIsInterrupt)
-	c.Interrupt(&SelectCharacterCard, global.SelectCharacterTime*time.Second, c.BtCtx.ProtoColGetCharacterCard(c.OwnerId), 1, &CheckIsInterrupt)
+	c.Interrupt(&SelectCharacterCard, global.Interrupt*time.Second, c.BtCtx.ProtoColGetCharacterCard(c.OwnerId), 1, &CheckIsInterrupt, BattleData.Deploy)
 	c.DisCard(&[]int{c.GetTempId()}, &CheckIsInterrupt) //反向压入
 }
 
 func (c *CharacterBaseCard) BtCry() {
 
 }
+
 func (c *CharacterBaseCard) RoundEnd() {
 
 }
@@ -87,7 +94,7 @@ func (c *CharacterBaseCard) EffectUpdateEnergy(offset int) {
 func (c *CharacterBaseCard) Notify(Beh BattleData.AnimationBehavior, UserID int, CallerId int, AcceptorId int) { //都是tempid
 	c.BtCtx.Notify(BattleData.NewAnimationDto(CallerId, AcceptorId, Beh), UserID)
 }
-func (c *CharacterBaseCard) Interrupt(res *[]int, time time.Duration, TempIdList []int, SelectNum int, CheckIsInterrupt *bool) { //res一定要塞到effect函数里处理
+func (c *CharacterBaseCard) Interrupt(res *[]int, time time.Duration, TempIdList []int, SelectNum int, CheckIsInterrupt *bool, interruptType BattleData.InterruptType) { //res一定要塞到effect函数里处理
 	resChan := make(chan []int)
 	c.BtCtx.ProtoColPush(&protocol.Interrupt{
 		UserId:           c.OwnerId,
@@ -96,6 +103,8 @@ func (c *CharacterBaseCard) Interrupt(res *[]int, time time.Duration, TempIdList
 		SelectNum:        SelectNum,
 		Res:              resChan,
 		CheckIsInterrupt: CheckIsInterrupt,
+		CallTempId:       c.TempId,
+		InterruptType:    interruptType,
 	})
 	go func() {
 		val := <-resChan
@@ -160,4 +169,14 @@ func (c *CharacterBaseCard) ChangeForm(Form BattleData.Form) bool {
 	}
 	return true
 	//-------------------通知form数值变化-------------------
+}
+
+func (c *CharacterBaseCard) CheckIsHaveBuff(BuffId protocol.BuffId) bool {
+	for _, b := range c.BuffList {
+		if b.BuffId == BuffId {
+			return true
+		}
+	}
+	return false
+
 }
