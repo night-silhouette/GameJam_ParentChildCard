@@ -100,7 +100,7 @@ state_machine = NodePath("../State_machine")
 self_energy_node = NodePath("../../卡牌显示/我方能量")
 oppent_energy_node = NodePath("../../卡牌显示/敌方能量")
 
-[node name="State_machine" type="Node" parent="数据层" node_paths=PackedStringArray("card_manager", "time", "all_block", "combat_block", "spell_block", "judge", "jugde_bt", "dis_card", "choose_child_card", "weather", "desk_ui", "state_name")]
+[node name="State_machine" type="Node" parent="数据层" node_paths=PackedStringArray("card_manager", "time", "all_block", "combat_block", "spell_block", "judge", "jugde_bt", "dis_card", "choose_child_card", "weather", "desk_ui", "state_name", "calc_state_machine")]
 script = ExtResource("11_ile2j")
 card_manager = NodePath("../card_manager")
 time = NodePath("../../信息显示/time")
@@ -114,6 +114,7 @@ choose_child_card = NodePath("../../卡牌显示/选择子牌")
 weather = NodePath("../../卡牌显示/weather")
 desk_ui = NodePath("../../卡牌显示/桌面")
 state_name = NodePath("../../信息显示/状态栏")
+calc_state_machine = NodePath("../calc_state_machine")
 
 [node name="calc_state_machine" type="Node" parent="数据层"]
 script = ExtResource("7_uxigx")
@@ -285,7 +286,6 @@ grow_vertical = 1
 scale = Vector2(0.19120544, 0.19120544)
 
 [node name="weather_name" type="Label" parent="信息显示"]
-visible = false
 layout_mode = 0
 offset_left = 264.0
 offset_top = 70.0
@@ -295,7 +295,6 @@ scale = Vector2(1.1358575, 1.1358575)
 label_settings = SubResource("LabelSettings_qxhen")
 
 [node name="状态栏" type="Label" parent="信息显示"]
-visible = false
 layout_mode = 0
 offset_left = 80.0
 offset_top = 88.000015

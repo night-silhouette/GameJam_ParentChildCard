@@ -16,6 +16,7 @@ class_name GameManager
 @export var desk_ui: Node = null
 
 @export var state_name:Label = null
+@export var calc_state_machine:Node = null
 
 
 var is_win:int ;
@@ -62,7 +63,7 @@ var current_state: GameState = GameState.INIT_STATE:
 		_enter_state(current_state)
 		state_name.text = str(GAME_STATE_NAME[current_state])
 		is_pass = 0;
-
+		
 # --- 初始化 ---
 func _ready() -> void:
 	# 所有的状态切换都由外部/全局信号触发
@@ -74,21 +75,16 @@ func _ready() -> void:
 	SignalBus.magic_card_finish.connect(_magic_card_finish)
 	SignalBus.judge_finish.connect(_judge_finish)
 	SignalBus.enter_free.connect(_enter_free)
-	
 	# [新增] 0.102 新阶段信号
 	SignalBus.active_child_card_start.connect(_on_active_child_card_start)
 	SignalBus.select_weather_start.connect(_on_select_weather_start)
 	SignalBus.card_calc_finish.connect(_on_card_calc_finish)
 	SignalBus.interrupt_start.connect(_on_interrupt_start)
-	SignalBus.interrupt_succeed.connect(_on_interrupt_succeed)
-	
-
+	SignalBus.interrupt_succeed.connect(_on_interrupt_succeed)	
 	Global.fake_death(judge)
 	Global.fake_death(jugde_bt)
 	Global.fake_death(weather)
 	Global.fake_death(choose_child_card)
-	
-	
 	_enter_state(current_state)
 	
 # --- 核心：状态切换逻辑 ---
@@ -124,8 +120,10 @@ func _exit_state(old_state: GameState) -> void:
 			spell_block.allow_input()
 		
 		GameState.INTERRUPT:
-			all_block.allow_input()
-			_interrupt_selected.clear()
+			SignalBus.request_interrupt_select.emit()##选中的逻辑之后再写
+			
+		GameState.CARDCALC:
+			SignalBus.request_end_animation.emit()
 		GameState.FREE:
 			time.visible = true
 			pass;
@@ -170,7 +168,10 @@ func _enter_state(new_state: GameState) -> void:
 			_refresh_all_battle_data()
 			Global.revive(choose_child_card)
 			_interrupt_selected.clear()
-			
+			calc_state_machine.change_state(calc_state_machine.CalcState.READ)
+		GameState.CARDCALC:
+			_refresh_all_battle_data()
+			calc_state_machine.change_state(calc_state_machine.CalcState.READ)
 		GameState.FREE:
 			time.visible = false;
 
@@ -240,7 +241,7 @@ func _enter_free():
 
 # [新增] 卡牌结算完成
 func _on_card_calc_finish() -> void:
-	pass
+	change_state(GameState.CARDCALC)
 
 # [新增] 中断选牌阶段开始
 func _on_interrupt_start(interrupt_data) -> void:
@@ -259,13 +260,12 @@ func _on_万能按钮_button_down() -> void:
 		return;
 	is_pass = 1;
 	SignalBus.enter_free.emit();
-	
-	
+		
 func _send_message():
 	var card:Array;
 	match current_state :
-
 		GameState.INIT_STATE:
+			
 			card = card_manager.get_cards_by_zone(Global.ZONE_CARD.PARENT_BATTLE_ZONE);
 			if !card.is_empty():
 				SignalBus.request_deploy_parent_card.emit(card[0].id,card[0].temp_id)
@@ -298,14 +298,13 @@ func _send_message():
 			print(card_manager.action_list)
 			print(combat_list)
 			SignalBus.request_combat_movement.emit(combat_list)
-	
-		
+			
 		GameState.JUDGEMENT:
 			if judge.index_judge == -1:
 				return;
 			jugde_bt.update_single_judge_data(0,judge.index_judge)
 			SignalBus.request_judge.emit(judge.index_judge)
-		
+			
 		GameState.INTERRUPT:
 			var selected = card_manager.get_selected_temp_ids(99)
 			if selected.is_empty():
@@ -323,9 +322,11 @@ func _send_message():
 func _deploy_magic_success():
 	if current_state == GameState.USE_MAGIC_CARD :
 		pass;
+		
 func _magic_card_finish( ):
 	if current_state == GameState.USE_MAGIC_CARD :
 		pass;
+		
 func _judge_finish(data):
 	if current_state == GameState.JUDGEMENT:
 		Global.fake_death(judge)
