@@ -182,6 +182,7 @@ func _should_override_zone(old_zone: int, new_zone: int) -> bool:
 
 #region ==================== 卡牌数据导入（原有逻辑） ====================
 
+
 ## 核心功能：通过 ID 查询本地 .tres 资源
 func querry_resoure_by_id(card_id: int) -> Resource:
 	return InventoryManager._find_card_resource_by_id(card_id)
@@ -392,7 +393,26 @@ func _on_discard_list_updated(data):
 func _on_oppent_inhand_updated(data):
 	if data is Array:
 		_update_cards(data, Global.ZONE_CARD.ENEMY_HAND_ZONE)
-
+		
+func load_all_data(data_all):
+	var bt_card_info = data_all.get("bt_card_info")
+	var self_data = bt_card_info.get("self");
+	var opp_data = bt_card_info.get("opponent");
+	_bt_selfinfo_updated(self_data);
+	_bt_oppinfo_updated(opp_data);
+	
+	var card_in_hand = data_all.get("card_in_hand")
+	_self_inhand_updated(card_in_hand)
+	
+	var energy = data_all.get("energy")
+	_on_energy_updated(energy)
+	
+	var discard_pool = data_all.get("discard_pool")
+	_on_discard_list_updated(discard_pool)
+	
+	var child_child_pool = data_all.get("child_child_pool")
+	_on_child_card_list_updated(child_child_pool)
+	
 #endregion
 
 
@@ -558,6 +578,7 @@ func clear_all_combat_dto() -> void:
 	SignalBus.request_get_self_cards_inhand.emit()
 	
 #endregion
+
 
 #region ==================== 游戏交互逻辑 ====================
 

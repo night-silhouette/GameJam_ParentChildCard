@@ -41,6 +41,7 @@ func _dispatch(action_code: int, action_data: Variant, predicate: int):
 				SignalBus.bt_selfinfo_updated.emit(self_data);
 				SignalBus.bt_oppinfo_updated.emit(opp_data);
 				
+				
 
 		NetDef.Action.START_BATTLE:
 			if predicate == NetDef.Predicate.NOTIFY:
@@ -176,28 +177,19 @@ func _dispatch(action_code: int, action_data: Variant, predicate: int):
 			var action = SignalBus.buff_notify.emit.bind()
 			Global.cardcalc_animaiton_list.push_back(action)
 		NetDef.Action.AnimationNotify:
-			var caller = action_data.get("caller")
-			var acceptor = action_data.get("acceptor") #都是tempid
-			var behavior = action_data.get("animation_behavior")
-			var action = SignalBus.action_card_notify.emit.bind(caller,acceptor,behavior)
+			var action = SignalBus.action_card_notify.emit.bind(action_data)
 			Global.cardcalc_animaiton_list.push_back(action)
 		NetDef.Action.ChildBelongChange:
-			var origin = action_data.get("origin") ##来源，三种来源，子牌堆，我方手牌，敌方手牌的枚举
-			var object = action_data.get("object")
-			var action = SignalBus.child_belong_change.emit.bind(origin,object)
+
+			var action = SignalBus.child_belong_change.emit.bind(action_data)
 			Global.cardcalc_animaiton_list.push_back(action)
 			_add_refresh(action_data)
 		NetDef.Action.PositionChange:
-			var object = action_data.get("object") #where
-			var temp_id = int(action_data.get("temp_id"))
-			var action = SignalBus.card_pos_change.emit.bind(object,temp_id)
+			var action = SignalBus.card_pos_change.emit.bind(action_data)
 			Global.cardcalc_animaiton_list.push_back(action)
 			_add_refresh(action_data)
 		NetDef.Action.HpChange:
-			var temp_id = int(action_data.get("temp_id"))
-			var category = int(action_data.get("category"))#HP_category
-			var value = int(action_data.get("value"))
-			var action = SignalBus.hp_change.emit.bind(temp_id,category,value)
+			var action = SignalBus.hp_change.emit.bind(action_data)
 			Global.cardcalc_animaiton_list.push_back(action)
 			_add_refresh(action_data)
 			

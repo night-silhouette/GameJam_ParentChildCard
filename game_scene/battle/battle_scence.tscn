@@ -312,6 +312,11 @@ offset_right = 394.0
 offset_bottom = 290.0
 scale = Vector2(0.26664147, 0.26664147)
 
+[node name="cardcalc_信息" type="Label" parent="信息显示"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 25.0
+
 [node name="弃牌按钮" parent="." node_paths=PackedStringArray("dis_card") instance=ExtResource("22_qxhen")]
 offset_left = 69.00001
 offset_top = 544.0

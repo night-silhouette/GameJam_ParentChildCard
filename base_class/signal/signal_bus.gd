@@ -126,10 +126,10 @@ signal card_calc_start
 signal skill_card_notify()
 signal weather_notify
 signal buff_notify
-signal action_card_notify(caller,acceptor,behavior)
+signal action_card_notify(action_data)
 signal deploy_card_notify()
 
-signal child_belong_change(origin,object)
+signal child_belong_change(action_data)
 signal card_pos_change()
 signal hp_change()
 signal buff_change()

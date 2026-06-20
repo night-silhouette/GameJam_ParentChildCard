@@ -1,9 +1,11 @@
 extends Node
 class_name AniStateMachine
-
+@export var card_manager : Node
+var cardcalc_data;
 # 两个空字典，后续填充动画配置
 var ani_enter_dict: Dictionary = {}
 var ani_exit_dict: Dictionary = {}
+
 const HP_category = {
 	Damage = 0,
 	Heal = 1,
@@ -46,9 +48,9 @@ var current_state: CalcState = CalcState.IDLE:
 		current_state = value
 		_enter_state(current_state)
 		
-func change_state(new_state: CalcState) -> void:
+func change_state(new_state: CalcState,action_data = null) -> void:
 	current_state = new_state
-		
+	cardcalc_data = action_data
 func _exit_state(old_state: CalcState) -> void:
 	match old_state:
 		CalcState.IDLE:
@@ -76,7 +78,6 @@ func _exit_state(old_state: CalcState) -> void:
 		CalcState.REFRESH_ALL:
 			pass
 
-
 func _enter_state(new_state: CalcState) -> void:
 	print("cardcalc")
 	match new_state:
@@ -89,36 +90,55 @@ func _enter_state(new_state: CalcState) -> void:
 			else:
 				change_state(CalcState.IDLE)
 		CalcState.SKILL_CARD_NOTIFY:
+			
 			print("进入法术实施")
 			change_state(CalcState.READ)
+			
 		CalcState.WEATHER_NOTIFY:
+			
 			print("进入天气通知")
 			change_state(CalcState.READ)
+			
 		CalcState.BUFF_NOTIFY:
+			
 			print("进入Buff通知")
 			change_state(CalcState.READ)
+			
 		CalcState.ACTION_CARD_NOTIFY:
+			
 			print("进入行动卡通知")
+			var caller = cardcalc_data.get("caller")
+			var acceptor = cardcalc_data.get("acceptor") #都是tempid
+			var behavior = cardcalc_data.get("animation_behavior")
 			change_state(CalcState.READ)
+			
 		CalcState.DEPLOY_CARD_NOTIFY:
 			print("进入部署卡通知")
 			change_state(CalcState.READ)
 		CalcState.CHILD_BELONG_CHANGE:
 			print("进入子牌归属变更")
+			var origin = cardcalc_data.get("origin") ##来源，三种来源，子牌堆，我方手牌，敌方手牌的枚举
+			var object = cardcalc_data.get("object")
 			change_state(CalcState.READ)
 		CalcState.CARD_POS_CHANGE:
 			print("进入卡牌位置变更")
+			var object = cardcalc_data.get("object") #where
+			var temp_id = int(cardcalc_data.get("temp_id"))
 			change_state(CalcState.READ)
 		CalcState.HP_CHANGE:
+			var temp_id = int(cardcalc_data.get("temp_id"))
+			var category = int(cardcalc_data.get("category"))#HP_category
+			var value = int(cardcalc_data.get("value"))
 			print("进入HP变更")
 			change_state(CalcState.READ)
 		CalcState.BUFF_CHANGE:
+
 			print("进入Buff变更")
 			change_state(CalcState.READ)
 		CalcState.REFRESH_ALL:
+			card_manager.load_load_all_data(cardcalc_data)
 			print("进入全量刷新")
 			change_state(CalcState.READ)
-
 
 func _skill_card_notify():
 	change_state(CalcState.SKILL_CARD_NOTIFY)
@@ -129,26 +149,26 @@ func _weather_notify():
 func _buff_notify():
 	change_state(CalcState.BUFF_NOTIFY)
 
-func _action_card_notify(caller, acceptor, behavior):
-	change_state(CalcState.ACTION_CARD_NOTIFY)
+func _action_card_notify(action_data):
+	change_state(CalcState.ACTION_CARD_NOTIFY,action_data)
 
 func _deploy_card_notify():
 	change_state(CalcState.DEPLOY_CARD_NOTIFY)
 
-func _child_belong_change(origin, object):
-	change_state(CalcState.CHILD_BELONG_CHANGE)
+func _child_belong_change(action_data):
+	change_state(CalcState.CHILD_BELONG_CHANGE,action_data)
 
-func _card_pos_change():
-	change_state(CalcState.CARD_POS_CHANGE)
+func _card_pos_change(action_data):
+	change_state(CalcState.CARD_POS_CHANGE,action_data)
 
-func _hp_change():
-	change_state(CalcState.HP_CHANGE)
+func _hp_change(action_data):
+	change_state(CalcState.HP_CHANGE,action_data)
 
 func _buff_change():
 	change_state(CalcState.BUFF_CHANGE)
 
 func _refresh_all(All_data):
-	change_state(CalcState.REFRESH_ALL)
+	change_state(CalcState.REFRESH_ALL,All_data)
 
 func _ani_end():
 	change_state(CalcState.READ)
