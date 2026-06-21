@@ -19,7 +19,8 @@ func (c *CharacterBaseCard) Attack(TargetId int) bool {
 	if !c.BtCtx.ProtoColCanUpdateEnergy(c.OwnerId, -offset) {
 		return false
 	}
-	if c.CheckIsHaveBuff(protocol.Binding) {
+	if c.CheckIsHaveBuff(protocol.Binding) { //能量吞掉再滚出去
+		c.EffectUpdateEnergy(-offset)
 		return false
 	}
 
@@ -42,6 +43,7 @@ func (c *CharacterBaseCard) Skill(TargetId int) bool {
 		return false
 	}
 	if c.CheckIsHaveBuff(protocol.Binding) {
+		c.EffectUpdateEnergy(-offset)
 		return false
 	}
 	c.Notify(BattleData.AnSkill, -1, c.GetTempId(), TargetId)

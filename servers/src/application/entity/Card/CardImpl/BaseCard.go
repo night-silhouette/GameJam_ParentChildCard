@@ -4,11 +4,14 @@ import (
 	"context"
 	_ "embed"
 	"pcc_card/application/entity/BattleData"
+	"pcc_card/application/entity/Card/CardAbstract"
 	"pcc_card/application/entity/CardMeta"
 	"pcc_card/application/entity/protocol"
 )
 
 type BaseCard struct {
+	self CardAbstract.Card
+
 	ID   int            `json:"id"`
 	Info map[string]any `json:"-"`
 
@@ -20,7 +23,7 @@ type BaseCard struct {
 	OwnerId              int
 	BuffList             []*protocol.Buff
 	Dec                  *CardMeta.Decorator
-	SpecialCardStateChan chan CardMeta.SpecialCardState
+	SpecialCardStateChan chan *CardMeta.BroadInfo
 	Form                 BattleData.Form
 }
 
@@ -152,28 +155,36 @@ func (c *BaseCard) SetForm(form BattleData.Form) {
 	c.Form = form
 }
 
-func (c *BaseCard) IntSpecialCardStateChan() {
-	var ch chan CardMeta.SpecialCardState
+func (c *BaseCard) IntSpecialCardStateChan(goctx context.Context) {
+	var ch chan *CardMeta.BroadInfo
+	ch = make(chan *CardMeta.BroadInfo, 4)
 	c.SpecialCardStateChan = ch
 	go func() {
 		for {
 			select {
 			case v := <-c.SpecialCardStateChan:
-				c.SpecialCardStateCallBack(v)
+				c.self.BroadCallBack(v)
+			case <-goctx.Done():
+				return
 			}
 		}
 	}()
 }
 
-func (c *BaseCard) SpecialCardStateCallBack(v CardMeta.SpecialCardState) {
+func (c *BaseCard) BroadCallBack(v *CardMeta.BroadInfo) {
 
 }
 
 // 所有的卡的一些重要的初始化在这
 func (c *BaseCard) ShareInit(goctx context.Context, ctx protocol.ProtocolCardWithCtx) {
+	c.self = c
 	c.Dec = CardMeta.NewDecorator()
 	c.BuffList = make([]*protocol.Buff, 0, 8)
 	c.SetForm(BattleData.NormalForm)
 	c.SetBtCtx(ctx)
+	go c.IntSpecialCardStateChan(goctx)
+}
 
+func (c *BaseCard) PutBroadInfo(v *CardMeta.BroadInfo) {
+	c.SpecialCardStateChan <- v
 }

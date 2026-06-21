@@ -52,9 +52,11 @@ func (A *Hurt) Execute(pc ProtocolCardWithCtx) {
 	} else if A.Category == BattleData.TrueDamage {
 		FinalAtkValue = int(A.AtkValue)
 	}
-
 	pc.ProtoColReduceCardBtHp(A.SendTempId, A.TargetTempId, float64(FinalAtkValue))
 	pc.ProtoNotifyValue(A.Category, -float64(FinalAtkValue), A.TargetTempId, IfMiss)
+	if FinalAtkValue > 0 {
+		pc.Broad(CardMeta.NewBroadInfo(CardMeta.Wound, A.SendTempId, A.TargetTempId)) //广播被击伤
+	}
 }
 
 func NewHurt(UserId int, SendTempId int, TargetTempId int, AtkValue float64, Dec *CardMeta.Decorator, Category BattleData.ValueChange) *Hurt {

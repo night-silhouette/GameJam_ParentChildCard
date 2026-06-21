@@ -5,8 +5,6 @@ import (
 	"pcc_card/application/entity/protocol"
 )
 
-
-
 type Card3006 struct {
 	BaseCard
 }

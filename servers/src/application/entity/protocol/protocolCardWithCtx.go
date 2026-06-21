@@ -2,6 +2,7 @@ package protocol
 
 import (
 	"pcc_card/application/entity/BattleData"
+	"pcc_card/application/entity/CardMeta"
 	"pcc_card/presentation/handler/battlehandler/BattleDto"
 	"time"
 )
@@ -37,4 +38,5 @@ type ProtocolCardWithCtx interface {
 	ProtoSendAction(UserId int, action BattleDto.Action)
 	GetWeather() Weather
 	GetDataAll(UseId int) *BattleData.DataAll
+	Broad(v *CardMeta.BroadInfo)
 }

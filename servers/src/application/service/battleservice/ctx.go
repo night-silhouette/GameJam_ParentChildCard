@@ -6,6 +6,7 @@ import (
 	"pcc_card/Util"
 	"pcc_card/application/entity/BattleData"
 	"pcc_card/application/entity/Card/CardAbstract"
+	"pcc_card/application/entity/CardMeta"
 	"pcc_card/application/entity/protocol"
 	"pcc_card/global"
 	"pcc_card/presentation/handler/battlehandler/BattleDto"
@@ -552,6 +553,12 @@ func (c *Ctx) ProtoColHealCardBt(TargetTempId int, HealHp float64) {
 	}
 	card.SetHpNow(NowHp + HealHp)
 }
+func (c *Ctx) Broad(v *CardMeta.BroadInfo) {
+	AllCardList := c.GetAllCard()
+	for _, card := range AllCardList {
+		card.PutBroadInfo(v)
+	}
+}
 
 func (c *Ctx) ProtoColGetCharacterCard(UserId int) []int {
 	return c.GetCharacterCardinCardInHand(UserId)
@@ -900,6 +907,37 @@ func (c *Ctx) GetDataAll(UseId int) *BattleData.DataAll {
 	return res
 }
 
+// 获取全部的卡
+func (c *Ctx) GetAllCard() []CardAbstract.Card {
+	res := make([]CardAbstract.Card, 0)
+	appendPlayer := func(p *PlayerData) {
+		if p == nil {
+			return
+		}
+		if p.ParentCardBT != nil {
+			res = append(res, p.ParentCardBT)
+		}
+		if p.ChildCardBT != nil {
+			res = append(res, p.ChildCardBT)
+		}
+		if p.SkillCardBT != nil {
+			res = append(res, p.SkillCardBT)
+		}
+	}
+	appendCardInHand := func(UserId int) {
+		player := c.PlayerDataMap[UserId]
+		for _, card := range player.CardInHand {
+			res = append(res, card)
+		}
+	}
+	appendCardInHand(c.StateMachine.Id1)
+	appendCardInHand(c.StateMachine.Id2)
+	appendPlayer(c.PlayerDataMap[c.StateMachine.Id1])
+	appendPlayer(c.PlayerDataMap[c.StateMachine.Id2])
+	return res
+}
+
+// 获取全部的角色卡
 func (c *Ctx) GetCharacter() []CardAbstract.Card {
 
 	res := make([]CardAbstract.Card, 0)
