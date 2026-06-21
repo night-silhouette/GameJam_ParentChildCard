@@ -12,15 +12,15 @@ type BaseCard struct {
 	Info          map[string]any `json:"-"`
 	StateCodeChan chan protocol.Effect
 	//动态变量
-	BtCtx            protocol.ProtocolCardWithCtx
-	HpNow            float64
-	AtkNow           float64
-	TempId           int
-	OwnerId          int
-	BuffList         []*protocol.Buff
-	Dec              *CardMeta.Decorator
-	ControlSignalMap map[string]CardMeta.ControlSignal
-	Form             BattleData.Form
+	BtCtx                protocol.ProtocolCardWithCtx
+	HpNow                float64
+	AtkNow               float64
+	TempId               int
+	OwnerId              int
+	BuffList             []*protocol.Buff
+	Dec                  *CardMeta.Decorator
+	SpecialCardStateChan chan CardMeta.SpecialCardState
+	Form                 BattleData.Form
 }
 
 func (c *BaseCard) SetBtCtx(btCtx protocol.ProtocolCardWithCtx) {
@@ -132,10 +132,6 @@ func (c *BaseCard) CalcDecByBuff(Dec CardMeta.Decorator) CardMeta.Decorator {
 	return Dec
 }
 
-func (c *BaseCard) InitControlSignalMap() {
-	c.ControlSignalMap = make(map[string]CardMeta.ControlSignal)
-}
-
 func (c *BaseCard) AddBuff(buff *protocol.Buff, pc protocol.ProtocolCardWithCtx) {
 	c.AppendBuff(buff)
 	protocol.BuffOnApplyFuncMap[buff.BuffId](pc, buff.Value, c) //执行挂载函数
@@ -167,4 +163,21 @@ func (c *BaseCard) GetForm() BattleData.Form {
 
 func (c *BaseCard) SetForm(form BattleData.Form) {
 	c.Form = form
+}
+
+func (c *BaseCard) IntSpecialCardStateChan() {
+	var ch chan CardMeta.SpecialCardState
+	c.SpecialCardStateChan = ch
+	go func() {
+		for {
+			select {
+			case v := <-c.SpecialCardStateChan:
+				c.SpecialCardStateCallBack(v)
+			}
+		}
+	}()
+}
+
+func (c *BaseCard) SpecialCardStateCallBack(v CardMeta.SpecialCardState) {
+
 }

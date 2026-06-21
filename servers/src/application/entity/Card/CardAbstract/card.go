@@ -28,11 +28,12 @@ type Card interface {
 	InitBuffList()
 	SetDec(Dec *CardMeta.Decorator)
 	GetDec() *CardMeta.Decorator
-	InitControlSignalMap()
 	AddBuff(buff *protocol.Buff, pc protocol.ProtocolCardWithCtx)
 	BuffRoundEnd(pc protocol.ProtocolCardWithCtx)
 	GetForm() BattleData.Form
 	SetForm(BattleData.Form)
+	IntSpecialCardStateChan()
+	SpecialCardStateCallBack(v CardMeta.SpecialCardState)
 }
 
 func GetCardDto(c Card) BattleData.CardDto {

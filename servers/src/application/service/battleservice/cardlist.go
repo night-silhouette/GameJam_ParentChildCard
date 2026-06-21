@@ -12,7 +12,7 @@ import (
 
 type CardList struct {
 	creators      map[int]func() CardAbstract.Card
-	cardInfoCache map[int]map[string]any // 💡 这里存的是“只读的原始配置图鉴”
+	cardInfoCache map[int]map[string]any // 这里存的是“只读的原始配置图鉴”
 	Mt            sync.Mutex
 	s             BattleService
 }
@@ -64,7 +64,7 @@ func (Cd *CardList) getCardImpl(CardId int) CardAbstract.Card {
 	}
 
 	e.SetDec(CardMeta.NewDecorator())
-	e.InitControlSignalMap() //------------------有新的初始化,就来这里------------------
+	//------------------有新的初始化,就来这里------------------
 	e.SetForm(BattleData.NormalForm)
 
 	return e
