@@ -5,7 +5,6 @@ import (
 	"math/rand/v2"
 	"pcc_card/Util"
 	"pcc_card/application/entity/BattleData"
-	"pcc_card/application/entity/Card/CardAbstract"
 	"pcc_card/global"
 	"pcc_card/infra/repo/userrepo"
 	"sync"
@@ -125,7 +124,7 @@ func (m *MatchManager) AddPool(id int, data BattleData.EnterBtData) {
 }
 
 // 这才是匹配算法的集中地,判定是否要把他抓进去
-func (m *MatchManager) TryMatch() (bool, int, int, map[int][]int, int, []CardAbstract.Card) {
+func (m *MatchManager) TryMatch() (bool, int, int, map[int][]int, int, []int) {
 	NeedNum := m.GetRequiredNum()
 	NowNum := MatchPool.GetSize()
 	if NowNum >= NeedNum {
@@ -135,7 +134,7 @@ func (m *MatchManager) TryMatch() (bool, int, int, map[int][]int, int, []CardAbs
 		return true, id1, id2, res, GoldMoreUserId, cList
 	}
 
-	return false, -1, -1, nil, -1, make([]CardAbstract.Card, 0)
+	return false, -1, -1, nil, -1, make([]int, 0)
 }
 
 func (m *MatchManager) GetRequiredNum() int {
@@ -260,11 +259,17 @@ func (m *MatchManager) IsHasID(id int) bool {
 }
 
 // 随机野生子牌堆
-func RandChildList() []CardAbstract.Card {
-	CList := CardListImpl.GetChildCard() //这个函数直接创建了实例
-	res := Util.GetRandomElements[CardAbstract.Card](CList, 10)
-
-	//fmt.Println("随机后的子牌堆:", res)
+func RandChildList() []int {
+	CList := make([]int, 0)
+	for i := range global.Lev1Category3Num {
+		Id := 2000 + i
+		CList = append(CList, Id)
+	}
+	for i := range global.Lev1Category4Num {
+		Id := 3000 + i
+		CList = append(CList, Id)
+	}
+	res := Util.GetRandomElements[int](CList, 10)
 	return res
 }
 

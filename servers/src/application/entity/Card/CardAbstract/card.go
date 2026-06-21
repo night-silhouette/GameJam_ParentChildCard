@@ -28,7 +28,7 @@ type Card interface {
 	BuffRoundEnd(pc protocol.ProtocolCardWithCtx)
 	GetForm() BattleData.Form
 	SetForm(BattleData.Form)
-	ShareInit(goctx context.Context)
+	ShareInit(goctx context.Context, ctx protocol.ProtocolCardWithCtx)
 }
 
 func GetCardDto(c Card) BattleData.CardDto {

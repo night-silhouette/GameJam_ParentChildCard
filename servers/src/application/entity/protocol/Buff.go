@@ -118,7 +118,6 @@ func InitBuffOnRemoveFuncMap() {
 //------------------buff清除的时候---------------------
 
 type BuffNeed interface {
-	SetDec(Dec *CardMeta.Decorator)
 	GetDec() *CardMeta.Decorator
 	GetTempId() int
 	GetOwnerId() int

@@ -170,9 +170,10 @@ func (c *BaseCard) SpecialCardStateCallBack(v CardMeta.SpecialCardState) {
 }
 
 // 所有的卡的一些重要的初始化在这
-func (c *BaseCard) ShareInit(goctx context.Context) {
+func (c *BaseCard) ShareInit(goctx context.Context, ctx protocol.ProtocolCardWithCtx) {
 	c.Dec = CardMeta.NewDecorator()
 	c.BuffList = make([]*protocol.Buff, 0, 8)
 	c.SetForm(BattleData.NormalForm)
+	c.SetBtCtx(ctx)
 
 }

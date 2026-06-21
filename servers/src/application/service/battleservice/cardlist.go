@@ -4,6 +4,8 @@ import (
 	"context"
 	"pcc_card/application/entity/Card/CardAbstract"
 	"pcc_card/application/entity/Card/CardImpl"
+	"pcc_card/application/entity/protocol"
+
 	"sync"
 )
 
@@ -22,14 +24,14 @@ func InitCardList(s BattleService) {
 }
 
 // 根据tempid获取卡牌对象
-func (Cd *CardList) GetCardImpl(CardId int) CardAbstract.Card {
+func (Cd *CardList) GetCardImpl(CardId int, GoCtx context.Context, ctx protocol.ProtocolCardWithCtx) CardAbstract.Card {
 	Cd.Mt.Lock()
 	defer Cd.Mt.Unlock()
-	return Cd.getCardImpl(CardId)
+	return Cd.getCardImpl(CardId, GoCtx, ctx)
 }
 
 // getCardImpl 内部核心工厂方法（绝对安全版）
-func (Cd *CardList) getCardImpl(CardId int) CardAbstract.Card {
+func (Cd *CardList) getCardImpl(CardId int, GoCtx context.Context, ctx protocol.ProtocolCardWithCtx) CardAbstract.Card {
 	creator, exists := Cd.creators[CardId]
 	if !exists {
 		return nil
@@ -57,28 +59,28 @@ func (Cd *CardList) getCardImpl(CardId int) CardAbstract.Card {
 	}
 
 	//------------------有新的初始化,就来这里------------------
-	e.ShareInit()
+	e.ShareInit(GoCtx, ctx)
 
 	return e
 }
 
 // 获得子牌数组//这个里面也是用getimpl搞出来的独立对象
-func (Cd *CardList) GetChildCard() []CardAbstract.Card {
-	Cd.Mt.Lock()
-	defer Cd.Mt.Unlock()
-
-	res := make([]CardAbstract.Card, 0)
-	for cardId, info := range Cd.cardInfoCache {
-		if info != nil {
-			if isParent, ok := info["is_parent"].(bool); ok && !isParent {
-				if newChildCard := Cd.getCardImpl(cardId); newChildCard != nil {
-					res = append(res, newChildCard)
-				}
-			}
-		}
-	}
-	return res
-}
+//func (Cd *CardList) GetChildCard() []CardAbstract.Card {
+//	Cd.Mt.Lock()
+//	defer Cd.Mt.Unlock()
+//
+//	res := make([]CardAbstract.Card, 0)
+//	for cardId, info := range Cd.cardInfoCache {
+//		if info != nil {
+//			if isParent, ok := info["is_parent"].(bool); ok && !isParent {
+//				if newChildCard := Cd.getCardImpl(cardId); newChildCard != nil {
+//					res = append(res, newChildCard)
+//				}
+//			}
+//		}
+//	}
+//	return res
+//}
 
 func (Cd *CardList) init(s BattleService) {
 	Cd.s = s
