@@ -2,11 +2,8 @@ package battleservice
 
 import (
 	"context"
-	"pcc_card/application/entity/BattleData"
 	"pcc_card/application/entity/Card/CardAbstract"
 	"pcc_card/application/entity/Card/CardImpl"
-	"pcc_card/application/entity/CardMeta"
-	"pcc_card/application/entity/protocol"
 	"sync"
 )
 
@@ -40,7 +37,6 @@ func (Cd *CardList) getCardImpl(CardId int) CardAbstract.Card {
 
 	// 1. 生产独立新卡
 	e := creator()
-	e.InitBuffList()
 
 	// 2. 🛡️ 核心防污染安全区：把缓存的只读配置 Map，【深/浅拷贝】一份给新卡牌！
 	cachedInfo := Cd.cardInfoCache[CardId]
@@ -52,9 +48,6 @@ func (Cd *CardList) getCardImpl(CardId int) CardAbstract.Card {
 	// 把拷贝出来的独立 Info 塞给新卡
 	e.SetInfo(freshInfo)
 
-	// 3. 每个人独立的 Channel
-	e.SetStateCodeChan(make(chan protocol.Effect))
-
 	// 4. 用 freshInfo 初始化数值
 	if val, ok := freshInfo["initHp"]; ok && val != nil {
 		e.SetHpNow(freshInfo["initHp"].(float64))
@@ -63,14 +56,13 @@ func (Cd *CardList) getCardImpl(CardId int) CardAbstract.Card {
 		e.SetAtkNow(freshInfo["damage"].(float64))
 	}
 
-	e.SetDec(CardMeta.NewDecorator())
 	//------------------有新的初始化,就来这里------------------
-	e.SetForm(BattleData.NormalForm)
+	e.ShareInit()
 
 	return e
 }
 
-// 获得子牌数组
+// 获得子牌数组//这个里面也是用getimpl搞出来的独立对象
 func (Cd *CardList) GetChildCard() []CardAbstract.Card {
 	Cd.Mt.Lock()
 	defer Cd.Mt.Unlock()

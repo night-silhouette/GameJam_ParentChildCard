@@ -1,6 +1,7 @@
 package CardImpl
 
 import (
+	"context"
 	_ "embed"
 	"pcc_card/application/entity/BattleData"
 	"pcc_card/application/entity/CardMeta"
@@ -8,9 +9,9 @@ import (
 )
 
 type BaseCard struct {
-	ID            int            `json:"id"`
-	Info          map[string]any `json:"-"`
-	StateCodeChan chan protocol.Effect
+	ID   int            `json:"id"`
+	Info map[string]any `json:"-"`
+
 	//动态变量
 	BtCtx                protocol.ProtocolCardWithCtx
 	HpNow                float64
@@ -65,13 +66,6 @@ func (c *BaseCard) GetInfo() map[string]any {
 	return c.Info
 }
 
-func (c *BaseCard) GetStateCodeChan() chan protocol.Effect {
-	return c.StateCodeChan
-}
-func (c *BaseCard) SetStateCodeChan(ch chan protocol.Effect) {
-	c.StateCodeChan = ch
-}
-
 func (c *BaseCard) ReInitialize() {
 	if val, ok := c.Info["hp"]; ok && val != nil {
 		c.SetHpNow(c.Info["hp"].(float64))
@@ -90,13 +84,6 @@ func (c *BaseCard) GetBuffList() *[]*protocol.Buff {
 
 func (c *BaseCard) AppendBuff(b *protocol.Buff) {
 	c.BuffList = append(c.BuffList, b)
-}
-func (c *BaseCard) InitBuffList() {
-	c.BuffList = make([]*protocol.Buff, 0, 8)
-}
-
-func (c *BaseCard) SetDec(Dec *CardMeta.Decorator) {
-	c.Dec = Dec
 }
 
 // 这个函数是进过buff计算的
@@ -179,5 +166,13 @@ func (c *BaseCard) IntSpecialCardStateChan() {
 }
 
 func (c *BaseCard) SpecialCardStateCallBack(v CardMeta.SpecialCardState) {
+
+}
+
+// 所有的卡的一些重要的初始化在这
+func (c *BaseCard) ShareInit(goctx context.Context) {
+	c.Dec = CardMeta.NewDecorator()
+	c.BuffList = make([]*protocol.Buff, 0, 8)
+	c.SetForm(BattleData.NormalForm)
 
 }

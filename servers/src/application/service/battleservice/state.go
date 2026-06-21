@@ -454,59 +454,59 @@ func (s *ShuffleDeal) process(GoCtx context.Context) {
 	s.SM.AcceptAction(GoCtx, handleAction)
 }
 
-func (s *ShuffleDeal) RandomCard() bool {
-	cList := s.SM.CardListCopy
-	for _, card := range *cList {
-		card.SetBtCtx(s.c)
-		card.SetTempId(s.c.entityCounter)
-		s.c.entityCounter++
-	}
-
-	rand.Shuffle(len(*cList), func(i, j int) {
-		(*cList)[i], (*cList)[j] = (*cList)[j], (*cList)[i]
-	})
-
-	numA := global.InitCardNum
-	numB := global.InitCardNum
-	i := 0
-	CardInHandA := make(map[int]CardAbstract.Card)
-	s.c.PlayerDataMap[s.SM.Id1].CardInHand = CardInHandA
-	CardInHandB := make(map[int]CardAbstract.Card)
-	s.c.PlayerDataMap[s.SM.Id2].CardInHand = CardInHandB
-	CharacterNumA := 0
-	CharacterNumB := 0
-
-	for ; i < len(*cList); i++ {
-		if (*cList)[i].GetInfo()["is_parent"] == true { //id1
-			(*cList)[i].SetOwnerId(s.Id1)
-			CardInHandA[(*cList)[i].GetTempId()] = (*cList)[i]
-			if _, ok := (*cList)[i].(CardAbstract.Character); ok {
-				CharacterNumA++
-			}
-			numA -= 1
-			if numA == 0 {
-				break
-			}
-		}
-	}
-	for ; i < len(*cList); i++ {
-		if (*cList)[i].GetInfo()["is_parent"] == true {
-			(*cList)[i].SetOwnerId(s.Id2)
-			CardInHandB[(*cList)[i].GetTempId()] = (*cList)[i]
-			if _, ok := (*cList)[i].(CardAbstract.Character); ok {
-				CharacterNumB++
-			}
-			numB -= 1
-			if numB == 0 {
-				break
-			}
-		}
-	}
-	//if CharacterNumA <= 1 || CharacterNumB <= 1 {
-	//	return false
-	//}
-	return true
-}
+//func (s *ShuffleDeal) RandomCard() bool {
+//	cList := s.SM.CardListCopy
+//	for _, card := range *cList {
+//		card.SetBtCtx(s.c)
+//		card.SetTempId(s.c.entityCounter)
+//		s.c.entityCounter++
+//	}
+//
+//	rand.Shuffle(len(*cList), func(i, j int) {
+//		(*cList)[i], (*cList)[j] = (*cList)[j], (*cList)[i]
+//	})
+//
+//	numA := global.InitCardNum
+//	numB := global.InitCardNum
+//	i := 0
+//	CardInHandA := make(map[int]CardAbstract.Card)
+//	s.c.PlayerDataMap[s.SM.Id1].CardInHand = CardInHandA
+//	CardInHandB := make(map[int]CardAbstract.Card)
+//	s.c.PlayerDataMap[s.SM.Id2].CardInHand = CardInHandB
+//	CharacterNumA := 0
+//	CharacterNumB := 0
+//
+//	for ; i < len(*cList); i++ {
+//		if (*cList)[i].GetInfo()["is_parent"] == true { //id1
+//			(*cList)[i].SetOwnerId(s.Id1)
+//			CardInHandA[(*cList)[i].GetTempId()] = (*cList)[i]
+//			if _, ok := (*cList)[i].(CardAbstract.Character); ok {
+//				CharacterNumA++
+//			}
+//			numA -= 1
+//			if numA == 0 {
+//				break
+//			}
+//		}
+//	}
+//	for ; i < len(*cList); i++ {
+//		if (*cList)[i].GetInfo()["is_parent"] == true {
+//			(*cList)[i].SetOwnerId(s.Id2)
+//			CardInHandB[(*cList)[i].GetTempId()] = (*cList)[i]
+//			if _, ok := (*cList)[i].(CardAbstract.Character); ok {
+//				CharacterNumB++
+//			}
+//			numB -= 1
+//			if numB == 0 {
+//				break
+//			}
+//		}
+//	}
+//	//if CharacterNumA <= 1 || CharacterNumB <= 1 {
+//	//	return false
+//	//}
+//	return true
+//}
 
 func (s *ShuffleDeal) exit() {
 	s.StateTemplate.exit()

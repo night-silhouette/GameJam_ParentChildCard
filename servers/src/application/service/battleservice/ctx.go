@@ -35,6 +35,7 @@ type Ctx struct {
 
 }
 
+// cList是子牌堆,CardList是手牌堆
 func NewCtx(idA int, idB int, ParentContext context.Context, CardList map[int]map[int]CardAbstract.Card, TempIdCalc *atomic.Int32, cList []CardAbstract.Card) *Ctx {
 	c := &Ctx{}
 	c.EffectsStack = NewEffectStack()
@@ -43,7 +44,7 @@ func NewCtx(idA int, idB int, ParentContext context.Context, CardList map[int]ma
 
 	c.PlayerDataMap = make(map[int]*PlayerData, 2)
 	c.PlayerDataMap[idA] = NewPlayerData(idA, CardList[idA])
-	for _, card := range CardList[idA] {
+	for _, card := range CardList[idA] { //他这里的问题是,我靠,这真的是最优解,我要给卡注入ctx,但是牌的生成算法要写在匹配的时候,不对,其实可以
 		card.SetBtCtx(c)
 	}
 	for _, card := range CardList[idB] {

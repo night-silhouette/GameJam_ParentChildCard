@@ -259,8 +259,9 @@ func (m *MatchManager) IsHasID(id int) bool {
 	return false
 }
 
+// 随机野生子牌堆
 func RandChildList() []CardAbstract.Card {
-	CList := CardListImpl.GetChildCard()
+	CList := CardListImpl.GetChildCard() //这个函数直接创建了实例
 	res := Util.GetRandomElements[CardAbstract.Card](CList, 10)
 
 	//fmt.Println("随机后的子牌堆:", res)

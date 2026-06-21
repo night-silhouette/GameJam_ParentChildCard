@@ -1,6 +1,7 @@
 package CardAbstract
 
 import (
+	"context"
 	"pcc_card/application/entity/BattleData"
 	"pcc_card/application/entity/CardMeta"
 	"pcc_card/application/entity/protocol"
@@ -10,9 +11,6 @@ type Card interface {
 	GetID() int
 	SetInfo(info map[string]any)
 	GetInfo() map[string]any
-	Clone() Card
-	GetStateCodeChan() chan protocol.Effect
-	SetStateCodeChan(chan protocol.Effect)
 	GetTempId() int
 	SetTempId(id int)
 	GetOwnerId() int
@@ -25,15 +23,12 @@ type Card interface {
 	ReInitialize()
 	GetBuffList() *[]*protocol.Buff
 	AppendBuff(b *protocol.Buff)
-	InitBuffList()
-	SetDec(Dec *CardMeta.Decorator)
 	GetDec() *CardMeta.Decorator
 	AddBuff(buff *protocol.Buff, pc protocol.ProtocolCardWithCtx)
 	BuffRoundEnd(pc protocol.ProtocolCardWithCtx)
 	GetForm() BattleData.Form
 	SetForm(BattleData.Form)
-	IntSpecialCardStateChan()
-	SpecialCardStateCallBack(v CardMeta.SpecialCardState)
+	ShareInit(goctx context.Context)
 }
 
 func GetCardDto(c Card) BattleData.CardDto {
