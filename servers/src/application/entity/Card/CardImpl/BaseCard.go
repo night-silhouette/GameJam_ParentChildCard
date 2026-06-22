@@ -25,6 +25,7 @@ type BaseCard struct {
 	Dec                  *CardMeta.Decorator
 	SpecialCardStateChan chan *CardMeta.BroadInfo
 	Form                 BattleData.Form
+	changeJiangShi       bool
 }
 
 func (c *BaseCard) SetBtCtx(btCtx protocol.ProtocolCardWithCtx) {
@@ -182,6 +183,7 @@ func (c *BaseCard) ShareInit(goctx context.Context, ctx protocol.ProtocolCardWit
 	c.BuffList = make([]*protocol.Buff, 0, 8)
 	c.SetForm(BattleData.NormalForm)
 	c.SetBtCtx(ctx)
+	c.changeJiangShi = false
 	go c.IntSpecialCardStateChan(goctx)
 }
 

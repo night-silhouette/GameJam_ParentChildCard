@@ -54,8 +54,9 @@ func (c *CharacterBaseCard) Skill(TargetId int) bool {
 // 如果被无主伤害杀死,那杀死者的id为-1
 func (c *CharacterBaseCard) Death(AttackId int) {
 
-	if c.BtCtx.GetWeather() == protocol.Fengdu { //如果天气是这个,就变僵尸
+	if c.BtCtx.GetWeather() == protocol.Fengdu && !c.changeJiangShi { //如果天气是这个,就变僵尸
 		c.ChangeForm(BattleData.JiangShi)
+		c.changeJiangShi = true
 		return //如果变僵尸了,就不用死了
 	}
 
