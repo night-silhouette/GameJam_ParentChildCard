@@ -596,6 +596,14 @@ func (c *Ctx) ProtoColSetDamageCardBt(UserId int, TargetTempId int, NewDamage fl
 	}
 	card.SetAtkNow(NewDamage)
 }
+func (c *Ctx) GetCharacterId() []int {
+	list := c.GetCharacter()
+	result := make([]int, len(list))
+	for _, e := range list {
+		result = append(result, e.GetTempId())
+	}
+	return result
+}
 
 func (c *Ctx) ProtoNotifyValue(Category BattleData.ValueChange, Value float64, TempId int, IsMiss bool) {
 	c.StateMachine.SendActionById(c.StateMachine.Id1, BattleDto.NewAction(BattleDto.HpChange, BattleDto.Result, BattleData.CardCalcValueDto{

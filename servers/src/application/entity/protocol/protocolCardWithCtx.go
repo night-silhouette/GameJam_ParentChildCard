@@ -42,4 +42,5 @@ type ProtocolCardWithCtx interface {
 	Broad(v *CardMeta.BroadInfo)
 	CheckBuff(tempId int, buffId BuffId) (bool, *Buff)
 	GetTempIdByWhere(where BattleData.Where, userId int) int
+	GetCharacterId() []int
 }

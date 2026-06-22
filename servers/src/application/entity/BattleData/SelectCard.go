@@ -18,4 +18,5 @@ const (
 	DisCardPool
 	ChildCardPool
 	InHand
+	Self
 )

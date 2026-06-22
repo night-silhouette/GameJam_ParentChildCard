@@ -1318,12 +1318,17 @@ func (s *CardCalc) Switch(_data BattleData.CombatDto, UserId int) bool {
 
 // 返回值是,是否使用技能或者攻击
 func (s *CardCalc) CalcNotSwitch(data BattleData.CombatDto, UserId int) bool {
-	opponentCardId := s.c.GetCardBt(UserId, data.OpponentWhere).GetTempId()
+	var ObjectCardId int
+	if data.OpponentWhere != BattleData.Self {
+		ObjectCardId = s.c.GetCardBt(s.c.GetOpponentId(UserId), data.OpponentWhere).GetTempId()
+	} else {
+		ObjectCardId = s.c.GetCardBt(UserId, data.SelfWhere).GetTempId()
+	}
 	res := false
 	if data.Behavior == BattleData.Attack { //执行前端传过来的行为
-		res = s.c.GetCardBt(UserId, data.SelfWhere).(CardAbstract.Character).Attack(opponentCardId)
+		res = s.c.GetCardBt(UserId, data.SelfWhere).(CardAbstract.Character).Attack(ObjectCardId)
 	} else if data.Behavior == BattleData.Skill {
-		res = s.c.GetCardBt(UserId, data.SelfWhere).(CardAbstract.Character).Skill(opponentCardId)
+		res = s.c.GetCardBt(UserId, data.SelfWhere).(CardAbstract.Character).Skill(ObjectCardId)
 	}
 
 	s.c.StackSettle() //执行效果堆栈
@@ -1458,7 +1463,7 @@ CalcLoop:
 			}
 			s.c.StackSettle()
 			s.c.ChildCardCheck()
-	
+
 			//回合结束,回合计数加一,并通知
 			RoundChange(s.SM)
 

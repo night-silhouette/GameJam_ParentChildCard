@@ -197,6 +197,8 @@ func (c *CharacterBaseCard) CheckGuard(TargetId int) int {
 	IsGuard, Guard := c.BtCtx.CheckBuff(TargetId, protocol.Guard) //检查指向对象是否有守护
 	if IsGuard {
 		FinalId = int(Guard.Value)
+	} else {
+		FinalId = TargetId
 	}
 	return FinalId
 }

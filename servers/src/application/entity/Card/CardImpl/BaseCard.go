@@ -157,9 +157,7 @@ func (c *BaseCard) SetForm(form BattleData.Form) {
 }
 
 func (c *BaseCard) IntSpecialCardStateChan(goctx context.Context) {
-	var ch chan *CardMeta.BroadInfo
-	ch = make(chan *CardMeta.BroadInfo, 4)
-	c.SpecialCardStateChan = ch
+
 	go func() {
 		for {
 			select {
@@ -184,6 +182,9 @@ func (c *BaseCard) ShareInit(goctx context.Context, ctx protocol.ProtocolCardWit
 	c.SetForm(BattleData.NormalForm)
 	c.SetBtCtx(ctx)
 	c.changeJiangShi = false
+	var ch chan *CardMeta.BroadInfo
+	ch = make(chan *CardMeta.BroadInfo, 4)
+	c.SpecialCardStateChan = ch
 	go c.IntSpecialCardStateChan(goctx)
 }
 
