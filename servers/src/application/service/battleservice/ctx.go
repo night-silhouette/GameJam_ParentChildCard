@@ -427,18 +427,10 @@ func (c *Ctx) Notify(AnimationDto BattleData.AnimationDto, UserId int) {
 
 }
 
-// 不走卡牌hurt虚函数的攻击,也可以叫做无主攻击
+// 不走卡牌hurt虚函数的攻击(走NoSourceHurt),也可以叫做无主攻击
 func (c *Ctx) ProtoColAttackNoHurt(CardTempId int, Value int, Category BattleData.ValueChange) {
 	Card := c.FindCard(CardTempId)
-	var FinalAtkValue int
-	IsMiss := false
-	if Category == BattleData.Damage { //判断是否是真伤,是的话,就不走装饰器
-		FinalAtkValue, IsMiss = Card.GetDec().CalcHurt(float64(Value))
-	} else if Category == BattleData.TrueDamage {
-		FinalAtkValue = Value
-	}
-	c.ProtoColReduceCardBtHp(-1, CardTempId, float64(FinalAtkValue))
-	c.ProtoNotifyValue(Category, float64(Value), CardTempId, IsMiss)
+	Card.(CardAbstract.Character).NoSourceHurt(float64(Value), Category)
 }
 func (c *Ctx) GetWeather() protocol.Weather {
 	return protocol.Weather(c.Weather.Load())
@@ -511,6 +503,25 @@ func (c *Ctx) ProtoColCancelInterrupt() {
 	c.InterruptChan <- struct{}{}
 }
 
+func (c *Ctx) GetTempIdByWhere(where BattleData.Where, userId int) int {
+	playerdata := c.PlayerDataMap[userId]
+	var res int
+	switch where {
+	case BattleData.ParentCard:
+		if playerdata.ParentCardBT != nil {
+			res = playerdata.ParentCardBT.GetTempId()
+		}
+	case BattleData.ChildCard:
+		if playerdata.ChildCardBT != nil {
+			res = playerdata.ChildCardBT.GetTempId()
+		}
+	case BattleData.SkillCard:
+		if playerdata.SkillCardBT != nil {
+			res = playerdata.SkillCardBT.GetTempId()
+		}
+	}
+	return res
+}
 func (c *Ctx) ProtoColSetMaxHp(TargetTempId int, MaxHp float64) {
 	Card := c.FindCard(TargetTempId)
 	Card.GetInfo()["maxHp"] = MaxHp
@@ -624,6 +635,16 @@ func (c *Ctx) ProtoNotifyCardMove(Object BattleData.Where, TempId int) {
 func (c *Ctx) GiveBuff(TempId int, buff *protocol.Buff) {
 	card := c.FindCard(TempId)
 	card.AddBuff(buff, c)
+}
+
+func (c *Ctx) CheckBuff(tempId int, buffId protocol.BuffId) (bool, *protocol.Buff) {
+	card := c.FindCard(tempId)
+	for _, b := range *card.GetBuffList() {
+		if b.BuffId == buffId {
+			return true, b
+		}
+	}
+	return false, nil
 }
 
 // FindCard 这是一个总和方法,他会在两个人的手牌和出战斗牌里根据tempId找牌

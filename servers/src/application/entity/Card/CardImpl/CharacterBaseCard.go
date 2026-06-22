@@ -15,42 +15,43 @@ type CharacterBaseCard struct {
 }
 
 func (c *CharacterBaseCard) Attack(TargetId int) bool {
-	offset := int(c.GetInfo()["skillCharge"].(float64))
-	if !c.BtCtx.ProtoColCanUpdateEnergy(c.OwnerId, -offset) {
-		return false
-	}
-	if c.CheckIsHaveBuff(protocol.Binding) { //能量吞掉再滚出去
-		c.EffectUpdateEnergy(-offset)
-		return false
-	}
+	FinalId := c.CheckGuard(TargetId) //检查指向对象是否有守护
+	return c.ShareAttack(FinalId)
+}
 
-	c.Notify(BattleData.AnAttack, -1, c.GetTempId(), TargetId)
+func (c *CharacterBaseCard) Retaliate(AttackId int, HurtHp float64) {
+	RetaliateTotal := 0.0
+	for _, buff := range c.BuffList {
+		if buff.BuffId == protocol.Retaliate {
+			RetaliateTotal += buff.Value
+		}
+	}
+	if RetaliateTotal != 0.0 {
+		c.Notify(BattleData.AnRetaliate, -1, AttackId, c.GetTempId())
+		c.EffectAttack(AttackId, float64(int(HurtHp*RetaliateTotal)), BattleData.TrueDamage)
+	}
+}
 
-	c.EffectAttack(TargetId, c.AtkNow, BattleData.Damage)
-	c.EffectUpdateEnergy(-offset) //反向压入,先扣能量,再伤害
-	return true
+func (c *CharacterBaseCard) NoSourceHurt(HurtHp float64, category BattleData.ValueChange) {
+	c.EffectHurt(-1, HurtHp, category)
 }
 
 func (c *CharacterBaseCard) Hurt(AttackId int, HurtHp float64, category BattleData.ValueChange) {
+	//-------------反击逻辑------------
+	c.Retaliate(AttackId, HurtHp)
+	//-------------反击逻辑------------
+
 	c.Notify(BattleData.AnHurt, -1, AttackId, c.GetTempId())
 	c.EffectHurt(AttackId, HurtHp, category)
 }
 
 // 父类的skill函数,消耗了能量,通知前端,true表示,能量已经扣了
 func (c *CharacterBaseCard) Skill(TargetId int) bool {
-	offset := int(c.GetInfo()["skillCharge"].(float64))
-	if !c.BtCtx.ProtoColCanUpdateEnergy(c.OwnerId, -offset) {
-		return false
-	}
-	if c.CheckIsHaveBuff(protocol.Binding) {
-		c.EffectUpdateEnergy(-offset)
-		return false
-	}
-	c.Notify(BattleData.AnSkill, -1, c.GetTempId(), TargetId)
-	c.EffectUpdateEnergy(-offset)
-	return true
+	FinalId := c.CheckGuard(TargetId)
+	return c.ShareSkill(FinalId)
 }
 
+// 如果被无主伤害杀死,那杀死者的id为-1
 func (c *CharacterBaseCard) Death(AttackId int) {
 
 	if c.BtCtx.GetWeather() == protocol.Fengdu { //如果天气是这个,就变僵尸
@@ -71,6 +72,10 @@ func (c *CharacterBaseCard) BtCry() {
 }
 
 func (c *CharacterBaseCard) RoundEnd() {
+
+}
+
+func (c *CharacterBaseCard) NextRound() {
 
 }
 
@@ -181,4 +186,46 @@ func (c *CharacterBaseCard) CheckIsHaveBuff(BuffId protocol.BuffId) bool {
 	}
 	return false
 
+}
+
+func (c *CharacterBaseCard) CheckGuard(TargetId int) int {
+	if TargetId == c.GetTempId() {
+		return TargetId
+	}
+	var FinalId int
+	IsGuard, Guard := c.BtCtx.CheckBuff(TargetId, protocol.Guard) //检查指向对象是否有守护
+	if IsGuard {
+		FinalId = int(Guard.Value)
+	}
+	return FinalId
+}
+
+func (c *CharacterBaseCard) ShareAttack(TargetId int) bool {
+	offset := int(c.GetInfo()["skillCharge"].(float64))
+	if !c.BtCtx.ProtoColCanUpdateEnergy(c.OwnerId, -offset) {
+		return false
+	}
+	if c.CheckIsHaveBuff(protocol.Binding) { //能量吞掉再滚出去
+		c.EffectUpdateEnergy(-offset)
+		return false
+	}
+
+	c.Notify(BattleData.AnAttack, -1, c.GetTempId(), TargetId)
+	c.EffectAttack(TargetId, c.AtkNow, BattleData.Damage)
+	c.EffectUpdateEnergy(-offset) //反向压入,先扣能量,再伤害
+	return true
+}
+
+func (c *CharacterBaseCard) ShareSkill(TargetId int) bool {
+	offset := int(c.GetInfo()["skillCharge"].(float64))
+	if !c.BtCtx.ProtoColCanUpdateEnergy(c.OwnerId, -offset) {
+		return false
+	}
+	if c.CheckIsHaveBuff(protocol.Binding) {
+		c.EffectUpdateEnergy(-offset)
+		return false
+	}
+	c.Notify(BattleData.AnSkill, -1, c.GetTempId(), TargetId)
+	c.EffectUpdateEnergy(-offset)
+	return true
 }

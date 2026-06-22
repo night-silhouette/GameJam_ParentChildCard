@@ -28,7 +28,8 @@ func (c *Card0000) Clone() CardAbstract.Card {
 }
 
 func (c *Card0000) Skill(TargetId int) bool {
-	if !c.CharacterBaseCard.Skill(TargetId) {
+	FinalId := c.CheckGuard(TargetId)
+	if !c.ShareSkill(FinalId) {
 		return false
 	}
 	TempId := c.GetTempId()

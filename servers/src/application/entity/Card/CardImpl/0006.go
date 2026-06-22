@@ -25,11 +25,12 @@ func (c *Card0006) Clone() CardAbstract.Card {
 }
 
 func (c *Card0006) Skill(TargetId int) bool {
-	if !c.CharacterBaseCard.Skill(TargetId) {
+	FinalId := c.CheckGuard(TargetId)
+	if !c.ShareSkill(FinalId) {
 		return false
 	}
 
-	c.GiveBuff(&TargetId, *protocol.NewBuffBase(protocol.HealingDecay, 4, 0.5, c.BtCtx.CreateTempId()))
+	c.GiveBuff(&FinalId, *protocol.NewBuffBase(protocol.HealingDecay, 4, 0.5, c.BtCtx.CreateTempId()))
 
 	return true
 }

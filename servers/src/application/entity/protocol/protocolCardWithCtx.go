@@ -2,6 +2,7 @@ package protocol
 
 import (
 	"pcc_card/application/entity/BattleData"
+
 	"pcc_card/application/entity/CardMeta"
 	"pcc_card/presentation/handler/battlehandler/BattleDto"
 	"time"
@@ -39,4 +40,6 @@ type ProtocolCardWithCtx interface {
 	GetWeather() Weather
 	GetDataAll(UseId int) *BattleData.DataAll
 	Broad(v *CardMeta.BroadInfo)
+	CheckBuff(tempId int, buffId BuffId) (bool, *Buff)
+	GetTempIdByWhere(where BattleData.Where, userId int) int
 }

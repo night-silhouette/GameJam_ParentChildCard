@@ -46,6 +46,9 @@ const (
 	GetRoundNum
 	BuffChange
 	FormChange
+	RoundChange
+	EnergyChange
+	WeatherChange
 )
 
 var ActionName = map[ActionCode]string{
@@ -83,6 +86,9 @@ var ActionName = map[ActionCode]string{
 	GetRoundNum:           "获取回合数",
 	BuffChange:            "buff发生改变",
 	FormChange:            "形态变化",
+	RoundChange:           "回合变化",
+	EnergyChange:          "能量变化",
+	WeatherChange:         "天气变化",
 }
 
 type Predicates int

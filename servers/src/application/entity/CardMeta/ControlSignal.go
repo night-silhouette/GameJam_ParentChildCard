@@ -12,6 +12,7 @@ type BroadInfo struct {
 	Publisher     int //发布者
 }
 
+// 没用的字段就传-1吧
 func NewBroadInfo(signal ControlSignal, Caller int, Publisher int) *BroadInfo {
 	res := BroadInfo{}
 	res.ControlSignal = signal

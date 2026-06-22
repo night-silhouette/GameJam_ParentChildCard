@@ -25,10 +25,11 @@ func (c *Card0001) Clone() CardAbstract.Card {
 }
 
 func (c *Card0001) Skill(TargetId int) bool {
-	if !c.CharacterBaseCard.Skill(TargetId) {
+	FinalId := c.CheckGuard(TargetId)
+	if !c.ShareSkill(FinalId) {
 		return false
 	}
 	c.EffectHeal(c.GetTempId(), 1)
-	c.EffectAttack(TargetId, 1, BattleData.TrueDamage)
+	c.EffectAttack(FinalId, 1, BattleData.TrueDamage)
 	return true
 }

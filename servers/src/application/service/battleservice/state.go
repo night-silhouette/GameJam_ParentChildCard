@@ -860,7 +860,18 @@ func (s *SelectWeather) enter() {
 }
 
 func (s *SelectWeather) exit() {
+	RoundChange(s.SM)
+}
 
+// 回合结束,回合计数加一,并通知
+func RoundChange(SM *StateMachine) {
+	SM.RoundNum.Store(SM.RoundNum.Add(1))
+	SM.SendActionById(SM.Id2, BattleDto.NewAction(BattleDto.RoundChange, BattleDto.Result, map[string]interface{}{
+		"data_all": SM.c.GetDataAll(SM.Id2),
+	}))
+	SM.SendActionById(SM.Id1, BattleDto.NewAction(BattleDto.RoundChange, BattleDto.Result, map[string]interface{}{
+		"data_all": SM.c.GetDataAll(SM.Id1),
+	}))
 }
 
 //#endregion
@@ -890,7 +901,6 @@ func (s *SelectSkillCard) SelectEnd() {
 
 func (s *SelectSkillCard) enter() {
 
-	s.SM.RoundNum.Store(s.SM.RoundNum.Add(1))
 	chanStop, chanCrash := Util.CreateTimer(time.Second*global.SelectSkillCardTime, s.SelectEnd)
 	s.ChanCrash = chanCrash
 	s.ChanStop = chanStop
@@ -1280,6 +1290,13 @@ func (s *CardCalc) Switch(_data BattleData.CombatDto, UserId int) bool {
 					return false
 				}
 				playerData.UpdateEnergy(-1)
+				//能量变化通知双方
+				s.SM.SendActionById(s.SM.Id1, BattleDto.NewAction(BattleDto.EnergyChange, BattleDto.Result, map[string]interface{}{
+					"data_all": s.c.GetDataAll(s.SM.Id1),
+				}))
+				s.SM.SendActionById(s.SM.Id2, BattleDto.NewAction(BattleDto.EnergyChange, BattleDto.Result, map[string]interface{}{
+					"data_all": s.c.GetDataAll(s.SM.Id2),
+				}))
 
 				//-----------------------换牌正文-----------------------
 
@@ -1432,6 +1449,24 @@ CalcLoop:
 				Card.BuffRoundEnd(s.c)
 				s.c.StackSettle()
 			}
+			s.c.ChildCardCheck()
+
+			//回合结束,所有卡牌的roundend执行
+			AllCharacter := s.c.GetCharacter()
+			for _, Card := range AllCharacter {
+				Card.(CardAbstract.Character).RoundEnd()
+			}
+			s.c.StackSettle()
+			s.c.ChildCardCheck()
+	
+			//回合结束,回合计数加一,并通知
+			RoundChange(s.SM)
+
+			//执行下回合回合开始的card的效果(nextRound)
+			for _, Card := range AllCharacter {
+				Card.(CardAbstract.Character).NextRound()
+			}
+			s.c.StackSettle()
 			s.c.ChildCardCheck()
 
 			//全部结算完成,发个通知

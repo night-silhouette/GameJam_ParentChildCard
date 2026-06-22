@@ -30,11 +30,13 @@ const (
 
 	Wither
 	Binding
+	//反击
 	Retaliate
 	Confine
 	Giant
 	Disarm
 	XuFeng
+	Guard
 )
 
 var BuffRoundEndFuncMap map[BuffId]func(pc ProtocolCardWithCtx, value float64, card BuffNeed)
@@ -62,6 +64,7 @@ func InitBuffRoundEndFuncMap() {
 	BuffRoundEndFuncMap[Giant] = func(pc ProtocolCardWithCtx, value float64, card BuffNeed) {}
 	BuffRoundEndFuncMap[Disarm] = func(pc ProtocolCardWithCtx, value float64, card BuffNeed) {}
 	BuffRoundEndFuncMap[XuFeng] = func(pc ProtocolCardWithCtx, value float64, card BuffNeed) {}
+	BuffRoundEndFuncMap[Guard] = func(pc ProtocolCardWithCtx, value float64, card BuffNeed) {}
 }
 
 //------------------回合结束---------------------
@@ -88,6 +91,7 @@ func InitBuffOnApplyFuncMap() {
 	BuffOnApplyFuncMap[Giant] = func(pc ProtocolCardWithCtx, value float64, card BuffNeed) {}
 	BuffOnApplyFuncMap[Disarm] = func(pc ProtocolCardWithCtx, value float64, card BuffNeed) {}
 	BuffOnApplyFuncMap[XuFeng] = func(pc ProtocolCardWithCtx, value float64, card BuffNeed) {}
+	BuffOnApplyFuncMap[Guard] = func(pc ProtocolCardWithCtx, value float64, card BuffNeed) {}
 }
 
 //------------------buff上去的时候---------------------
@@ -113,6 +117,7 @@ func InitBuffOnRemoveFuncMap() {
 	BuffOnRemoveFuncMap[Giant] = func(pc ProtocolCardWithCtx, value float64, card BuffNeed) {}
 	BuffOnRemoveFuncMap[Disarm] = func(pc ProtocolCardWithCtx, value float64, card BuffNeed) {}
 	BuffOnRemoveFuncMap[XuFeng] = func(pc ProtocolCardWithCtx, value float64, card BuffNeed) {}
+	BuffOnRemoveFuncMap[Guard] = func(pc ProtocolCardWithCtx, value float64, card BuffNeed) {}
 }
 
 //------------------buff清除的时候---------------------

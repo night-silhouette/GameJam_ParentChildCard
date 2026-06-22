@@ -207,6 +207,11 @@ type UpdateEnergy struct {
 
 func (U *UpdateEnergy) Execute(pc ProtocolCardWithCtx) {
 	pc.ProtoColUpdateEnergy(U.UserId, U.Offset)
+	for _, UserId := range pc.GetIds() {
+		pc.ProtoSendAction(UserId, BattleDto.NewAction(BattleDto.EnergyChange, BattleDto.Result, map[string]interface{}{
+			"data_all": pc.GetDataAll(UserId),
+		}))
+	}
 }
 
 func NewUpdateEnergy(UserId int, Offset int) *UpdateEnergy {
