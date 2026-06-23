@@ -244,7 +244,7 @@ func _on_card_calc_finish() -> void:
 	change_state(GameState.CARDCALC)
 
 # [新增] 中断选牌阶段开始
-func _on_interrupt_start(interrupt_data) -> void:
+func _on_interrupt_start(interrupt_data,is_need) -> void:##去控制最后传数组
 	card_manager.interrupt_data = interrupt_data
 	_interrupt_selected.clear()
 	var t = interrupt_data.get("state_wait_time", 60)

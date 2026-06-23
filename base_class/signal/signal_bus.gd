@@ -136,7 +136,7 @@ signal buff_change()
 signal refresh_all(All_data)
 signal card_calc_finish
 
-signal interrupt_start(t,temp_id_list,select_num,is_need)
+signal interrupt_start(action_data,is_need)
 signal interrupt_succeed
 signal combat_action_success
 

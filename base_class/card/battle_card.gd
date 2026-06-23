@@ -1,7 +1,7 @@
 extends card
    # 所有可进入区域
 
-enum CardState { IDLE, HOVERED, DRAGGING }
+enum CardState { IDLE, HOVERED, DRAGGING ,NEED_OPERATE}
 var current_state: CardState = CardState.IDLE
 const HOVER_ALLOWED_ZONES = [Global.ZONE_CARD.DECK_ZONE,Global.ZONE_CARD.SPELL_ZONE] 
 @onready var display: TextureRect = $"卡牌纹理"
@@ -23,6 +23,7 @@ var _is_pressing: bool = false
 var is_selectable: bool = false
 signal card_selected(temp_id: int)
 
+var need_chosse:bool = false
 
 
 func _ready():
@@ -135,6 +136,9 @@ func change_state(new_state: CardState):
 			SignalBus.enter_freecard.emit(temp_id, zone)
 			# ✅ 发完信号立刻回到 IDLE
 			change_state(CardState.IDLE)
+		CardState.NEED_OPERATE:
+			pass;
+			pass
 
 # --- 鼠标悬停事件（✅ 只有 zone 符合才允许 hover）---
 func _on_mouse_entered():
@@ -147,7 +151,7 @@ func _on_mouse_exited():
 		change_state(CardState.IDLE)
 
 # --- 拖拽判定 ---
-func _gui_input(event):
+func _gui_input(event):#检验松开去进行choose的判定
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
 		if event.pressed:
 			mouse_start_pos = event.global_position

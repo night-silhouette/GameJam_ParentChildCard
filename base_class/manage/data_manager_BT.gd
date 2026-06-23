@@ -621,7 +621,7 @@ func _can_deploy_card(icard: Dictionary, target_zone: int) -> bool:
 					return true
 			else:		
 				return false
-		
+	
 		state_machine.GameState.USE_MAGIC_CARD:
 			if target_zone == Global.ZONE_CARD.DECK_ZONE:
 				return true
@@ -669,6 +669,14 @@ func _can_deploy_card(icard: Dictionary, target_zone: int) -> bool:
 						switch_parent = true
 						return true
 			return false
+			
+		state_machine.GameState.INTERRUPT:
+			if res.is_combat_card and !get_cards_by_zone(target_zone).is_empty():
+				if target_zone == Global.ZONE_CARD.CHILD_BATTLE_ZONE and res.is_sub_card:
+					return true
+				elif target_zone == Global.ZONE_CARD.PARENT_BATTLE_ZONE and !res.is_sub_card:
+					return true
+				
 	return false
 
 func _deploy_card_to_zone(temp_id: int, target_zone: int):

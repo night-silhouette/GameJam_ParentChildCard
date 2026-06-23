@@ -153,17 +153,21 @@ func _dispatch(action_code: int, action_data: Variant, predicate: int):
 				
 		# 新增：中断选牌
 		NetDef.Action.Interrupt:
-			if predicate == NetDef.Predicate.QUERY:
+			if predicate == NetDef.Predicate.QUERY:#需要进行操作的终端
 				var t = action_data.get("state_wait_time")
 				var temp_id_list = action_data.get("temp_id_list")#可以选的牌
 				var select_num = action_data.get("select_num")#需要选几张
-				var action = SignalBus.interrupt_start.emit.bind(t,temp_id_list,select_num,1)
-				Global.cardcalc_animaiton_list.push_back(action)
-			if predicate == NetDef.Predicate.NOTIFY:
+				var interrupt_type = action_data.get("interrupt_type")
+				var call_temp_id = action_data.get("call_temp_id")
+				SignalBus.interrupt_start.emit(action_data,1)
+
+			if predicate == NetDef.Predicate.NOTIFY:#不需要操作的终端
 				var t = action_data.get("state_wait_time")
 				var temp_id_list = action_data.get("temp_id_list")#可以选的牌
 				var select_num = action_data.get("select_num")#需要选几张
-				var action = SignalBus.interrupt_start.emit.bind(t,temp_id_list,select_num,0)				
+				var interrupt_type = action_data.get("interrupt_type")
+				var call_temp_id = action_data.get("call_temp_id")
+				SignalBus.interrupt_start.emit(action_data,0)			
 			if predicate == NetDef.Predicate.SUCCEED:
 				SignalBus.interrupt_succeed.emit()
 				
