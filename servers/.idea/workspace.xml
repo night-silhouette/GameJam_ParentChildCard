@@ -6,14 +6,10 @@
   <component name="ChangeListManager">
     <list default="true" id="760cea56-5efb-4b56-8acc-717cb714ebef" name="更改" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/application/entity/BattleData/SelectCard.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/entity/BattleData/SelectCard.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/application/entity/Card/CardImpl/1000.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/entity/Card/CardImpl/1000.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/entity/Card/CardImpl/1002.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/entity/Card/CardImpl/1002.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/application/entity/Card/CardImpl/BaseCard.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/entity/Card/CardImpl/BaseCard.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/application/entity/Card/CardImpl/CharacterBaseCard.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/entity/Card/CardImpl/CharacterBaseCard.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/application/entity/protocol/protocolCardWithCtx.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/entity/protocol/protocolCardWithCtx.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/application/service/battleservice/ctx.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/service/battleservice/ctx.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/application/service/battleservice/state.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/service/battleservice/state.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/global/setting.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/global/setting.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -274,11 +270,6 @@
           <url>file://$PROJECT_DIR$/src/application/service/battleservice/ctx.go</url>
           <line>590</line>
           <option name="timeStamp" value="5" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/src/application/entity/Card/CardImpl/CharacterBaseCard.go</url>
-          <line>17</line>
-          <option name="timeStamp" value="7" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>
