@@ -43,7 +43,11 @@ enum Action {
 	WeatherNotify = 29, 
 	BuffCalcNotify  = 30,
 	GetRoundNum =  31,
-	BuffChange = 32,       
+	BuffChange = 32,  
+	FormChange = 33 ,
+	RoundChange = 34 ,
+	EnergyChange = 35  ,
+	WeatherChange = 36 ,    
 }
 
 const ACTION_NAME = {
@@ -71,7 +75,11 @@ const ACTION_NAME = {
 	Action.PositionChange:              "上下牌",
 	Action.AnimationNotify:       "行为动画通知",
 	Action.HpChange:           "生命数值变化",
-	Action.GetUserId:             "获取玩家ID"
+	Action.GetUserId:             "获取玩家ID",
+	Action.FormChange:            "形态变化",
+	Action.RoundChange:           "回合变化",
+	Action.EnergyChange:          "能量变化",
+	Action.WeatherChange:         "天气变化",
 	
 }
 

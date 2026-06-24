@@ -18,8 +18,6 @@ signal energy_changed(self_energy: int, opponent_energy: int)
 ## [新增] 天气数据变更信号
 signal weather_num_changed(weather_num: int)
 
-## [新增] 中断选牌数据变更信号
-signal interrupt_changed(interrupt_data: Dictionary)
 
 ## [新增] 弃牌堆数据变更信号
 signal discard_changed
@@ -55,12 +53,7 @@ var weather_num: int = -1:
 		weather_num_changed.emit(weather_num)
 
 ## [新增] 中断选牌数据
-var interrupt_data: Dictionary = {}:
-	set(value):
-		interrupt_data = value
-		interrupt_changed.emit(interrupt_data)
-		# 处理中断选牌卡牌数据并通知 UI
-		_on_interrupt_data_received()
+var interrupt_data: Dictionary = {};
 		
 
 ## 中断数据到达后：从 hand 匹配 temp_id，发 signal 让 UI 填充
@@ -71,18 +64,14 @@ func _on_interrupt_data_received() -> void:
 	if not temp_id_list is Array:
 		temp_id_list = []
 	var select_num = int(interrupt_data.get("select_num", 0))
-	
-	# 从手牌(DECK_ZONE)匹配对应的卡牌数据
-	var matched_cards: Array = []
-	var all_cards = get_cards_by_zone(Global.ZONE_CARD.DECK_ZONE)
-	for tid in temp_id_list:
-		for c in all_cards:
-			if int(c.get("temp_id", -1)) == int(tid):
-				matched_cards.append(c)
-				break
-	
-	interrupt_cards_ready.emit(matched_cards, select_num)
-	
+	var interrupt_type = int(interrupt_data.get("interrupt_type"))
+	var call_temp_id = interrupt_data.get("call_temp_id")
+	set_card
+	match interrupt_type:
+		0:#选定
+			pass
+		1:#死亡中断
+			pass
 var combat_list: Array = []; 
 #endregion
 
@@ -485,7 +474,13 @@ func clear_selection(match_code: int) -> void:
 func clear_all_selections():
 	for match_code in selection_pools.keys():
 		clear_selection(match_code)
-
+		
+func set_cards_need_operate(temp_ids: Array) -> void:
+	
+	# 再把传入数组中的 temp_id 对应的卡牌设为 NEED_OPERATE
+	for tid in temp_ids:
+		var card = select_card_by_key(int(tid), "temp_id")
+		#这里是数据层，有问题，不能这样写，统一在ui_update里
 #endregion
 
 
