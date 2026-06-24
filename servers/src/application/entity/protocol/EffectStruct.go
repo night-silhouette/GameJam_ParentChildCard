@@ -68,6 +68,10 @@ func (A *Hurt) Execute(pc ProtocolCardWithCtx) {
 	} else if A.Category == BattleData.TrueDamage {
 		FinalAtkValue = int(A.AtkValue)
 	}
+	flag, _ := pc.CheckBuff(A.TargetTempId, Untouchable)
+	if flag {
+		FinalAtkValue = 0
+	}
 	pc.ProtoColReduceCardBtHp(A.SendTempId, A.TargetTempId, float64(FinalAtkValue))
 	pc.ProtoNotifyValue(A.Category, -float64(FinalAtkValue), A.TargetTempId, IfMiss)
 	if FinalAtkValue > 0 {
@@ -286,5 +290,22 @@ func NewChangeMaxHp(TargetTempId int, MaxHp float64) *ChangeMaxHp {
 	res := ChangeMaxHp{}
 	res.MaxHp = MaxHp
 	res.TargetTempId = TargetTempId
+	return &res
+}
+
+//----------------------------------------
+
+type CustomInterrupt struct {
+	EffectBase
+	InterruptCallBack func(res []int, pc ProtocolCardWithCtx)
+}
+
+func (c *CustomInterrupt) Execute(pc ProtocolCardWithCtx) {
+	c.CallInterrupt(pc, c.InterruptCallBack)
+}
+func NewCustomInterrupt(InterruptCallBack func(res []int, pc ProtocolCardWithCtx), config *InterruptConfig) *CustomInterrupt {
+	res := CustomInterrupt{}
+	res.InterruptCallBack = InterruptCallBack
+	res.InterruptConfig = config
 	return &res
 }

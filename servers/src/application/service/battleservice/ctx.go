@@ -320,16 +320,34 @@ func (p *PlayerData) GetBt(where BattleData.Where) CardAbstract.Card {
 }
 
 // SwitchCard 没有做skillCard的鉴定//鉴定了原来的那个牌是不是空的,空的才会把他换下来//还有,纯下牌的情况也写进去了
-func (p *PlayerData) SwitchCard(where BattleData.Where, card CardAbstract.Card) {
+func (p *PlayerData) SwitchCard(where BattleData.Where, card CardAbstract.Card, c *Ctx) {
 	p.dataMutex.Lock()
 	defer p.dataMutex.Unlock()
 	var SwitchedCard CardAbstract.Card
+
+	//检查是否有禁锢,做了nil鉴定
+	check := func(cd CardAbstract.Card) bool {
+		if card == nil {
+			return false
+		}
+		flag, _ := c.CheckBuff(cd.GetTempId(), protocol.Confine) //如果有捆缚,不可上牌
+		return flag
+	}
+	if check(card) {
+		return
+	}
 	if where == BattleData.ChildCard {
 		SwitchedCard = p.ChildCardBT
+		if check(SwitchedCard) {
+			return
+		}
 		p.ChildCardBT = card
 	}
 	if where == BattleData.ParentCard {
 		SwitchedCard = p.ParentCardBT
+		if check(SwitchedCard) {
+			return
+		}
 		p.ParentCardBT = card
 	}
 	if where == BattleData.InHand { //下牌
@@ -451,7 +469,7 @@ func (c *Ctx) ProtoColInterrupt(UserId int, InterruptDto *BattleData.InterruptDt
 	var DataIsOK atomic.Bool
 	DataIsOK.Store(false)
 
-	TimeEnding := func() {    //结束回调
+	TimeEnding := func() { //结束回调
 		if !DataIsOK.Load() { //随机取
 			dataMutex.Lock()
 			data.TempIdList = Util.GetRandomElements(InterruptDto.TempIdList, InterruptDto.SelectNum)
@@ -609,6 +627,9 @@ func (c *Ctx) GetCharacterId() []int {
 		result = append(result, e.GetTempId())
 	}
 	return result
+}
+func (c *Ctx) ChangeWeather(w protocol.Weather) {
+	ChangeWeather(w, c.StateMachine)
 }
 
 func (c *Ctx) ProtoNotifyValue(Category BattleData.ValueChange, Value float64, TempId int, IsMiss bool) {
@@ -794,6 +815,10 @@ func (c *Ctx) SetCardBt(id int, card CardAbstract.Card) {
 	if _, ok := card.(CardAbstract.SkillCard); ok {
 		c.SetSkillCardBT(id, card)
 		delete(playerData.CardInHand, card.GetTempId())
+		return
+	}
+	flag, _ := c.CheckBuff(card.GetTempId(), protocol.Confine) //如果有捆缚,不可上牌
+	if flag {
 		return
 	}
 	if card.GetInfo()["is_parent"].(bool) && !c.CheckCardByWhere(id, BattleData.ParentCard) {
@@ -1001,6 +1026,16 @@ func (c *Ctx) GetCharacter() []CardAbstract.Card {
 	appendCardInHand(c.StateMachine.Id2)
 	appendPlayer(c.PlayerDataMap[c.StateMachine.Id1])
 	appendPlayer(c.PlayerDataMap[c.StateMachine.Id2])
+	return res
+}
+
+// 获取场上所有的出战卡的id,如果输入-1,就是所有双方的,如果是有id,就是单人的
+func (c *Ctx) ProtoGetBtAll(UserId int) []int {
+	List := c.GetBtAll(UserId)
+	res := make([]int, 0, len(List))
+	for _, Value := range List {
+		res = append(res, Value.GetTempId())
+	}
 	return res
 }
 

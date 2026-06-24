@@ -102,7 +102,7 @@ func InitWeatherFuncMap() {
 	WeatherFuncMap[Shutu] = func(pc ProtocolCardWithCtx, card []BuffNeed) {
 		for _, c := range card {
 			TempId := c.GetTempId()
-			pc.ProtoColPush(NewGiveBuff(&TempId, *NewBuffBase(DamageImmunity, 1, 0.28, pc.CreateTempId()), false, &InterruptConfig{}))
+			pc.ProtoColPush(NewGiveBuff(&TempId, *NewBuffBase(Weakness, 1, 0.28, pc.CreateTempId()), false, &InterruptConfig{}))
 		}
 	}
 	WeatherFuncMap[Fengdu] = func(pc ProtocolCardWithCtx, card []BuffNeed) {

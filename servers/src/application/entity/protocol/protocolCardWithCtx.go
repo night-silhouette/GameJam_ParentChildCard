@@ -45,4 +45,6 @@ type ProtocolCardWithCtx interface {
 	GetCharacterId() []int
 	GetOpponentId(selfId int) int
 	CheckIs2Bt(userId int) bool
+	ProtoGetBtAll(UserId int) []int
+	ChangeWeather(w Weather)
 }

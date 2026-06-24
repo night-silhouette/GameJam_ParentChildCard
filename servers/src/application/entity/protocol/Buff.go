@@ -15,8 +15,10 @@ func InitBuff() {
 type BuffId int
 
 const (
+	//附伤
 	BonusDamage BuffId = iota
 	Powerful
+	//虚弱
 	Weakness
 	//免伤
 	DamageImmunity
@@ -29,14 +31,18 @@ const (
 	HealingDecay
 
 	Wither
+	//捆缚(不可行动)
 	Binding
 	//反击
 	Retaliate
+	//禁锢
 	Confine
 	Giant
 	Disarm
 	XuFeng
+	//守护
 	Guard
+	Untouchable
 )
 
 var BuffRoundEndFuncMap map[BuffId]func(pc ProtocolCardWithCtx, value float64, card BuffNeed)
@@ -65,6 +71,7 @@ func InitBuffRoundEndFuncMap() {
 	BuffRoundEndFuncMap[Disarm] = func(pc ProtocolCardWithCtx, value float64, card BuffNeed) {}
 	BuffRoundEndFuncMap[XuFeng] = func(pc ProtocolCardWithCtx, value float64, card BuffNeed) {}
 	BuffRoundEndFuncMap[Guard] = func(pc ProtocolCardWithCtx, value float64, card BuffNeed) {}
+	BuffRoundEndFuncMap[Untouchable] = func(pc ProtocolCardWithCtx, value float64, card BuffNeed) {}
 }
 
 //------------------回合结束---------------------
@@ -92,6 +99,7 @@ func InitBuffOnApplyFuncMap() {
 	BuffOnApplyFuncMap[Disarm] = func(pc ProtocolCardWithCtx, value float64, card BuffNeed) {}
 	BuffOnApplyFuncMap[XuFeng] = func(pc ProtocolCardWithCtx, value float64, card BuffNeed) {}
 	BuffOnApplyFuncMap[Guard] = func(pc ProtocolCardWithCtx, value float64, card BuffNeed) {}
+	BuffOnApplyFuncMap[Untouchable] = func(pc ProtocolCardWithCtx, value float64, card BuffNeed) {}
 }
 
 //------------------buff上去的时候---------------------
@@ -118,6 +126,7 @@ func InitBuffOnRemoveFuncMap() {
 	BuffOnRemoveFuncMap[Disarm] = func(pc ProtocolCardWithCtx, value float64, card BuffNeed) {}
 	BuffOnRemoveFuncMap[XuFeng] = func(pc ProtocolCardWithCtx, value float64, card BuffNeed) {}
 	BuffOnRemoveFuncMap[Guard] = func(pc ProtocolCardWithCtx, value float64, card BuffNeed) {}
+	BuffOnRemoveFuncMap[Untouchable] = func(pc ProtocolCardWithCtx, value float64, card BuffNeed) {}
 }
 
 //------------------buff清除的时候---------------------

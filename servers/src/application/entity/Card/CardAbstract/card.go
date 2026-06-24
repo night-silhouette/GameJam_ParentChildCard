@@ -31,6 +31,7 @@ type Card interface {
 	ShareInit(goctx context.Context, ctx protocol.ProtocolCardWithCtx)
 	PutBroadInfo(v *CardMeta.BroadInfo) //把广播信息丢到管道里
 	BroadCallBack(v *CardMeta.BroadInfo)
+	NextRound()
 }
 
 func GetCardDto(c Card) BattleData.CardDto {

@@ -12,5 +12,4 @@ type Character interface {
 	Skill(TargetId int) bool
 	Death(AttackTempId int) //如果,杀死者是无主的,就传入-1
 	RoundEnd()
-	NextRound()
 }

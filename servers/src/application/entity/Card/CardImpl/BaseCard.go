@@ -256,3 +256,5 @@ func (c *BaseCard) NewCustom(ExecFunc func(pc protocol.ProtocolCardWithCtx)) {
 func (c *BaseCard) ChangeMaxHp(TargetTempId int, MaxHp float64) {
 	c.BtCtx.ProtoColPush(protocol.NewChangeMaxHp(TargetTempId, MaxHp))
 }
+
+func (c *BaseCard) NextRound() {}

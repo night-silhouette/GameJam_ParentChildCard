@@ -756,6 +756,14 @@ func ChangeWeather(w protocol.Weather, SM *StateMachine) {
 		buffNeeds[i] = card
 	}
 	protocol.WeatherOnaApplyMap[protocol.Weather(SM.c.Weather.Load())](SM.c, buffNeeds) //执行天气部署函数
+
+	//通知天气改变
+	SM.SendActionById(SM.Id1, BattleDto.NewAction(BattleDto.WeatherChange, BattleDto.Result, map[string]any{
+		"data_all": SM.c.GetDataAll(SM.Id1),
+	}))
+	SM.SendActionById(SM.Id2, BattleDto.NewAction(BattleDto.WeatherChange, BattleDto.Result, map[string]any{
+		"data_all": SM.c.GetDataAll(SM.Id2),
+	}))
 }
 
 // ToSelect 随机出3个天气,加上宁静
@@ -1433,11 +1441,9 @@ CalcLoop:
 			//-----------结算攻击或者技能-----------------
 
 			//结算法术(s.c.ChildCardCheck()在里面了)
-
 			s.SM.SendActionById(s.SM.Id2, BattleDto.NewAction(BattleDto.SkillCardNotify, BattleDto.Notify, ""))
 			s.SM.SendActionById(s.SM.Id1, BattleDto.NewAction(BattleDto.SkillCardNotify, BattleDto.Notify, ""))
 			s.SkillCalc()
-			s.c.ChildCardCheck()
 
 			//回合结束结算天气//通知在里面了
 			if protocol.WeatherExecPositionMap[protocol.Weather(s.c.Weather.Load())] == protocol.RoundEnd {
@@ -1467,12 +1473,24 @@ CalcLoop:
 			//回合结束,回合计数加一,并通知
 			RoundChange(s.SM)
 
-			//执行下回合回合开始的card的效果(nextRound)
+			//------执行下回合回合开始的card的效果(nextRound)------
 			for _, Card := range AllCharacter {
-				Card.(CardAbstract.Character).NextRound()
+				Card.NextRound() //所有战斗卡
 			}
 			s.c.StackSettle()
 			s.c.ChildCardCheck()
+			if s.c.PlayerDataMap[s.SM.Winner].SkillCardBT != nil {
+				s.c.PlayerDataMap[s.SM.Winner].SkillCardBT.(CardAbstract.SkillCard).NextRound()
+				s.c.StackSettle()
+				s.c.ChildCardCheck()
+			}
+
+			if s.c.PlayerDataMap[s.SM.Loser].SkillCardBT != nil {
+				s.c.PlayerDataMap[s.SM.Loser].SkillCardBT.(CardAbstract.SkillCard).NextRound()
+				s.c.StackSettle() //执行效果堆栈
+				s.c.ChildCardCheck()
+			}
+			//------执行下回合回合开始的card的效果(nextRound)------
 
 			//全部结算完成,发个通知
 			s.SM.SendActionById(s.SM.Id2, BattleDto.NewAction(BattleDto.CardCalc, BattleDto.Finish, ""))
