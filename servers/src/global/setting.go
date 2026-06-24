@@ -22,7 +22,7 @@ const (
 	SelectWeatherTime   = 2   //s
 	BattleWaitTime      = 2   //s
 	ActiveChildCardTime = 2   //s
-	Interrupt           = 20  //s 中断
+	Interrupt           = 5   //s 中断
 	SelectSkillCardTime = 2   //s
 	JudgeWaitTime       = 2   //s
 	CombatWaitTime      = 100 //s

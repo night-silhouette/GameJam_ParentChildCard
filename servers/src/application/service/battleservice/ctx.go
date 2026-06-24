@@ -76,12 +76,14 @@ func (c *Ctx) GetNeedCheckChildCard() []CardAbstract.ChildCard {
 
 	})
 	for _, playerData := range c.PlayerDataMap {
+		playerData.dataMutex.Lock()
 		for _, Card := range playerData.CardInHand {
 			if Card.GetInfo()["is_parent"] == false {
 				childCard := Card.(CardAbstract.ChildCard)
 				res = append(res, childCard)
 			}
 		}
+		playerData.dataMutex.Unlock()
 	}
 	return res
 }
@@ -254,6 +256,10 @@ func (p *PlayerData) GetEnergy() int {
 	p.dataMutex.RLock()
 	defer p.dataMutex.RUnlock()
 	return p.Energy
+}
+func (c *Ctx) CheckIs2Bt(userId int) bool {
+	playerData := c.PlayerDataMap[userId]
+	return playerData.CheckIs2Bt()
 }
 
 // 是不是有两张出战卡,返回bool
@@ -445,7 +451,7 @@ func (c *Ctx) ProtoColInterrupt(UserId int, InterruptDto *BattleData.InterruptDt
 	var DataIsOK atomic.Bool
 	DataIsOK.Store(false)
 
-	TimeEnding := func() { //结束回调
+	TimeEnding := func() {    //结束回调
 		if !DataIsOK.Load() { //随机取
 			dataMutex.Lock()
 			data.TempIdList = Util.GetRandomElements(InterruptDto.TempIdList, InterruptDto.SelectNum)

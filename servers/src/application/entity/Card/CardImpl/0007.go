@@ -4,8 +4,6 @@ import (
 	"pcc_card/application/entity/BattleData"
 	"pcc_card/application/entity/Card/CardAbstract"
 	"pcc_card/application/entity/protocol"
-	"pcc_card/global"
-	"time"
 )
 
 type Card0007 struct {
@@ -61,9 +59,10 @@ func (c *Card0007) Death(AttackId int) {
 	}
 
 	c.Notify(BattleData.AnDeath, -1, AttackId, c.GetTempId())
-	CheckIsInterrupt := true //声明这个指针bool,接受等待弃牌的结果,弃牌完,如果没有出战牌的话,就要中断,默认值随便搞的
-	SelectCharacterCard := make([]int, 0)
-	c.SetCardBt(&SelectCharacterCard, &CheckIsInterrupt)
-	c.Interrupt(&SelectCharacterCard, global.Interrupt*time.Second, c.BtCtx.ProtoColGetCharacterCard(c.OwnerId), 1, &CheckIsInterrupt, BattleData.Deploy)
-	c.DisCard(&[]int{c.GetTempId()}, &CheckIsInterrupt) //反向压入
+
+	if !c.BtCtx.CheckIs2Bt(c.OwnerId) {
+		config := protocol.NewInterruptConfig(c.OwnerId, c.BtCtx.ProtoColGetCharacterCard(c.OwnerId), 1, c.GetTempId(), BattleData.Deploy)
+		c.BtCtx.ProtoColPush(protocol.NewSetCardBt(c.OwnerId, -1, true, &config))
+		c.DisCard([]int{c.GetTempId()})
+	}
 }

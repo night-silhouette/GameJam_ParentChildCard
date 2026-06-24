@@ -4,10 +4,10 @@ import (
 	"pcc_card/application/entity/BattleData"
 	"pcc_card/application/entity/CardMeta"
 	"pcc_card/presentation/handler/battlehandler/BattleDto"
-	"time"
 )
 
 type Attack struct {
+	EffectBase
 	UserId       int
 	SendTempId   int
 	TargetTempId int
@@ -16,7 +16,8 @@ type Attack struct {
 	Category     BattleData.ValueChange
 }
 
-func NewAttack(UserId int, SendTempId int, TargetTempId int, AtkValue float64, Dec *CardMeta.Decorator, category BattleData.ValueChange) *Attack {
+// 中断的话,TargetTempId传什么都可以
+func NewAttack(UserId int, SendTempId int, TargetTempId int, AtkValue float64, Dec *CardMeta.Decorator, category BattleData.ValueChange, isInterrupt bool, config *InterruptConfig) *Attack {
 	res := Attack{}
 	res.UserId = UserId
 	res.SendTempId = SendTempId
@@ -24,18 +25,33 @@ func NewAttack(UserId int, SendTempId int, TargetTempId int, AtkValue float64, D
 	res.AtkValue = AtkValue
 	res.Dec = Dec
 	res.Category = category
+	res.CheckIsInterrupt = isInterrupt
+	res.InterruptConfig = config
 	return &res
 }
 
 func (A *Attack) Execute(pc ProtocolCardWithCtx) {
+	if !A.CheckIsInterrupt {
+		A.ShareLogic(pc, A.TargetTempId)
+	} else {
+		A.CallInterrupt(pc, func(res []int, pc ProtocolCardWithCtx) {
+			for _, ObjId := range res {
+				A.ShareLogic(pc, ObjId)
+			}
+		})
+	}
+
+}
+func (A *Attack) ShareLogic(pc ProtocolCardWithCtx, Obj int) {
 	originValue := A.AtkValue
 	FinalAtkValue := A.Dec.CalcAttack(originValue)
-	pc.ProtoColCardBtAttack(A.SendTempId, A.UserId, A.TargetTempId, float64(FinalAtkValue), A.Category)
+	pc.ProtoColCardBtAttack(A.SendTempId, A.UserId, Obj, float64(FinalAtkValue), A.Category)
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------
 
 type Hurt struct {
+	EffectBase
 	UserId       int
 	SendTempId   int
 	TargetTempId int
@@ -73,128 +89,146 @@ func NewHurt(UserId int, SendTempId int, TargetTempId int, AtkValue float64, Dec
 //-----------------------------------------------------------------------------------------------------------------------------------------
 
 type Heal struct {
+	EffectBase
 	TargetTempId *int
 	HealValue    float64
 	Dec          *CardMeta.Decorator
 }
 
 func (H *Heal) Execute(pc ProtocolCardWithCtx) {
-	var target int
-	if H.TargetTempId != nil {
-		target = *H.TargetTempId
+	if !H.CheckIsInterrupt {
+		H.ShareLogic(pc, *H.TargetTempId)
+	} else {
+		H.CallInterrupt(pc, func(res []int, pc ProtocolCardWithCtx) {
+			for _, ObjId := range res {
+				H.ShareLogic(pc, ObjId)
+			}
+		})
 	}
-	originValue := H.HealValue
-	FinalHeal := H.Dec.CalcHeal(originValue)
-	pc.ProtoColHealCardBt(target, float64(FinalHeal))
-	pc.ProtoNotifyValue(BattleData.Heal, H.HealValue, *H.TargetTempId, false)
+
 }
 
-func NewHeal(TargetTempId *int, HealValue float64, Dec *CardMeta.Decorator) *Heal {
-	res := Heal{}
+func (H *Heal) ShareLogic(pc ProtocolCardWithCtx, ObjId int) {
+	originValue := H.HealValue
+	FinalHeal := H.Dec.CalcHeal(originValue)
+	pc.ProtoColHealCardBt(ObjId, float64(FinalHeal))
+	pc.ProtoNotifyValue(BattleData.Heal, H.HealValue, ObjId, false)
+}
 
+func NewHeal(TargetTempId *int, HealValue float64, Dec *CardMeta.Decorator, isInterrupt bool, config *InterruptConfig) *Heal {
+	res := Heal{}
 	res.TargetTempId = TargetTempId
 	res.HealValue = HealValue
 	res.Dec = Dec
+	res.CheckIsInterrupt = isInterrupt
+	res.InterruptConfig = config
 	return &res
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------
 
-type Interrupt struct {
-	UserId           int
-	Time             time.Duration
-	TempIdList       []int
-	SelectNum        int
-	Res              chan []int
-	CheckIsInterrupt *bool
-	CallTempId       int
-	InterruptType    BattleData.InterruptType
-}
-
-func (I *Interrupt) Execute(pc ProtocolCardWithCtx) {
-	if !(*I.CheckIsInterrupt) {
-		return
-	}
-	dto := BattleData.NewInterruptDto(I.Time, I.TempIdList, I.SelectNum, I.InterruptType, I.CallTempId)
-	pc.ProtoColInterrupt(I.UserId, dto, I.Res, I.Time)
-}
-
-//----------------------------------------------------
-
 type DisCard struct {
-	UserId      int
-	TempIdList  *[]int
-	IsInterrupt *bool
+	EffectBase
+	UserId     int
+	TempIdList []int
 }
 
 func (D *DisCard) Execute(pc ProtocolCardWithCtx) {
-	for _, tempId := range *D.TempIdList {
+	if !D.CheckIsInterrupt {
+		D.ShareLogic(pc, D.TempIdList)
+	} else {
+		D.CallInterrupt(pc, func(res []int, pc ProtocolCardWithCtx) {
+			D.ShareLogic(pc, res)
+		})
+	}
+
+}
+func (D *DisCard) ShareLogic(pc ProtocolCardWithCtx, ObjId []int) {
+	for _, tempId := range ObjId {
 		pc.ProtoColMoveDisCardPool(D.UserId, tempId)
 		pc.ProtoNotifyCardMove(BattleData.DisCardPool, tempId)
 	}
-	if !pc.CheckCard(D.UserId) { //检查出没有出战的牌了
-
-		*D.IsInterrupt = true
-	} else {
-		*D.IsInterrupt = false
-	}
 }
 
-func NewDisCard(UserId int, TempIdList *[]int, IsInterrupt *bool) *DisCard {
+func NewDisCard(UserId int, TempIdList []int, isInterrupt bool, config *InterruptConfig) *DisCard {
 	res := DisCard{}
 	res.UserId = UserId
 	res.TempIdList = TempIdList
-	res.IsInterrupt = IsInterrupt
+	res.CheckIsInterrupt = isInterrupt
+	res.InterruptConfig = config
 	return &res
 }
 
 //----------------------------------------------------
 
 type SetCardBt struct {
-	TempIdList       *[]int
-	UserId           int
-	CheckIsInterrupt *bool
+	EffectBase
+	TargetId int
+	UserId   int
 }
 
 func (S *SetCardBt) Execute(pc ProtocolCardWithCtx) {
-	if !(*S.CheckIsInterrupt) {
-		return
+	if !S.CheckIsInterrupt {
+		S.ShareLogic(pc, S.TargetId)
+	} else {
+		S.CallInterrupt(pc, func(res []int, pc ProtocolCardWithCtx) {
+			for _, ObjId := range res {
+				S.ShareLogic(pc, ObjId)
+			}
+		})
 	}
-	tempId := (*S.TempIdList)[0]
-	pc.ProtoColSetCardBt(S.UserId, tempId)
 
 }
 
+func (S *SetCardBt) ShareLogic(pc ProtocolCardWithCtx, ObjId int) {
+	pc.ProtoColSetCardBt(S.UserId, ObjId)
+}
+
 // NewSetCardBt 只上数组里的一张
-func NewSetCardBt(UserId int, TempIdList *[]int, CheckIsInterrupt *bool) *SetCardBt {
+func NewSetCardBt(UserId int, TargetId int, CheckIsInterrupt bool, config *InterruptConfig) *SetCardBt {
 	res := SetCardBt{}
 	res.UserId = UserId
-	res.TempIdList = TempIdList
+	res.TargetId = TargetId
 	res.CheckIsInterrupt = CheckIsInterrupt
+	res.InterruptConfig = config
 	return &res
 }
 
 //----------------------------------------------------
 
 type GiveBuff struct {
+	EffectBase
 	TempId *int
 	Buff   Buff
 }
 
 func (G *GiveBuff) Execute(pc ProtocolCardWithCtx) {
-	pc.GiveBuff(*G.TempId, &G.Buff)
+	if !G.CheckIsInterrupt {
+		G.ShareLogic(pc, *G.TempId)
+	} else {
+		G.CallInterrupt(pc, func(res []int, pc ProtocolCardWithCtx) {
+			for _, ObjId := range res {
+				G.ShareLogic(pc, ObjId)
+			}
+		})
+	}
+}
+
+func (G *GiveBuff) ShareLogic(pc ProtocolCardWithCtx, ObjId int) {
+	pc.GiveBuff(ObjId, &G.Buff)
 	for _, UserId := range pc.GetIds() { //做buff改动的通知
 		pc.ProtoSendAction(UserId, BattleDto.NewAction(BattleDto.BuffChange, BattleDto.Result, map[string]any{
 			"data_all": pc.GetDataAll(UserId),
 		}))
 	}
-
 }
 
-func NewGiveBuff(TempId *int, Buff Buff) *GiveBuff {
+func NewGiveBuff(TempId *int, Buff Buff, isInterrupt bool, config *InterruptConfig) *GiveBuff {
 	res := GiveBuff{}
 	res.TempId = TempId
 	res.Buff = Buff
+	res.InterruptConfig = config
+	res.CheckIsInterrupt = isInterrupt
 	return &res
 }
 

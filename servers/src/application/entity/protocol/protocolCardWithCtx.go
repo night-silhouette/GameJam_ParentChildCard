@@ -44,4 +44,5 @@ type ProtocolCardWithCtx interface {
 	GetTempIdByWhere(where BattleData.Where, userId int) int
 	GetCharacterId() []int
 	GetOpponentId(selfId int) int
+	CheckIs2Bt(userId int) bool
 }

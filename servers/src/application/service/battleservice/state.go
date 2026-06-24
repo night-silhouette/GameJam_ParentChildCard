@@ -1364,7 +1364,7 @@ CalcLoop:
 				for _, card := range LoserBtCardList {
 					for range s.SM.LoseMarkMap[s.SM.Loser] - 1 {
 						TempId := card.GetTempId()
-						s.c.ProtoColPush(protocol.NewGiveBuff(&TempId, *protocol.NewBuffBase(protocol.DamageImmunity, 1, 0.28, s.c.CreateTempId())))
+						s.c.ProtoColPush(protocol.NewGiveBuff(&TempId, *protocol.NewBuffBase(protocol.DamageImmunity, 1, 0.28, s.c.CreateTempId()), false, &protocol.InterruptConfig{}))
 					}
 				}
 			}

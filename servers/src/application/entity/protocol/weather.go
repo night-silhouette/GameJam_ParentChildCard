@@ -58,7 +58,7 @@ func InitWeatherFuncMap() {
 	WeatherFuncMap[Ganmu] = func(pc ProtocolCardWithCtx, card []BuffNeed) { //出战牌回血
 		for _, c := range card {
 			TempId := c.GetTempId()
-			pc.ProtoColPush(NewHeal(&TempId, 1, c.GetDec()))
+			pc.ProtoColPush(NewHeal(&TempId, 1, c.GetDec(), false, &InterruptConfig{}))
 		}
 	}
 	WeatherFuncMap[Mingyang] = func(pc ProtocolCardWithCtx, card []BuffNeed) { //
@@ -71,13 +71,13 @@ func InitWeatherFuncMap() {
 	WeatherFuncMap[Miwu] = func(pc ProtocolCardWithCtx, card []BuffNeed) { //每个人有闪避
 		for _, c := range card {
 			TempId := c.GetTempId()
-			pc.ProtoColPush(NewGiveBuff(&TempId, *NewBuffBase(XuFeng, 1, 0.15, pc.CreateTempId())))
+			pc.ProtoColPush(NewGiveBuff(&TempId, *NewBuffBase(XuFeng, 1, 0.15, pc.CreateTempId()), false, &InterruptConfig{}))
 		}
 	}
 	WeatherFuncMap[Dashu] = func(pc ProtocolCardWithCtx, card []BuffNeed) {
 		for _, c := range card {
 			TempId := c.GetTempId()
-			pc.ProtoColPush(NewGiveBuff(&TempId, *NewBuffBase(HealingDecay, 1, 0.3, pc.CreateTempId())))
+			pc.ProtoColPush(NewGiveBuff(&TempId, *NewBuffBase(HealingDecay, 1, 0.3, pc.CreateTempId()), false, &InterruptConfig{}))
 		}
 	}
 	WeatherFuncMap[Zhipou] = func(pc ProtocolCardWithCtx, card []BuffNeed) {
@@ -96,13 +96,13 @@ func InitWeatherFuncMap() {
 	WeatherFuncMap[Shuangjiang] = func(pc ProtocolCardWithCtx, card []BuffNeed) {
 		for _, c := range card {
 			TempId := c.GetTempId()
-			pc.ProtoColPush(NewGiveBuff(&TempId, *NewBuffBase(Vulnerability, 1, 0.4, pc.CreateTempId())))
+			pc.ProtoColPush(NewGiveBuff(&TempId, *NewBuffBase(Vulnerability, 1, 0.4, pc.CreateTempId()), false, &InterruptConfig{}))
 		}
 	}
 	WeatherFuncMap[Shutu] = func(pc ProtocolCardWithCtx, card []BuffNeed) {
 		for _, c := range card {
 			TempId := c.GetTempId()
-			pc.ProtoColPush(NewGiveBuff(&TempId, *NewBuffBase(DamageImmunity, 1, 0.28, pc.CreateTempId())))
+			pc.ProtoColPush(NewGiveBuff(&TempId, *NewBuffBase(DamageImmunity, 1, 0.28, pc.CreateTempId()), false, &InterruptConfig{}))
 		}
 	}
 	WeatherFuncMap[Fengdu] = func(pc ProtocolCardWithCtx, card []BuffNeed) {

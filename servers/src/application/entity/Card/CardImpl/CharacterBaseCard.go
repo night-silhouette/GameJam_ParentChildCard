@@ -4,9 +4,7 @@ import (
 	"pcc_card/application/entity/BattleData"
 	"pcc_card/application/entity/Card/CardAbstract"
 	"pcc_card/application/entity/protocol"
-	"pcc_card/global"
 	"pcc_card/presentation/handler/battlehandler/BattleDto"
-	"time"
 )
 
 type CharacterBaseCard struct {
@@ -19,6 +17,7 @@ func (c *CharacterBaseCard) Attack(TargetId int) bool {
 	return c.ShareAttack(FinalId)
 }
 
+// 反击
 func (c *CharacterBaseCard) Retaliate(AttackId int, HurtHp float64) {
 	RetaliateTotal := 0.0
 	for _, buff := range c.BuffList {
@@ -59,11 +58,12 @@ func (c *CharacterBaseCard) Death(AttackId int) {
 		return //如果变僵尸了,就不用死了
 	}
 	c.Notify(BattleData.AnDeath, -1, AttackId, c.GetTempId())
-	CheckIsInterrupt := true //声明这个指针bool,接受等待弃牌的结果,弃牌完,如果没有出战牌的话,就要中断,默认值随便搞的
-	SelectCharacterCard := make([]int, 0)
-	c.SetCardBt(&SelectCharacterCard, &CheckIsInterrupt)
-	c.Interrupt(&SelectCharacterCard, global.Interrupt*time.Second, c.BtCtx.ProtoColGetCharacterCard(c.OwnerId), 1, &CheckIsInterrupt, BattleData.Deploy)
-	c.DisCard(&[]int{c.GetTempId()}, &CheckIsInterrupt) //反向压入
+
+	if !c.BtCtx.CheckIs2Bt(c.OwnerId) {
+		config := protocol.NewInterruptConfig(c.OwnerId, c.BtCtx.ProtoColGetCharacterCard(c.OwnerId), 1, c.GetTempId(), BattleData.Deploy)
+		c.BtCtx.ProtoColPush(protocol.NewSetCardBt(c.OwnerId, -1, true, &config))
+		c.DisCard([]int{c.GetTempId()})
+	}
 }
 
 func (c *CharacterBaseCard) BtCry() {
@@ -130,7 +130,7 @@ func (c *CharacterBaseCard) ShareAttack(TargetId int) bool {
 	}
 
 	c.Notify(BattleData.AnAttack, -1, c.GetTempId(), TargetId)
-	c.EffectAttack(TargetId, c.AtkNow, BattleData.Damage)
+	c.EffectAttack(TargetId, 10*c.AtkNow, BattleData.Damage)
 	c.EffectUpdateEnergy(-offset) //反向压入,先扣能量,再伤害
 	return true
 }
