@@ -569,6 +569,41 @@ func (c *Ctx) ProtoColReduceCardBtHp(SendTempId int, TargetTempId int, ReduceHp 
 	card.SetHpNow(NowHp - ReduceHp)
 
 }
+func (c *Ctx) ProtoCol1002(A int, B int) {
+	Acard := c.FindCard(A)
+	Bcard := c.FindCard(B)
+
+	aAtk := int(Acard.GetAtkNow())
+	aHpNow := int(Acard.GetHpNow())
+	maxHpAny := Acard.GetInfo()["maxHp"]
+	var aMaxHp int
+	if val, ok := maxHpAny.(float64); ok {
+		aMaxHp = int(val)
+	} else {
+		fmt.Println("ProtoCol1002 err")
+		return
+	}
+	offAttack := aAtk / 2
+	offHpNow := aHpNow / 2
+	offHpMax := aMaxHp / 2
+
+	// 3. 执行更新 (保证守恒)
+	// 更新 Acard
+	Acard.SetHpNow(float64(aHpNow - offHpNow))
+	Acard.SetAtkNow(float64(aAtk - offAttack))
+	Acard.GetInfo()["maxHp"] = float64(aMaxHp - offHpMax)
+
+	// 更新 Bcard (使用上面算好的 off 值，而不是再次读取 Acard)
+	Bcard.SetHpNow(float64(int(Bcard.GetHpNow()) + offHpNow))
+	Bcard.SetAtkNow(float64(int(Bcard.GetAtkNow()) + offAttack))
+
+	bMaxHp := 0
+	if val, ok := Bcard.GetInfo()["maxHp"].(float64); ok {
+		bMaxHp = int(val)
+	}
+	Bcard.GetInfo()["maxHp"] = float64(bMaxHp + offHpMax)
+}
+
 func (c *Ctx) ProtoColHealCardBt(TargetTempId int, HealHp float64) {
 	var card CardAbstract.Character
 	var ok bool
@@ -608,7 +643,7 @@ func (c *Ctx) ProtoSendAction(UserId int, action BattleDto.Action) {
 	c.StateMachine.SendActionById(UserId, action)
 }
 
-func (c *Ctx) ProtoColSetDamageCardBt(UserId int, TargetTempId int, NewDamage float64) {
+func (c *Ctx) ProtoColSetDamageCardBt(TargetTempId int, NewDamage float64) {
 	var card CardAbstract.Character
 	var ok bool
 	if card, ok = c.FindCard(TargetTempId).(CardAbstract.Character); !ok {
