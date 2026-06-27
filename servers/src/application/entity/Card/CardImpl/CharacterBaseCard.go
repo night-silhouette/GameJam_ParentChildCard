@@ -70,10 +70,6 @@ func (c *CharacterBaseCard) BtCry() {
 
 }
 
-func (c *CharacterBaseCard) RoundEnd() {
-
-}
-
 func (c *CharacterBaseCard) NextRound() {
 
 }

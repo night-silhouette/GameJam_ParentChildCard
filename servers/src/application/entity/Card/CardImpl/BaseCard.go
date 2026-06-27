@@ -16,6 +16,7 @@ type BaseCard struct {
 	Info map[string]any `json:"-"`
 
 	//动态变量
+	CR                   *CardAbstract.CardRecord
 	BtCtx                protocol.ProtocolCardWithCtx
 	HpNow                float64
 	AtkNow               float64
@@ -36,7 +37,14 @@ func (c *BaseCard) GetHpNow() float64 {
 	return c.HpNow
 }
 func (c *BaseCard) SetHpNow(hpNow float64) {
+	OldHp := c.HpNow
+	if OldHp <= hpNow {
+		c.HpNow = hpNow
+		return
+	}
 	c.HpNow = hpNow
+	offset := OldHp - hpNow //这次扣掉的血
+	c.CR.HurtedThisTurn += offset
 }
 func (c *BaseCard) GetAtkNow() float64 {
 	return c.AtkNow
@@ -182,6 +190,7 @@ func (c *BaseCard) ShareInit(goctx context.Context, ctx protocol.ProtocolCardWit
 	c.SetForm(BattleData.NormalForm)
 	c.SetBtCtx(ctx)
 	c.changeJiangShi = false
+	c.CR = CardAbstract.NewCardRecord()
 	var ch chan *CardMeta.BroadInfo
 	ch = make(chan *CardMeta.BroadInfo, 4)
 	c.SpecialCardStateChan = ch
@@ -258,3 +267,11 @@ func (c *BaseCard) ChangeMaxHp(TargetTempId int, MaxHp float64) {
 }
 
 func (c *BaseCard) NextRound() {}
+
+func (c *BaseCard) RoundEnd() {
+	c.CR.RoundEnd()
+}
+
+func (c *BaseCard) GetCR() *CardAbstract.CardRecord {
+	return c.CR
+}

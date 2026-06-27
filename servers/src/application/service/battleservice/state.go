@@ -1308,7 +1308,7 @@ func (s *CardCalc) Switch(_data BattleData.CombatDto, UserId int) bool {
 
 				//-----------------------换牌正文-----------------------
 
-				playerData.SwitchCard(data.Where, card)
+				playerData.SwitchCard(data.Where, card, s.c)
 				return true
 				//-----------------------换牌正文-----------------------
 
@@ -1455,17 +1455,28 @@ CalcLoop:
 			//结算buff
 			s.SM.SendActionById(s.SM.Id2, BattleDto.NewAction(BattleDto.BuffCalcNotify, BattleDto.Notify, ""))
 			s.SM.SendActionById(s.SM.Id1, BattleDto.NewAction(BattleDto.BuffCalcNotify, BattleDto.Notify, ""))
+	
 			CharacterCardList := s.c.GetCharacter()
+			for _, Card := range CharacterCardList {
+				flag, buff := s.c.CheckBuff(Card.GetTempId(), protocol.DamageTransform)
+				if flag {
+					trans_hurt := int(buff.Value * Card.GetCR().HurtedThisTurn)
+					OpBtList := s.c.ProtoGetBtAll(s.c.GetOpponentId(Card.GetOwnerId()))
+					Obj := Util.GetRandomElements[int](OpBtList, 1)
+					s.c.ProtoColPush(protocol.NewAttack(Card.GetOwnerId(), Card.GetTempId(), Obj[0], float64(trans_hurt), Card.GetDec(), BattleData.Damage, false, &protocol.InterruptConfig{}))
+					s.c.StackSettle()
+				}
+			} //结算伤害转移这个buff,他特殊化提出来,是因为必须先结算
 			for _, Card := range CharacterCardList {
 				Card.BuffRoundEnd(s.c)
 				s.c.StackSettle()
 			}
 			s.c.ChildCardCheck()
 
-			//回合结束,所有卡牌的roundend执行
-			AllCharacter := s.c.GetCharacter()
-			for _, Card := range AllCharacter {
-				Card.(CardAbstract.Character).RoundEnd()
+			//回合结束,所有卡的roundend执行
+			AllCard := s.c.GetAllCard()
+			for _, Card := range AllCard {
+				Card.RoundEnd()
 			}
 			s.c.StackSettle()
 			s.c.ChildCardCheck()
@@ -1474,22 +1485,26 @@ CalcLoop:
 			RoundChange(s.SM)
 
 			//------执行下回合回合开始的card的效果(nextRound)------
+			AllCharacter := s.c.GetCharacter()
 			for _, Card := range AllCharacter {
 				Card.NextRound() //所有战斗卡
 			}
 			s.c.StackSettle()
 			s.c.ChildCardCheck()
-			if s.c.PlayerDataMap[s.SM.Winner].SkillCardBT != nil {
+			if s.c.PlayerDataMap[s.SM.Winner].SkillCardBT != nil { //和上场的法术牌
 				s.c.PlayerDataMap[s.SM.Winner].SkillCardBT.(CardAbstract.SkillCard).NextRound()
 				s.c.StackSettle()
 				s.c.ChildCardCheck()
+				s.c.ProtoColMoveDisCardPool(s.SM.Winner, s.c.PlayerDataMap[s.SM.Winner].SkillCardBT.GetTempId()) //丢弃掉法术牌
 			}
 
 			if s.c.PlayerDataMap[s.SM.Loser].SkillCardBT != nil {
 				s.c.PlayerDataMap[s.SM.Loser].SkillCardBT.(CardAbstract.SkillCard).NextRound()
 				s.c.StackSettle() //执行效果堆栈
 				s.c.ChildCardCheck()
+				s.c.ProtoColMoveDisCardPool(s.SM.Loser, s.c.PlayerDataMap[s.SM.Loser].SkillCardBT.GetTempId())
 			}
+
 			//------执行下回合回合开始的card的效果(nextRound)------
 
 			//全部结算完成,发个通知

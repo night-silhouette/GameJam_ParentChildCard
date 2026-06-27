@@ -11,5 +11,5 @@ type Character interface {
 	NoSourceHurt(HurtHp float64, category BattleData.ValueChange)
 	Skill(TargetId int) bool
 	Death(AttackTempId int) //如果,杀死者是无主的,就传入-1
-	RoundEnd()
+
 }

@@ -35,6 +35,7 @@ func (c *Card0004) Skill(TargetId int) bool {
 }
 
 func (c *Card0004) RoundEnd() {
+	c.BaseCard.RoundEnd()
 	c.IsSkill = false
 }
 

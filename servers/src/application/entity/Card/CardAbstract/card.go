@@ -32,6 +32,8 @@ type Card interface {
 	PutBroadInfo(v *CardMeta.BroadInfo) //把广播信息丢到管道里
 	BroadCallBack(v *CardMeta.BroadInfo)
 	NextRound()
+	RoundEnd()
+	GetCR() *CardRecord
 }
 
 func GetCardDto(c Card) BattleData.CardDto {
