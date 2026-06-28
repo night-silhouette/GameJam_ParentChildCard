@@ -27,6 +27,7 @@ type BaseCard struct {
 	SpecialCardStateChan chan *CardMeta.BroadInfo
 	Form                 BattleData.Form
 	changeJiangShi       bool
+	CtxRecord            *CardAbstract.CtxRecord
 }
 
 func (c *BaseCard) SetBtCtx(btCtx protocol.ProtocolCardWithCtx) {
@@ -183,7 +184,7 @@ func (c *BaseCard) BroadCallBack(v *CardMeta.BroadInfo) {
 }
 
 // 所有的卡的一些重要的初始化在这
-func (c *BaseCard) ShareInit(goctx context.Context, ctx protocol.ProtocolCardWithCtx) {
+func (c *BaseCard) ShareInit(goctx context.Context, ctx protocol.ProtocolCardWithCtx, CtxRecord *CardAbstract.CtxRecord) {
 	c.self = c
 	c.Dec = CardMeta.NewDecorator()
 	c.BuffList = make([]*protocol.Buff, 0, 8)
@@ -191,6 +192,7 @@ func (c *BaseCard) ShareInit(goctx context.Context, ctx protocol.ProtocolCardWit
 	c.SetBtCtx(ctx)
 	c.changeJiangShi = false
 	c.CR = CardAbstract.NewCardRecord()
+	c.CtxRecord = CtxRecord
 	var ch chan *CardMeta.BroadInfo
 	ch = make(chan *CardMeta.BroadInfo, 4)
 	c.SpecialCardStateChan = ch
@@ -274,4 +276,8 @@ func (c *BaseCard) RoundEnd() {
 
 func (c *BaseCard) GetCR() *CardAbstract.CardRecord {
 	return c.CR
+}
+
+func (c *BaseCard) GetCtxRd() *CardAbstract.CtxRecord {
+	return c.CtxRecord
 }

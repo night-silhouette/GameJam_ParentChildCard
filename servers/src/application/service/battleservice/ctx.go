@@ -33,15 +33,15 @@ type Ctx struct {
 	NeedInterrupt       atomic.Bool
 	InterruptChan       chan struct{}
 	InterruptListenFunc atomic.Value //func(id int, action BattleDto.Action, ResponseChan chan<- BattleDto.Action) bool
-
+	CtxRecord           *CardAbstract.CtxRecord
 }
 
 // cList是子牌堆,CardList是手牌堆
-func InitCtx(c *Ctx, idA int, idB int, ParentContext context.Context, CardList map[int]map[int]CardAbstract.Card, TempIdCalc *atomic.Int32, cList []CardAbstract.Card) *Ctx {
+func InitCtx(c *Ctx, idA int, idB int, ParentContext context.Context, CardList map[int]map[int]CardAbstract.Card, TempIdCalc *atomic.Int32, cList []CardAbstract.Card, CtxRecord *CardAbstract.CtxRecord) *Ctx {
 	c.EffectsStack = NewEffectStack()
 	c.entityCounter = 1
 	c.ParentContext = ParentContext
-
+	c.CtxRecord = CtxRecord
 	c.PlayerDataMap = make(map[int]*PlayerData, 2)
 	c.PlayerDataMap[idA] = NewPlayerData(idA, CardList[idA])
 

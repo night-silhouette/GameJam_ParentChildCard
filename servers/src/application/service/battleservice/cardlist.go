@@ -24,14 +24,14 @@ func InitCardList(s BattleService) {
 }
 
 // 根据tempid获取卡牌对象
-func (Cd *CardList) GetCardImpl(CardId int, GoCtx context.Context, ctx protocol.ProtocolCardWithCtx) CardAbstract.Card {
+func (Cd *CardList) GetCardImpl(CardId int, GoCtx context.Context, ctx protocol.ProtocolCardWithCtx, CtxRecord *CardAbstract.CtxRecord) CardAbstract.Card {
 	Cd.Mt.Lock()
 	defer Cd.Mt.Unlock()
-	return Cd.getCardImpl(CardId, GoCtx, ctx)
+	return Cd.getCardImpl(CardId, GoCtx, ctx, CtxRecord)
 }
 
 // getCardImpl 内部核心工厂方法（绝对安全版）
-func (Cd *CardList) getCardImpl(CardId int, GoCtx context.Context, ctx protocol.ProtocolCardWithCtx) CardAbstract.Card {
+func (Cd *CardList) getCardImpl(CardId int, GoCtx context.Context, ctx protocol.ProtocolCardWithCtx, CtxRecord *CardAbstract.CtxRecord) CardAbstract.Card {
 	creator, exists := Cd.creators[CardId]
 	if !exists {
 		return nil
@@ -59,7 +59,7 @@ func (Cd *CardList) getCardImpl(CardId int, GoCtx context.Context, ctx protocol.
 	}
 
 	//------------------有新的初始化,就来这里------------------
-	e.ShareInit(GoCtx, ctx)
+	e.ShareInit(GoCtx, ctx, CtxRecord)
 
 	return e
 }

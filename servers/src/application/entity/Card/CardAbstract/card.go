@@ -28,12 +28,13 @@ type Card interface {
 	BuffRoundEnd(pc protocol.ProtocolCardWithCtx)
 	GetForm() BattleData.Form
 	SetForm(BattleData.Form)
-	ShareInit(goctx context.Context, ctx protocol.ProtocolCardWithCtx)
+	ShareInit(goctx context.Context, ctx protocol.ProtocolCardWithCtx, CtxRecord *CtxRecord)
 	PutBroadInfo(v *CardMeta.BroadInfo) //把广播信息丢到管道里
 	BroadCallBack(v *CardMeta.BroadInfo)
 	NextRound()
 	RoundEnd()
 	GetCR() *CardRecord
+	GetCtxRd() *CtxRecord
 }
 
 func GetCardDto(c Card) BattleData.CardDto {

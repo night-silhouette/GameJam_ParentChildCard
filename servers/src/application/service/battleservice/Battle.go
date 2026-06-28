@@ -27,11 +27,11 @@ type Battle struct {
 }
 
 // 传来的卡的id。出来的是充血对象(填充tempid了的),tempid是自增了的
-func CloneCardListByid(cardIdList []int, NumCalc *atomic.Int32, GoCtx context.Context, ctx protocol.ProtocolCardWithCtx) []CardAbstract.Card {
+func CloneCardListByid(cardIdList []int, NumCalc *atomic.Int32, GoCtx context.Context, ctx protocol.ProtocolCardWithCtx, CtxRecord *CardAbstract.CtxRecord) []CardAbstract.Card {
 	ChildCardList := make([]CardAbstract.Card, 0)
 
 	for _, CardId := range cardIdList {
-		e := CardListImpl.GetCardImpl(CardId, GoCtx, ctx)
+		e := CardListImpl.GetCardImpl(CardId, GoCtx, ctx, CtxRecord)
 		e.SetTempId(int(NumCalc.Add(1)))
 		ChildCardList = append(ChildCardList, e)
 	}
@@ -44,6 +44,7 @@ func NewBattle(UserA int, UserB int, CardList map[int][]int, GoldMoreUserId int,
 	rootContext := context.Background()
 	BattleContext, cancel := context.WithCancel(rootContext)
 	id := int(atomic.AddInt64(&battleIDCounter, 1))
+	CtxRecord := CardAbstract.NewCtxRecord()
 	c := Ctx{}
 	//clone手牌,给userid到ownerId
 	//这个函数递增了tempid的计数,
@@ -51,7 +52,7 @@ func NewBattle(UserA int, UserB int, CardList map[int][]int, GoldMoreUserId int,
 	CardInHand := make(map[int]map[int]CardAbstract.Card)
 	for UserId, Value := range CardList {
 		CardInHand[UserId] = make(map[int]CardAbstract.Card)
-		List := CloneCardListByid(Value, &TempId, BattleContext, &c)
+		List := CloneCardListByid(Value, &TempId, BattleContext, &c, CtxRecord)
 		for _, Card := range List {
 			CardInHand[UserId][Card.GetTempId()] = Card
 		}
@@ -65,9 +66,9 @@ func NewBattle(UserA int, UserB int, CardList map[int][]int, GoldMoreUserId int,
 	//全都聚合在这里的,匹配只是传过来id,他只指挥生成什么牌,不具体生成牌,因为ctx和GoCtx都在这里
 	//子牌堆初始化
 	ChildCardList := make([]CardAbstract.Card, 0)
-	ChildCardList = CloneCardListByid(cList, &TempId, BattleContext, &c)
+	ChildCardList = CloneCardListByid(cList, &TempId, BattleContext, &c, CtxRecord)
 
-	InitCtx(&c, UserA, UserB, BattleContext, CardInHand, &TempId, ChildCardList)
+	InitCtx(&c, UserA, UserB, BattleContext, CardInHand, &TempId, ChildCardList, CtxRecord)
 	Nt := NewNotifyManager(UserA, UserB, 32) //初始化bufferSize
 	SM := NewStateMachine(&c, UserA, UserB, Nt, BattleContext, GoldMoreUserId)
 	go func() {
