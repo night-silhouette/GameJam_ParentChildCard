@@ -6,9 +6,12 @@
   <component name="ChangeListManager">
     <list default="true" id="760cea56-5efb-4b56-8acc-717cb714ebef" name="更改" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/application/entity/Card/CardAbstract/ChildCard.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/entity/Card/CardAbstract/ChildCard.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/application/entity/Card/CardAbstract/card.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/entity/Card/CardAbstract/card.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/entity/Card/CardAbstract/ctxRecord.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/entity/BattleData/ctxRecord.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/entity/Card/CardImpl/2000.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/entity/Card/CardImpl/2000.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/application/entity/Card/CardImpl/BaseCard.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/entity/Card/CardImpl/BaseCard.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/entity/protocol/EffectStruct.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/entity/protocol/EffectStruct.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/entity/protocol/protocolCardWithCtx.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/entity/protocol/protocolCardWithCtx.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/application/service/battleservice/Battle.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/service/battleservice/Battle.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/application/service/battleservice/cardlist.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/service/battleservice/cardlist.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/application/service/battleservice/ctx.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/service/battleservice/ctx.go" afterDir="false" />
@@ -98,11 +101,11 @@
       <recent name="C:\Users\jixiegm\Desktop\GameJam_ParentChildCard\servers\开发文档\开发日志" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/application/entity/BattleData" />
       <recent name="$PROJECT_DIR$/src/application/entity/protocol" />
       <recent name="$PROJECT_DIR$/src/application/entity/CardMeta" />
       <recent name="$PROJECT_DIR$/src/application/entity/protocolCardWithCtx" />
       <recent name="$PROJECT_DIR$/src/application/service/battleservice" />
-      <recent name="$PROJECT_DIR$/src/application/entity/Effect" />
     </key>
   </component>
   <component name="RunDashboard">

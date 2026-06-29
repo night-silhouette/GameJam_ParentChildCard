@@ -3,6 +3,7 @@ package battleservice
 import (
 	"context"
 	"fmt"
+	"pcc_card/application/entity/BattleData"
 	"pcc_card/application/entity/Card/CardAbstract"
 	"pcc_card/application/entity/protocol"
 	"pcc_card/infra/repo/userrepo"
@@ -27,7 +28,7 @@ type Battle struct {
 }
 
 // 传来的卡的id。出来的是充血对象(填充tempid了的),tempid是自增了的
-func CloneCardListByid(cardIdList []int, NumCalc *atomic.Int32, GoCtx context.Context, ctx protocol.ProtocolCardWithCtx, CtxRecord *CardAbstract.CtxRecord) []CardAbstract.Card {
+func CloneCardListByid(cardIdList []int, NumCalc *atomic.Int32, GoCtx context.Context, ctx protocol.ProtocolCardWithCtx, CtxRecord *BattleData.CtxRecord) []CardAbstract.Card {
 	ChildCardList := make([]CardAbstract.Card, 0)
 
 	for _, CardId := range cardIdList {
@@ -44,7 +45,7 @@ func NewBattle(UserA int, UserB int, CardList map[int][]int, GoldMoreUserId int,
 	rootContext := context.Background()
 	BattleContext, cancel := context.WithCancel(rootContext)
 	id := int(atomic.AddInt64(&battleIDCounter, 1))
-	CtxRecord := CardAbstract.NewCtxRecord()
+	CtxRecord := BattleData.NewCtxRecord()
 	c := Ctx{}
 	//clone手牌,给userid到ownerId
 	//这个函数递增了tempid的计数,
@@ -74,7 +75,7 @@ func NewBattle(UserA int, UserB int, CardList map[int][]int, GoldMoreUserId int,
 	go func() {
 		select {
 		case <-BattleContext.Done():
-			BC.RemoveBattle(id)
+			BC.RemoveBattle(id) //当这个ctx被释放的时候删除battle本身,让gc把他free
 		}
 	}()
 	return &Battle{BattleID: id, SM: SM, Ctx: &c, Nt: Nt, Context: BattleContext, Cancel: cancel}

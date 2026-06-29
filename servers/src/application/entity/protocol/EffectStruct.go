@@ -74,6 +74,10 @@ func (A *Hurt) Execute(pc ProtocolCardWithCtx) {
 	}
 	pc.ProtoColReduceCardBtHp(A.SendTempId, A.TargetTempId, float64(FinalAtkValue))
 	pc.ProtoNotifyValue(A.Category, -float64(FinalAtkValue), A.TargetTempId, IfMiss)
+	//记录更新到全局记录表里,
+	//上一次扣血的元数据
+	CtxRD := pc.GetCtxRD()
+	CtxRD.LastHurt = BattleData.NewHurtRecord(BattleData.CardCalcValueDto{TempId: A.TargetTempId, Category: A.Category, Value: float64(FinalAtkValue), IsMiss: IfMiss}, pc.CreateTempId())
 	if FinalAtkValue > 0 {
 		pc.Broad(CardMeta.NewBroadInfo(CardMeta.Wound, A.SendTempId, A.TargetTempId)) //广播被击伤
 	}

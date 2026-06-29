@@ -48,4 +48,6 @@ type ProtocolCardWithCtx interface {
 	ProtoGetBtAll(UserId int) []int
 	ChangeWeather(w Weather)
 	ProtoCol1002(A int, B int)
+	GetCtxRD() *BattleData.CtxRecord
+	CardUserIdByTempId(TempId int) int //根据tempid返回userid
 }

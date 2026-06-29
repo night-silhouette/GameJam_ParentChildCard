@@ -33,11 +33,11 @@ type Ctx struct {
 	NeedInterrupt       atomic.Bool
 	InterruptChan       chan struct{}
 	InterruptListenFunc atomic.Value //func(id int, action BattleDto.Action, ResponseChan chan<- BattleDto.Action) bool
-	CtxRecord           *CardAbstract.CtxRecord
+	CtxRecord           *BattleData.CtxRecord
 }
 
 // cList是子牌堆,CardList是手牌堆
-func InitCtx(c *Ctx, idA int, idB int, ParentContext context.Context, CardList map[int]map[int]CardAbstract.Card, TempIdCalc *atomic.Int32, cList []CardAbstract.Card, CtxRecord *CardAbstract.CtxRecord) *Ctx {
+func InitCtx(c *Ctx, idA int, idB int, ParentContext context.Context, CardList map[int]map[int]CardAbstract.Card, TempIdCalc *atomic.Int32, cList []CardAbstract.Card, CtxRecord *BattleData.CtxRecord) *Ctx {
 	c.EffectsStack = NewEffectStack()
 	c.entityCounter = 1
 	c.ParentContext = ParentContext
@@ -569,6 +569,11 @@ func (c *Ctx) ProtoColReduceCardBtHp(SendTempId int, TargetTempId int, ReduceHp 
 	card.SetHpNow(NowHp - ReduceHp)
 
 }
+func (c *Ctx) CardUserIdByTempId(TempId int) int {
+	card := c.FindCard(TempId)
+	return card.GetOwnerId()
+}
+
 func (c *Ctx) ProtoCol1002(A int, B int) {
 	Acard := c.FindCard(A)
 	Bcard := c.FindCard(B)
@@ -667,6 +672,10 @@ func (c *Ctx) ChangeWeather(w protocol.Weather) {
 	ChangeWeather(w, c.StateMachine)
 }
 
+func (c *Ctx) GetCtxRD() *BattleData.CtxRecord {
+	return c.CtxRecord
+}
+
 func (c *Ctx) ProtoNotifyValue(Category BattleData.ValueChange, Value float64, TempId int, IsMiss bool) {
 	c.StateMachine.SendActionById(c.StateMachine.Id1, BattleDto.NewAction(BattleDto.HpChange, BattleDto.Result, BattleData.CardCalcValueDto{
 		TempId:   TempId,
@@ -717,7 +726,7 @@ func (c *Ctx) CheckBuff(tempId int, buffId protocol.BuffId) (bool, *protocol.Buf
 	return false, nil
 }
 
-// FindCard 这是一个总和方法,他会在两个人的手牌和出战斗牌里根据tempId找牌
+// FindCard 这是一个总和方法,他会在两个人的手牌和出战斗牌和弃牌堆里根据tempId找牌
 func (c *Ctx) FindCard(tempId int) CardAbstract.Card {
 	var card CardAbstract.Card
 	res := c.GetCardInCardBtByCardTempId(c.StateMachine.Id1, tempId)
@@ -736,6 +745,15 @@ func (c *Ctx) FindCard(tempId int) CardAbstract.Card {
 	if res != nil {
 		card = res
 	}
+	c.DisCardPool.Do(func(data *[]CardAbstract.Card) {
+		for _, el := range *data {
+			if el.GetTempId() == tempId {
+				card = el
+				break
+			}
+		}
+	})
+
 	return card
 }
 
