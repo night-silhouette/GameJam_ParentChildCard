@@ -50,6 +50,9 @@ type User_repo interface {
 	GetStuffByStuffId(ctx context.Context, db repo.SQLQueryer, userId int, stuffId int) (global.ResponseStatusCode, BattleData.BagStuffDto)
 	JudgeCardIsParent(ctx context.Context, db repo.SQLQueryer, CardId int) (global.ResponseStatusCode, bool)
 	JudgeCardIsCharacter(ctx context.Context, db repo.SQLQueryer, CardId int) (global.ResponseStatusCode, bool)
+	CreateBattle(ctx context.Context, db repo.SQLQueryer, playerIdA int, playerIdB int) (int, global.ResponseStatusCode)
+	CheckUserIdIsBattle(ctx context.Context, db repo.SQLQueryer, userId int) (int, global.ResponseStatusCode)
+	DeleteBattle(ctx context.Context, db repo.SQLQueryer, BtId int) global.ResponseStatusCode
 }
 
 type User_repo_impl struct {
@@ -734,4 +737,61 @@ func (r *User_repo_impl) JudgeCardIsCharacter(ctx context.Context, db repo.SQLQu
 		return global.ResponseSuccess, false
 	}
 
+}
+
+// CreateBattle 创建战斗并返回数据库自动生成的 battle_id
+func (r *User_repo_impl) CreateBattle(ctx context.Context, db repo.SQLQueryer, playerIdA int, playerIdB int) (int, global.ResponseStatusCode) {
+	var battleId int
+	query := `insert into battle (player_ida, player_idb) values ($1, $2) returning battle_id`
+	err := db.QueryRowContext(ctx, query, playerIdA, playerIdB).Scan(&battleId)
+	if err != nil {
+		log.Printf("failed to create battle: %v", err)
+		return 0, global.ResponseInternalServersError
+	}
+	return battleId, global.ResponseSuccess
+}
+
+// 检查并且返回 battleid
+// 返回值：battleId (int), status (global.ResponseStatusCode)
+func (r *User_repo_impl) CheckUserIdIsBattle(ctx context.Context, db repo.SQLQueryer, userId int) (int, global.ResponseStatusCode) {
+	query := `select battle_id from battle where player_ida = $1 or player_idb = $1 limit 1`
+
+	var battleId int
+	err := db.QueryRowContext(ctx, query, userId).Scan(&battleId)
+
+	if err != nil {
+		if err.Error() == "sql: no rows in result set" {
+			return 0, global.ResponseDataNotFound
+		}
+		fmt.Println("CheckUserIdIsBattle:", err)
+		return 0, global.ResponseInternalServersError
+	}
+
+	return battleId, global.ResponseSuccess
+}
+
+// DeleteBattle 根据 battle_id 删除战斗记录
+func (r *User_repo_impl) DeleteBattle(ctx context.Context, db repo.SQLQueryer, BtId int) global.ResponseStatusCode {
+	// 根据 battle_id 删除对应记录
+	query := `delete from battle where battle_id = $1`
+
+	result, err := db.ExecContext(ctx, query, BtId)
+	if err != nil {
+		log.Printf("failed to delete battle %d: %v", BtId, err)
+		return global.ResponseInternalServersError
+	}
+
+	// 检查是否有行被删除
+	rows, err := result.RowsAffected()
+	if err != nil {
+		fmt.Println(err)
+		return global.ResponseInternalServersError
+	}
+
+	if rows == 0 {
+		fmt.Println("battle_id 不存在")
+		return global.ResponseDataNotFound
+	}
+
+	return global.ResponseSuccess
 }

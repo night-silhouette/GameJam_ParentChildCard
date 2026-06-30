@@ -55,6 +55,7 @@ func (u *BattleHandlerImpl) DebugBattleContainer() gin.HandlerFunc {
 
 func (u *BattleHandlerImpl) AddMatch(c *gin.Context, conn *websocket.Conn, goctx context.Context, res chan battleservice.PlayerChannel, data BattleData.EnterBtData) {
 	id := c.GetInt("id")
+
 	if !u.s.IsHasID(id) {
 		u.s.AddMatch(id, data)
 		matchSignals := u.s.GetMatchSignals()
@@ -99,23 +100,28 @@ func (u *BattleHandlerImpl) BattleWs() gin.HandlerFunc {
 		//----------ws设置----------
 
 		id := c.GetInt("id")
+		HandlerCtx, cancel := context.WithCancel(c.Request.Context())
 		//----------------------生命周期管理----------------------
-		goctx, cancel := context.WithCancel(c.Request.Context())
 		defer func() {
-			u.writeMu.Lock()
-			response.WsSuccess(conn, BattleDto.NewAction(BattleDto.OverBattle, BattleDto.Notify, ""))
-			u.writeMu.Unlock()
+
+			u.NotifyOpOffline(id) //掉线断链的通知
+
 			Util.CreateTimer(time.Second*2, func() {
 				cancel()
 				conn.Close() //两秒之后再断，这样前端可以收到死掉的信息
 			})
-			if battleservice.BC.GetBattleByUserID(id) == nil {
-				return
-			}
-			battleservice.BC.GetBattleByUserID(id).Cancel()
 
 		}()
 		//----------------------生命周期管理----------------------
+
+		//检查是不是加入战斗了
+		_, HaveBt := u.s.CheckUserIdIsBattle(HandlerCtx, id)
+		fmt.Println("IsHaveBt", HaveBt)
+		if HaveBt == global.ResponseSuccess { //找到了,也就是有这个战斗
+			response.WsFailWithMsg(conn, global.ResponseRepeatRequest, "已经在战斗了,断线重连用另外那个接口")
+			return
+		}
+		//检查是不是加入战斗了
 
 		//-------------------对带入的card和gold信息解析---------------------
 		BtData := c.Query("btData")
@@ -135,32 +141,37 @@ func (u *BattleHandlerImpl) BattleWs() gin.HandlerFunc {
 		}
 		fmt.Println(data)
 		//检验data合法性
-		ok := u.User_s.CheckBtDataIsValid(goctx, id, data.CardList, data.Gold)
+		ok := u.User_s.CheckBtDataIsValid(HandlerCtx, id, data.CardList, data.Gold)
 		if ok != global.ResponseSuccess {
 			fmt.Println(ok)
 			response.WsFail(conn, ok)
 			return
 		}
 		//-------------------对带入的card和gold信息解析---------------------
+
 		fmt.Println("数据合法")
 
 		transformAddMatchWithThis := make(chan battleservice.PlayerChannel, 2)
-		go u.AddMatch(c, conn, goctx, transformAddMatchWithThis, data)
-		go u.ListenResquest(conn, id, goctx, transformAddMatchWithThis, cancel)
+		go u.AddMatch(c, conn, HandlerCtx, transformAddMatchWithThis, data)
+		go u.ListenResquest(conn, id, HandlerCtx, transformAddMatchWithThis, cancel)
 
 		var OverGameChan chan bool = make(chan bool, 1)
 		select {
-		case <-goctx.Done():
+		case <-HandlerCtx.Done():
 			return
 		case playerChan := <-transformAddMatchWithThis:
-			go u.ListenResponse(conn, id, playerChan.ResponseChan, goctx, OverGameChan)
+			go u.ListenResponse(conn, id, playerChan.ResponseChan, HandlerCtx, OverGameChan)
 		}
 
 		select { //阻塞，不让handler直接结束
-		case <-goctx.Done():
+		case <-HandlerCtx.Done():
 			return
 		case ret, _ := <-OverGameChan:
 			if ret {
+				Bt := battleservice.BC.GetBattleByUserID(id)
+				if Bt != nil {
+					Bt.Cancel()
+				}
 				return
 			}
 		}
@@ -184,7 +195,7 @@ func (u *BattleHandlerImpl) ListenResquest(conn *websocket.Conn, id int, goctx c
 			playerC = playerChan.AcceptChan
 		default:
 		}
-		
+
 		//todo 拦截器
 		//if Interceptor.ShouldBlock(p) {
 		//	continue
@@ -232,7 +243,7 @@ func (u *BattleHandlerImpl) ListenResponse(conn *websocket.Conn, id int, playerC
 		select {
 		case Res, _ := <-playerC:
 
-			if Res.ActionCode == BattleDto.OverBattle {
+			if Res.ActionCode == BattleDto.OverBattle { //游戏结束了,就回从这里出来,这是正常的出口,具体是因为投降还是结束,看actiondata字段
 				OverGamechan <- true
 			} //结束战斗
 			if Res.ActionCode == BattleDto.Fault {
@@ -240,7 +251,6 @@ func (u *BattleHandlerImpl) ListenResponse(conn *websocket.Conn, id int, playerC
 				u.writeMu.Lock()
 				response.WsFail(conn, code)
 				u.writeMu.Unlock()
-
 				continue
 			} //监听内部错误
 			u.writeMu.Lock()
@@ -251,4 +261,27 @@ func (u *BattleHandlerImpl) ListenResponse(conn *websocket.Conn, id int, playerC
 		}
 
 	}
+}
+
+// 有一方异常退出的时候,给另一方消息通知他离线了(有BT的nil解释)//传入自己的userid
+func (u *BattleHandlerImpl) NotifyOpOffline(UserId int) {
+	Bt := battleservice.BC.GetBattleByUserID(UserId)
+	if Bt == nil {
+		return
+	}
+	ctx := Bt.Ctx
+	OpId := ctx.GetOpponentId(UserId)
+	Bt.SM.SendActionById(OpId, BattleDto.NewAction(BattleDto.OpOffline, BattleDto.Notify, ""))
+}
+
+// 通知双方,传入任意一个id就可以
+func (u *BattleHandlerImpl) NotifyOverBattle(UserId int) {
+	Bt := battleservice.BC.GetBattleByUserID(UserId)
+	if Bt == nil {
+		return
+	}
+	ctx := Bt.Ctx
+	OpId := ctx.GetOpponentId(UserId)
+	Bt.SM.SendActionById(OpId, BattleDto.NewAction(BattleDto.OverBattle, BattleDto.Notify, ""))
+	Bt.SM.SendActionById(OpId, BattleDto.NewAction(BattleDto.OverBattle, BattleDto.Notify, ""))
 }

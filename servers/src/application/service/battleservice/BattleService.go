@@ -4,6 +4,7 @@ import (
 	"context"
 	"pcc_card/application/entity/BattleData"
 	"pcc_card/application/service"
+	"pcc_card/global"
 	"pcc_card/infra/repo"
 	"pcc_card/infra/repo/battlerepo"
 	"pcc_card/infra/repo/userrepo"
@@ -16,6 +17,7 @@ type BattleService interface {
 	IsHasID(id int) bool
 	GetMatchSignals() *sync.Map
 	GetCardInfoByID(ctx context.Context, ID int) map[string]any
+	CheckUserIdIsBattle(ctx context.Context, userId int) (int, global.ResponseStatusCode)
 }
 
 type BattleServiceImpl struct {
@@ -39,4 +41,8 @@ func (u *BattleServiceImpl) GetMatchSignals() *sync.Map {
 
 func (u *BattleServiceImpl) GetCardInfoByID(ctx context.Context, ID int) map[string]any {
 	return u.repo.ReadCardByID(ctx, u.repo.Get_db(), ID)
+}
+
+func (u *BattleServiceImpl) CheckUserIdIsBattle(ctx context.Context, userId int) (int, global.ResponseStatusCode) {
+	return u.User_repo.CheckUserIdIsBattle(ctx, u.repo.Get_db(), userId)
 }

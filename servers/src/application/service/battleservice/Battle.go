@@ -11,8 +11,6 @@ import (
 	"sync/atomic"
 )
 
-var battleIDCounter int64
-
 type Battle struct {
 	mu sync.RWMutex //房间锁
 
@@ -39,12 +37,14 @@ func CloneCardListByid(cardIdList []int, NumCalc *atomic.Int32, GoCtx context.Co
 	return ChildCardList
 }
 
-func NewBattle(UserA int, UserB int, CardList map[int][]int, GoldMoreUserId int, cList []int) *Battle {
-	var TempId atomic.Int32
-	TempId.Store(int32(0))
+func (bc *BattleContainer) NewBattle(UserA int, UserB int, CardList map[int][]int, GoldMoreUserId int, cList []int) *Battle {
 	rootContext := context.Background()
 	BattleContext, cancel := context.WithCancel(rootContext)
-	id := int(atomic.AddInt64(&battleIDCounter, 1))
+	BtId, _ := bc.User_repo.CreateBattle(BattleContext, bc.User_repo.Get_db(), UserA, UserB)
+
+	var TempId atomic.Int32 //这是局内的tempid计数器的初始化
+	TempId.Store(int32(0))
+
 	CtxRecord := BattleData.NewCtxRecord()
 	c := Ctx{}
 	//clone手牌,给userid到ownerId
@@ -72,13 +72,15 @@ func NewBattle(UserA int, UserB int, CardList map[int][]int, GoldMoreUserId int,
 	InitCtx(&c, UserA, UserB, BattleContext, CardInHand, &TempId, ChildCardList, CtxRecord)
 	Nt := NewNotifyManager(UserA, UserB, 32) //初始化bufferSize
 	SM := NewStateMachine(&c, UserA, UserB, Nt, BattleContext, GoldMoreUserId)
-	go func() {
+	go func() { //当这个ctx被释放的时候删除battle本身,让gc把他free.这样cancel就是结束总开关
 		select {
 		case <-BattleContext.Done():
-			BC.RemoveBattle(id) //当这个ctx被释放的时候删除battle本身,让gc把他free
+			fmt.Println("BattleContext.Done()")
+			BC.User_repo.DeleteBattle(context.Background(), BC.User_repo.Get_db(), BtId) //删除数据库里的battle
+			BC.RemoveBattle(BtId)
 		}
 	}()
-	return &Battle{BattleID: id, SM: SM, Ctx: &c, Nt: Nt, Context: BattleContext, Cancel: cancel}
+	return &Battle{BattleID: BtId, SM: SM, Ctx: &c, Nt: Nt, Context: BattleContext, Cancel: cancel}
 }
 
 func (b *Battle) GetPlayerChanByUserID(id int) PlayerChannel {
@@ -110,14 +112,13 @@ func InitBattleContainer(repo userrepo.User_repo) {
 	BC.User_repo = repo
 	BC.Data = make(map[int]*Battle)
 	BC.UserToBTID = make(map[int]int)
-	battleIDCounter = 1
 
 }
 
 // AddBattle 传来的卡的id。
 func (bc *BattleContainer) AddBattle(id1 int, id2 int, cardIdList map[int][]int, GoldMoreUserId int, cList []int) int { //启动接口
 
-	Bt := NewBattle(id1, id2, cardIdList, GoldMoreUserId, cList)
+	Bt := bc.NewBattle(id1, id2, cardIdList, GoldMoreUserId, cList)
 	bc.mu.Lock()
 	defer bc.mu.Unlock()
 	bc.Data[Bt.BattleID] = Bt
@@ -131,9 +132,6 @@ func (bc *BattleContainer) GetBattleByUserID(id int) *Battle {
 	bc.mu.RLock()
 	defer bc.mu.RUnlock()
 	BTID := bc.UserToBTID[id]
-	if BTID == 0 {
-		return nil
-	}
 	BT := bc.Data[BTID]
 	return BT
 }

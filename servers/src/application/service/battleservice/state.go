@@ -202,13 +202,6 @@ func NewStateMachine(c *Ctx, id1 int, id2 int, Nt *NotifyManager, ParentNodeCtx 
 	for _, element := range StateMachineImpl.StateList {
 		element.Init(id1, id2, c, Nt, StateMachineImpl, element)
 	}
-	go func() { //游戏结束，发通知
-		select {
-		case <-ParentNodeCtx.Done():
-			StateMachineImpl.SendActionById(StateMachineImpl.Id1, BattleDto.NewAction(BattleDto.OverBattle, BattleDto.Notify, ""))
-			StateMachineImpl.SendActionById(StateMachineImpl.Id2, BattleDto.NewAction(BattleDto.OverBattle, BattleDto.Notify, ""))
-		}
-	}()
 
 	StateMachineImpl.finish("ShuffleDeal")
 	return StateMachineImpl
@@ -1455,7 +1448,7 @@ CalcLoop:
 			//结算buff
 			s.SM.SendActionById(s.SM.Id2, BattleDto.NewAction(BattleDto.BuffCalcNotify, BattleDto.Notify, ""))
 			s.SM.SendActionById(s.SM.Id1, BattleDto.NewAction(BattleDto.BuffCalcNotify, BattleDto.Notify, ""))
-	
+
 			CharacterCardList := s.c.GetCharacter()
 			for _, Card := range CharacterCardList {
 				flag, buff := s.c.CheckBuff(Card.GetTempId(), protocol.DamageTransform)

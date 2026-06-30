@@ -17,7 +17,7 @@ const (
 	GetSelfCardInHard
 	GetOpponentCardInHard
 	GetBtCardInfo
-	OverBattle
+	OverBattle //主动传的话,是投降的意思
 	StartBattle
 	DeployCard //-------------------------------------
 	Judge
@@ -49,6 +49,7 @@ const (
 	RoundChange
 	EnergyChange
 	WeatherChange
+	OpOffline
 )
 
 var ActionName = map[ActionCode]string{
@@ -89,6 +90,7 @@ var ActionName = map[ActionCode]string{
 	RoundChange:           "回合变化",
 	EnergyChange:          "能量变化",
 	WeatherChange:         "天气变化",
+	OpOffline:             "对手离线了",
 }
 
 type Predicates int
