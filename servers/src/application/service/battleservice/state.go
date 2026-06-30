@@ -120,7 +120,9 @@ func (s *StateMachine) SharedProcess(id int, action BattleDto.Action, ResponseCh
 		return true
 	}
 	if action.ActionCode == BattleDto.OverBattle && action.Predicates == BattleDto.Notify { //结束战斗
-		ResponseChan <- BattleDto.NewAction(BattleDto.OverBattle, BattleDto.Notify, "ok")
+		s.SendActionById(s.Id1, BattleDto.NewAction(BattleDto.OverBattle, BattleDto.Notify, "ok"))
+		s.SendActionById(s.Id2, BattleDto.NewAction(BattleDto.OverBattle, BattleDto.Notify, "ok"))
+		s.ParentCancel()
 		return true
 	}
 	if action.ActionCode == BattleDto.GetBtCardInfo && action.Predicates == BattleDto.Query { //获取战斗卡信息
@@ -153,17 +155,17 @@ type StateMachine struct {
 	Mutex          sync.RWMutex
 	ParentNodeCtx  context.Context
 
-	Id1          int
-	Id2          int
-	StateList    map[string]State
-	CurrentState State
-	StateStack   []State
-	c            *Ctx
-	Nt           *NotifyManager
-	CardListCopy *[]CardAbstract.Card
-	cancelFunc   context.CancelFunc
-	RoundNum     atomic.Int32
-
+	Id1            int
+	Id2            int
+	StateList      map[string]State
+	CurrentState   State
+	StateStack     []State
+	c              *Ctx
+	Nt             *NotifyManager
+	CardListCopy   *[]CardAbstract.Card
+	cancelFunc     context.CancelFunc
+	RoundNum       atomic.Int32
+	ParentCancel   context.CancelFunc
 	GoldMoreUserId int
 
 	//stateData
@@ -177,7 +179,7 @@ type StateMachine struct {
 	WinnerIsAction atomic.Bool //赢的人是否行动
 }
 
-func NewStateMachine(c *Ctx, id1 int, id2 int, Nt *NotifyManager, ParentNodeCtx context.Context, GoldMoreUserId int) *StateMachine {
+func NewStateMachine(c *Ctx, id1 int, id2 int, Nt *NotifyManager, ParentNodeCtx context.Context, GoldMoreUserId int, ParentCancel context.CancelFunc) *StateMachine {
 
 	StateMachineImpl := &StateMachine{}
 	c.StateMachine = StateMachineImpl
@@ -186,7 +188,7 @@ func NewStateMachine(c *Ctx, id1 int, id2 int, Nt *NotifyManager, ParentNodeCtx 
 	StateMachineImpl.Id1 = id1
 	StateMachineImpl.Id2 = id2
 	StateMachineImpl.Nt = Nt //Nt的注入
-
+	StateMachineImpl.ParentCancel = ParentCancel
 	StateMachineImpl.StateStack = make([]State, 0)
 	StateMachineImpl.CombatDataChan = make(chan map[string][]BattleData.CombatDto, 1)
 	StateMachineImpl.LoseMarkMap = make(map[int]int)

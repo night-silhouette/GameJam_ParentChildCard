@@ -155,25 +155,16 @@ func (u *BattleHandlerImpl) BattleWs() gin.HandlerFunc {
 		go u.AddMatch(c, conn, HandlerCtx, transformAddMatchWithThis, data)
 		go u.ListenResquest(conn, id, HandlerCtx, transformAddMatchWithThis, cancel)
 
-		var OverGameChan chan bool = make(chan bool, 1)
 		select {
 		case <-HandlerCtx.Done():
 			return
 		case playerChan := <-transformAddMatchWithThis:
-			go u.ListenResponse(conn, id, playerChan.ResponseChan, HandlerCtx, OverGameChan)
+			go u.ListenResponse(conn, id, playerChan.ResponseChan, HandlerCtx)
 		}
 
 		select { //阻塞，不让handler直接结束
 		case <-HandlerCtx.Done():
 			return
-		case ret, _ := <-OverGameChan:
-			if ret {
-				Bt := battleservice.BC.GetBattleByUserID(id)
-				if Bt != nil {
-					Bt.Cancel()
-				}
-				return
-			}
 		}
 
 	}
@@ -238,14 +229,11 @@ func (u *BattleHandlerImpl) ListenResquest(conn *websocket.Conn, id int, goctx c
 	}
 }
 
-func (u *BattleHandlerImpl) ListenResponse(conn *websocket.Conn, id int, playerC chan BattleDto.Action, goctx context.Context, OverGamechan chan bool) {
+func (u *BattleHandlerImpl) ListenResponse(conn *websocket.Conn, id int, playerC chan BattleDto.Action, goctx context.Context) {
 	for {
 		select {
 		case Res, _ := <-playerC:
 
-			if Res.ActionCode == BattleDto.OverBattle { //游戏结束了,就回从这里出来,这是正常的出口,具体是因为投降还是结束,看actiondata字段
-				OverGamechan <- true
-			} //结束战斗
 			if Res.ActionCode == BattleDto.Fault {
 				code := Res.ActionData.(global.ResponseStatusCode)
 				u.writeMu.Lock()
