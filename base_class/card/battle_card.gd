@@ -23,7 +23,13 @@ var _is_pressing: bool = false
 var is_selectable: bool = false
 signal card_selected(temp_id: int)
 
-var need_chosse:bool = false
+## 中断选牌：是否被选中
+var is_chosen: bool = false:
+	set(value):
+		is_chosen = value
+		_update_chosen_visual()
+
+@export var card_manager: Node
 
 
 func _ready():
@@ -115,6 +121,8 @@ func change_state(new_state: CardState):
 			SignalBus.exit_hover.emit()
 		CardState.DRAGGING:
 			pass
+		CardState.NEED_OPERATE:
+			is_chosen = false
 
 	# 进入新状态
 	current_state = new_state
@@ -137,7 +145,6 @@ func change_state(new_state: CardState):
 			# ✅ 发完信号立刻回到 IDLE
 			change_state(CardState.IDLE)
 		CardState.NEED_OPERATE:
-			pass;
 			pass
 
 # --- 鼠标悬停事件（✅ 只有 zone 符合才允许 hover）---
@@ -151,7 +158,14 @@ func _on_mouse_exited():
 		change_state(CardState.IDLE)
 
 # --- 拖拽判定 ---
-func _gui_input(event):#检验松开去进行choose的判定
+func _gui_input(event):
+	# NEED_OPERATE 状态下：点击切换选中
+	if current_state == CardState.NEED_OPERATE:
+		if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+			accept_event()
+			_on_need_operate_click()
+		return
+
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
 		if event.pressed:
 			mouse_start_pos = event.global_position
@@ -164,3 +178,25 @@ func _gui_input(event):#检验松开去进行choose的判定
 		if distance >= DRAG_THRESHOLD:
 			_is_pressing = false
 			change_state(CardState.DRAGGING)
+
+
+## NEED_OPERATE 点击：切换选中状态，由 card_manager 校验上限
+func _on_need_operate_click() -> void:
+	if card_manager and card_manager.has_method("toggle_selection"):
+		# card_manager 会校验上限，通过 selection_changed 信号回调结果
+		card_manager.toggle_selection(99, temp_id)
+
+
+## 外部信号：进入中断选牌模式
+func enter_need_operate() -> void:
+	change_state(CardState.NEED_OPERATE)
+
+
+## 外部信号：退出中断选牌模式
+func exit_need_operate() -> void:
+	change_state(CardState.IDLE)
+
+
+## 选中视觉反馈
+func _update_chosen_visual() -> void:
+	modulate = Color(1.0, 0.8, 0.5, 1.0) if is_chosen else Color.WHITE

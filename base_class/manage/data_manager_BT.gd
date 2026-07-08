@@ -54,6 +54,7 @@ var weather_num: int = -1:
 
 ## [新增] 中断选牌数据
 var interrupt_data: Dictionary = {};
+var interrupt_tempid_list
 		
 
 ## 中断数据到达后：从 hand 匹配 temp_id，发 signal 让 UI 填充
@@ -66,7 +67,7 @@ func _on_interrupt_data_received() -> void:
 	var select_num = int(interrupt_data.get("select_num", 0))
 	var interrupt_type = int(interrupt_data.get("interrupt_type"))
 	var call_temp_id = interrupt_data.get("call_temp_id")
-	set_card
+
 	match interrupt_type:
 		0:#选定
 			pass
