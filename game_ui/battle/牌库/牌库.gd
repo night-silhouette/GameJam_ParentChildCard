@@ -36,9 +36,15 @@ func _update_view():
 	for i in range(ui_nodes.size()):
 		var child = ui_nodes[i]
 		if i < page_cards.size():
-			child.update_card_data(page_cards[i])
+			var card_data = page_cards[i]
+			child.update_card_data(card_data)
 			child.show()
-			child.modulate.a = 1.0 
+			child.modulate.a = 1.0
+			# 根据 card_data 的 need_operate 标记切换状态
+			if card_data.get("need_operate", false):
+				child.enter_need_operate()
+			else:
+				child.exit_need_operate()
 		else:
 			child.hide()
 

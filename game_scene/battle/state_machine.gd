@@ -86,6 +86,7 @@ func _ready() -> void:
 	Global.fake_death(weather)
 	Global.fake_death(choose_child_card)
 	_enter_state(current_state)
+	_interrupt_selected = card_manager.interrupt_selected
 	
 # --- 核心：状态切换逻辑 ---
 func change_state(new_state: GameState) -> void:
@@ -120,7 +121,10 @@ func _exit_state(old_state: GameState) -> void:
 			spell_block.allow_input()
 		
 		GameState.INTERRUPT:
-			SignalBus.request_interrupt_select.emit()##选中的逻辑之后再写
+			SignalBus.set_change_lock.emit(false);
+			SignalBus.card_use_dead_exit.emit();
+			card_manager.clear_cards_need_operate()
+			
 			
 		GameState.CARDCALC:
 			SignalBus.request_end_animation.emit()
@@ -168,6 +172,12 @@ func _enter_state(new_state: GameState) -> void:
 			_refresh_all_battle_data()
 			Global.revive(choose_child_card)
 			_interrupt_selected.clear()
+			# 匹配可选中卡牌，标记 NEED_OPERATE
+			card_manager._on_interrupt_data_received()
+			SignalBus.card_use_dead_enter.emit();
+			var temp_id_list = card_manager.interrupt_data.get("temp_id_list", [])
+			card_manager.mark_cards_need_operate(temp_id_list)
+			SignalBus.set_change_lock.emit(true)
 			calc_state_machine.change_state(calc_state_machine.CalcState.READ)
 		GameState.CARDCALC:
 			_refresh_all_battle_data()
@@ -306,18 +316,7 @@ func _send_message():
 			SignalBus.request_judge.emit(judge.index_judge)
 			
 		GameState.INTERRUPT:
-			var selected = card_manager.get_selected_temp_ids(99)
-			if selected.is_empty():
-				SignalBus.request_interrupt_select.emit([])
-			else:
-				# 每选一张牌消耗 1 能量
-				var cost = selected.size()
-				if card_manager.self_energy >= cost:
-					card_manager.self_energy -= cost
-					SignalBus.request_interrupt_select.emit(selected)
-				else:
-					SignalBus.request_interrupt_select.emit([])
-			_interrupt_selected.clear()	
+			SignalBus.request_interrupt_select.emit(_interrupt_selected);
 
 func _deploy_magic_success():
 	if current_state == GameState.USE_MAGIC_CARD :

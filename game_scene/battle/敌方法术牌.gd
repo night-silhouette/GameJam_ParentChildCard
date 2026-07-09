@@ -13,6 +13,10 @@ func refresh_ui():
 	if !cards.is_empty():
 		var icard = cards[0];
 		card.update_card_data(icard);
+		if icard.get("need_operate", false):
+			card.enter_need_operate()
+		else:
+			card.exit_need_operate()
 		_fade_in(in_duration)
 	else:
 		card.visible = false;

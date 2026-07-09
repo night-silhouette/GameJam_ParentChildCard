@@ -78,6 +78,12 @@ func refresh_ui():
 			var icard = zone_cards[0]
 			current_card_ui.update_card_data(icard)
 			current_data_ui.update_card_data(icard)
+			if icard.get("need_operate", false):
+				current_card_ui.enter_need_operate()
+				current_data_ui.enter_need_operate()
+			else:
+				current_card_ui.exit_need_operate()
+				current_data_ui.exit_need_operate()
 
 			if not current_card_ui.visible or current_card_ui.modulate.a < 1.0:
 				_fade_in(current_card_ui, in_duration)

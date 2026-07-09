@@ -26,6 +26,7 @@ enum CalcState {
 	HP_CHANGE,
 	BUFF_CHANGE,
 	REFRESH_ALL,
+
 }
 
 func _ready() -> void:

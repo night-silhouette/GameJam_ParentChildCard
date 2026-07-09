@@ -1,7 +1,6 @@
 extends Node
 ## 导出变量
 @export var card_scene: PackedScene = preload("res://base_class/card/battle_card.tscn")
-@export var spawn_container: Control
 @export_dir var base_path: String = "res://game_data/card/" # 资源存放的基础路径
 @export var state_machine : Node;
 @export var self_energy_node : Control
@@ -54,8 +53,38 @@ var weather_num: int = -1:
 
 ## [新增] 中断选牌数据
 var interrupt_data: Dictionary = {};
-var interrupt_tempid_list
-		
+## 中断选中的 temp_id 列表
+var interrupt_selected: Array[int] = []
+
+
+## 中断选牌：检查是否可以继续添加（由 battle_card 调用）
+func can_add_interrupt_selection(temp_id: int) -> bool:
+	var limit = int(interrupt_data.get("select_num", 0))
+	if limit <= 0:
+		return false
+	# 已存在则不允许重复添加
+	if interrupt_selected.has(temp_id):
+		return false
+	return interrupt_selected.size() < limit
+
+
+## 中断选牌：添加 temp_id（调用前需先通过 can_add 校验）
+func add_interrupt_selection(temp_id: int) -> void:
+	if not interrupt_selected.has(temp_id):
+		interrupt_selected.append(temp_id)
+
+
+## 中断选牌：移除 temp_id
+func remove_interrupt_selection(temp_id: int) -> void:
+	var idx = interrupt_selected.find(temp_id)
+	if idx >= 0:
+		interrupt_selected.remove_at(idx)
+
+
+## 中断选牌：清空选中
+func clear_interrupt_selection() -> void:
+	interrupt_selected.clear()
+
 
 ## 中断数据到达后：从 hand 匹配 temp_id，发 signal 让 UI 填充
 func _on_interrupt_data_received() -> void:
@@ -65,20 +94,40 @@ func _on_interrupt_data_received() -> void:
 	if not temp_id_list is Array:
 		temp_id_list = []
 	var select_num = int(interrupt_data.get("select_num", 0))
-	var interrupt_type = int(interrupt_data.get("interrupt_type"))
-	var call_temp_id = interrupt_data.get("call_temp_id")
 
-	match interrupt_type:
-		0:#选定
-			pass
-		1:#死亡中断
-			pass
+	# 从 card_list 中匹配 temp_id，组装可选的卡牌数据
+	var matched_cards: Array = []
+	for temp_id in temp_id_list:
+		for card in card_list:
+			if card.get("temp_id") == temp_id:
+				matched_cards.append(card.duplicate())
+				break
+	
+	interrupt_cards_ready.emit(matched_cards, select_num)
+
+
+## [state_machine 调用] 标记指定 temp_id 的卡牌进入 NEED_OPERATE 状态
+func mark_cards_need_operate(temp_id_list: Array) -> void:
+	for card in card_list:
+		var tid = card.get("temp_id", -1)
+		card["need_operate"] = tid in temp_id_list
+
+
+## [state_machine 调用] 清除所有卡牌的 NEED_OPERATE 标记
+func clear_cards_need_operate() -> void:
+	interrupt_selected.clear()
+	for card in card_list:
+		card.erase("need_operate")
 var combat_list: Array = []; 
 #endregion
 
 
 #region 游戏运行时变量
-var free_card_nextzone = null;
+## 区域重叠栈（解决多 Area 叠加时 free_card_nextzone 被误清的问题）
+var _area_stack: Array[int] = []
+var free_card_nextzone = null:
+	get:
+		return _area_stack.back() if not _area_stack.is_empty() else null
 var free_card_prevzone = null;
 var hover_card :int   =  -1;
 var card_list :Array = [];#这里的card只掌握数据，不拥有任何的实体
@@ -477,11 +526,12 @@ func clear_all_selections():
 		clear_selection(match_code)
 		
 func set_cards_need_operate(temp_ids: Array) -> void:
-	
 	# 再把传入数组中的 temp_id 对应的卡牌设为 NEED_OPERATE
 	for tid in temp_ids:
 		var card = select_card_by_key(int(tid), "temp_id")
 		#这里是数据层，有问题，不能这样写，统一在ui_update里
+		
+
 #endregion
 
 
@@ -579,6 +629,7 @@ func clear_all_combat_dto() -> void:
 #region ==================== 游戏交互逻辑 ====================
 
 func _enter_freecard(temp_id, zone):
+	_area_stack.clear()
 	free_card_prevzone = zone;
 	_change_card_zone(temp_id, Global.ZONE_CARD.FREE_ZONE);
 
@@ -586,10 +637,12 @@ func _exit_freecard(temp_id):
 	var icard = select_card_by_key(temp_id, "temp_id")
 	if icard.is_empty():
 		_change_card_zone(temp_id, free_card_prevzone)
+		_area_stack.clear()
 		return
 
 	if free_card_nextzone == null:
 		_change_card_zone(temp_id, free_card_prevzone)
+		_area_stack.clear()
 		return
 
 	var can_deploy = _can_deploy_card(icard, free_card_nextzone)
@@ -597,6 +650,7 @@ func _exit_freecard(temp_id):
 		_deploy_card_to_zone(temp_id, free_card_nextzone)
 	else:
 		_change_card_zone(temp_id, free_card_prevzone)
+	_area_stack.clear()
 
 func _can_deploy_card(icard: Dictionary, target_zone: int) -> bool:
 	if not state_machine:
@@ -709,11 +763,12 @@ func _deploy_card_to_zone(temp_id: int, target_zone: int):
 			print(switch_list[0])
 			
 func _detected_area(zone):
-	free_card_nextzone = zone;
+	_area_stack.append(zone)
 
 func _exit_area(zone):
-	if zone == free_card_nextzone:
-		free_card_nextzone = null;
+	var idx = _area_stack.find(zone)
+	if idx >= 0:
+		_area_stack.remove_at(idx)
 
 func _enter_hover(temp_id):
 	hover_card = temp_id;

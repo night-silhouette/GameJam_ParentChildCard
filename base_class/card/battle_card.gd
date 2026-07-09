@@ -1,7 +1,7 @@
 extends card
    # 所有可进入区域
 
-enum CardState { IDLE, HOVERED, DRAGGING ,NEED_OPERATE}
+enum CardState { IDLE, HOVERED, DRAGGING, NEED_OPERATE, DEAD }
 var current_state: CardState = CardState.IDLE
 const HOVER_ALLOWED_ZONES = [Global.ZONE_CARD.DECK_ZONE,Global.ZONE_CARD.SPELL_ZONE] 
 @onready var display: TextureRect = $"卡牌纹理"
@@ -14,6 +14,8 @@ var damage: int = 0
 var buff_list: Array = []
 var zone: int = 0
 
+## 状态锁：为 true 时禁止 change_state
+var change_lock: bool = false
 # 拖拽判定距离（防止误触，按住鼠标移动超过这个像素才算拖拽，不需要可以设为 0）
 const DRAG_THRESHOLD = 5.0
 var mouse_start_pos = Vector2.ZERO
@@ -31,12 +33,29 @@ var is_chosen: bool = false:
 
 @export var card_manager: Node
 
+## hover 浮动动画参数
+const HOVER_FLOAT_OFFSET: float = -8.0
+const HOVER_FLOAT_DURATION: float = 0.15
+var _original_position: Vector2
+var _glow_rect: ColorRect
+
 
 func _ready():
+	_original_position = position
+	# 创建选中发光层
+	_glow_rect = ColorRect.new()
+	_glow_rect.color = Color(1.0, 1.0, 1.0, 0.4)
+	_glow_rect.size = Vector2(size.x, 10)
+	_glow_rect.position = Vector2(0, size.y - 10)
+	_glow_rect.visible = false
+	_glow_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(_glow_rect)
+	
 	mouse_entered.connect(_on_mouse_entered)
 	mouse_exited.connect(_on_mouse_exited)
-	
-
+	SignalBus.card_use_dead_enter.connect(enter_dead)
+	SignalBus.card_use_dead_exit.connect(exit_dead)
+	SignalBus.set_change_lock.connect(set_change_lock)
 func update_card_data(base_res: Dictionary) -> void:
 	# base_res 是 data_manager_BT 中的 card 字典，格式如下：
 	# {
@@ -62,6 +81,7 @@ func update_card_data(base_res: Dictionary) -> void:
 	# 2. 填充运行时数据（从 Dictionary 获取）
 	temp_id = base_res.get("temp_id")
 	zone = base_res.get("zone")
+	_update_placeholder_visual()
 	buff_list = base_res.get("buff_list", [])
 	_update_buff_display()
 	
@@ -112,17 +132,19 @@ func _update_buff_display() -> void:
 
 
 func change_state(new_state: CardState):
-	if current_state == new_state:
+	if change_lock or current_state == new_state:
 		return
 	
 	# 退出旧状态
 	match current_state:
 		CardState.HOVERED:
 			SignalBus.exit_hover.emit()
+			_hover_float_down()
 		CardState.DRAGGING:
 			pass
 		CardState.NEED_OPERATE:
 			is_chosen = false
+			_hover_float_down()
 
 	# 进入新状态
 	current_state = new_state
@@ -135,6 +157,7 @@ func change_state(new_state: CardState):
 		
 		CardState.HOVERED:
 			SignalBus.enter_hover.emit(temp_id)
+			_hover_float_up()
 			#var tween = create_tween()
 			#tween.tween_property(self, "scale", Vector2(1.05, 1.05), 0.1)
 		
@@ -145,20 +168,30 @@ func change_state(new_state: CardState):
 			# ✅ 发完信号立刻回到 IDLE
 			change_state(CardState.IDLE)
 		CardState.NEED_OPERATE:
+			_hover_float_up()
+		CardState.DEAD:
 			pass
 
 # --- 鼠标悬停事件（✅ 只有 zone 符合才允许 hover）---
 func _on_mouse_entered():
-	# ✅ 关键：只有 zone == HOVER_ENABLE_ZONE 时才允许进入悬停
+	if current_state == CardState.DEAD:
+		return
 	if current_state == CardState.IDLE and  zone in HOVER_ALLOWED_ZONES:
 		change_state(CardState.HOVERED)
 
 func _on_mouse_exited():
+	if current_state == CardState.DEAD:
+		return
 	if current_state == CardState.HOVERED:
 		change_state(CardState.IDLE)
 
 # --- 拖拽判定 ---
 func _gui_input(event):
+	# DEAD 状态下不响应任何交互
+	if current_state == CardState.DEAD:
+		accept_event()
+		return
+
 	# NEED_OPERATE 状态下：点击切换选中
 	if current_state == CardState.NEED_OPERATE:
 		if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
@@ -182,9 +215,19 @@ func _gui_input(event):
 
 ## NEED_OPERATE 点击：切换选中状态，由 card_manager 校验上限
 func _on_need_operate_click() -> void:
-	if card_manager and card_manager.has_method("toggle_selection"):
-		# card_manager 会校验上限，通过 selection_changed 信号回调结果
-		card_manager.toggle_selection(99, temp_id)
+	if card_manager == null:
+		return
+	
+	if is_chosen:
+		# 已选中 → 取消选中
+		card_manager.remove_interrupt_selection(temp_id)
+		is_chosen = false
+	else:
+		# 未选中 → 尝试选中，由 card_manager 校验上限
+		if card_manager.can_add_interrupt_selection(temp_id):
+			card_manager.add_interrupt_selection(temp_id)
+			is_chosen = true
+	
 
 
 ## 外部信号：进入中断选牌模式
@@ -197,6 +240,42 @@ func exit_need_operate() -> void:
 	change_state(CardState.IDLE)
 
 
-## 选中视觉反馈
+## 选中视觉反馈：底部白色发光
 func _update_chosen_visual() -> void:
-	modulate = Color(1.0, 0.8, 0.5, 1.0) if is_chosen else Color.WHITE
+	if _glow_rect:
+		_glow_rect.visible = is_chosen
+
+
+## hover 浮动：向上位移
+func _hover_float_up() -> void:
+	var tween = create_tween()
+	tween.tween_property(self, "position", _original_position + Vector2(0, HOVER_FLOAT_OFFSET), HOVER_FLOAT_DURATION)
+
+
+## hover 浮动：恢复原位
+func _hover_float_down() -> void:
+	var tween = create_tween()
+	tween.tween_property(self, "position", _original_position, HOVER_FLOAT_DURATION)
+
+
+## 占位符视觉：zone 为 FREE_ZONE 时半透明，恢复时全透明
+func _update_placeholder_visual() -> void:
+	if zone == Global.ZONE_CARD.FREE_ZONE:
+		modulate = Color(1, 1, 1, 0.3)
+	else:
+		modulate = Color.WHITE
+
+
+## 设置 change_lock：锁定/解锁状态切换
+func set_change_lock(locked: bool) -> void:
+	change_lock = locked
+
+
+## 进入死亡状态
+func enter_dead() -> void:
+	change_state(CardState.DEAD)
+
+
+## 退出死亡状态
+func exit_dead() -> void:
+	change_state(CardState.IDLE)

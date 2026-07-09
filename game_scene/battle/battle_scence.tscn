@@ -96,8 +96,6 @@ script = ExtResource("4_cqcp3")
 
 [node name="card_manager" type="Node" parent="数据层" node_paths=PackedStringArray("state_machine", "self_energy_node", "oppent_energy_node")]
 script = ExtResource("9_oo4tg")
-card_scene = null
-base_path = null
 state_machine = NodePath("../State_machine")
 self_energy_node = NodePath("../../卡牌显示/我方能量")
 oppent_energy_node = NodePath("../../卡牌显示/敌方能量")
