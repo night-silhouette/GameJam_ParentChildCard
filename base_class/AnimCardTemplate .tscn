@@ -1,0 +1,41 @@
+[gd_scene load_steps=5 format=3 uid="uid://fon2md2dssrq"]
+
+[ext_resource type="Animation" uid="uid://c1vj60u47qy40" path="res://game_animation/card_dead.res" id="1_bx6yl"]
+[ext_resource type="Texture2D" uid="uid://7tgdcost1uex" path="res://素材/使用素材/战斗内/桌面/卡牌死亡/图.png" id="2_r0wbg"]
+
+[sub_resource type="Animation" id="Animation_yrx8j"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("card_dead:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [9]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_omy48"]
+_data = {
+&"RESET": SubResource("Animation_yrx8j"),
+&"卡牌死亡": ExtResource("1_bx6yl")
+}
+
+[node name="Node2D" type="Node2D"]
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_omy48")
+}
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+
+[node name="card_dead" type="Sprite2D" parent="."]
+position = Vector2(276, -199)
+texture = ExtResource("2_r0wbg")
+hframes = 5
+vframes = 2
+frame = 9
