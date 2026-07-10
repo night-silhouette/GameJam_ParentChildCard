@@ -32,7 +32,6 @@ signal switch_card_requested(temp_id: int, self_where: int)
 
 #region 视觉节点
 @onready var highlight: ColorRect = $"Highlight" if has_node("Highlight") else null
-@onready var state_label: Label = $"StateLabel" if has_node("StateLabel") else null
 #endregion
 
 
@@ -43,6 +42,9 @@ func _ready() -> void:
 	if zone in [Global.ZONE_CARD.PARENT_BATTLE_ZONE, Global.ZONE_CARD.CHILD_BATTLE_ZONE]:
 		is_own = true
 		self_where = 0 if zone == Global.ZONE_CARD.PARENT_BATTLE_ZONE else 1
+	
+	# 监听 HP 变化动画
+	SignalBus.ani_hp_change_enter.connect(_on_hp_change_enter)
 
 
 ## 覆盖父类 update_card_data，补充 combat 相关初始化
@@ -127,21 +129,52 @@ func _update_visual() -> void:
 				highlight.visible = true
 			_:
 				highlight.visible = false
+
+
+#region HP 变化数值动画
+const HP_COLOR = {
+	0: Color(0.2, 0.9, 0.2),   # Damage → 绿
+	1: Color(1.0, 0.2, 0.2),   # Heal → 红
+	2: Color(1.0, 1.0, 1.0),   # TrueDamage → 白
+}
+
+## 收到 ani_hp_change_enter 信号，匹配 temp_id 决定是否播放
+func _on_hp_change_enter(temp_id: int, category: int, value: int) -> void:
+	if temp_id != self.temp_id:
+		return
+	_play_value_change(category, value)
+
+
+## 播放数值变化动画：浮现 → 放大回缩 → 淡出消失
+func _play_value_change(category: int, value: int) -> void:
+	var color = HP_COLOR.get(category, Color.WHITE)
 	
-	# 动画标签
-	if state_label:
-		match combat_anim:
-			CombatAnim.ATTACKING:
-				state_label.text = "攻击"
-				state_label.visible = true
-			CombatAnim.SKILL:
-				state_label.text = "技能"
-				state_label.visible = true
-			CombatAnim.DAMAGED:
-				state_label.text = "受伤"
-				state_label.visible = true
-			CombatAnim.DEATH:
-				state_label.text = "死亡"
-				state_label.visible = true
-			_:
-				state_label.visible = false
+	# 创建数值 Label
+	var label = Label.new()
+	label.text = ("+" if category == 1 else "-") + str(abs(value))
+	label.label_settings = LabelSettings.new()
+	label.label_settings.font_size = 40
+	label.label_settings.font_color = color
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	label.position = Vector2(size.x / 2 - 50, -(size.y * 0.3))
+	label.size = Vector2(100, 50)
+	label.scale = Vector2.ZERO
+	label.modulate.a = 1.0
+	add_child(label)
+	
+	var tween = create_tween()
+	tween.set_parallel(true)
+	
+	# 浮现上移
+	tween.tween_property(label, "position:y", label.position.y - 40, 0.5)
+	# 放大
+	tween.tween_property(label, "scale", Vector2(1.5, 1.5), 0.15)
+	# 回缩
+	tween.tween_property(label, "scale", Vector2.ONE, 0.15).set_delay(0.15)
+	# 淡出
+	tween.tween_property(label, "modulate:a", 0.0, 0.4).set_delay(0.2)
+	
+	# 动画结束后清理
+	tween.chain().tween_callback(label.queue_free)
+#endregion

@@ -201,6 +201,17 @@ signal ani_end()
 signal card_use_dead_enter()
 signal card_use_dead_exit()
 signal set_change_lock(a:bool)
+
+# 动画状态进入信号（ani_state_machine 进入每个状态时发出，供外部监听）
+signal ani_skill_card_notify_enter()
+signal ani_weather_notify_enter()
+signal ani_buff_notify_enter()
+signal ani_action_card_notify_enter(caller, acceptor, behavior)
+signal ani_deploy_card_notify_enter(action_data)
+signal ani_child_belong_change_enter(origin, object)
+signal ani_card_pos_change_enter(object, temp_id)
+signal ani_hp_change_enter(temp_id, category, value)
+signal ani_buff_change_enter()
 #endregion
 
 signal left_clicked(stuff_id: int,state: int)

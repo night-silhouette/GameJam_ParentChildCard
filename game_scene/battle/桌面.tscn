@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://drj8312i1aoi6"]
+[gd_scene load_steps=32 format=3 uid="uid://drj8312i1aoi6"]
 
 [ext_resource type="Texture2D" uid="uid://bxbpcw7rdnhhj" path="res://素材/使用素材/战斗内/桌面/说明/桌面.png" id="1_m77db"]
 [ext_resource type="Script" uid="uid://cdupj53tbybnx" path="res://game_scene/battle/桌面.gd" id="2_kwvrx"]
@@ -7,12 +7,152 @@
 [ext_resource type="PackedScene" uid="uid://dx67q76jhqn1l" path="res://game_ui/battle/子卡详细.tscn" id="4_vq28s"]
 [ext_resource type="PackedScene" uid="uid://dngn8v87puqiy" path="res://game_ui/battle/母卡详细.tscn" id="5_nqrhk"]
 [ext_resource type="PackedScene" uid="uid://bvywilaq1ou8w" path="res://game_scene/menu/笑脸按钮.tscn" id="7_nqrhk"]
-[ext_resource type="Texture2D" uid="uid://ogdp7llfedj2" path="res://素材/使用素材/战斗内/功能区/战斗卡行为选择/手/1.png" id="9_4vh08"]
 [ext_resource type="Texture2D" uid="uid://bxd3bccdhucok" path="res://素材/使用素材/战斗内/功能区/战斗卡行为选择/技能.png" id="10_snraw"]
-[ext_resource type="Texture2D" uid="uid://cqs0a3ba4wl8h" path="res://素材/使用素材/战斗内/功能区/战斗卡行为选择/手/2.png" id="11_igswe"]
 [ext_resource type="Texture2D" uid="uid://1hm12m5elh2x" path="res://素材/使用素材/战斗内/桌面/指向/10.png" id="12_y8gow"]
 [ext_resource type="Texture2D" uid="uid://hxj871mw4kby" path="res://素材/使用素材/战斗内/功能区/战斗卡行为选择/普攻.png" id="12_ysthc"]
 [ext_resource type="PackedScene" uid="uid://cf218n73yp1t0" path="res://game_scene/battle/万能按钮.tscn" id="13_4vh08"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mfwp7"]
+atlas = ExtResource("12_ysthc")
+region = Rect2(0, 0, 1440, 960)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_y8gow"]
+atlas = ExtResource("12_ysthc")
+region = Rect2(1440, 0, 1440, 960)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4vh08"]
+atlas = ExtResource("12_ysthc")
+region = Rect2(2880, 0, 1440, 960)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_snraw"]
+atlas = ExtResource("12_ysthc")
+region = Rect2(4320, 0, 1440, 960)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_igswe"]
+atlas = ExtResource("12_ysthc")
+region = Rect2(5760, 0, 1440, 960)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ysthc"]
+atlas = ExtResource("12_ysthc")
+region = Rect2(0, 960, 1440, 960)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mbdhk"]
+atlas = ExtResource("12_ysthc")
+region = Rect2(1440, 960, 1440, 960)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kurf2"]
+atlas = ExtResource("12_ysthc")
+region = Rect2(2880, 960, 1440, 960)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_odugv"]
+atlas = ExtResource("12_ysthc")
+region = Rect2(4320, 960, 1440, 960)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_rk3xu"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mfwp7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_y8gow")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4vh08")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_snraw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_igswe")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ysthc")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mbdhk")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kurf2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_odugv")
+}],
+"loop": true,
+"name": &"default",
+"speed": 8.0
+}]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bwtvi"]
+atlas = ExtResource("10_snraw")
+region = Rect2(0, 0, 142, 464)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_k7qr3"]
+atlas = ExtResource("10_snraw")
+region = Rect2(142, 0, 142, 464)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0cxnm"]
+atlas = ExtResource("10_snraw")
+region = Rect2(284, 0, 142, 464)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_f0cb5"]
+atlas = ExtResource("10_snraw")
+region = Rect2(426, 0, 142, 464)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_o078e"]
+atlas = ExtResource("10_snraw")
+region = Rect2(568, 0, 142, 464)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ky7dk"]
+atlas = ExtResource("10_snraw")
+region = Rect2(0, 464, 142, 464)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_df4n3"]
+atlas = ExtResource("10_snraw")
+region = Rect2(142, 464, 142, 464)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mtgd0"]
+atlas = ExtResource("10_snraw")
+region = Rect2(284, 464, 142, 464)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tgk0w"]
+atlas = ExtResource("10_snraw")
+region = Rect2(426, 464, 142, 464)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_yk7qc"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_bwtvi")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_k7qr3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0cxnm")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_f0cb5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_o078e")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ky7dk")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_df4n3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mtgd0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_tgk0w")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
 
 [node name="桌面" type="TextureRect" node_paths=PackedStringArray("cards_ui", "data_UI")]
 offset_right = 2171.0
@@ -109,20 +249,40 @@ mouse_filter = 2
 [node name="战斗" parent="." instance=ExtResource("7_nqrhk")]
 visible = false
 layout_mode = 0
-offset_left = 63.91668
-offset_top = 394.68008
-offset_right = 1648.9166
-offset_bottom = 1673.6799
-scale = Vector2(0.23225516, 0.28033492)
+offset_left = 41.357845
+offset_top = 584.2812
+offset_right = 1626.3578
+offset_bottom = 1863.2813
+scale = Vector2(0.19647935, 0.23715307)
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="战斗"]
+modulate = Color(1, 1, 1, 0.4745098)
+self_modulate = Color(0.5330367, 0.5330367, 0.5330367, 1)
+z_index = -1
+position = Vector2(2066.674, 32.632477)
+rotation = 0.99309236
+scale = Vector2(3.3698447, 3.3698447)
+sprite_frames = SubResource("SpriteFrames_rk3xu")
+frame_progress = 0.053607825
+flip_h = true
 
 [node name="法术" parent="." instance=ExtResource("7_nqrhk")]
 visible = false
 layout_mode = 0
-offset_left = 1770.8677
-offset_top = 425.63535
-offset_right = 3355.8677
-offset_bottom = 1704.6351
-scale = Vector2(0.23225516, 0.28033492)
+offset_left = 1804.7058
+offset_top = 599.7589
+offset_right = 3389.706
+offset_bottom = 1878.7587
+scale = Vector2(0.20074338, 0.2422998)
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="法术"]
+modulate = Color(0.74785084, 0.7276333, 0.72934747, 0.5764706)
+self_modulate = Color(0.98234254, 0.9823423, 0.9823424, 1)
+z_index = -1
+position = Vector2(674.25934, -335.36008)
+scale = Vector2(-20.326355, 8.026024)
+sprite_frames = SubResource("SpriteFrames_yk7qc")
+frame_progress = 0.9714514
 
 [node name="指向" type="TextureRect" parent="."]
 visible = false
@@ -134,34 +294,6 @@ offset_bottom = 1892.8658
 scale = Vector2(0.59581345, 0.59581345)
 texture = ExtResource("12_y8gow")
 flip_h = true
-
-[node name="1" type="Sprite2D" parent="."]
-visible = false
-position = Vector2(2270.9216, 986.69995)
-scale = Vector2(0.8009654, 0.8009654)
-texture = ExtResource("9_4vh08")
-
-[node name="技能" type="Sprite2D" parent="1"]
-visible = false
-position = Vector2(30.078613, -456.59064)
-scale = Vector2(1.6122327, 1.6122327)
-texture = ExtResource("10_snraw")
-hframes = 5
-vframes = 2
-
-[node name="2" type="Sprite2D" parent="."]
-visible = false
-position = Vector2(-154.15186, 990.5695)
-scale = Vector2(0.69745284, 0.69745284)
-texture = ExtResource("11_igswe")
-
-[node name="普攻" type="Sprite2D" parent="2"]
-visible = false
-position = Vector2(93.99463, -313.4225)
-scale = Vector2(0.8709027, 0.8709027)
-texture = ExtResource("12_ysthc")
-hframes = 5
-vframes = 2
 
 [node name="万能按钮" parent="." instance=ExtResource("13_4vh08")]
 layout_mode = 0

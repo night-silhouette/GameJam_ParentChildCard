@@ -47,10 +47,9 @@ vertical_alignment = 1
 
 [node name="buff" type="Label" parent="."]
 layout_mode = 0
-offset_left = -17.108261
-offset_top = 325.05698
-offset_right = 246.8669
-offset_bottom = 395.05698
+offset_top = 564.57263
+offset_right = 263.97516
+offset_bottom = 634.57263
 scale = Vector2(1.4425231, 1.4425231)
 label_settings = SubResource("LabelSettings_0o2o1")
 horizontal_alignment = 1

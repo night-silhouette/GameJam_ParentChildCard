@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=3 uid="uid://ck88jwk2wt3ap"]
+[gd_scene load_steps=7 format=3 uid="uid://ck88jwk2wt3ap"]
 
 [ext_resource type="Script" uid="uid://bcgtwjrhxgie8" path="res://combat_card.gd" id="1_johr8"]
 [ext_resource type="Texture2D" uid="uid://dje375wa2ans7" path="res://素材/使用素材/卡牌/基础卡牌重置素材/卡牌.png" id="2_u8n05"]
@@ -9,10 +9,13 @@ font = ExtResource("3_csoqi")
 font_size = 55
 font_color = Color(0.3254902, 0.09411765, 0, 1)
 
-[sub_resource type="LabelSettings" id="LabelSettings_0o2o1"]
+[sub_resource type="LabelSettings" id="LabelSettings_qbhd0"]
 font = ExtResource("3_csoqi")
 font_size = 30
 font_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_johr8"]
+font_size = 128
 
 [node name="combat_card" type="Control"]
 custom_minimum_size = Vector2(329, 570)
@@ -47,17 +50,6 @@ label_settings = SubResource("LabelSettings_6xbm0")
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="buff" type="Label" parent="."]
-layout_mode = 0
-offset_left = -17.108261
-offset_top = 325.05698
-offset_right = 246.8669
-offset_bottom = 395.05698
-scale = Vector2(1.4425231, 1.4425231)
-label_settings = SubResource("LabelSettings_0o2o1")
-horizontal_alignment = 1
-vertical_alignment = 1
-
 [node name="Highlight" type="ColorRect" parent="."]
 visible = false
 layout_mode = 1
@@ -69,11 +61,23 @@ grow_vertical = 2
 mouse_filter = 2
 color = Color(1, 0.8, 0, 0.4)
 
-[node name="StateLabel" type="Label" parent="."]
+[node name="buff" type="Label" parent="."]
 layout_mode = 0
-offset_top = 216.0
-offset_right = 329.0
-offset_bottom = 346.0
+offset_left = -5.702753
+offset_top = 570.2754
+offset_right = 258.2724
+offset_bottom = 640.2754
 scale = Vector2(1.4425231, 1.4425231)
+label_settings = SubResource("LabelSettings_qbhd0")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Value_change" type="Label" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 25.0
+scale = Vector2(2.6397362, 4.364679)
+text = "+7"
+label_settings = SubResource("LabelSettings_johr8")
 horizontal_alignment = 1
 vertical_alignment = 1

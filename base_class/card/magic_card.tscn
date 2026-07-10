@@ -1,0 +1,57 @@
+[gd_scene load_steps=6 format=3 uid="uid://cw1xblcsq6ndt"]
+
+[ext_resource type="Script" uid="uid://cq2oesxen86dj" path="res://base_class/card/magic_card.gd" id="1_lg3ej"]
+[ext_resource type="Texture2D" uid="uid://dje375wa2ans7" path="res://素材/使用素材/卡牌/基础卡牌重置素材/卡牌.png" id="1_rbevn"]
+[ext_resource type="FontFile" uid="uid://bj1pdtvpfop4a" path="res://素材/使用素材/YaoSuiXinShouXieTi-2.ttf" id="2_lg3ej"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_jfdbt"]
+font = ExtResource("2_lg3ej")
+font_size = 55
+font_color = Color(0.3254902, 0.09411765, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_qbhd0"]
+font = ExtResource("2_lg3ej")
+font_size = 30
+font_color = Color(0, 0, 0, 1)
+
+[node name="magic_card" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_lg3ej")
+
+[node name="卡牌纹理" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("1_rbevn")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="name" type="Label" parent="."]
+layout_mode = 0
+offset_left = -17.849545
+offset_top = 220.14435
+offset_right = 246.12561
+offset_bottom = 290.14435
+scale = Vector2(1.4425231, 1.4425231)
+label_settings = SubResource("LabelSettings_jfdbt")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="buff" type="Label" parent="."]
+layout_mode = 0
+offset_left = -17.108261
+offset_top = 325.05698
+offset_right = 246.8669
+offset_bottom = 395.05698
+scale = Vector2(1.4425231, 1.4425231)
+label_settings = SubResource("LabelSettings_qbhd0")
+horizontal_alignment = 1
+vertical_alignment = 1

@@ -3,9 +3,9 @@
 [ext_resource type="Texture2D" uid="uid://bdterl2d6fvqo" path="res://素材/使用素材/战斗内/功能区/选取法术/底.png" id="1_w0x15"]
 [ext_resource type="Script" uid="uid://bwn6trwwuecrc" path="res://game_scene/battle/法术放置.gd" id="2_3rw3e"]
 [ext_resource type="PackedScene" uid="uid://k0qlnd2phxbe" path="res://game_scene/battle/检验区.tscn" id="2_n1afl"]
-[ext_resource type="PackedScene" uid="uid://diwsy4ebydgfx" path="res://base_class/card/battle_card.tscn" id="4_3rw3e"]
+[ext_resource type="PackedScene" uid="uid://cw1xblcsq6ndt" path="res://base_class/card/magic_card.tscn" id="3_3rw3e"]
 
-[node name="法术放置" type="TextureRect" node_paths=PackedStringArray("card")]
+[node name="法术放置" type="TextureRect"]
 offset_left = 808.0
 offset_top = 408.0
 offset_right = 1151.0001
@@ -13,17 +13,16 @@ offset_bottom = 973.0
 scale = Vector2(0.2502101, 0.27473265)
 texture = ExtResource("1_w0x15")
 script = ExtResource("2_3rw3e")
-card = NodePath("Control")
+
+[node name="magic_card" parent="." instance=ExtResource("3_3rw3e")]
+layout_mode = 1
+offset_left = 51.95633
+offset_top = 101.91727
+offset_right = 51.95633
+offset_bottom = 101.91724
+scale = Vector2(0.64231044, 0.64231044)
 
 [node name="检验区" parent="." instance=ExtResource("2_n1afl")]
 position = Vector2(167.85884, 272.99265)
 scale = Vector2(3.5285423, 5.684344)
 zone = 5
-
-[node name="Control" parent="." instance=ExtResource("4_3rw3e")]
-layout_mode = 0
-offset_left = 55.95298
-offset_top = 94.63747
-offset_right = 384.95297
-offset_bottom = 664.63745
-scale = Vector2(0.6709178, 0.6709178)

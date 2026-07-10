@@ -26,7 +26,6 @@ enum CalcState {
 	HP_CHANGE,
 	BUFF_CHANGE,
 	REFRESH_ALL,
-
 }
 
 func _ready() -> void:
@@ -91,55 +90,55 @@ func _enter_state(new_state: CalcState) -> void:
 			else:
 				change_state(CalcState.IDLE)
 		CalcState.SKILL_CARD_NOTIFY:
-			
 			print("进入法术实施")
-			change_state(CalcState.READ)
-			
+			SignalBus.ani_skill_card_notify_enter.emit()
+
 		CalcState.WEATHER_NOTIFY:
-			
 			print("进入天气通知")
+			SignalBus.ani_weather_notify_enter.emit()
 			change_state(CalcState.READ)
-			
 		CalcState.BUFF_NOTIFY:
-			
 			print("进入Buff通知")
+			SignalBus.ani_buff_notify_enter.emit()
 			change_state(CalcState.READ)
-			
 		CalcState.ACTION_CARD_NOTIFY:
-			
 			print("进入行动卡通知")
 			var caller = cardcalc_data.get("caller")
 			var acceptor = cardcalc_data.get("acceptor") #都是tempid
 			var behavior = cardcalc_data.get("animation_behavior")
-			change_state(CalcState.READ)
-			
+			SignalBus.ani_action_card_notify_enter.emit(caller, acceptor, behavior)
+
 		CalcState.DEPLOY_CARD_NOTIFY:
 			print("进入部署卡通知")
+			SignalBus.ani_deploy_card_notify_enter.emit(cardcalc_data)
 			change_state(CalcState.READ)
 		CalcState.CHILD_BELONG_CHANGE:
 			print("进入子牌归属变更")
 			var origin = cardcalc_data.get("origin") ##来源，三种来源，子牌堆，我方手牌，敌方手牌的枚举
 			var object = cardcalc_data.get("object")
+			SignalBus.ani_child_belong_change_enter.emit(origin, object)
 			change_state(CalcState.READ)
 		CalcState.CARD_POS_CHANGE:
 			print("进入卡牌位置变更")
 			var object = cardcalc_data.get("object") #where
 			var temp_id = int(cardcalc_data.get("temp_id"))
-			change_state(CalcState.READ)
+			SignalBus.ani_card_pos_change_enter.emit(object, temp_id)
+
 		CalcState.HP_CHANGE:
 			var temp_id = int(cardcalc_data.get("temp_id"))
 			var category = int(cardcalc_data.get("category"))#HP_category
 			var value = int(cardcalc_data.get("value"))
 			print("进入HP变更")
-			change_state(CalcState.READ)
-		CalcState.BUFF_CHANGE:
+			SignalBus.ani_hp_change_enter.emit(temp_id, category, value)
 
+		CalcState.BUFF_CHANGE:
 			print("进入Buff变更")
-			change_state(CalcState.READ)
+			SignalBus.ani_buff_change_enter.emit()
+
 		CalcState.REFRESH_ALL:
 			card_manager.load_load_all_data(cardcalc_data)
 			print("进入全量刷新")
-			change_state(CalcState.READ)
+			SignalBus.ani_end.emit()
 
 func _skill_card_notify():
 	change_state(CalcState.SKILL_CARD_NOTIFY)

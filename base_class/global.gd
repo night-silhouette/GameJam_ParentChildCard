@@ -125,6 +125,18 @@ const BUFF_NAME = {
 	BUFF.XuFeng : "续风",
 }
 
+enum ANI_BEHAVIOR {
+	AnAttack = 0,
+	AnHurt  = 1,
+	AnDeath = 2,
+	AnSkill = 3,
+}
+enum HP_CATEGORY  {
+	Damage  = 0,
+	Heal  = 1,
+	TrueDamage  = 2,
+}
+
 ## 接口 1：让节点进入【假死】状态
 func fake_death(target_node: Node) -> void:
 	if not is_instance_valid(target_node):

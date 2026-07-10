@@ -2,7 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://bdterl2d6fvqo" path="res://素材/使用素材/战斗内/功能区/选取法术/底.png" id="1_p1qws"]
 [ext_resource type="Script" uid="uid://cyx6xcb05ih25" path="res://game_scene/battle/敌方法术牌.gd" id="2_p1qws"]
-[ext_resource type="PackedScene" uid="uid://diwsy4ebydgfx" path="res://base_class/card/battle_card.tscn" id="3_ly8a1"]
+[ext_resource type="PackedScene" uid="uid://cw1xblcsq6ndt" path="res://base_class/card/magic_card.tscn" id="3_p1qws"]
 
 [node name="敌方法术牌" type="TextureRect" node_paths=PackedStringArray("card")]
 offset_left = 214.99988
@@ -13,12 +13,12 @@ scale = Vector2(0.2502101, 0.27473265)
 mouse_filter = 2
 texture = ExtResource("1_p1qws")
 script = ExtResource("2_p1qws")
-card = NodePath("Control")
+card = NodePath("")
 
-[node name="Control" parent="." instance=ExtResource("3_ly8a1")]
-layout_mode = 0
-offset_left = 51.956825
-offset_top = 87.35777
-offset_right = 380.95682
-offset_bottom = 657.3578
-scale = Vector2(0.6755602, 0.6755602)
+[node name="magic_card" parent="." instance=ExtResource("3_p1qws")]
+layout_mode = 1
+offset_left = 59.950123
+offset_top = 105.557274
+offset_right = 59.950134
+offset_bottom = 105.55725
+scale = Vector2(0.6299223, 0.6299223)
