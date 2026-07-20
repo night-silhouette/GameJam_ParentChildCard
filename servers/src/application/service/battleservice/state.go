@@ -120,8 +120,9 @@ func (s *StateMachine) SharedProcess(id int, action BattleDto.Action, ResponseCh
 		return true
 	}
 	if action.ActionCode == BattleDto.OverBattle && action.Predicates == BattleDto.Notify { //结束战斗
-		s.SendActionById(id, BattleDto.NewAction(BattleDto.OverBattle, BattleDto.Notify, "loser"))
-		s.SendActionById(s.c.GetOpponentId(id), BattleDto.NewAction(BattleDto.OverBattle, BattleDto.Notify, "winner"))
+		BC.SaveLoot(s.c.GetOpponentId(id), s.c.GetLoot())
+		s.SendActionById(id, BattleDto.NewAction(BattleDto.OverBattle, BattleDto.Result, "loser"))
+		s.SendActionById(s.c.GetOpponentId(id), BattleDto.NewAction(BattleDto.OverBattle, BattleDto.Result, "winner"))
 		s.ParentCancel()
 		return true
 	}

@@ -66,6 +66,10 @@ func Register_user_routes(h userhandler.User_handler) {
 	R.POST("v1/debug/Card/", h.DebugGiveCardByCardId())
 	R.GET("v1/bags/", h.BagGet())
 	R.POST("v1/bags/sell/", h.CardSell())
+
+	R.GET("v1/user/battle/", h.GetUserBattle())
+	R.GET("v1/user/loot/", h.GetLoot())
+	R.POST("v1/user/loot/", h.PostLoot())
 }
 
 func Register_token_routes(h tokenhandler.Token_handler) {

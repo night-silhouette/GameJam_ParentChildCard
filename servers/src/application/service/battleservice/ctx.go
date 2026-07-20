@@ -469,7 +469,7 @@ func (c *Ctx) ProtoColInterrupt(UserId int, InterruptDto *BattleData.InterruptDt
 	var DataIsOK atomic.Bool
 	DataIsOK.Store(false)
 
-	TimeEnding := func() { //结束回调
+	TimeEnding := func() {    //结束回调
 		if !DataIsOK.Load() { //随机取
 			dataMutex.Lock()
 			data.TempIdList = Util.GetRandomElements(InterruptDto.TempIdList, InterruptDto.SelectNum)
@@ -1020,7 +1020,7 @@ func (c *Ctx) GetDataAll(UseId int) *BattleData.DataAll {
 	return res
 }
 
-// 获取全部的卡
+// 获取全部的卡(手牌,出站牌)
 func (c *Ctx) GetAllCard() []CardAbstract.Card {
 	res := make([]CardAbstract.Card, 0)
 	appendPlayer := func(p *PlayerData) {
@@ -1092,7 +1092,7 @@ func (c *Ctx) ProtoGetBtAll(UserId int) []int {
 	return res
 }
 
-// GetBtAll 获取场上所有的出战卡,如果输入-1,就是所有双方的,如果是有id,就是单人的
+// GetBtAll 获取场上所有的出战卡(不包含法术卡),如果输入-1,就是所有双方的,如果是有id,就是单人的
 func (c *Ctx) GetBtAll(UserId int) []CardAbstract.Card {
 	res := make([]CardAbstract.Card, 0)
 	DiffUserId := func(id int) {
@@ -1126,6 +1126,15 @@ func (c *Ctx) GetWinnerIsAction() bool {
 }
 func (c *Ctx) GetWinnerId() int {
 	return c.StateMachine.Winner
+}
+
+func (c *Ctx) GetLoot() []int {
+	res := make([]int, 0, 20)
+	for _, card := range c.GetAllCard() {
+		res = append(res, card.GetID())
+	}
+	//还有丢弃排队,和未激活字牌中的随机一个
+	return res
 }
 
 //endregion

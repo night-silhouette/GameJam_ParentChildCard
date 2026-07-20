@@ -39,6 +39,9 @@ type User_handler interface {
 	StarterPack() gin.HandlerFunc
 	BagGet() gin.HandlerFunc
 	CardSell() gin.HandlerFunc
+	GetUserBattle() gin.HandlerFunc
+	GetLoot() gin.HandlerFunc
+	PostLoot() gin.HandlerFunc
 }
 
 type CardSellDto struct {
@@ -313,5 +316,37 @@ func (u *User_handler_impl) DebugGiveCardByCardId() gin.HandlerFunc {
 			return
 		}
 		response.Success(c, "增加成功")
+	}
+}
+func (u *User_handler_impl) GetUserBattle() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		UserId := c.GetInt("id")
+		err := u.s.IsInBattle(c.Request.Context(), UserId)
+		if err == global.ResponseSuccess {
+			response.Success(c, true)
+			return
+		} else {
+			fmt.Println("查看是否在战斗不在err:", err)
+			response.Success(c, false)
+			return
+		}
+	}
+}
+
+func (u *User_handler_impl) GetLoot() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		UserId := c.GetInt("id")
+		err, List := u.s.GetLoot(UserId, c.Request.Context())
+		if err != global.ResponseSuccess {
+			response.Fail(c, err)
+			return
+		}
+		response.Success(c, List)
+	}
+}
+
+func (u *User_handler_impl) PostLoot() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		
 	}
 }

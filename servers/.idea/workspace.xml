@@ -6,13 +6,21 @@
   <component name="ChangeListManager">
     <list default="true" id="760cea56-5efb-4b56-8acc-717cb714ebef" name="更改" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/presentation/handler/battlehandler/BattleHandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/presentation/handler/battlehandler/BattleHandler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/service/UserService/user_service.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/service/UserService/user_service.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/service/battleservice/Battle.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/service/battleservice/Battle.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/service/battleservice/ctx.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/service/battleservice/ctx.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/application/service/battleservice/state.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/application/service/battleservice/state.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/infra/repo/userrepo/user_repo.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/infra/repo/userrepo/user_repo.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/presentation/handler/userhandler/userhandler.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/presentation/handler/userhandler/userhandler.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/presentation/route/route.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/presentation/route/route.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="EmbeddingIndexingInfo">
+    <option name="cachedIndexableFilesCount" value="185" />
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -32,6 +40,10 @@
     <setting file="file://$PROJECT_DIR$/开发文档/开发日志/3.8pm2_monit.txt" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$USER_HOME$/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.25.6.darwin-arm64/src/runtime/panic.go" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$USER_HOME$/go/pkg/mod/golang.org/x/net@v0.43.0/quic/math.go" root0="SKIP_INSPECTION" />
+  </component>
+  <component name="McpProjectServerCommands">
+    <commands />
+    <urls />
   </component>
   <component name="ProblemsViewState">
     <option name="selectedTabId" value="CurrentFile" />
@@ -58,6 +70,7 @@
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.GoLinterPluginOnboardingV2": "true",
     "RunOnceActivity.GoLinterPluginStorageMigration": "true",
+    "RunOnceActivity.MCP Project settings loaded": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
@@ -112,7 +125,7 @@
         <entry key="GoApplicationRunConfiguration">
           <value>
             <map>
-              <entry key="go build main.go -race -gcflags=&quot;-l&quot;" value="STOPPED" />
+              <entry key="go build main.go -race -gcflags=&quot;-l&quot;" value="FAILED" />
             </map>
           </value>
         </entry>

@@ -75,6 +75,7 @@ func (bc *BattleContainer) NewBattle(UserA int, UserB int, CardList map[int][]in
 	go func() { //当这个ctx被释放的时候删除battle本身,让gc把他free.这样cancel就是结束总开关
 		select {
 		case <-BattleContext.Done():
+
 			fmt.Println("BattleContext.Done()")
 			BC.User_repo.DeleteBattle(context.Background(), BC.User_repo.Get_db(), BtId) //删除数据库里的battle
 			BC.RemoveBattle(BtId)
@@ -140,4 +141,11 @@ func (bc *BattleContainer) RemoveBattle(BattleId int) {
 	defer bc.mu.Unlock()
 	delete(bc.Data, BattleId)
 	delete(bc.UserToBTID, BattleId)
+}
+
+// loot存储
+func (bc *BattleContainer) SaveLoot(UserId int, CardIdList []int) {
+	bc.mu.Lock()
+	defer bc.mu.Unlock()
+	bc.User_repo.CreateLoot(context.Background(), bc.User_repo.Get_db(), CardIdList, UserId)
 }

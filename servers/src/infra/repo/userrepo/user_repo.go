@@ -53,6 +53,8 @@ type User_repo interface {
 	CreateBattle(ctx context.Context, db repo.SQLQueryer, playerIdA int, playerIdB int) (int, global.ResponseStatusCode)
 	CheckUserIdIsBattle(ctx context.Context, db repo.SQLQueryer, userId int) (int, global.ResponseStatusCode)
 	DeleteBattle(ctx context.Context, db repo.SQLQueryer, BtId int) global.ResponseStatusCode
+	CreateLoot(ctx context.Context, db repo.SQLQueryer, loot []int, UserId int) global.ResponseStatusCode
+	GetLoot(ctx context.Context, db repo.SQLQueryer, UserId int) (global.ResponseStatusCode, [][]int)
 }
 
 type User_repo_impl struct {
@@ -794,4 +796,46 @@ func (r *User_repo_impl) DeleteBattle(ctx context.Context, db repo.SQLQueryer, B
 	}
 
 	return global.ResponseSuccess
+}
+
+// CreateLoot 创建 loot 记录
+func (r *User_repo_impl) CreateLoot(ctx context.Context, db repo.SQLQueryer, loot []int, UserId int) global.ResponseStatusCode {
+	query := `insert into loot (userId, data) values ($1, $2)`
+
+	_, err := db.ExecContext(ctx, query, UserId, loot)
+	if err != nil {
+		log.Printf("failed to create loot for user %d: %v", UserId, err)
+		return global.ResponseInternalServersError
+	}
+
+	return global.ResponseSuccess
+}
+
+// GetLoot 获取用户的 loot 记录列表
+func (r *User_repo_impl) GetLoot(ctx context.Context, db repo.SQLQueryer, UserId int) (global.ResponseStatusCode, [][]int) {
+	query := `select data from loot where userid = $1`
+
+	rows, err := db.QueryContext(ctx, query, UserId)
+	if err != nil {
+		log.Printf("failed to get loot for user %d: %v", UserId, err)
+		return global.ResponseInternalServersError, nil
+	}
+	defer rows.Close()
+
+	// 初始化为非 nil 的空切片，确保为空时返回空数组
+	loots := make([][]int, 0)
+	for rows.Next() {
+		var data []int
+		if err := rows.Scan(&data); err != nil {
+			log.Printf("failed to scan loot data for user %d: %v", UserId, err)
+			return global.ResponseInternalServersError, nil
+		}
+		loots = append(loots, data)
+	}
+
+	if err := rows.Err(); err != nil {
+		log.Printf("rows error getting loot for user %d: %v", UserId, err)
+		return global.ResponseInternalServersError, nil
+	}
+	return global.ResponseSuccess, loots
 }
