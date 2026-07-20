@@ -182,12 +182,24 @@ func (u *BattleHandlerImpl) ListenRequest(conn *websocket.Conn, id int, goctx co
 	//拦截器
 	//Interceptor := Util.NewInterceptor(global.WsInterceptorTime * time.Millisecond)
 	for {
+		_, p, err := conn.ReadMessage()
+		if err != nil {
+			cancelFunc()
+			return
+		}
+		//todo 拦截器
+		//if Interceptor.ShouldBlock(p) {
+		//	continue
+		//}
+
 		select {
 		case playerChan := <-trans:
 			fmt.Println(playerChan)
 			playerC = playerChan.AcceptChan
+		default:
 		} //每一次去监听match有不有把playerC给这
-		flag := u.ListenRequestConn(conn, cancelFunc, id, goctx, playerC)
+
+		flag := u.ListenRequestConn(p, conn, cancelFunc, id, goctx, playerC)
 		if !flag {
 			return
 		}
@@ -195,31 +207,20 @@ func (u *BattleHandlerImpl) ListenRequest(conn *websocket.Conn, id int, goctx co
 }
 
 // 阻塞的,读conn,解析action,传给playerc(playerc是传进来的管道)
-func (u *BattleHandlerImpl) ListenRequestConn(conn *websocket.Conn, cancelFunc context.CancelFunc, UserId int, goctx context.Context, playerC chan BattleDto.Action) bool {
-	_, p, err := conn.ReadMessage()
-	if err != nil {
-		cancelFunc()
-		return false
-	}
-	//todo 拦截器
-	//if Interceptor.ShouldBlock(p) {
-	//	continue
-	//}
-
+func (u *BattleHandlerImpl) ListenRequestConn(p []byte, conn *websocket.Conn, cancelFunc context.CancelFunc, UserId int, goctx context.Context, playerC chan BattleDto.Action) bool {
 	decoder := json.NewDecoder(bytes.NewReader(p))
 	decoder.DisallowUnknownFields() // 开启严苛模式
-
 	var action BattleDto.Action
-	err = decoder.Decode(&action)
+	err := decoder.Decode(&action)
 	if err != nil {
 		u.writeMu.Lock()
 		response.WsFailWithErr(conn, global.ResponseInvalidReqParams, err)
 		u.writeMu.Unlock()
 		return true
 	}
-
 	//action解析完成
 	if action.ActionCode == BattleDto.CancelMatch && action.Predicates == BattleDto.Notify {
+		fmt.Println("取消匹配")
 		battleservice.MatchSignals.Delete(UserId)
 		battleservice.MatchPool.Delete(UserId)
 		response.WsSuccess(conn, "取消成功")
@@ -233,6 +234,7 @@ func (u *BattleHandlerImpl) ListenRequestConn(conn *websocket.Conn, cancelFunc c
 	case <-goctx.Done():
 		return false
 	default:
+
 		if playerC == nil {
 			u.writeMu.Lock()
 			response.WsFailWithMsg(conn, global.BattleInvalidTiming, "正在匹配中")
@@ -329,7 +331,16 @@ func (u *BattleHandlerImpl) WsReconnect() gin.HandlerFunc {
 		go u.ListenResponse(conn, Nt.ResponseChan, HandlerCtx)
 		go func() {
 			for {
-				u.ListenRequestConn(conn, HandlerCancel, UserId, HandlerCtx, Nt.AcceptChan)
+				_, p, err := conn.ReadMessage()
+				if err != nil {
+					HandlerCancel()
+					return
+				}
+				//todo 拦截器
+				//if Interceptor.ShouldBlock(p) {
+				//	continue
+				//}
+				u.ListenRequestConn(p, conn, HandlerCancel, UserId, HandlerCtx, Nt.AcceptChan)
 			}
 		}()
 

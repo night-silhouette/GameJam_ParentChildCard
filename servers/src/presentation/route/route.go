@@ -80,7 +80,7 @@ func Register_token_routes(h tokenhandler.Token_handler) {
 
 func RegisterBattleWS(h battlehandler.BattleHandler) {
 	R.GET("/v1/ws/", h.BattleWs())
-	R.GET("/ws/reconnect/", h.WsReconnect())
+	R.GET("/v1/ws/reconnect/", h.WsReconnect())
 	R.GET("/v1/debug/match_pool/", h.DebugGetMachData())
 	R.GET("/v1/debug/battle_container", h.DebugBattleContainer())
 }
