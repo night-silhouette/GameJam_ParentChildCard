@@ -50,6 +50,7 @@ const (
 	EnergyChange
 	WeatherChange
 	OpOffline
+	OpOnline
 )
 
 var ActionName = map[ActionCode]string{
@@ -91,6 +92,7 @@ var ActionName = map[ActionCode]string{
 	EnergyChange:          "能量变化",
 	WeatherChange:         "天气变化",
 	OpOffline:             "对手离线了",
+	OpOnline:              "对手重新上线了",
 }
 
 type Predicates int

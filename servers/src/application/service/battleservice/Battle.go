@@ -70,7 +70,7 @@ func (bc *BattleContainer) NewBattle(UserA int, UserB int, CardList map[int][]in
 	ChildCardList = CloneCardListByid(cList, &TempId, BattleContext, &c, CtxRecord)
 
 	InitCtx(&c, UserA, UserB, BattleContext, CardInHand, &TempId, ChildCardList, CtxRecord)
-	Nt := NewNotifyManager(UserA, UserB, 32) //初始化bufferSize
+	Nt := NewNotifyManager(UserA, UserB, 256) //初始化bufferSize
 	SM := NewStateMachine(&c, UserA, UserB, Nt, BattleContext, GoldMoreUserId, cancel)
 	go func() { //当这个ctx被释放的时候删除battle本身,让gc把他free.这样cancel就是结束总开关
 		select {
