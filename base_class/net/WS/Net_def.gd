@@ -47,7 +47,9 @@ enum Action {
 	FormChange = 33 ,
 	RoundChange = 34 ,
 	EnergyChange = 35  ,
-	WeatherChange = 36 ,    
+	WeatherChange = 36 ,  
+	OpOffline = 37,
+	OpOnline = 38,
 }
 
 const ACTION_NAME = {
@@ -80,7 +82,8 @@ const ACTION_NAME = {
 	Action.RoundChange:           "回合变化",
 	Action.EnergyChange:          "能量变化",
 	Action.WeatherChange:         "天气变化",
-	
+	Action.OpOffline:             "对手离线了",
+	Action.OpOnline:              "对手重新上线了",
 }
 
 # 辅助函数：快速获取名字打印日志

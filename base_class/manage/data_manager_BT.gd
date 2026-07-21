@@ -771,10 +771,14 @@ func _exit_area(zone):
 		_area_stack.remove_at(idx)
 
 func _enter_hover(temp_id):
+	if hover_card == temp_id:
+		return
 	hover_card = temp_id;
 	UI_date_update.emit()
 
 func _exit_hover():
+	if hover_card == -1:
+		return
 	hover_card = -1;
 	UI_date_update.emit()
 

@@ -49,8 +49,9 @@ var current_state: CalcState = CalcState.IDLE:
 		_enter_state(current_state)
 		
 func change_state(new_state: CalcState,action_data = null) -> void:
-	current_state = new_state
 	cardcalc_data = action_data
+	current_state = new_state
+	
 func _exit_state(old_state: CalcState) -> void:
 	match old_state:
 		CalcState.IDLE:
@@ -96,11 +97,10 @@ func _enter_state(new_state: CalcState) -> void:
 		CalcState.WEATHER_NOTIFY:
 			print("进入天气通知")
 			SignalBus.ani_weather_notify_enter.emit()
-			change_state(CalcState.READ)
+
 		CalcState.BUFF_NOTIFY:
 			print("进入Buff通知")
 			SignalBus.ani_buff_notify_enter.emit()
-			change_state(CalcState.READ)
 		CalcState.ACTION_CARD_NOTIFY:
 			print("进入行动卡通知")
 			var caller = cardcalc_data.get("caller")
@@ -111,13 +111,12 @@ func _enter_state(new_state: CalcState) -> void:
 		CalcState.DEPLOY_CARD_NOTIFY:
 			print("进入部署卡通知")
 			SignalBus.ani_deploy_card_notify_enter.emit(cardcalc_data)
-			change_state(CalcState.READ)
+
 		CalcState.CHILD_BELONG_CHANGE:
 			print("进入子牌归属变更")
 			var origin = cardcalc_data.get("origin") ##来源，三种来源，子牌堆，我方手牌，敌方手牌的枚举
 			var object = cardcalc_data.get("object")
 			SignalBus.ani_child_belong_change_enter.emit(origin, object)
-			change_state(CalcState.READ)
 		CalcState.CARD_POS_CHANGE:
 			print("进入卡牌位置变更")
 			var object = cardcalc_data.get("object") #where
@@ -138,7 +137,7 @@ func _enter_state(new_state: CalcState) -> void:
 		CalcState.REFRESH_ALL:
 			card_manager.load_load_all_data(cardcalc_data)
 			print("进入全量刷新")
-			SignalBus.ani_end.emit()
+			SignalBus.ani_end.emit.call_deferred()
 
 func _skill_card_notify():
 	change_state(CalcState.SKILL_CARD_NOTIFY)
@@ -171,4 +170,4 @@ func _refresh_all(All_data):
 	change_state(CalcState.REFRESH_ALL,All_data)
 
 func _ani_end():
-	change_state(CalcState.READ)
+	change_state.call_deferred(CalcState.READ)

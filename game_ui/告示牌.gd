@@ -16,7 +16,7 @@ func _ready() -> void:
 	hide_timer.timeout.connect(_hide_notice)
 	add_child(hide_timer)
 	
-	InventoryManager.notice_updated.connect(_show_notice)
+	SignalBus.notice_updated.connect(_show_notice)
 
 func _show_notice(msg: String) -> void:
 	hide_timer.stop()

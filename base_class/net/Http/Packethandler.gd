@@ -114,3 +114,6 @@ func _handle_raw_api_data(api_name: String, method: int, code: int, data: Varian
 			if method ==  HTTPClient.METHOD_POST:
 				SignalBus.sell_card_success.emit()
 				
+		"/v1/user/battle/":
+			if method == HTTPClient.METHOD_POST:
+				SignalBus.ifbattle.emit(bool(data))

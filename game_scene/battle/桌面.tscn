@@ -256,14 +256,14 @@ offset_bottom = 1863.2813
 scale = Vector2(0.19647935, 0.23715307)
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="战斗"]
-modulate = Color(1, 1, 1, 0.4745098)
+modulate = Color(0.6255971, 0.6255971, 0.6255971, 0.4745098)
 self_modulate = Color(0.5330367, 0.5330367, 0.5330367, 1)
 z_index = -1
 position = Vector2(2066.674, 32.632477)
 rotation = 0.99309236
 scale = Vector2(3.3698447, 3.3698447)
 sprite_frames = SubResource("SpriteFrames_rk3xu")
-frame_progress = 0.053607825
+frame_progress = 0.6860002
 flip_h = true
 
 [node name="法术" parent="." instance=ExtResource("7_nqrhk")]
@@ -282,7 +282,8 @@ z_index = -1
 position = Vector2(674.25934, -335.36008)
 scale = Vector2(-20.326355, 8.026024)
 sprite_frames = SubResource("SpriteFrames_yk7qc")
-frame_progress = 0.9714514
+frame = 1
+frame_progress = 0.8761042
 
 [node name="指向" type="TextureRect" parent="."]
 visible = false

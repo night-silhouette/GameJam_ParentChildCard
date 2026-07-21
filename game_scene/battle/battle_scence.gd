@@ -59,3 +59,8 @@ func _on_weather_num_changed(weather_num: int) -> void:
 		return
 	weather_name_label.text = Global.WEATHER_NAME.get(weather_num, "未知")
 	weather_name_label.visible = true
+
+
+func _on_万能按钮2_pressed() -> void:
+	SignalBus.request_over_battle.emit()
+	

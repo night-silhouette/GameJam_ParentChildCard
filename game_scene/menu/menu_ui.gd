@@ -13,6 +13,5 @@ func _ready() -> void:
 func _match_success(t):
 	
 	Global.init_battle_time = t;
-	SignalBus.change_scence.emit("tobattle");	
-	SignalBus.change_ui.emit("tobattle");
+	SignalBus.change_scence.emit("tobattle");
 	

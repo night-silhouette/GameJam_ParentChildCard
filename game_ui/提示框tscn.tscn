@@ -1,0 +1,23 @@
+[gd_scene load_steps=3 format=3 uid="uid://dwtv7wtjdaonw"]
+
+[ext_resource type="Texture2D" uid="uid://dx1ewstebv33h" path="res://素材/使用素材/万能组件.png" id="1_ipg6r"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_mohep"]
+font_size = 166
+font_color = Color(0, 0, 0, 1)
+
+[node name="提示框" type="TextureRect"]
+offset_right = 40.0
+offset_bottom = 40.0
+texture = ExtResource("1_ipg6r")
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+label_settings = SubResource("LabelSettings_mohep")
+horizontal_alignment = 1
+vertical_alignment = 1

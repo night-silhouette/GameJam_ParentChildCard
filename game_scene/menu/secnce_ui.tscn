@@ -128,6 +128,7 @@ text = "注销
 script = ExtResource("10_hqt4n")
 
 [node name="信封" type="Sprite2D" parent="."]
+visible = false
 position = Vector2(1096, 103.99999)
 scale = Vector2(0.19546409, 0.19546409)
 texture = ExtResource("11_h14v4")

@@ -4,13 +4,13 @@ extends Node
 # 当数据发生变化时，通知全家老小（比如 UI 刷新）
 signal bag_updated 
 signal gold_updated(value:int)
-signal notice_updated(msg: String)
+
 
 var notice_msg: String = "":
 	set(value):
 		notice_msg = value
 		if value != "" and value != "null":
-			notice_updated.emit(value)
+			SignalBus.notice_updated.emit(value)
 
 var card_list: Array = []:
 	set(value):

@@ -30,6 +30,9 @@ signal request_card_random
 signal request_get_self_gold
 signal request_debug_addcard
 signal request_sell_card(card_list:Array)
+signal request_reconnect
+signal request_battle
+signal request_loot
 
 # 邮件
 signal request_send_mail(id: int, txt: String)
@@ -60,7 +63,7 @@ signal get_card_random(card_list)
 signal get_card_bag(card_list)
 signal get_self_gold(gold)
 signal sell_card_success()
-
+signal ifbattle(index:bool)
 # 邮件
 signal send_mail_success()
 signal get_mail_numberN_success()
@@ -139,7 +142,8 @@ signal card_calc_finish
 signal interrupt_start(action_data,is_need)
 signal interrupt_succeed
 signal combat_action_success
-
+signal opoffline
+signal oponline
 # 弃牌堆
 signal discard_list_updated(cards)
 
@@ -182,6 +186,7 @@ signal request_active_child_card(temp_id_list)
 signal request_get_discard_list()
 signal request_interrupt_select(temp_id_list)
 signal request_get_weather()
+signal request_overbattle()
 # 调试
 signal request_debug_time
 signal request_debug_matchpool
@@ -202,6 +207,7 @@ signal card_use_dead_enter()
 signal card_use_dead_exit()
 signal set_change_lock(a:bool)
 
+
 # 动画状态进入信号（ani_state_machine 进入每个状态时发出，供外部监听）
 signal ani_skill_card_notify_enter()
 signal ani_weather_notify_enter()
@@ -216,3 +222,4 @@ signal ani_buff_change_enter()
 
 signal left_clicked(stuff_id: int,state: int)
 signal right_clicked(stuff_id: int,state: int)	
+signal notice_updated(msg:String)

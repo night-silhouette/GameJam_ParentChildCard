@@ -1,9 +1,51 @@
-[gd_scene format=3 uid="uid://cmyxnm5twmf3h"]
+[gd_scene load_steps=5 format=3 uid="uid://cmyxnm5twmf3h"]
 
-[node name="MenuUi" type="Control"]
+[ext_resource type="Script" uid="uid://b7h4cawmk3llg" path="res://game_ui/menu/default_ui.gd" id="1_7e4nj"]
+[ext_resource type="Texture2D" uid="uid://cwb5kck3rk3i6" path="res://素材/使用素材/战斗外/设置/绳子.png" id="1_tqu8i"]
+[ext_resource type="PackedScene" uid="uid://s14mr1ndy4u6" path="res://game_ui/告示牌.tscn" id="2_qfxjv"]
+[ext_resource type="PackedScene" uid="uid://cf218n73yp1t0" path="res://game_scene/battle/万能按钮.tscn" id="4_ja110"]
+
+[node name="Default_Ui" type="Control"]
 layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+anchors_preset = 0
+script = ExtResource("1_7e4nj")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+visible = false
+layout_mode = 1
+offset_right = 40.0
+offset_bottom = 40.0
+scale = Vector2(29.056538, 16.544558)
+color = Color(0.12955832, 0.12955853, 0.12955844, 0.49019608)
+
+[node name="set" type="TextureButton" parent="."]
+layout_mode = 0
+offset_left = 1054.0
+offset_top = 2.0
+offset_right = 1374.0
+offset_bottom = 1023.0
+scale = Vector2(0.1570465, 0.1570465)
+texture_normal = ExtResource("1_tqu8i")
+texture_pressed = ExtResource("1_tqu8i")
+texture_hover = ExtResource("1_tqu8i")
+
+[node name="告示牌" parent="." instance=ExtResource("2_qfxjv")]
+layout_mode = 1
+offset_left = 464.00003
+offset_top = 224.00002
+offset_right = 1002.0
+offset_bottom = 578.0
+scale = Vector2(0.41932663, 0.41932663)
+
+[node name="设置" type="VBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 622.0
+offset_top = 393.0
+offset_right = 1771.0
+offset_bottom = 1470.0
+scale = Vector2(0.14485869, 0.150092)
+
+[node name="万能按钮" parent="设置" instance=ExtResource("4_ja110")]
+layout_mode = 2
+
+[connection signal="button_down" from="设置/万能按钮" to="." method="_on_万能按钮_button_down"]

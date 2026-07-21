@@ -1,4 +1,4 @@
-[gd_scene load_steps=81 format=3 uid="uid://fon2md2dssrq"]
+[gd_scene load_steps=93 format=3 uid="uid://fon2md2dssrq"]
 
 [ext_resource type="Animation" uid="uid://8oodkiswg7fj" path="res://game_animation/card_attack.res" id="2_omy48"]
 [ext_resource type="Texture2D" uid="uid://7tgdcost1uex" path="res://素材/使用素材/战斗内/桌面/卡牌死亡/图.png" id="2_r0wbg"]
@@ -12,7 +12,7 @@ length = 0.001
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("card_dead:frame")
+tracks/0/path = NodePath("card_dead_sp:frame")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -24,7 +24,7 @@ tracks/0/keys = {
 tracks/1/type = "value"
 tracks/1/imported = false
 tracks/1/enabled = true
-tracks/1/path = NodePath("card_attack:animation")
+tracks/1/path = NodePath("card_attack_an:animation")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
@@ -36,7 +36,7 @@ tracks/1/keys = {
 tracks/2/type = "value"
 tracks/2/imported = false
 tracks/2/enabled = true
-tracks/2/path = NodePath("card_spell:animation")
+tracks/2/path = NodePath("card_spell_an:animation")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
@@ -46,10 +46,14 @@ tracks/2/keys = {
 "values": [&"default"]
 }
 
+[sub_resource type="Animation" id="Animation_g03c1"]
+resource_name = "card_dead"
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_omy48"]
 _data = {
 &"RESET": SubResource("Animation_yrx8j"),
 &"card_attack": ExtResource("2_omy48"),
+&"card_dead": SubResource("Animation_g03c1"),
 &"card_spell": ExtResource("3_g03c1")
 }
 
@@ -559,6 +563,84 @@ animations = [{
 "speed": 5.0
 }]
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_g03c1"]
+atlas = ExtResource("2_r0wbg")
+region = Rect2(0, 0, 1280, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_t14kw"]
+atlas = ExtResource("2_r0wbg")
+region = Rect2(1280, 0, 1280, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_y8cw2"]
+atlas = ExtResource("2_r0wbg")
+region = Rect2(2560, 0, 1280, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vxtus"]
+atlas = ExtResource("2_r0wbg")
+region = Rect2(3840, 0, 1280, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tfr02"]
+atlas = ExtResource("2_r0wbg")
+region = Rect2(5120, 0, 1280, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4n2db"]
+atlas = ExtResource("2_r0wbg")
+region = Rect2(0, 720, 1280, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qjx6v"]
+atlas = ExtResource("2_r0wbg")
+region = Rect2(1280, 720, 1280, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_d8i8y"]
+atlas = ExtResource("2_r0wbg")
+region = Rect2(2560, 720, 1280, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8dabv"]
+atlas = ExtResource("2_r0wbg")
+region = Rect2(3840, 720, 1280, 720)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8bvet"]
+atlas = ExtResource("2_r0wbg")
+region = Rect2(5120, 720, 1280, 720)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_q1bty"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_g03c1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_t14kw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_y8cw2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vxtus")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_tfr02")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4n2db")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qjx6v")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_d8i8y")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8dabv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8bvet")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
 [node name="Node2D" type="Node2D"]
 script = ExtResource("4_test")
 
@@ -569,19 +651,23 @@ libraries = {
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
 
-[node name="card_dead" type="Sprite2D" parent="."]
+[node name="card_dead_sp" type="Sprite2D" parent="."]
 position = Vector2(-406, -828)
 texture = ExtResource("2_r0wbg")
 hframes = 5
 vframes = 2
 frame = 9
 
-[node name="card_attack" type="AnimatedSprite2D" parent="."]
+[node name="card_attack_an" type="AnimatedSprite2D" parent="."]
 modulate = Color(0.728822, 0.728822, 0.7288219, 1)
 position = Vector2(430, 334)
 scale = Vector2(0.65367746, 0.65367746)
 sprite_frames = SubResource("SpriteFrames_t14kw")
 
-[node name="card_spell" type="AnimatedSprite2D" parent="."]
+[node name="card_spell_an" type="AnimatedSprite2D" parent="."]
 position = Vector2(883, 518)
 sprite_frames = SubResource("SpriteFrames_y8cw2")
+
+[node name="card_dead_an" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_q1bty")
+frame_progress = 0.011259723

@@ -43,8 +43,12 @@ func _ready() -> void:
 		is_own = true
 		self_where = 0 if zone == Global.ZONE_CARD.PARENT_BATTLE_ZONE else 1
 	
-	# 监听 HP 变化动画
+	# 监听动画状态机信号
 	SignalBus.ani_hp_change_enter.connect(_on_hp_change_enter)
+	SignalBus.ani_action_card_notify_enter.connect(_on_action_anim_enter)
+	SignalBus.ani_deploy_card_notify_enter.connect(_on_deploy_anim_enter)
+	SignalBus.ani_card_pos_change_enter.connect(_on_pos_change_enter)
+	SignalBus.ani_child_belong_change_enter.connect(_on_belong_change_enter)
 
 
 ## 覆盖父类 update_card_data，补充 combat 相关初始化
@@ -177,4 +181,66 @@ func _play_value_change(category: int, value: int) -> void:
 	
 	# 动画结束后清理
 	tween.chain().tween_callback(label.queue_free)
+#endregion
+
+
+#region 动画状态机信号处理
+
+## action_card_notify：攻击/技能动画
+func _on_action_anim_enter(caller: int, acceptor: int, behavior: String) -> void:
+	if temp_id == caller:
+		_play_anim_and_end(behavior)
+	elif temp_id == acceptor:
+		_play_anim_and_end("damaged")
+
+
+## deploy_card_notify：部署动画
+func _on_deploy_anim_enter(action_data: Dictionary) -> void:
+	var tid = int(action_data.get("temp_id", 0))
+	if tid == temp_id:
+		_play_anim_and_end("deploy")
+
+
+## card_pos_change：位置变更动画
+func _on_pos_change_enter(_object, tid: int) -> void:
+	if tid == temp_id:
+		_play_anim_and_end("move")
+
+
+## child_belong_change：归属变更动画
+func _on_belong_change_enter(_origin, _object) -> void:
+	# 暂时跳过，后续有动画需求再加
+	pass
+
+
+## 覆盖父类：死亡时播放动画 → emit ani_end
+func enter_dead() -> void:
+	super.enter_dead()
+	_play_anim_and_end("dead")
+
+
+## 通用：播放动画 → 播完 emit ani_end
+func _play_anim_and_end(anim_name: String) -> void:
+	# 尝试通过 AnimationPlayer 播放（如果子节点有的话）
+	var ap = get_node_or_null("AnimationPlayer") as AnimationPlayer
+	if ap and ap.has_animation(anim_name):
+		ap.animation_finished.connect(_on_anim_finished, CONNECT_ONE_SHOT)
+		ap.play(anim_name)
+		return
+	
+	# 没有 AnimationPlayer 时，用 AnimatedSprite2D 对应节点
+	var sprite = get_node_or_null("Sprite_%s" % anim_name.capitalize()) as AnimatedSprite2D
+	if sprite and sprite.sprite_frames and sprite.sprite_frames.has_animation(anim_name):
+		sprite.visible = true
+		sprite.play(anim_name)
+		sprite.animation_finished.connect(_on_anim_finished, CONNECT_ONE_SHOT)
+		return
+	
+	# 都没有：直接结束
+	_on_anim_finished()
+
+
+func _on_anim_finished(_name: String = "") -> void:
+	SignalBus.ani_end.emit.call_deferred()
+
 #endregion

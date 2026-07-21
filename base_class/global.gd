@@ -4,6 +4,7 @@ var token_save :bool = false;
 var init_battle_time :int;
 var max_delay_time = 0.46;
 var cardcalc_animaiton_list:Array;
+var game_sence : int
 
 # 注意：Action / Predicate / ACTION_NAME 等网络协议定义已统一迁移到 Net_def.gd
 # 请使用 NetDef.Action / NetDef.Predicate 等，避免重复定义
@@ -136,7 +137,13 @@ enum HP_CATEGORY  {
 	Heal  = 1,
 	TrueDamage  = 2,
 }
-
+enum GAME_SENCE{
+	START = 0,
+	LOGIN = 1,
+	MENU  = 2,
+	BATTLE = 3,
+	BAG = 4,
+}
 ## 接口 1：让节点进入【假死】状态
 func fake_death(target_node: Node) -> void:
 	if not is_instance_valid(target_node):

@@ -21,7 +21,7 @@ var _selected_opponent_where: int = -1:
 				hand_dir.flip_h = true;
 			1:
 				hand_dir.flip_h = false;
-		_selected_opponent_where = value
+		_selected_opponent_where = value	
 ## 手部手势节点
 @onready var hand_skill: Sprite2D = $"1"
 @onready var hand_attack: Sprite2D = $"2"
@@ -78,12 +78,11 @@ func refresh_ui():
 			var icard = zone_cards[0]
 			current_card_ui.update_card_data(icard)
 			current_data_ui.update_card_data(icard)
-			if icard.get("need_operate", false):
-				current_card_ui.enter_need_operate()
-				current_data_ui.enter_need_operate()
-			else:
-				current_card_ui.exit_need_operate()
-				current_data_ui.exit_need_operate()
+			if current_card_ui.has_method("enter_need_operate"):
+				if icard.get("need_operate", false):
+					current_card_ui.enter_need_operate()
+				else:
+					current_card_ui.exit_need_operate()
 
 			if not current_card_ui.visible or current_card_ui.modulate.a < 1.0:
 				_fade_in(current_card_ui, in_duration)

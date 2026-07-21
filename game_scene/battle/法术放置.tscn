@@ -5,7 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://k0qlnd2phxbe" path="res://game_scene/battle/检验区.tscn" id="2_n1afl"]
 [ext_resource type="PackedScene" uid="uid://cw1xblcsq6ndt" path="res://base_class/card/magic_card.tscn" id="3_3rw3e"]
 
-[node name="法术放置" type="TextureRect"]
+[node name="法术放置" type="TextureRect" node_paths=PackedStringArray("card")]
 offset_left = 808.0
 offset_top = 408.0
 offset_right = 1151.0001
@@ -13,6 +13,7 @@ offset_bottom = 973.0
 scale = Vector2(0.2502101, 0.27473265)
 texture = ExtResource("1_w0x15")
 script = ExtResource("2_3rw3e")
+card = NodePath("magic_card")
 
 [node name="magic_card" parent="." instance=ExtResource("3_3rw3e")]
 layout_mode = 1

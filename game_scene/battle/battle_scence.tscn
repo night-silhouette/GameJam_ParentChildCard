@@ -1,4 +1,4 @@
-[gd_scene load_steps=68 format=3 uid="uid://c85a1ra55sbk0"]
+[gd_scene load_steps=69 format=3 uid="uid://c85a1ra55sbk0"]
 
 [ext_resource type="Script" uid="uid://dw1q80ff6ue4v" path="res://game_scene/battle/battle_scence.gd" id="1_51ed8"]
 [ext_resource type="Texture2D" uid="uid://dng874p0igvq" path="res://素材/使用素材/转换.png" id="1_chjg7"]
@@ -29,6 +29,7 @@
 [ext_resource type="PackedScene" uid="uid://csfb5yccdy0eg" path="res://game_scene/battle/active_child_card.tscn" id="23_b7tvc"]
 [ext_resource type="PackedScene" uid="uid://c6euaia4cenn0" path="res://game_scene/battle/转换.tscn" id="24_b7tvc"]
 [ext_resource type="Texture2D" uid="uid://dwjvmlpr00j2m" path="res://素材/使用素材/战斗内/暂停/图.png" id="29_yht3b"]
+[ext_resource type="Texture2D" uid="uid://du2purmrxflu0" path="res://素材/使用素材/战斗外/设置/进度框.png" id="30_qrii7"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_qxhen"]
 font_size = 48
@@ -632,7 +633,20 @@ frame = 9
 
 [node name="card_spell" type="Sprite2D" parent="animation"]
 
+[node name="进度框" type="Sprite2D" parent="."]
+position = Vector2(500.0001, 34.00006)
+scale = Vector2(0.17804407, 0.17804407)
+texture = ExtResource("30_qrii7")
+
+[node name="万能按钮2" parent="." instance=ExtResource("13_3krv3")]
+offset_left = 59.0
+offset_top = 430.0
+offset_right = 1208.0
+offset_bottom = 1507.0
+scale = Vector2(0.094462015, 0.094462015)
+
 [connection signal="button_down" from="debug/debug_action" to="debug/debug_action2" method="_on_debug_action_button_down"]
 [connection signal="button_down" from="万能按钮" to="数据层/State_machine" method="_on_万能按钮_button_down"]
 [connection signal="button_down" from="突发按钮" to="数据层/State_machine" method="_on_万能按钮_button_down"]
 [connection signal="button_down" from="转换" to="." method="_on_转换_button_down"]
+[connection signal="pressed" from="万能按钮2" to="." method="_on_万能按钮2_pressed"]

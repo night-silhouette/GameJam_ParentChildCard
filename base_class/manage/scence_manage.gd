@@ -17,18 +17,19 @@ func fchange_scence(state):
 	match state:
 		"start":
 			next_path = "res://game_scene/main/start_scence.tscn"
-
+			Global.game_sence = 0
 		"tologin":
 			next_path = "res://game_scene/login/login_scence.tscn"
-			
+			Global.game_sence = 1
 		"tomenu":
 			next_path = "res://game_scene/menu/menu_secence.tscn"
-			
+			Global.game_sence = 2
 		"tobattle":
 			next_path = "res://game_scene/battle/battle_scence.tscn"
+			Global.game_sence = 3
 		"bag":
 			next_path = "res://game_scene/bag/bag.tscn"
-
+			Global.game_sence = 4
 	await goto_scene(next_path)
 
 

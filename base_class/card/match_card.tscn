@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=3 uid="uid://bwufxlkxb2sy0"]
+[gd_scene load_steps=8 format=3 uid="uid://bwufxlkxb2sy0"]
 
 [ext_resource type="Script" uid="uid://8dk6ql8p6mu2" path="res://base_class/card/match_card.gd" id="1_ygsfu"]
 [ext_resource type="Texture2D" uid="uid://dje375wa2ans7" path="res://素材/使用素材/卡牌/基础卡牌重置素材/卡牌.png" id="2_3620s"]
@@ -12,6 +12,14 @@ font_color = Color(0.78775924, 0.78775924, 0.78775924, 1)
 font = ExtResource("3_8tpen")
 font_size = 55
 font_color = Color(0.3254902, 0.09411765, 0, 1)
+
+[sub_resource type="Animation" id="Animation_qrii7"]
+resource_name = "stop"
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_tpn7x"]
+_data = {
+&"stop": SubResource("Animation_qrii7")
+}
 
 [node name="match_card" type="Control"]
 custom_minimum_size = Vector2(329, 570)
@@ -54,3 +62,28 @@ text = "未上牌"
 label_settings = SubResource("LabelSettings_5pqt6")
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="animation" type="Node2D" parent="."]
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="animation"]
+libraries = {
+&"": SubResource("AnimationLibrary_tpn7x")
+}
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="animation"]
+
+[node name="card_dead_sp" type="Sprite2D" parent="animation"]
+position = Vector2(276, -199)
+hframes = 5
+vframes = 2
+frame = 9
+
+[node name="card_attack_sp" type="Sprite2D" parent="animation"]
+
+[node name="card_spell_sp" type="Sprite2D" parent="animation"]
+
+[node name="card_dead_an" type="AnimatedSprite2D" parent="animation"]
+
+[node name="card_attack_an" type="AnimatedSprite2D" parent="animation"]
+
+[node name="card_spell_an" type="AnimatedSprite2D" parent="animation"]

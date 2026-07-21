@@ -13,7 +13,7 @@ scale = Vector2(0.2502101, 0.27473265)
 mouse_filter = 2
 texture = ExtResource("1_p1qws")
 script = ExtResource("2_p1qws")
-card = NodePath("")
+card = NodePath("magic_card")
 
 [node name="magic_card" parent="." instance=ExtResource("3_p1qws")]
 layout_mode = 1

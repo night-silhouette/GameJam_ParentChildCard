@@ -47,6 +47,9 @@ func _dispatch(action_code: int, action_data: Variant, predicate: int):
 			if predicate == NetDef.Predicate.NOTIFY:
 				SignalBus.battle_started.emit(action_code)
 				
+		NetDef.Action.OVER_BATTLE:
+			if predicate == NetDef.Predicate.RESULT:
+				SignalBus.battle_over.emit(str(action_data))#action_data:winner/loser
 		NetDef.Action.DEPLOY_CARD:
 			if predicate == NetDef.Predicate.NOTIFY:
 				if action_data is Dictionary:
@@ -91,7 +94,12 @@ func _dispatch(action_code: int, action_data: Variant, predicate: int):
 			if predicate == NetDef.Predicate.SUCCEED:
 				SignalBus.combat_action_success.emit()
 				print("success!!!!!!!!!!!!!")
-	
+		NetDef.Action.OpOffline:
+			if predicate == NetDef.Predicate.NOTIFY:
+				SignalBus.opoffline.emit() 	#对手离线
+		NetDef.Action.OpOffline:
+			if predicate == NetDef.Predicate.NOTIFY:
+				SignalBus.oponline.emit() 	#对手上线
 		# 新增：能量值
 		NetDef.Action.GetEnergy:
 			if predicate == NetDef.Predicate.RESULT:
@@ -184,7 +192,6 @@ func _dispatch(action_code: int, action_data: Variant, predicate: int):
 			var action = SignalBus.action_card_notify.emit.bind(action_data)
 			Global.cardcalc_animaiton_list.push_back(action)
 		NetDef.Action.ChildBelongChange:
-
 			var action = SignalBus.child_belong_change.emit.bind(action_data)
 			Global.cardcalc_animaiton_list.push_back(action)
 			_add_refresh(action_data)
@@ -199,6 +206,7 @@ func _dispatch(action_code: int, action_data: Variant, predicate: int):
 			
 		NetDef.Action.BuffChange:
 			_add_refresh(action_data)
+
 			
 		
 		_:
