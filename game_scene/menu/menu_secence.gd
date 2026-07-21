@@ -6,5 +6,4 @@ func _ready() -> void:
 	
 func _ifbattle(index):
 	if index:
-		SignalBus.request_reconnect.emit()
-		SignalBus.match_success.emit()
+		SignalBus.to_reconnect_to.emit()

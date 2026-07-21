@@ -25,7 +25,6 @@ UiManage="*res://base_class/manage/ui_manage.gd"
 NetError="*res://base_class/net/Net_error.gd"
 Packethandler="*res://base_class/net/Http/Packethandler.gd"
 ApiManager="*res://base_class/net/Http/Api_manager.gd"
-Global="*res://base_class/global.gd"
 NetDef="*res://base_class/net/WS/Net_def.gd"
 NetworkClient="*res://base_class/net/Http/Network_Client.gd"
 BattleWs="*res://base_class/net/WS/BattleWS.gd"
@@ -34,6 +33,7 @@ BattleResponseManager="*res://base_class/net/WS/Battle_ResponseManager.gd"
 TokenManager="*res://base_class/net/token_manager.gd"
 TimeOffset="*res://base_class/net/time_offset.tscn"
 InventoryManager="*res://base_class/manage/inventory_manager.gd"
+Global="*res://base_class/global.gd"
 
 [display]
 

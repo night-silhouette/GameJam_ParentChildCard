@@ -38,6 +38,8 @@ func _hide_notice() -> void:
 	tween.set_ease(Tween.EASE_IN)
 	tween.tween_property(self, "modulate:a", 0.0, fade_duration)
 	tween.finished.connect(_on_hide_finished)
+	
 
 func _on_hide_finished() -> void:
 	visible = false
+	SignalBus.ani_over_battle.emit()

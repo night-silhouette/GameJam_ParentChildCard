@@ -4,6 +4,7 @@ var ws := WebSocketPeer.new()
 var is_connected := false
 func _ready() -> void:
 	SignalBus.to_connect_ws.connect(_connect_ws);
+	SignalBus.to_reconnect_to.connect(_reconnect_ws)
 func _connect_ws(body):
 	# body 格式来自 match_ui: {"btData": {"card_list": [...], "gold": 0}}
 	# 提取内层 btData 作为真正的 data 内容
@@ -23,6 +24,18 @@ func _connect_ws(body):
 	if err != OK:
 		push_error("WS连接失败")
 		
+func _reconnect_ws():
+	var token_string = TokenManager.get_token()
+	
+	# 组装 URL（data 不编码，直接拼 JSON 字符串）
+	var base_url = Global.BASE_URL.replace("http", "ws") + "/v1/ws/reconnect/"
+	var url = base_url + "?token=" + token_string 
+	
+	print("WS连接中... URL: ", url)
+	var err = ws.connect_to_url(url)
+	
+	if err != OK:
+		push_error("WS连接失败")
 		
 func _process(delta):
 	if ws.get_ready_state() == WebSocketPeer.STATE_CONNECTING:

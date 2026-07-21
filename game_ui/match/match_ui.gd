@@ -50,15 +50,22 @@ func _on_街机按钮_button_down() -> void:
 			"gold": input_amount
 		}
 	}
-	if send == 0:
+	if send == 0:	
 	# 6. 发送信号并播放等待动画
 		SignalBus.to_connect_ws.emit(body)
 		send = 1;
 		$wait.visible = true;
 		$wait.play("wait")
+		$ColorRect2.visible = true
 
 func _on_返回_button_down() -> void:
 	SignalBus.change_ui.emit("tomenu")
 
 func _ws_connected():
 	pass
+
+
+func _on_万能按钮_button_down() -> void:
+	SignalBus.request_cancel_match.emit();
+	$wait.visible = false;
+	$ColorRect2.visible = false

@@ -13,7 +13,7 @@ func _ready():
 	SignalBus.request_get_combat_cards.connect(_request_get_combat_cards)
 	SignalBus.request_end_animation.connect(_request_end_animation)
 	SignalBus.request_combat_movement.connect(_request_combat_movement)
-	
+	SignalBus.request_over_battle.connect(_request_over_battle)
 	# 新增请求信号连接
 	SignalBus.request_get_energy.connect(_request_get_energy)
 	SignalBus.request_get_child_card_list.connect(_request_get_child_card_list)
@@ -23,6 +23,7 @@ func _ready():
 	SignalBus.request_interrupt_select.connect(_request_interrupt_select)
 	SignalBus.request_get_weather.connect(_request_get_weather)
 	SignalBus.request_get_opponent_cards_inhand.connect(_request_get_opponent_cards_inhand)
+	SignalBus.request_reconnect_query.connect(_request_reconnect_query)
 	
 func _request_deploy_parent_card(card_id,card_temp_id):
 	_on_deploy_card(0,card_id,card_temp_id);
@@ -52,7 +53,8 @@ func _request_end_animation():
 	
 func _request_get_weather():
 	_send_to_server(NetDef.Action.GetWeather,NetDef.Predicate.QUERY,null);
-
+func _request_over_battle():
+	_send_to_server(NetDef.Action.OVER_BATTLE,NetDef.Predicate.NOTIFY,null)
 func _request_get_opponent_cards_inhand():
 	_send_to_server(NetDef.Action.GET_OPPONENT_CARDS, NetDef.Predicate.QUERY, null)
 	# 带参数的特殊请求：这就是为什么不能用字典循环绑定的原因
@@ -73,6 +75,8 @@ func _request_judge(judge_data):
 	}
 	_send_to_server(NetDef.Action.JUDGE, NetDef.Predicate.RESULT, action_data)
 	
+func _request_reconnect_query():
+	_send_to_server(NetDef.Action.ReConnect,NetDef.Predicate.QUERY,null)
 func _request_combat_movement(combat_list):
 	var action_data = combat_list
 	_send_to_server(NetDef.Action.COMBAT,NetDef.Predicate.RESULT,action_data)

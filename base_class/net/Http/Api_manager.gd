@@ -30,7 +30,6 @@ func _ready():
 	SignalBus.request_get_self_gold.connect(_request_get_self_gold)
 	SignalBus.request_debug_addcard.connect(_request_debug_addcard)
 	SignalBus.request_sell_card.connect(_request_sell_card)
-	SignalBus.request_reconnect.connect(_request_reconnect)
 	SignalBus.request_battle.connect(_request_battle)
 	SignalBus.request_loot.connect(_request_loot)
 # =========================
@@ -182,9 +181,7 @@ func _request_sell_card():
 	# print(body)
 	NetworkClient.call_api(url,HTTPClient.METHOD_POST, body)
 
-func _request_reconnect():
-	var url = "/v1/ws/reconnect/"
-	NetworkClient.call_api(url,HTTPClient.METHOD_GET)
+
 	
 func _request_battle():
 	var url = "/v1/user/battle/"

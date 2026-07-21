@@ -30,7 +30,7 @@ signal request_card_random
 signal request_get_self_gold
 signal request_debug_addcard
 signal request_sell_card(card_list:Array)
-signal request_reconnect
+
 signal request_battle
 signal request_loot
 
@@ -64,6 +64,7 @@ signal get_card_bag(card_list)
 signal get_self_gold(gold)
 signal sell_card_success()
 signal ifbattle(index:bool)
+
 # 邮件
 signal send_mail_success()
 signal get_mail_numberN_success()
@@ -82,7 +83,8 @@ signal get_time_debug(T: int)
 signal to_connect_ws(body)
 signal ws_connected
 signal ws_disconnected
-
+signal to_reconnect_to(body)
+signal soft_reconnect()
 # 原始数据（调试用）
 signal raw_ws_responded(code, data, msg)
 
@@ -187,6 +189,7 @@ signal request_get_discard_list()
 signal request_interrupt_select(temp_id_list)
 signal request_get_weather()
 signal request_overbattle()
+signal request_reconnect_query()
 # 调试
 signal request_debug_time
 signal request_debug_matchpool
@@ -218,6 +221,8 @@ signal ani_child_belong_change_enter(origin, object)
 signal ani_card_pos_change_enter(object, temp_id)
 signal ani_hp_change_enter(temp_id, category, value)
 signal ani_buff_change_enter()
+
+signal ani_over_battle()
 #endregion
 
 signal left_clicked(stuff_id: int,state: int)

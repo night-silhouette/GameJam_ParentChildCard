@@ -1,5 +1,5 @@
 extends Node
-var BASE_URL = "http://120.26.145.68:10086" 
+var BASE_URL = "http://120.26.145.68:5300" 
 var token_save :bool = false;	
 var init_battle_time :int;
 var max_delay_time = 0.46;

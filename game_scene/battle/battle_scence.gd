@@ -20,7 +20,8 @@ func _ready() -> void:
 	if card_manager:
 		card_manager.UI_date_update.connect(_update_active_child_display)
 		card_manager.weather_num_changed.connect(_on_weather_num_changed)
-
+	SignalBus.battle_over.connect(_battle_over)
+	SignalBus.ani_over_battle.connect(_ani_over_battle)
 
 func _ws_disconnected() -> void:
 	SignalBus.change_scence.emit("tomenu")
@@ -64,3 +65,8 @@ func _on_weather_num_changed(weather_num: int) -> void:
 func _on_万能按钮2_pressed() -> void:
 	SignalBus.request_over_battle.emit()
 	
+func _battle_over(msg):
+	SignalBus.notice_updated.emit(msg)
+
+func _ani_over_battle():
+	SignalBus.change_scence.emit("tomenu")

@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3 uid="uid://cuvi8jmlquxkr"]
+[gd_scene load_steps=26 format=3 uid="uid://cuvi8jmlquxkr"]
 
 [ext_resource type="Texture2D" uid="uid://dgyqirah3ilvl" path="res://素材/使用素材/战斗内/桌面/卡库栏底版 .png" id="1_c20ep"]
 [ext_resource type="Script" uid="uid://dsjhgmpb1haaw" path="res://game_ui/match/match_ui.gd" id="1_oqlle"]
@@ -14,6 +14,7 @@
 [ext_resource type="Texture2D" uid="uid://ci7ym6d16j3bs" path="res://素材/使用素材/战斗外/游戏初始界面/UI手（左手）.png" id="10_hgah4"]
 [ext_resource type="Texture2D" uid="uid://v6mxhb2ytswh" path="res://素材/使用素材/战斗外/游戏模式选择与匹配/匹配到后的信息显示动画/匹配信息框/信息框.png" id="12_6u7u6"]
 [ext_resource type="PackedScene" uid="uid://s14mr1ndy4u6" path="res://game_ui/告示牌.tscn" id="12_ea11v"]
+[ext_resource type="PackedScene" uid="uid://cf218n73yp1t0" path="res://game_scene/battle/万能按钮.tscn" id="15_vafcw"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_6u7u6"]
 font_size = 36
@@ -256,6 +257,16 @@ offset_right = 939.0
 offset_bottom = 614.0
 scale = Vector2(0.4787446, 0.4787446)
 
+[node name="ColorRect2" type="ColorRect" parent="."]
+visible = false
+layout_mode = 0
+offset_left = -2.0
+offset_top = 5.0000005
+offset_right = 38.0
+offset_bottom = 45.0
+scale = Vector2(29.116865, 16.201954)
+color = Color(0.12955832, 0.12955853, 0.12955844, 0.49019608)
+
 [node name="wait" type="AnimatedSprite2D" parent="."]
 visible = false
 position = Vector2(545, 305.00003)
@@ -264,4 +275,12 @@ sprite_frames = SubResource("SpriteFrames_n0lx2")
 animation = &"wait"
 frame_progress = 0.7351176
 
+[node name="万能按钮" parent="wait" instance=ExtResource("15_vafcw")]
+offset_left = -1385.4635
+offset_top = 461.82114
+offset_right = -236.4635
+offset_bottom = 1538.8212
+scale = Vector2(0.4527417, 0.4527417)
+
 [connection signal="button_down" from="返回" to="." method="_on_返回_button_down"]
+[connection signal="button_down" from="wait/万能按钮" to="." method="_on_万能按钮_button_down"]

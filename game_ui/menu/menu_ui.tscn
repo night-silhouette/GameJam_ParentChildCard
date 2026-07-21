@@ -38,6 +38,7 @@ offset_bottom = 578.0
 scale = Vector2(0.41932663, 0.41932663)
 
 [node name="设置" type="VBoxContainer" parent="."]
+visible = false
 layout_mode = 0
 offset_left = 622.0
 offset_top = 393.0
