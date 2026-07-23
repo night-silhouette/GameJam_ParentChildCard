@@ -81,7 +81,7 @@ func _dispatch(action_code: int, action_data: Variant, predicate: int):
 		NetDef.Action.JUDGE:
 			if predicate == NetDef.Predicate.QUERY:
 				var t = action_data.state_wait_time;
-				print("战斗阶段")
+				print("判读阶段")
 				SignalBus.judge_start.emit(t);
 			if predicate == NetDef.Predicate.FINISH:
 				SignalBus.judge_finish.emit(action_data);
@@ -91,20 +91,23 @@ func _dispatch(action_code: int, action_data: Variant, predicate: int):
 			if predicate == NetDef.Predicate.QUERY:
 				var t = action_data.state_wait_time;
 				SignalBus.combat_start_success.emit(t,1);
+				print("战斗阶段")	
 			if predicate == NetDef.Predicate.NOTIFY:
 				var t = action_data.state_wait_time;
 				SignalBus.combat_start_success.emit(t,0);
+				print("战斗阶段")	
 			if predicate == NetDef.Predicate.SUCCEED:
 				SignalBus.combat_action_success.emit()
 				print("success!!!!!!!!!!!!!")
 		NetDef.Action.OpOffline:
 			if predicate == NetDef.Predicate.NOTIFY:
 				SignalBus.opoffline.emit() 	#对手离线
+				SignalBus.notice_updated.emit("对手离线")
 				
 		NetDef.Action.OpOffline:
 			if predicate == NetDef.Predicate.NOTIFY:
 				SignalBus.oponline.emit() 	#对手上线
-				
+				SignalBus.notice_updated.emit("对手上线")
 		NetDef.Action.SoftReConnect:
 			if predicate == NetDef.Predicate.NOTIFY:
 				SignalBus.soft_reconnect.emit()
@@ -171,6 +174,7 @@ func _dispatch(action_code: int, action_data: Variant, predicate: int):
 		NetDef.Action.WaitState:
 			if predicate == NetDef.Predicate.QUERY:
 				SignalBus.enter_free.emit()	
+			print("自由阶段")
 		# 新增：中断选牌
 		NetDef.Action.Interrupt:
 			if predicate == NetDef.Predicate.QUERY:#需要进行操作的终端

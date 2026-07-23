@@ -12,9 +12,6 @@ var _showing_active: bool = false
 func _ready() -> void:
 	Global.fake_death(active_card)
 	Global.fake_death(op_card)
-	if Global.match_mode == 1 :
-		SignalBus.request_reconnect_query.emit()
-		SignalBus.refresh_all_battle_data.emit()
 	# 临时：测试阶段全部允许输入
 	$"block/全局block".allow_input()
 	$"block/战斗牌block".allow_input()

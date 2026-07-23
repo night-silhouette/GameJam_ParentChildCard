@@ -86,8 +86,11 @@ func _ready() -> void:
 	Global.fake_death(weather)
 	Global.fake_death(choose_child_card)
 	_enter_state(current_state)
+	if Global.match_mode == 1 :
+		SignalBus.request_reconnect_query.emit()
+		print("发送请求")
 	_interrupt_selected = card_manager.interrupt_selected
-	
+
 # --- 核心：状态切换逻辑 ---
 func change_state(new_state: GameState) -> void:
 	current_state = new_state # 触发 setter
