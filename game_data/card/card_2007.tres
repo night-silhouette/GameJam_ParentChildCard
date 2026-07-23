@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="CardResource" load_steps=3 format=3 uid="uid://cdbvc7edbbmbw"]
 
-[ext_resource type="Texture2D" uid="uid://dje375wa2ans7" path="res://素材/使用素材/卡牌/基础卡牌重置素材/卡牌.png" id="1_rj0q3"]
+[ext_resource type="Texture2D" uid="uid://c8qtsrhpb4ew5" path="res://素材/新素材/卡牌/2007/2007.png" id="1_rj0q3"]
 [ext_resource type="Script" uid="uid://cik6i25pfmxeg" path="res://base_class/card/card_data.gd" id="2_xk564"]
 
 [resource]
@@ -17,5 +17,5 @@ skill_charge = 2
 is_combat_card = true
 is_sub_card = true
 skill_description = "主动：若母牌有多形态，杀死母牌，将上一形态的攻击和血量和血量上限累加到下一形态。若无，50%的概率增加母牌2点攻击和一点血量，50%概率增加母牌一点攻击和一点血量。"
-notes = "召唤条件：连续俩回合我方死亡数量大于敌方"
+notes = "召唤条件：连续三回合我方死亡数量大于敌方"
 sub_card_trigger_effect = "获得一点行动点"

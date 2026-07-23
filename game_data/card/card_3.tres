@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="CardResource" load_steps=3 format=3 uid="uid://f4yhy83mddng"]
 
-[ext_resource type="Texture2D" uid="uid://dje375wa2ans7" path="res://素材/使用素材/卡牌/基础卡牌重置素材/卡牌.png" id="1_mkk88"]
+[ext_resource type="Texture2D" uid="uid://cnrihaqcuq37f" path="res://素材/新素材/卡牌/0003/0003.png" id="1_mkk88"]
 [ext_resource type="Script" uid="uid://cik6i25pfmxeg" path="res://base_class/card/card_data.gd" id="2_qukeu"]
 
 [resource]
@@ -15,4 +15,5 @@ initial_health = 6
 max_health = 6
 skill_charge = 2
 is_combat_card = true
-skill_description = "主动：敌方下一次攻击或技能效果必须以你为目标"
+skill_description = "主动：给予子牌槽位的单位3回合守护"
+notes = "守护:被守护者被攻击或者使用技能时,转移到守护者身上"

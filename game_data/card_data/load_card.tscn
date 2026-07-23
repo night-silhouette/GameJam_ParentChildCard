@@ -10,7 +10,6 @@ extends Node
 @export_dir var output_dir: String = \"res://resources/cards/\"
 @export_dir var texture_dir: String = \"res://assets/cards/\"
 @export_file(\"*.png\", \"*.jpg\") var default_texture_path: String = \"res://assets/cards/default_texture.png\"
-
 @export_group(\"Controls\")
 ## 点击勾选此项立即开始导入（文件名绝对唯一，无等级后缀）
 @export var trigger_import: bool = false:
@@ -139,23 +138,14 @@ func _start_import() -> void:
 		card_res.sub_card_trigger_effect = sub_effect
 		card_res.texture_filename = img_name
 		
-		# 7. 图片匹配与默认保底逻辑
+		# 7. 图片匹配：从 {padded_id}/{padded_id}.png 加载 (如 0000/0000.png)
 		var texture_loaded = false
-		if img_name != \"\":
-			var full_img_path = texture_dir.path_join(img_name)
-			if ResourceLoader.exists(full_img_path):
-				card_res.card_texture = load(full_img_path)
-				texture_loaded = true
+		var padded_id = str(card_id).pad_zeros(4)
+		var card_texture_path = texture_dir.path_join(padded_id).path_join(padded_id + \".png\")
+		if ResourceLoader.exists(card_texture_path):
+			card_res.card_texture = load(card_texture_path)
+			texture_loaded = true
 		
-		if not texture_loaded:
-			var possible_extensions = [\".png\", \".jpg\", \".jpeg\", \".tga\"]
-			for ext in possible_extensions:
-				var id_img_path = texture_dir.path_join(str(card_id) + ext)
-				if ResourceLoader.exists(id_img_path):
-					card_res.card_texture = load(id_img_path)
-					texture_loaded = true
-					break
-					
 		if not texture_loaded:
 			card_res.card_texture = default_texture
 				
@@ -172,7 +162,7 @@ func _start_import() -> void:
 
 [node name="Node" type="Node"]
 script = SubResource("GDScript_g0b1l")
-csv_path = "uid://mrsuelblgy2f"
+csv_path = "uid://qxx1fi6pauwp"
 output_dir = "res://game_data/card"
-texture_dir = "res://素材/使用素材/卡牌"
+texture_dir = "res://素材/新素材/卡牌"
 default_texture_path = "uid://dje375wa2ans7"

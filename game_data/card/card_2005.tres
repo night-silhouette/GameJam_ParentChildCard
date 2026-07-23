@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="CardResource" load_steps=3 format=3 uid="uid://bqs3dv41j6lk8"]
 
-[ext_resource type="Texture2D" uid="uid://dje375wa2ans7" path="res://素材/使用素材/卡牌/基础卡牌重置素材/卡牌.png" id="1_phra3"]
+[ext_resource type="Texture2D" uid="uid://byfci6emmfouo" path="res://素材/新素材/卡牌/2005/2005.png" id="1_phra3"]
 [ext_resource type="Script" uid="uid://cik6i25pfmxeg" path="res://base_class/card/card_data.gd" id="2_nsopp"]
 
 [resource]
@@ -16,6 +16,6 @@ max_health = 8
 skill_charge = 2
 is_combat_card = true
 is_sub_card = true
-skill_description = "被动：治疗量翻倍"
+skill_description = "被动：治疗量增加100%"
 notes = "召唤条件：甘露持续4回合，给与天气造成者。若天气被中断，给予中断者"
 sub_card_trigger_effect = "随机回复我方一张战斗牌2点生命"

@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="CardResource" load_steps=3 format=3 uid="uid://db1nmevjvdh72"]
 
-[ext_resource type="Texture2D" uid="uid://dje375wa2ans7" path="res://素材/使用素材/卡牌/基础卡牌重置素材/卡牌.png" id="1_ca3dk"]
+[ext_resource type="Texture2D" uid="uid://d1jajfi5v1fq6" path="res://素材/新素材/卡牌/1004/1004.png" id="1_ca3dk"]
 [ext_resource type="Script" uid="uid://cik6i25pfmxeg" path="res://base_class/card/card_data.gd" id="2_1553c"]
 
 [resource]
@@ -11,4 +11,4 @@ name = "祈雨"
 id = 1004
 value = 10
 skill_card_use_num = 1
-skill_description = "给场上的所有角色牌回复5点血量，将天气改为甘霖"
+skill_description = "将天气改为甘霖,给上场的所有角色牌回复5点血量"

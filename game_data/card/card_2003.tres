@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="CardResource" load_steps=3 format=3 uid="uid://br40gl0wxjt7n"]
 
-[ext_resource type="Texture2D" uid="uid://dje375wa2ans7" path="res://素材/使用素材/卡牌/基础卡牌重置素材/卡牌.png" id="1_x1atd"]
+[ext_resource type="Texture2D" uid="uid://cgwjxrrj5f35n" path="res://素材/新素材/卡牌/2003/2003.png" id="1_x1atd"]
 [ext_resource type="Script" uid="uid://cik6i25pfmxeg" path="res://base_class/card/card_data.gd" id="2_4gj0b"]
 
 [resource]

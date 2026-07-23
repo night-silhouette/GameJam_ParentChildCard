@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="CardResource" load_steps=3 format=3 uid="uid://8nc3hrui86f2"]
 
-[ext_resource type="Texture2D" uid="uid://dje375wa2ans7" path="res://素材/使用素材/卡牌/基础卡牌重置素材/卡牌.png" id="1_0hpu6"]
+[ext_resource type="Texture2D" uid="uid://fqck7r4atcp3" path="res://素材/新素材/卡牌/1008/1008.png" id="1_0hpu6"]
 [ext_resource type="Script" uid="uid://cik6i25pfmxeg" path="res://base_class/card/card_data.gd" id="2_klwdr"]
 
 [resource]
@@ -11,4 +11,4 @@ name = "磨刀"
 id = 1008
 value = 10
 skill_card_use_num = 1
-skill_description = "指定一张牌,下回合开始增加攻击伤害2点,持续三回合"
+skill_description = "指定一张牌,下回合开增加攻击伤害2点,持续三回合"

@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://dui7lknuhmfcv"]
 
-[ext_resource type="Script" uid="uid://da7g6kojgdema" path="res://base_class/net/WS/test_ws.gd" id="1_s3wy7"]
+[ext_resource type="Script" uid="uid://da7g6kojgdema" path="res://game_scene/test_ws.gd" id="1_s3wy7"]
 
 [node name="TestWs" type="Node"]
 script = ExtResource("1_s3wy7")
