@@ -50,7 +50,8 @@ enum Action {
 	WeatherChange = 36 ,  
 	OpOffline = 37,
 	OpOnline = 38,
-	SoftReConnect = 39
+	SoftReConnect = 39,
+	WaitState = 40,
 }
 
 const ACTION_NAME = {
@@ -86,7 +87,7 @@ const ACTION_NAME = {
 	Action.OpOffline:             "对手离线了",
 	Action.OpOnline:              "对手重新上线了",
 	Action.SoftReConnect: 		  "软重连",
-	
+	Action.WaitState:              "等待时间"
 }
 
 # 辅助函数：快速获取名字打印日志

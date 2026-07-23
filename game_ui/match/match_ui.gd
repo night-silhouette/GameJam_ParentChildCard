@@ -67,5 +67,6 @@ func _ws_connected():
 
 func _on_万能按钮_button_down() -> void:
 	SignalBus.request_cancel_match.emit();
+	send = 0;
 	$wait.visible = false;
 	$ColorRect2.visible = false

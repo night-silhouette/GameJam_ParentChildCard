@@ -1,10 +1,11 @@
 extends Node
-var BASE_URL = "http://120.26.145.68:5300" 
+var BASE_URL = "http://120.26.145.68:10086" 
 var token_save :bool = false;	
-var init_battle_time :int;
+var init_battle_time :int = 0;
 var max_delay_time = 0.46;
 var cardcalc_animaiton_list:Array;
 var game_sence : int
+var match_mode : int #0为match/1为reconnect
 
 # 注意：Action / Predicate / ACTION_NAME 等网络协议定义已统一迁移到 Net_def.gd
 # 请使用 NetDef.Action / NetDef.Predicate 等，避免重复定义

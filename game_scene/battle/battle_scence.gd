@@ -3,15 +3,18 @@ extends Node
 @onready var button: TextureButton = $"转换"
 @onready var active_card: HBoxContainer = $"卡牌显示/active_child_card"
 @onready var op_card: Control = $"卡牌显示/敌方牌库"
-@onready var weather_name_label: Label = $"weather_name"
+@onready var weather_name_label: Label = $"信息显示/weather_name"
 @onready var card_manager: Node = $"数据层/card_manager"
+
 
 var _showing_active: bool = false
 
 func _ready() -> void:
 	Global.fake_death(active_card)
 	Global.fake_death(op_card)
-
+	if Global.match_mode == 1 :
+		SignalBus.request_reconnect_query.emit()
+		SignalBus.refresh_all_battle_data.emit()
 	# 临时：测试阶段全部允许输入
 	$"block/全局block".allow_input()
 	$"block/战斗牌block".allow_input()
@@ -70,3 +73,4 @@ func _battle_over(msg):
 
 func _ani_over_battle():
 	SignalBus.change_scence.emit("tomenu")
+	BattleWs.close_ws()

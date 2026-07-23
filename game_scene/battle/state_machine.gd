@@ -45,7 +45,7 @@ enum GameState {
 	CARDCALC,			#确定起始和尾部，接收到尾部后进行read
 }
 const GAME_STATE_NAME = {
-	GameState.INIT_STATE:         "看牌阶段",
+	GameState.INIT_STATE:         "初始阶段",
 	GameState.CHOOSE_CHILD_CARD:  "选择子卡",
 	GameState.CHOOSE_WEATHER:     "选择天气",
 	GameState.USE_MAGIC_CARD:     "法术牌阶段",
@@ -61,7 +61,6 @@ var current_state: GameState = GameState.INIT_STATE:
 		_exit_state(current_state)
 		current_state = value
 		_enter_state(current_state)
-		state_name.text = str(GAME_STATE_NAME[current_state])
 		is_pass = 0;
 		
 # --- 初始化 ---
@@ -80,7 +79,8 @@ func _ready() -> void:
 	SignalBus.select_weather_start.connect(_on_select_weather_start)
 	SignalBus.card_calc_finish.connect(_on_card_calc_finish)
 	SignalBus.interrupt_start.connect(_on_interrupt_start)
-	SignalBus.interrupt_succeed.connect(_on_interrupt_succeed)	
+	SignalBus.interrupt_succeed.connect(_on_interrupt_succeed)
+	SignalBus.refresh_all_battle_data.connect(_refresh_all_battle_data)	
 	Global.fake_death(judge)
 	Global.fake_death(jugde_bt)
 	Global.fake_death(weather)
@@ -133,6 +133,7 @@ func _exit_state(old_state: GameState) -> void:
 			pass;
 
 func _enter_state(new_state: GameState) -> void:
+	state_name.text = str(GAME_STATE_NAME[current_state])
 	# 每进入一个状态，刷新全部战斗数据
 	# ↓↓↓ 临时：测试阶段，所有状态统一 allow_input ↓↓↓
 	all_block.allow_input()
@@ -142,7 +143,9 @@ func _enter_state(new_state: GameState) -> void:
 	
 	match new_state:
 		GameState.INIT_STATE:
-			time.start_countdown.call_deferred(TimeOffset.get_remaining_seconds(Global.init_battle_time))
+			if not Global.init_battle_time == 0 :
+				time.start_countdown.call_deferred(TimeOffset.get_remaining_seconds(Global.init_battle_time))
+			Global.init_battle_time = 0;
 			_refresh_all_battle_data()
 		
 		GameState.CHOOSE_CHILD_CARD:
@@ -218,6 +221,7 @@ func _populate_weather() -> void:
 
 # --- 信号回调（在这里控制状态流转） ---
 func _on_match_success(t) -> void:
+	time.start_countdown(TimeOffset.get_remaining_seconds(t));
 	change_state(GameState.INIT_STATE)
 	
 func _on_magic_card_start(t) -> void:

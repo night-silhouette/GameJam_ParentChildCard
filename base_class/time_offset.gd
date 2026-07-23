@@ -15,7 +15,8 @@ func time_offset() -> int:
 	SignalBus.request_get_time.emit(T1)
 
 	var Tservers = await SignalBus.get_time_success
-
+	if Tservers < 0 :
+		Tservers = 0
 	var T2 = Time.get_ticks_msec()
 	var RTT = T2 - T1
 

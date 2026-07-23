@@ -12,12 +12,12 @@ func _ready() -> void:
 	
 	
 func _match_success(t):
-	
+	Global.match_mode = 0;
 	Global.init_battle_time = t;
 	SignalBus.change_scence.emit("tobattle");
 	SignalBus.change_ui.emit("tomenu");
 	
 func _soft_reconnect():
+	Global.match_mode = 1;
 	SignalBus.change_scence.emit("tobattle");
 	SignalBus.change_ui.emit("tomenu");
-	SignalBus.request_reconnect_query.emit()

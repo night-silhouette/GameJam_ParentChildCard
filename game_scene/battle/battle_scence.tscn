@@ -369,7 +369,6 @@ calc_state_machine = NodePath("../calc_state_machine")
 script = ExtResource("7_uxigx")
 
 [node name="debug" type="Control" parent="."]
-visible = false
 layout_mode = 3
 anchors_preset = 0
 offset_right = 40.0
@@ -536,20 +535,21 @@ scale = Vector2(0.19120544, 0.19120544)
 
 [node name="weather_name" type="Label" parent="信息显示"]
 layout_mode = 0
-offset_left = 264.0
-offset_top = 70.0
-offset_right = 360.0
-offset_bottom = 119.0
-scale = Vector2(1.1358575, 1.1358575)
+offset_left = 253.0
+offset_top = 71.0
+offset_right = 349.0
+offset_bottom = 120.0
+scale = Vector2(0.86344093, 0.86344093)
+text = "幸运星"
 label_settings = SubResource("LabelSettings_qxhen")
 
 [node name="状态栏" type="Label" parent="信息显示"]
 layout_mode = 0
-offset_left = 80.0
-offset_top = 88.000015
-offset_right = 179.0
-offset_bottom = 137.00002
-scale = Vector2(1.168982, 1.1733543)
+offset_left = 82.0
+offset_top = 163.0
+offset_right = 181.0
+offset_bottom = 212.0
+scale = Vector2(1.6686189, 1.8512796)
 label_settings = SubResource("LabelSettings_25d8u")
 
 [node name="jugde_bt" parent="信息显示" instance=ExtResource("19_ka56j")]

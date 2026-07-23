@@ -37,6 +37,12 @@ func _reconnect_ws():
 	if err != OK:
 		push_error("WS连接失败")
 		
+func close_ws():
+	if ws.get_ready_state() == WebSocketPeer.STATE_OPEN or ws.get_ready_state() == WebSocketPeer.STATE_CONNECTING:
+		ws.close()
+		is_connected = false
+		print("WS主动断开")
+
 func _process(delta):
 	if ws.get_ready_state() == WebSocketPeer.STATE_CONNECTING:
 		ws.poll()

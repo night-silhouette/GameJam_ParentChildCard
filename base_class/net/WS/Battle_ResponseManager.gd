@@ -60,11 +60,12 @@ func _dispatch(action_code: int, action_data: Variant, predicate: int):
 			if predicate == NetDef.Predicate.QUERY:
 				var t = action_data.state_wait_time;
 				var where = int(action_data.where);
-				# print(where)
+				print("法术放置")
 				match where:
 					2:
 						SignalBus.magic_card_start.emit(t)
 			if predicate == NetDef.Predicate.SUCCEED:
+				
 				SignalBus.deploy_magic_success.emit();
 			if predicate	 == NetDef.Predicate.FINISH:
 				SignalBus.magic_card_finish.emit();
@@ -75,11 +76,12 @@ func _dispatch(action_code: int, action_data: Variant, predicate: int):
 		NetDef.Action.MATCH_SUCCESS:
 			if predicate == NetDef.Predicate.NOTIFY:
 				var t = action_data.state_wait_time;
-				#print("init阶段")
+				print("init阶段")
 				SignalBus.match_success.emit(t);
 		NetDef.Action.JUDGE:
 			if predicate == NetDef.Predicate.QUERY:
 				var t = action_data.state_wait_time;
+				print("战斗阶段")
 				SignalBus.judge_start.emit(t);
 			if predicate == NetDef.Predicate.FINISH:
 				SignalBus.judge_finish.emit(action_data);
@@ -127,6 +129,7 @@ func _dispatch(action_code: int, action_data: Variant, predicate: int):
 				var t = action_data.get("state_wait_time", 0)
 				var child_list = action_data.get("child_list", [])
 				SignalBus.active_child_card_start.emit(t, child_list)
+				print("子牌选择")
 			if predicate == NetDef.Predicate.SUCCEED:
 				SignalBus.active_child_card_succeed.emit()
 			if predicate == NetDef.Predicate.FINISH:
@@ -141,7 +144,7 @@ func _dispatch(action_code: int, action_data: Variant, predicate: int):
 			if predicate == NetDef.Predicate.QUERY:
 				var t = action_data.get("state_wait_time", 0)
 				var weather_list = action_data.get("weather_list", [])
-				print(action_data)
+				print("选择天气")
 				SignalBus.select_weather_start.emit(t, weather_list)
 			if predicate == NetDef.Predicate.SUCCEED:
 				SignalBus.select_weather_succeed.emit(action_data)
@@ -164,7 +167,10 @@ func _dispatch(action_code: int, action_data: Variant, predicate: int):
 				SignalBus.card_calc_finish.emit()
 			if predicate == NetDef.Predicate.NOTIFY:
 				SignalBus.card_calc_start.emit()
-				
+			
+		NetDef.Action.WaitState:
+			if predicate == NetDef.Predicate.QUERY:
+				SignalBus.enter_free.emit()	
 		# 新增：中断选牌
 		NetDef.Action.Interrupt:
 			if predicate == NetDef.Predicate.QUERY:#需要进行操作的终端
@@ -174,7 +180,7 @@ func _dispatch(action_code: int, action_data: Variant, predicate: int):
 				var interrupt_type = action_data.get("interrupt_type")
 				var call_temp_id = action_data.get("call_temp_id")
 				SignalBus.interrupt_start.emit(action_data,1)
-
+					
 			if predicate == NetDef.Predicate.NOTIFY:#不需要操作的终端
 				var t = action_data.get("state_wait_time")
 				var temp_id_list = action_data.get("temp_id_list")#可以选的牌

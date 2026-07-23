@@ -660,6 +660,7 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="Value_change" type="Label" parent="."]
+visible = false
 layout_mode = 0
 offset_right = 40.0
 offset_bottom = 25.0
