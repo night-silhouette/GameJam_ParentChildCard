@@ -8,7 +8,7 @@ extends Node
 
 
 var _showing_active: bool = false
-
+var is_over:bool = false
 func _ready() -> void:
 	Global.fake_death(active_card)
 	Global.fake_death(op_card)
@@ -22,7 +22,7 @@ func _ready() -> void:
 		card_manager.weather_num_changed.connect(_on_weather_num_changed)
 	SignalBus.battle_over.connect(_battle_over)
 	SignalBus.ani_over_battle.connect(_ani_over_battle)
-
+	SignalBus.notic_end.connect(_notic_end)
 func _ws_disconnected() -> void:
 	SignalBus.change_scence.emit("tomenu")
 	SignalBus.change_ui.emit("tomenu")
@@ -67,7 +67,10 @@ func _on_万能按钮2_pressed() -> void:
 	
 func _battle_over(msg):
 	SignalBus.notice_updated.emit(msg)
-
+	is_over = true
 func _ani_over_battle():
 	SignalBus.change_scence.emit("tomenu")
 	BattleWs.close_ws()
+func _notic_end():
+	if is_over:
+		SignalBus.ani_over_battle.emit()

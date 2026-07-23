@@ -39,12 +39,18 @@ func _update_view():
 			var card_data = page_cards[i]
 			child.update_card_data(card_data)
 			child.show()
-			child.modulate.a = 1.0
-			# 根据 card_data 的 need_operate 标记切换状态
-			if card_data.get("need_operate", false):
-				child.enter_need_operate()
+			# 如果该卡有 FREE_ZONE 副本，显示半透明占位
+			if card_manager.has_free_zone_duplicate(card_data.get("temp_id")):
+				child.modulate.a = 0.3
 			else:
-				child.exit_need_operate()
+				child.modulate.a = 1.0
+			# 根据 card_data 的 need_operate 标记切换状态
+			# 跳过正在 HOVERED 的卡牌，避免覆盖 hover 状态导致 mouse_exited 失效
+			if child.current_state != child.CardState.HOVERED:
+				if card_data.get("need_operate", false):
+					child.enter_need_operate(true)
+				else:
+					child.exit_need_operate(true)
 		else:
 			child.hide()
 
@@ -55,13 +61,8 @@ func get_current_page() -> Array:
 # ================= 核心：配合“游荡对象”的逻辑 =================
 
 func _on_card_request_drag(card_data):
-	# 1. 激活全局游荡对象（DragProxy）
-	# 假设你有一个全局单例 DragManager 
-	#DragManager.start_drag(card_data/)
-	
-	# 2. 核心操作：修改数据层！
-	# 告诉 card_manager：这张牌现在离开 DECK_ZONE 了，进入临时状态
-	card_manager._change_card_zone(card_data.get("temp_id"), Global.ZONE_CARD.FREE_ZONE)
+	# 原卡保留在 DECK_ZONE 作为半透明占位，FREE_ZONE 副本由 enter_freecard 信号创建
+	pass
 
 # ================= 翻页逻辑（保持不变） =================
 

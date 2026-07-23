@@ -34,14 +34,17 @@ var is_chosen: bool = false:
 @export var card_manager: Node
 
 ## hover 浮动动画参数
-const HOVER_FLOAT_OFFSET: float = -8.0
+const HOVER_FLOAT_OFFSET: float = -18.0
+const HOVER_SCALE: float = 1.1
 const HOVER_FLOAT_DURATION: float = 0.15
 var _original_position: Vector2
+var _hover_base_scale: Vector2 = Vector2.ONE
+var _hover_base_captured: bool = false
+var _hover_tween: Tween
 var _glow_rect: ColorRect
 
 
 func _ready():
-	_original_position = position
 	# 创建选中发光层
 	_glow_rect = ColorRect.new()
 	_glow_rect.color = Color(1.0, 1.0, 1.0, 0.4)
@@ -81,7 +84,6 @@ func update_card_data(base_res: Dictionary) -> void:
 	# 2. 填充运行时数据（从 Dictionary 获取）
 	temp_id = base_res.get("temp_id")
 	zone = base_res.get("zone")
-	_update_placeholder_visual()
 	buff_list = base_res.get("buff_list", [])
 	_update_buff_display()
 	
@@ -114,6 +116,7 @@ func free_card():
 	damage = 0;
 	temp_id = 0;
 	buff_list = [];
+	_hover_base_captured = false
 	
 
 func _update_buff_display() -> void:
@@ -174,12 +177,14 @@ func change_state(new_state: CardState):
 
 # --- 鼠标悬停事件（✅ 只有 zone 符合才允许 hover）---
 func _on_mouse_entered():
+	print("enter")
 	if current_state == CardState.DEAD:
 		return
 	if current_state == CardState.IDLE and  zone in HOVER_ALLOWED_ZONES:
 		change_state(CardState.HOVERED)
 
 func _on_mouse_exited():
+	print("exited")
 	if current_state == CardState.DEAD:
 		return
 	if current_state == CardState.HOVERED:
@@ -231,13 +236,21 @@ func _on_need_operate_click() -> void:
 
 
 ## 外部信号：进入中断选牌模式
-func enter_need_operate() -> void:
-	change_state(CardState.NEED_OPERATE)
+func enter_need_operate(skip_anim: bool = false) -> void:
+	if skip_anim:
+		if current_state != CardState.HOVERED:
+			current_state = CardState.NEED_OPERATE
+	else:
+		change_state(CardState.NEED_OPERATE)
 
 
 ## 外部信号：退出中断选牌模式
-func exit_need_operate() -> void:
-	change_state(CardState.IDLE)
+func exit_need_operate(skip_anim: bool = false) -> void:
+	if skip_anim:
+		if current_state != CardState.HOVERED:
+			current_state = CardState.IDLE
+	else:
+		change_state(CardState.IDLE)
 
 
 ## 选中视觉反馈：底部白色发光
@@ -246,16 +259,31 @@ func _update_chosen_visual() -> void:
 		_glow_rect.visible = is_chosen
 
 
-## hover 浮动：向上位移
+## hover 浮动：居中放大（第一次 hover 时捕获 scale，设置 pivot_offset 使缩放以中心为基准）
 func _hover_float_up() -> void:
-	var tween = create_tween()
-	tween.tween_property(self, "position", _original_position + Vector2(0, HOVER_FLOAT_OFFSET), HOVER_FLOAT_DURATION)
+	print(name, " ", scale)
+	if not _hover_base_captured:
+		_hover_base_captured = true
+		_original_position = position
+		_hover_base_scale = scale
+	if _hover_tween and _hover_tween.is_valid():
+		_hover_tween.kill()
+	_hover_tween = create_tween()
+	_hover_tween.set_parallel(true)
+	_hover_tween.tween_property(self, "position", _original_position + Vector2(0, HOVER_FLOAT_OFFSET), HOVER_FLOAT_DURATION)
+	_hover_tween.tween_property(self, "scale", _hover_base_scale * HOVER_SCALE, HOVER_FLOAT_DURATION)
 
 
-## hover 浮动：恢复原位
+## hover 浮动：恢复原位 + 原始大小
 func _hover_float_down() -> void:
-	var tween = create_tween()
-	tween.tween_property(self, "position", _original_position, HOVER_FLOAT_DURATION)
+	if _hover_base_scale == Vector2.ZERO:
+		return
+	if _hover_tween and _hover_tween.is_valid():
+		_hover_tween.kill()
+	_hover_tween = create_tween()
+	_hover_tween.set_parallel(true)
+	_hover_tween.tween_property(self, "position", _original_position, HOVER_FLOAT_DURATION)
+	_hover_tween.tween_property(self, "scale", _hover_base_scale, HOVER_FLOAT_DURATION)
 
 
 ## 占位符视觉：zone 为 FREE_ZONE 时半透明，恢复时全透明

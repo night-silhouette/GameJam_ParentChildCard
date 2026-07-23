@@ -95,11 +95,11 @@ func _on_interrupt_data_received() -> void:
 		temp_id_list = []
 	var select_num = int(interrupt_data.get("select_num", 0))
 
-	# 从 card_list 中匹配 temp_id，组装可选的卡牌数据
+	# 从 card_list 中匹配 temp_id，组装可选的卡牌数据（跳过 FREE_ZONE 副本）
 	var matched_cards: Array = []
 	for temp_id in temp_id_list:
 		for card in card_list:
-			if card.get("temp_id") == temp_id:
+			if card.get("temp_id") == temp_id and card.get("zone") != Global.ZONE_CARD.FREE_ZONE:
 				matched_cards.append(card.duplicate())
 				break
 	
@@ -273,23 +273,24 @@ func _update_cards(data: Array, ZONE):
 func _sync_card_data(new_data: Dictionary, zone):
 	var target_temp_id = int(new_data.get("temp_id", -1))
 
-	var existing_card : Dictionary = {}
+	# 收集所有同 temp_id 的卡牌（包括 FREE_ZONE 副本）
+	var existing_cards: Array[Dictionary] = []
 	for card in card_list:
 		if card != null and int(card.get("temp_id", -2)) == target_temp_id:
-			existing_card = card
-			break
+			existing_cards.append(card)
 
-	if not existing_card.is_empty():
-		# 优先级判断：新 zone 优先级 >= 旧 zone 才更新
-		var old_zone = int(existing_card.get("zone", 0))
-		if not _should_override_zone(old_zone, zone):
-			# 不更新 zone，但更新其他数据（hp, damage, buff 等）
+	if not existing_cards.is_empty():
+		for existing_card in existing_cards:
+			# 优先级判断：新 zone 优先级 >= 旧 zone 才更新
+			var old_zone = int(existing_card.get("zone", 0))
+			if not _should_override_zone(old_zone, zone):
+				# 不更新 zone，但更新其他数据（hp, damage, buff 等）
+				_update_card_stats(existing_card, new_data)
+				continue
+			
+			# 更新 zone 和数据
+			existing_card["zone"] = zone
 			_update_card_stats(existing_card, new_data)
-			return
-		
-		# 更新 zone 和数据
-		existing_card["zone"] = zone
-		_update_card_stats(existing_card, new_data)
 	else:
 		var new_card_dict = _init_single_card(new_data, zone)
 		if not new_card_dict.is_empty():
@@ -631,26 +632,45 @@ func clear_all_combat_dto() -> void:
 func _enter_freecard(temp_id, zone):
 	_area_stack.clear()
 	free_card_prevzone = zone;
-	_change_card_zone(temp_id, Global.ZONE_CARD.FREE_ZONE);
+	# 在原 zone 保留卡牌，末尾追加一个 FREE_ZONE 的副本
+	var icard = select_card_by_key(temp_id, "temp_id")
+	if not icard.is_empty():
+		var free_card = icard.duplicate()
+		free_card["zone"] = Global.ZONE_CARD.FREE_ZONE
+		card_list.append(free_card)
+	UI_date_update.emit()
 
 func _exit_freecard(temp_id):
+	# 删除 FREE_ZONE 副本
+	for i in range(card_list.size() - 1, -1, -1):
+		var card = card_list[i]
+		if card.get("temp_id") == temp_id and card.get("zone") == Global.ZONE_CARD.FREE_ZONE:
+			card_list.remove_at(i)
+			break
+	
 	var icard = select_card_by_key(temp_id, "temp_id")
 	if icard.is_empty():
-		_change_card_zone(temp_id, free_card_prevzone)
 		_area_stack.clear()
+		UI_date_update.emit()
 		return
 
 	if free_card_nextzone == null:
-		_change_card_zone(temp_id, free_card_prevzone)
 		_area_stack.clear()
+		UI_date_update.emit()
 		return
 
 	var can_deploy = _can_deploy_card(icard, free_card_nextzone)
 	if can_deploy:
 		_deploy_card_to_zone(temp_id, free_card_nextzone)
 	else:
-		_change_card_zone(temp_id, free_card_prevzone)
+		UI_date_update.emit()
 	_area_stack.clear()
+
+func has_free_zone_duplicate(temp_id) -> bool:
+	for card in card_list:
+		if card.get("temp_id") == temp_id and card.get("zone") == Global.ZONE_CARD.FREE_ZONE:
+			return true
+	return false
 
 func _can_deploy_card(icard: Dictionary, target_zone: int) -> bool:
 	if not state_machine:

@@ -42,4 +42,4 @@ func _hide_notice() -> void:
 
 func _on_hide_finished() -> void:
 	visible = false
-	SignalBus.ani_over_battle.emit()
+	SignalBus.notic_end.emit()
