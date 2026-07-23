@@ -47,7 +47,8 @@ type User_service interface {
 	SellCard(ctx context.Context, userId int, stuffIdList []int) global.ResponseStatusCode
 	CheckBtDataIsValid(ctx context.Context, userId int, data []BattleData.BagStuffDto, gold int) global.ResponseStatusCode
 	IsInBattle(ctx context.Context, userId int) global.ResponseStatusCode
-	GetLoot(UserId int, ctx context.Context) (global.ResponseStatusCode, [][]int)
+
+	GetLoot(userId int, ctx context.Context) (global.ResponseStatusCode, []BattleData.LootDto)
 }
 
 type User_service_impl struct {
@@ -348,7 +349,7 @@ func (u *User_service_impl) IsInBattle(ctx context.Context, userId int) global.R
 	return err
 }
 
-func (u *User_service_impl) GetLoot(userId int, ctx context.Context) (global.ResponseStatusCode, [][]int) {
-	err, List := u.repo.GetLoot(ctx, u.repo.Get_db(), userId)
-	return err, List
+func (u *User_service_impl) GetLoot(userId int, ctx context.Context) (global.ResponseStatusCode, []BattleData.LootDto) {
+	err, lootDto := u.repo.GetLoot(ctx, u.repo.Get_db(), userId)
+	return err, lootDto
 }

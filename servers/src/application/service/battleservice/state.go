@@ -27,6 +27,7 @@ type State interface {
 	SetName(name string)
 	GetName() string
 	SpecialInit()
+	GetTemplate() *StateTemplate
 }
 
 func (s *StateMachine) RegisterState() {
@@ -57,24 +58,69 @@ func (s *StateMachine) ReduceWeatherLasting() {
 	s.WeatherLasting = res
 }
 
+var StateQueryMap = map[string]func(s *StateTemplate, id int){
+	//"WaitState":
+	"ShuffleDeal": func(s *StateTemplate, id int) {
+		s.SM.SendActionById(id, BattleDto.NewAction(BattleDto.MatchSuccess, BattleDto.Notify, StateWaitTime{StateWaitTime: s.QueryTime}))
+	},
+	"SelectSkillCard": func(s *StateTemplate, id int) {
+		s.SM.SendActionById(id, BattleDto.NewAction(BattleDto.DeployCard, BattleDto.Query, map[string]any{"state_wait_time": s.QueryTime, "where": BattleData.SkillCard}))
+	},
+	"Judge": func(s *StateTemplate, id int) {
+		s.SM.SendActionById(id, BattleDto.NewAction(BattleDto.Judge, BattleDto.Query, StateWaitTime{StateWaitTime: s.QueryTime}))
+	},
+	"Combat": func(s *StateTemplate, id int) {
+		if id == s.SM.Winner {
+			s.SM.SendActionById(id, BattleDto.NewAction(BattleDto.Combat, BattleDto.Query, StateWaitTime{StateWaitTime: s.QueryTime}))
+		}
+		if id == s.SM.Loser {
+			s.SM.SendActionById(id, BattleDto.NewAction(BattleDto.Combat, BattleDto.Notify, StateWaitTime{StateWaitTime: s.QueryTime}))
+		}
+	},
+	"CardCalc": func(s *StateTemplate, id int) {
+		s.SM.SendActionById(id, BattleDto.NewAction(BattleDto.CardCalc, BattleDto.Notify, ""))
+	},
+	"SelectWeather": func(s *StateTemplate, id int) {
+		if id == s.SM.GoldMoreUserId {
+
+			s.SM.SendActionById(id, BattleDto.NewAction(BattleDto.SelectWeather, BattleDto.Query, map[string]any{"state_wait_time": s.QueryTime, "weather_list": s.QueryMap}))
+
+		}
+	},
+	"ActiveChildCard": func(s *StateTemplate, id int) {
+		queryMap := map[string]any{
+			"state_wait_time": Util.SendTime(global.ActiveChildCardTime * time.Second),
+			"child_list":      s.SM.c.GetChildCardDto(),
+		}
+		s.SM.SendActionById(id, BattleDto.NewAction(BattleDto.ActiveChildCard, BattleDto.Query, queryMap))
+	},
+}
+
 func (s *StateMachine) SharedProcess(id int, action BattleDto.Action, ResponseChan chan<- BattleDto.Action) bool {
 	if action.ActionCode == BattleDto.GetUserId && action.Predicates == BattleDto.Query {
 		res := make(map[string]int)
 		res["self"] = id
 		res["opponent"] = s.c.GetOpponentId(id)
 		ResponseChan <- BattleDto.NewAction(BattleDto.GetWeather, BattleDto.Result, res)
+		return true
 	}
 	if action.ActionCode == BattleDto.GetRoundNum && action.Predicates == BattleDto.Query {
 		ResponseChan <- BattleDto.NewAction(BattleDto.GetRoundNum, BattleDto.Result, s.RoundNum.Load())
+		return true
 	}
-
-	if action.ActionCode == BattleDto.ReConnect && action.Predicates == BattleDto.Query {
-		//CurStateName := s.CurrentState.GetName()
-		//这个是软重连,如果请求这个,就先给他一个dto,一个字段是CurStateName,还有一个是,告诉他用户有不有响应过,(直接在statemachine里面,搞两个原子bool就好了,idaflag)
-		//然后,再把对应state的query给他
-
-		//还有硬重连的问题
-
+	//软重连//todo
+	if action.ActionCode == BattleDto.SoftReConnect && action.Predicates == BattleDto.Query {
+		if s.Id1 == id && s.IsAwaitA.Load() {
+			s.SendActionById(id, BattleDto.NewAction(BattleDto.WaitState, BattleDto.Query, ""))
+			return true
+		}
+		if s.Id2 == id && s.IsAwaitB.Load() {
+			s.SendActionById(id, BattleDto.NewAction(BattleDto.WaitState, BattleDto.Query, ""))
+			return true
+		}
+		CurStateName := s.CurrentState.GetName()
+		StateQueryMap[CurStateName](s.CurrentState.GetTemplate(), id)
+		return true
 	}
 
 	if action.ActionCode == BattleDto.Ping && action.Predicates == BattleDto.Query {
@@ -178,6 +224,9 @@ type StateMachine struct {
 
 	WeatherLasting int         //天气持续时间
 	WinnerIsAction atomic.Bool //赢的人是否行动
+
+	IsAwaitA atomic.Bool
+	IsAwaitB atomic.Bool
 }
 
 func NewStateMachine(c *Ctx, id1 int, id2 int, Nt *NotifyManager, ParentNodeCtx context.Context, GoldMoreUserId int, ParentCancel context.CancelFunc) *StateMachine {
@@ -202,6 +251,8 @@ func NewStateMachine(c *Ctx, id1 int, id2 int, Nt *NotifyManager, ParentNodeCtx 
 	StateMachineImpl.RegisterState()
 	StateMachineImpl.WeatherLasting = 0
 	StateMachineImpl.WinnerIsAction.Store(false)
+	StateMachineImpl.IsAwaitA.Store(false)
+	StateMachineImpl.IsAwaitB.Store(false)
 	for _, element := range StateMachineImpl.StateList {
 		element.Init(id1, id2, c, Nt, StateMachineImpl, element)
 	}
@@ -339,12 +390,22 @@ func (s *StateMachine) finish(NextState string) {
 //#region StateTemplate
 
 type StateTemplate struct {
-	name string
-	Id1  int
-	Id2  int
-	c    *Ctx
-	Nt   *NotifyManager
-	SM   *StateMachine
+	name      string
+	Id1       int
+	Id2       int
+	c         *Ctx
+	Nt        *NotifyManager
+	SM        *StateMachine
+	QueryTime int64
+	QueryMap  any //用来记录query的信息
+}
+
+func (s *StateTemplate) enter() {
+
+}
+
+func (s *StateTemplate) GetTemplate() *StateTemplate {
+	return s
 }
 
 func (s *StateTemplate) main() {
@@ -389,7 +450,7 @@ type ShuffleDeal struct {
 func (s *ShuffleDeal) enter() {
 	s.SM.SendActionById(s.Id1, BattleDto.NewAction(BattleDto.MatchSuccess, BattleDto.Notify, NewStateWaitTime(global.BattleWaitTime*time.Second))) //通知匹配成功
 	s.SM.SendActionById(s.Id2, BattleDto.NewAction(BattleDto.MatchSuccess, BattleDto.Notify, NewStateWaitTime(global.BattleWaitTime*time.Second)))
-
+	s.QueryTime = Util.SendTime(global.BattleWaitTime * time.Second)
 	Util.CreateTimer(global.BattleWaitTime*time.Second, func() { //准备时间过后，正式开始战斗
 		s.SM.Mutex.Lock()
 		if !s.c.CheckCard(s.Id1) {
@@ -540,6 +601,7 @@ func (a *ActiveChildCard) enter() {
 	}
 	a.SM.SendActionById(a.Id1, BattleDto.NewAction(BattleDto.ActiveChildCard, BattleDto.Query, queryMap))
 	a.SM.SendActionById(a.Id2, BattleDto.NewAction(BattleDto.ActiveChildCard, BattleDto.Query, queryMap))
+	a.QueryTime = Util.SendTime(global.ActiveChildCardTime * time.Second)
 	a.ChanStop, a.ChanCrash = Util.CreateTimer(global.ActiveChildCardTime*time.Second, a.SelectEnd)
 }
 
@@ -855,6 +917,8 @@ func (s *SelectWeather) enter() {
 	s.WeatherListMutex.Unlock()
 
 	s.SM.SendActionById(s.SM.GoldMoreUserId, BattleDto.NewAction(BattleDto.SelectWeather, BattleDto.Query, queryMap))
+	s.QueryMap = s.WeatherList
+	s.QueryTime = Util.SendTime(global.SelectWeatherTime * time.Second)
 	//-----让钱多的人选天气-----
 
 	//设置定时
@@ -911,7 +975,7 @@ func (s *SelectSkillCard) enter() {
 
 	s.SM.SendActionById(s.Id1, BattleDto.NewAction(BattleDto.DeployCard, BattleDto.Query, map[string]any{"state_wait_time": Util.SendTime(time.Second * global.SelectSkillCardTime), "where": BattleData.SkillCard}))
 	s.SM.SendActionById(s.Id2, BattleDto.NewAction(BattleDto.DeployCard, BattleDto.Query, map[string]any{"state_wait_time": Util.SendTime(time.Second * global.SelectSkillCardTime), "where": BattleData.SkillCard}))
-
+	s.QueryTime = Util.SendTime(time.Second * global.SelectSkillCardTime)
 }
 func (s *SelectSkillCard) exit() {
 	s.SM.Mutex.Lock()
@@ -1066,8 +1130,9 @@ func (J *Judge) enter() {
 	J.ChanCrash = chanCrash
 	J.ChanStop = chanStop
 
-	J.SM.SendActionById(J.Id1, BattleDto.NewAction(BattleDto.Judge, BattleDto.Query, NewStateWaitTime(global.JudgeWaitTime)))
-	J.SM.SendActionById(J.Id2, BattleDto.NewAction(BattleDto.Judge, BattleDto.Query, NewStateWaitTime(global.JudgeWaitTime)))
+	J.SM.SendActionById(J.Id1, BattleDto.NewAction(BattleDto.Judge, BattleDto.Query, NewStateWaitTime(time.Second*global.JudgeWaitTime)))
+	J.SM.SendActionById(J.Id2, BattleDto.NewAction(BattleDto.Judge, BattleDto.Query, NewStateWaitTime(time.Second*global.JudgeWaitTime)))
+	J.QueryTime = Util.SendTime(time.Second * global.JudgeWaitTime)
 }
 func (J *Judge) exit() {
 	J.Mutex.Lock()
@@ -1173,6 +1238,7 @@ func (c *Combat) enter() {
 
 	c.SM.SendActionById(c.SM.Winner, BattleDto.NewAction(BattleDto.Combat, BattleDto.Query, NewStateWaitTime(WaitTime)))
 	c.SM.SendActionById(c.SM.Loser, BattleDto.NewAction(BattleDto.Combat, BattleDto.Notify, NewStateWaitTime(WaitTime)))
+	c.QueryTime = Util.SendTime(WaitTime)
 	c.ChanStop, c.ChanCrash = Util.CreateTimer(WaitTime, c.CombatEnd)
 }
 func (c *Combat) CombatEnd() {
@@ -1255,6 +1321,7 @@ func (s *CardCalc) SpecialInit() {
 func (s *CardCalc) enter() {
 	s.SM.SendActionById(s.SM.Id2, BattleDto.NewAction(BattleDto.CardCalc, BattleDto.Notify, ""))
 	s.SM.SendActionById(s.SM.Id1, BattleDto.NewAction(BattleDto.CardCalc, BattleDto.Notify, ""))
+	s.QueryTime = 0
 }
 
 func (s *CardCalc) CalcBtCry() { //光环的效果

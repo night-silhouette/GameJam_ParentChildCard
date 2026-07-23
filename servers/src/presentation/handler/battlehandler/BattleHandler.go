@@ -325,6 +325,7 @@ func (u *BattleHandlerImpl) WsReconnect() gin.HandlerFunc {
 			fmt.Println("重连找不到战斗battle")
 			return
 		}
+
 		Nt := Bt.GetPlayerChanByUserID(UserId)
 
 		//接受
@@ -343,8 +344,9 @@ func (u *BattleHandlerImpl) WsReconnect() gin.HandlerFunc {
 				u.ListenRequestConn(p, conn, HandlerCancel, UserId, HandlerCtx, Nt.AcceptChan)
 			}
 		}()
-
+		Nt.ResponseChan <- BattleDto.NewAction(BattleDto.SoftReConnect, BattleDto.Notify, "")
 		u.NotifyOnOnline(UserId)
+		fmt.Println("重连成功")
 
 		select { //阻塞，不让handler直接结束
 		case <-HandlerCtx.Done():

@@ -40,7 +40,7 @@ const (
 	AnimationNotify //-----------------------------------
 	HpChange        //-----------------------------------
 	Ping
-	ReConnect
+	ReConnect      //放生这个
 	WeatherNotify  //-------------------------
 	BuffCalcNotify //-------------------------
 	GetRoundNum
@@ -51,6 +51,8 @@ const (
 	WeatherChange
 	OpOffline
 	OpOnline
+	SoftReConnect
+	WaitState
 )
 
 var ActionName = map[ActionCode]string{
@@ -93,6 +95,8 @@ var ActionName = map[ActionCode]string{
 	WeatherChange:         "天气变化",
 	OpOffline:             "对手离线了",
 	OpOnline:              "对手重新上线了",
+	SoftReConnect:         "软重连",
+	WaitState:             "WaitState",
 }
 
 type Predicates int

@@ -469,7 +469,7 @@ func (c *Ctx) ProtoColInterrupt(UserId int, InterruptDto *BattleData.InterruptDt
 	var DataIsOK atomic.Bool
 	DataIsOK.Store(false)
 
-	TimeEnding := func() {    //结束回调
+	TimeEnding := func() { //结束回调
 		if !DataIsOK.Load() { //随机取
 			dataMutex.Lock()
 			data.TempIdList = Util.GetRandomElements(InterruptDto.TempIdList, InterruptDto.SelectNum)
@@ -1133,7 +1133,21 @@ func (c *Ctx) GetLoot() []int {
 	for _, card := range c.GetAllCard() {
 		res = append(res, card.GetID())
 	}
-	//还有丢弃排队,和未激活字牌中的随机一个
+	//和未激活字牌中的随机一个
+	c.DisCardPool.Do(func(data *[]CardAbstract.Card) {
+		for _, card := range *data {
+			res = append(res, card.GetID())
+		}
+	})
+
+	c.ChildList.Do(func(data *[]CardAbstract.Card) {
+		for _, card := range *data {
+			if card.GetInfo()["ChildState"] == BattleData.Active || card.GetInfo()["ChildState"] == BattleData.NotActive {
+				res = append(res, card.GetID())
+			}
+		}
+	})
+
 	return res
 }
 

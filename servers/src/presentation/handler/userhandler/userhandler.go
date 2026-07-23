@@ -336,17 +336,17 @@ func (u *User_handler_impl) GetUserBattle() gin.HandlerFunc {
 func (u *User_handler_impl) GetLoot() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		UserId := c.GetInt("id")
-		err, List := u.s.GetLoot(UserId, c.Request.Context())
+		err, LootDto := u.s.GetLoot(UserId, c.Request.Context())
 		if err != global.ResponseSuccess {
 			response.Fail(c, err)
 			return
 		}
-		response.Success(c, List)
+		response.Success(c, LootDto)
 	}
 }
 
 func (u *User_handler_impl) PostLoot() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		
+
 	}
 }

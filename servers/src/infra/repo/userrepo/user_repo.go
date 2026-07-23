@@ -12,6 +12,7 @@ import (
 	"pcc_card/application/entity/mail"
 	"pcc_card/global"
 	"pcc_card/infra/repo"
+	"strconv"
 	"strings"
 
 	"github.com/jackc/pgx/v5/pgconn"
@@ -54,7 +55,7 @@ type User_repo interface {
 	CheckUserIdIsBattle(ctx context.Context, db repo.SQLQueryer, userId int) (int, global.ResponseStatusCode)
 	DeleteBattle(ctx context.Context, db repo.SQLQueryer, BtId int) global.ResponseStatusCode
 	CreateLoot(ctx context.Context, db repo.SQLQueryer, loot []int, UserId int) global.ResponseStatusCode
-	GetLoot(ctx context.Context, db repo.SQLQueryer, UserId int) (global.ResponseStatusCode, [][]int)
+	GetLoot(ctx context.Context, db repo.SQLQueryer, UserId int) (global.ResponseStatusCode, []BattleData.LootDto)
 }
 
 type User_repo_impl struct {
@@ -811,9 +812,53 @@ func (r *User_repo_impl) CreateLoot(ctx context.Context, db repo.SQLQueryer, loo
 	return global.ResponseSuccess
 }
 
+type IntSlice []int
+
+// 用来把psql的数组(json字符串)转化成goland的数组
+func (s *IntSlice) Scan(value interface{}) error {
+	if value == nil {
+		*s = nil
+		return nil
+	}
+
+	var str string
+	switch v := value.(type) {
+	case string:
+		str = v
+	case []byte:
+		str = string(v)
+	default:
+		return fmt.Errorf("unsupported type: %T", value)
+	}
+
+	// 去除首尾的 postgres 数组大括号 { 和 }
+	str = strings.TrimSpace(str)
+	str = strings.TrimPrefix(str, "{")
+	str = strings.TrimSuffix(str, "}")
+
+	if str == "" {
+		*s = []int{}
+		return nil
+	}
+
+	// 按逗号分割并转成 int
+	parts := strings.Split(str, ",")
+	res := make([]int, len(parts))
+	for i, p := range parts {
+		val, err := strconv.Atoi(strings.TrimSpace(p))
+		if err != nil {
+			return fmt.Errorf("failed to convert %q to int: %v", p, err)
+		}
+		res[i] = val
+	}
+	*s = res
+	return nil
+}
+
 // GetLoot 获取用户的 loot 记录列表
-func (r *User_repo_impl) GetLoot(ctx context.Context, db repo.SQLQueryer, UserId int) (global.ResponseStatusCode, [][]int) {
-	query := `select data from loot where userid = $1`
+func (r *User_repo_impl) GetLoot(ctx context.Context, db repo.SQLQueryer, UserId int) (global.ResponseStatusCode, []BattleData.LootDto) {
+
+	query := `select lootId, data from loot where userid = $1`
 
 	rows, err := db.QueryContext(ctx, query, UserId)
 	if err != nil {
@@ -822,15 +867,19 @@ func (r *User_repo_impl) GetLoot(ctx context.Context, db repo.SQLQueryer, UserId
 	}
 	defer rows.Close()
 
-	// 初始化为非 nil 的空切片，确保为空时返回空数组
-	loots := make([][]int, 0)
+	loots := make([]BattleData.LootDto, 0)
 	for rows.Next() {
-		var data []int
-		if err := rows.Scan(&data); err != nil {
+		var item BattleData.LootDto
+		// 使用之前定义好的 IntSlice 来接收 data 字段
+		var dataSlice IntSlice
+
+		if err := rows.Scan(&item.LootID, &dataSlice); err != nil {
 			log.Printf("failed to scan loot data for user %d: %v", UserId, err)
 			return global.ResponseInternalServersError, nil
 		}
-		loots = append(loots, data)
+
+		item.Data = dataSlice
+		loots = append(loots, item)
 	}
 
 	if err := rows.Err(); err != nil {
