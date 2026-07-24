@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://blc1dw1sqac7t"]
 
 [ext_resource type="Script" uid="uid://dfafyd8dximad" path="res://base_class/card/card.gd" id="1_xdlnp"]
-[ext_resource type="Texture2D" uid="uid://dje375wa2ans7" path="res://素材/使用素材/卡牌/基础卡牌重置素材/卡牌.png" id="2_8a1n0"]
+[ext_resource type="PackedScene" uid="uid://bvongwrpqp0vv" path="res://game_ui/卡牌具体页.tscn" id="2_8a1n0"]
 
 [node name="Control" type="Control"]
 custom_minimum_size = Vector2(329, 570)
@@ -12,13 +12,5 @@ offset_bottom = 519.0
 scale = Vector2(0.17535387, 0.17535387)
 script = ExtResource("1_xdlnp")
 
-[node name="卡牌纹理" type="TextureRect" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-texture = ExtResource("2_8a1n0")
-expand_mode = 1
-stretch_mode = 5
+[node name="卡牌具体页" parent="." instance=ExtResource("2_8a1n0")]
+layout_mode = 0

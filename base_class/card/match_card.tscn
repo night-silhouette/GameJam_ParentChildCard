@@ -1,25 +1,12 @@
-[gd_scene load_steps=8 format=3 uid="uid://bwufxlkxb2sy0"]
+[gd_scene load_steps=4 format=3 uid="uid://bwufxlkxb2sy0"]
 
 [ext_resource type="Script" uid="uid://8dk6ql8p6mu2" path="res://base_class/card/match_card.gd" id="1_ygsfu"]
-[ext_resource type="Texture2D" uid="uid://dje375wa2ans7" path="res://素材/使用素材/卡牌/基础卡牌重置素材/卡牌.png" id="2_3620s"]
-[ext_resource type="FontFile" uid="uid://bj1pdtvpfop4a" path="res://素材/使用素材/YaoSuiXinShouXieTi-2.ttf" id="3_8tpen"]
+[ext_resource type="PackedScene" uid="uid://bvongwrpqp0vv" path="res://game_ui/卡牌具体页.tscn" id="2_3yjtb"]
 
-[sub_resource type="LabelSettings" id="LabelSettings_rkg2p"]
-font_size = 56
-font_color = Color(0.78775924, 0.78775924, 0.78775924, 1)
-
-[sub_resource type="LabelSettings" id="LabelSettings_5pqt6"]
-font = ExtResource("3_8tpen")
-font_size = 55
-font_color = Color(0.3254902, 0.09411765, 0, 1)
-
-[sub_resource type="Animation" id="Animation_qrii7"]
-resource_name = "stop"
-
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_tpn7x"]
-_data = {
-&"stop": SubResource("Animation_qrii7")
-}
+[sub_resource type="LabelSettings" id="LabelSettings_3yjtb"]
+line_spacing = 3.255
+font_size = 81
+font_color = Color(0, 0, 0, 1)
 
 [node name="match_card" type="Control"]
 custom_minimum_size = Vector2(329, 570)
@@ -30,60 +17,15 @@ offset_bottom = 570.0
 scale = Vector2(0.16807154, 0.16807154)
 script = ExtResource("1_ygsfu")
 
-[node name="卡牌纹理" type="TextureRect" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-texture = ExtResource("2_3620s")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="详细" type="Label" parent="."]
-z_index = 10
+[node name="卡牌具体页" parent="." instance=ExtResource("2_3yjtb")]
 layout_mode = 0
-offset_left = 17.849543
-offset_top = -65.448364
-offset_right = 327.2416
-offset_bottom = 5.949768
-label_settings = SubResource("LabelSettings_rkg2p")
-horizontal_alignment = 1
+scale = Vector2(0.5622715, 0.5622715)
 
 [node name="name" type="Label" parent="."]
 layout_mode = 0
-offset_left = -17.849545
-offset_top = 220.14435
-offset_right = 246.12561
-offset_bottom = 290.14435
-scale = Vector2(1.4425231, 1.4425231)
+offset_left = 5.9498477
+offset_top = 196.34497
+offset_right = 248.94984
+offset_bottom = 278.34497
 text = "未上牌"
-label_settings = SubResource("LabelSettings_5pqt6")
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="animation" type="Node2D" parent="."]
-
-[node name="AnimationPlayer" type="AnimationPlayer" parent="animation"]
-libraries = {
-&"": SubResource("AnimationLibrary_tpn7x")
-}
-
-[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="animation"]
-
-[node name="card_dead_sp" type="Sprite2D" parent="animation"]
-position = Vector2(276, -199)
-hframes = 5
-vframes = 2
-frame = 9
-
-[node name="card_attack_sp" type="Sprite2D" parent="animation"]
-
-[node name="card_spell_sp" type="Sprite2D" parent="animation"]
-
-[node name="card_dead_an" type="AnimatedSprite2D" parent="animation"]
-
-[node name="card_attack_an" type="AnimatedSprite2D" parent="animation"]
-
-[node name="card_spell_an" type="AnimatedSprite2D" parent="animation"]
+label_settings = SubResource("LabelSettings_3yjtb")

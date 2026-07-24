@@ -1,18 +1,8 @@
-[gd_scene load_steps=7 format=3 uid="uid://berfm8ug5kccq"]
+[gd_scene load_steps=4 format=3 uid="uid://berfm8ug5kccq"]
 
 [ext_resource type="Script" uid="uid://d1crwdvt7japg" path="res://base_class/card/choose_card.gd" id="1_ekftw"]
-[ext_resource type="Texture2D" uid="uid://dje375wa2ans7" path="res://素材/使用素材/卡牌/基础卡牌重置素材/卡牌.png" id="1_nakgl"]
-[ext_resource type="FontFile" uid="uid://bj1pdtvpfop4a" path="res://素材/使用素材/YaoSuiXinShouXieTi-2.ttf" id="2_ekftw"]
 [ext_resource type="Texture2D" uid="uid://bhngjavywsdho" path="res://素材/使用素材/选择/确认/零件/勾.png" id="3_8nntq"]
-
-[sub_resource type="LabelSettings" id="LabelSettings_rkg2p"]
-font_size = 56
-font_color = Color(0, 0, 0, 1)
-
-[sub_resource type="LabelSettings" id="LabelSettings_5pqt6"]
-font = ExtResource("2_ekftw")
-font_size = 55
-font_color = Color(0.3254902, 0.09411765, 0, 1)
+[ext_resource type="PackedScene" uid="uid://bvongwrpqp0vv" path="res://game_ui/卡牌具体页.tscn" id="3_nakgl"]
 
 [node name="choose_card" type="Control"]
 custom_minimum_size = Vector2(329, 570)
@@ -23,39 +13,6 @@ offset_bottom = 570.0
 scale = Vector2(0.16807154, 0.16807154)
 script = ExtResource("1_ekftw")
 
-[node name="卡牌纹理" type="TextureRect" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-texture = ExtResource("1_nakgl")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="详细" type="Label" parent="."]
-z_index = 10
-layout_mode = 0
-offset_top = 577.13525
-offset_right = 315.34192
-offset_bottom = 749.6808
-text = "母牌/10"
-label_settings = SubResource("LabelSettings_rkg2p")
-horizontal_alignment = 1
-autowrap_mode = 3
-
-[node name="name" type="Label" parent="."]
-layout_mode = 0
-offset_left = -17.849556
-offset_top = 214.1945
-offset_right = 250.25024
-offset_bottom = 284.19452
-scale = Vector2(1.4425231, 1.4425231)
-label_settings = SubResource("LabelSettings_5pqt6")
-horizontal_alignment = 1
-vertical_alignment = 1
-
 [node name="勾" type="TextureRect" parent="."]
 visible = false
 z_index = 10
@@ -65,3 +22,6 @@ offset_right = 616.0
 offset_bottom = 668.9468
 scale = Vector2(0.5705235, 0.5705235)
 texture = ExtResource("3_8nntq")
+
+[node name="卡牌具体页" parent="." instance=ExtResource("3_nakgl")]
+layout_mode = 0

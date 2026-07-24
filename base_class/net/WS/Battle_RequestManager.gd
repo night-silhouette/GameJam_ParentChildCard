@@ -76,7 +76,7 @@ func _request_judge(judge_data):
 	_send_to_server(NetDef.Action.JUDGE, NetDef.Predicate.RESULT, action_data)
 	
 func _request_reconnect_query():
-	_send_to_server(NetDef.Action.ReConnect,NetDef.Predicate.QUERY,null)
+	_send_to_server(NetDef.Action.SoftReConnect,NetDef.Predicate.QUERY,null)
 func _request_combat_movement(combat_list):
 	var action_data = combat_list
 	_send_to_server(NetDef.Action.COMBAT,NetDef.Predicate.RESULT,action_data)

@@ -1,12 +1,12 @@
 extends Node
-var BASE_URL = "http://120.26.145.68:10086" 
+var BASE_URL = "http://120.26.145.68:5300" 
 var token_save :bool = false;	
 var init_battle_time :int = 0;
 var max_delay_time = 0.46;
 var cardcalc_animaiton_list:Array;
 var game_sence : int
 var match_mode : int #0为match/1为reconnect
-
+var _delay_timer: Timer
 # 注意：Action / Predicate / ACTION_NAME 等网络协议定义已统一迁移到 Net_def.gd
 # 请使用 NetDef.Action / NetDef.Predicate 等，避免重复定义
 
@@ -194,3 +194,15 @@ func _set_all_collisions(root_node: Node, enabled: bool) -> void:
 		if child.get_child_count() > 0:
 			_set_all_collisions(child, enabled)
 			
+func start_delay_timer(seconds: float) -> void:
+	if not _delay_timer:
+		_delay_timer = Timer.new()
+		_delay_timer.one_shot = true
+		_delay_timer.timeout.connect(_on_delay_timeout)
+		add_child(_delay_timer)
+	_delay_timer.stop()
+	_delay_timer.wait_time = seconds
+	_delay_timer.start()
+	
+func _on_delay_timeout() -> void:
+	SignalBus.time_end.emit()

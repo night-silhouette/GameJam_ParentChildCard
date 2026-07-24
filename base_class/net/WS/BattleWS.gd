@@ -63,7 +63,8 @@ func _process(delta):
 		if is_connected:
 			is_connected = false
 			print("WS断开")
-			SignalBus.ws_disconnected.emit()
+			reconnect()
+			
 
 # 收消息（只转发，不解析业务）
 func _on_message(msg: String):
@@ -99,3 +100,17 @@ func send_action(action_code: int, action_data = null, predicates: int = 2): # 1
 
 	# 调试用：打印发送的内容
 	# print("向后端发送: ", json)
+
+func reconnect():
+	var retry_delay := 4.0
+	while(1):
+		ws.close()
+		_reconnect_ws()
+		print("重连中...")
+		if is_connected:
+			SignalBus.request_reconnect_query.emit()
+			print("重连成功")
+			return
+		Global.start_delay_timer(retry_delay)
+		await SignalBus.time_end
+		print("重连中...")

@@ -21,9 +21,7 @@ var is_chosen: bool = false:
 #endregion
 
 #region 节点引用
-@onready var texture_rect: TextureRect = $TextureRect
-@onready var lab: Label = $"详细"
-@onready var ui_name: Label = $name
+
 @onready var check_mark: Control = $"勾"   # 选中勾号
 #endregion
 
@@ -71,8 +69,6 @@ func setup(data: Dictionary) -> void:
 	if res == null:
 		# 没有 resouce 时，尝试从 data 直接读取 card_name
 		card_name = data.get("card_name", "")
-		if ui_name:
-			ui_name.text = card_name
 		return
 
 	# 3. 填充父类静态配置
@@ -92,22 +88,12 @@ func setup(data: Dictionary) -> void:
 	skill_description = res.skill_description
 	notes = res.notes
 	sub_card_trigger_effect = res.sub_card_trigger_effect
-
-	# 5. 更新纹理
-	if texture_rect and card_texture:
-		texture_rect.texture = card_texture
-
-	# 6. 更新名称
-	if ui_name:
-		ui_name.text = card_name
-
+	
+	
 	# 7. 初始化缩放中心
 	pivot_offset = size / 2.0
-
-	# 8. 初始化 Label
-	if lab:
-		lab.visible = false
-
+	
+	super.populate_detail_page($"卡牌具体页")
 	# 9. 初始化选中视觉效果
 	_update_chosen_visual()
 
@@ -123,17 +109,13 @@ func _update_chosen_visual() -> void:
 func _on_mouse_entered() -> void:
 	_play_scale_tween(HOVER_SCALE)
 	
-	if lab:
-		lab.text = " %s/ %d" % [_get_type_string(), value]
-		lab.visible = true
+
 
 
 func _on_mouse_exited() -> void:
 	_play_scale_tween(NORMAL_SCALE)
 	
-	if lab:
-		lab.visible = false
-		lab.text = ""
+
 
 
 ## 左键点击：切换选中状态，通知数据层

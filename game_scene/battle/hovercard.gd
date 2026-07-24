@@ -8,9 +8,7 @@ var price: int
 var zone : int
 
 
-@onready var texture_rect: TextureRect = $TextureRect
-@onready var lab: Label = $"详细"
-@onready var ui_name: Label = $name
+
 
 
 # 动画参数配置
@@ -52,20 +50,13 @@ func setup(data: Dictionary) -> void:
 	sub_card_trigger_effect = res.sub_card_trigger_effect
 	
 	# 1. 更新卡牌基本纹理
-	if texture_rect and card_texture:
-		texture_rect.texture = card_texture
-		
-	# 💡 核心修改 1：让 ui_name 节点直接显示卡牌的名字
-	if ui_name:
-		ui_name.text = card_name
+
 		
 	# 2. 初始化缩放中心点
 	pivot_offset = size / 2.0
 	
 	# 3. 初始化 Label 状态
-	if lab:
-		lab.visible = false
-		
+	super.populate_detail_page($"卡牌具体页")
 	# 💡 核心修改 2：初始化时确保“选中特效”是关闭的
 	
 # 快捷获取当前卡牌类型文本
@@ -79,19 +70,12 @@ func get_type_string() -> String:
 func _mouse_entered() -> void:
 	_play_scale_tween(HOVER_SCALE)
 	
-	# 💡 核心修改 3：将名称信息从详细描述中移除
-	if lab:
-		lab.text = " %s/ %d" % [get_type_string(), value]
-		lab.visible = true
+
 
 
 func _mouse_exited() -> void:
 	_play_scale_tween(NORMAL_SCALE)
-	
-	if lab:
-		lab.visible = false
-		lab.text = ""
-	
+
 	unhovered.emit()
 
 
@@ -99,7 +83,6 @@ func _mouse_exited() -> void:
 func _play_scale_tween(target_scale: Vector2) -> void:
 	if scale_tween and scale_tween.is_valid():
 		scale_tween.kill()
-	
 	scale_tween = create_tween()
 	scale_tween.tween_property(self, "scale", target_scale, TWEEN_DURATION)\
 		.set_trans(Tween.TRANS_QUAD)\

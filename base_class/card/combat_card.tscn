@@ -1,16 +1,11 @@
-[gd_scene load_steps=93 format=3 uid="uid://ck88jwk2wt3ap"]
+[gd_scene load_steps=92 format=3 uid="uid://ck88jwk2wt3ap"]
 
 [ext_resource type="Script" uid="uid://bcgtwjrhxgie8" path="res://combat_card.gd" id="1_johr8"]
-[ext_resource type="Texture2D" uid="uid://dje375wa2ans7" path="res://素材/使用素材/卡牌/基础卡牌重置素材/卡牌.png" id="2_u8n05"]
+[ext_resource type="PackedScene" uid="uid://bvongwrpqp0vv" path="res://game_ui/卡牌具体页.tscn" id="2_dtu3g"]
 [ext_resource type="FontFile" uid="uid://bj1pdtvpfop4a" path="res://素材/使用素材/YaoSuiXinShouXieTi-2.ttf" id="3_csoqi"]
 [ext_resource type="Texture2D" uid="uid://c8mgf7a1815ru" path="res://素材/使用素材/战斗内/功能区/战斗卡行动动画/战斗卡攻击/射击/图.png" id="4_dtu3g"]
 [ext_resource type="Texture2D" uid="uid://cibetc2y8si5x" path="res://素材/使用素材/战斗内/功能区/战斗卡行动动画/战斗卡技能/图.png" id="5_vv1bw"]
 [ext_resource type="Texture2D" uid="uid://7tgdcost1uex" path="res://素材/使用素材/战斗内/桌面/卡牌死亡/图.png" id="6_5yayi"]
-
-[sub_resource type="LabelSettings" id="LabelSettings_6xbm0"]
-font = ExtResource("3_csoqi")
-font_size = 55
-font_color = Color(0.3254902, 0.09411765, 0, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_qbhd0"]
 font = ExtResource("3_csoqi")
@@ -605,37 +600,20 @@ animations = [{
 }]
 
 [node name="combat_card" type="Control"]
+visible = false
 custom_minimum_size = Vector2(329, 570)
 layout_mode = 3
 anchors_preset = 0
-offset_left = -7.0
-offset_top = -6.0
-offset_right = 322.0
-offset_bottom = 564.0
+offset_top = -0.9999995
+offset_right = 329.0
+offset_bottom = 569.0
 scale = Vector2(0.17535387, 0.17535387)
 script = ExtResource("1_johr8")
 
-[node name="卡牌纹理" type="TextureRect" parent="."]
+[node name="卡牌具体页" parent="." instance=ExtResource("2_dtu3g")]
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-texture = ExtResource("2_u8n05")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="name" type="Label" parent="."]
-layout_mode = 0
-offset_left = -17.849545
-offset_top = 220.14435
-offset_right = 246.12561
-offset_bottom = 290.14435
-scale = Vector2(1.4425231, 1.4425231)
-label_settings = SubResource("LabelSettings_6xbm0")
-horizontal_alignment = 1
-vertical_alignment = 1
+offset_right = 0.0
+offset_bottom = 0.0
 
 [node name="Highlight" type="ColorRect" parent="."]
 visible = false
@@ -690,5 +668,4 @@ visible = false
 position = Vector2(581.6809, -319.35425)
 scale = Vector2(2.5483096, 2.5483096)
 sprite_frames = SubResource("SpriteFrames_tbaew")
-frame = 8
-frame_progress = 0.750739
+frame_progress = 0.238698

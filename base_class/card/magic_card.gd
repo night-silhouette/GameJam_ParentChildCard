@@ -78,7 +78,7 @@ func play_burn_dissolve(duration: float = 0.7) -> void:
 	set_change_lock(true)
 
 	# 挂 shader 材质
-	display.material = _dissolve_material
+	$"卡牌具体页".material = _dissolve_material
 	_dissolve_material.set_shader_parameter("dissolve_amount", 0.0)
 
 	# 显示背光
@@ -105,7 +105,7 @@ func _set_dissolve(value: float) -> void:
 
 func _on_dissolve_finished() -> void:
 	_burn_glow.visible = false
-	display.material = null       # 移除 shader
+	$"卡牌具体页".material = null       # 移除 shader
 	set_change_lock(false)        # 解锁
 	visible = false               # 隐藏卡牌
 	SignalBus.ani_end.emit()      # 通知 ani_state_machine 动画结束

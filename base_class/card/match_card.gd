@@ -11,10 +11,9 @@ var zone: int = 0
 # 💡 新增：用于记录当前卡牌是否被选中 (true 为选中，false 为未选中)
 var is_chosen: bool = false 
 
-@onready var texture_rect: TextureRect = $TextureRect
-@onready var lab: Label = $"详细"
 @onready var ui_name: Label = $name
-@onready var border: ReferenceRect = $Border
+@onready var card: Control = $"卡牌具体页"
+
 
 
 # 动画参数配置
@@ -26,17 +25,14 @@ var scale_tween: Tween
 func _ready() -> void:
 	mouse_entered.connect(_mouse_entered)
 	mouse_exited.connect(_mouse_exited)
-	lab.visible = false;
+
 	
 	
 func setup(data: Dictionary) -> void:
 	stuff_id = int(data.get("stuff_id", 0))
 	price = int(data.get("price", 0))
 	zone = int(data.get("zone", 0))
-	if zone == Global.ZONE_CARD.SELL_ZONE :
-		is_chosen = true;
-		$"勾".visible = true
-	
+
 	
 	var res: CardResource = data.get("resource")
 	if res == null: return
@@ -60,22 +56,15 @@ func setup(data: Dictionary) -> void:
 	sub_card_trigger_effect = res.sub_card_trigger_effect
 	
 	# 1. 更新卡牌基本纹理
-	if texture_rect and card_texture:
-		texture_rect.texture = card_texture
 		
 	# 💡 核心修改 1：让 ui_name 节点直接显示卡牌的名字
-	if ui_name:
-		ui_name.text = card_name
 		
 	# 2. 初始化缩放中心点
 	pivot_offset = size / 2.0
-	
+	ui_name.visible = false
 	# 3. 初始化 Label 状态
-	if lab:
-		lab.visible = false
-		
 	# 💡 核心修改 2：初始化时确保"选中特效"是关闭的
-	
+	super.populate_detail_page(card)
 # 快捷获取当前卡牌类型文本
 func get_type_string() -> String:
 	var combat_type = "战斗牌" if is_combat_card else "法术牌"
@@ -90,9 +79,7 @@ func _mouse_entered() -> void:
 	if stuff_id <= 0:
 		return
 	
-	if lab:
-		lab.text = " %s/ %d" % [get_type_string(), value]
-		lab.visible = true
+
 	
 	hovered.emit({
 		"name": card_name,
@@ -106,9 +93,7 @@ func _mouse_entered() -> void:
 func _mouse_exited() -> void:
 	_play_scale_tween(NORMAL_SCALE)
 	
-	if lab:
-		lab.visible = false
-		lab.text = ""
+
 	
 	unhovered.emit()
 
@@ -145,21 +130,13 @@ func clear_data() -> void:
 	price = -1
 	zone = -1
 	is_chosen = false
-	
+	ui_name.visible = true
 	# 2. UI 文本与纹理回归默认
 	if ui_name:
 		ui_name.text = "未上牌"
-		
-	if texture_rect:
-		texture_rect.texture = null
 	
-	# 3. 前瞻性防御：顺便清理残留的特效和标签状态
-	if lab:
-		lab.visible = false
-		lab.text = ""
 		
-	if has_node("勾"):
-		$"勾".visible = false
+
 		
 	# 还原缩放，防止卡在悬停放大的状态
 	scale = NORMAL_SCALE

@@ -4,8 +4,7 @@ extends card
 enum CardState { IDLE, HOVERED, DRAGGING, NEED_OPERATE, DEAD }
 var current_state: CardState = CardState.IDLE
 const HOVER_ALLOWED_ZONES = [Global.ZONE_CARD.DECK_ZONE,Global.ZONE_CARD.SPELL_ZONE] 
-@onready var display: TextureRect = $"卡牌纹理"
-@onready var name_diapaly: Label = $name
+
 @onready var buff_label: Label = $"buff"
 
 var temp_id: int = 0
@@ -76,10 +75,7 @@ func update_card_data(base_res: Dictionary) -> void:
 	if res == null: return
 	
 	# 1. 先填充卡牌纹理（从 CardResource 获取）
-	display.texture = res.card_texture
 	
-	# 显示卡牌名字
-	name_diapaly.text = res.name
 	
 	# 2. 填充运行时数据（从 Dictionary 获取）
 	temp_id = base_res.get("temp_id")
@@ -110,8 +106,9 @@ func update_card_data(base_res: Dictionary) -> void:
 	notes = res.notes
 	sub_card_trigger_effect = res.sub_card_trigger_effect
 	
+	super.populate_detail_page($"卡牌具体页")
 func free_card():
-	display.texture = null;
+
 	hp = 0;
 	damage = 0;
 	temp_id = 0;

@@ -11,10 +11,6 @@ var zone: int = 0
 # 💡 新增：用于记录当前卡牌是否被选中 (true 为选中，false 为未选中)
 var is_chosen: bool = false 
 
-@onready var texture_rect: TextureRect = $TextureRect
-@onready var lab: Label = $"详细"
-@onready var ui_name: Label = $name
-@onready var border: ReferenceRect = $Border
 
 
 # 动画参数配置
@@ -59,20 +55,11 @@ func setup(data: Dictionary) -> void:
 	sub_card_trigger_effect = res.sub_card_trigger_effect
 	
 	# 1. 更新卡牌基本纹理
-	if texture_rect and card_texture:
-		texture_rect.texture = card_texture
-		
-	# 💡 核心修改 1：让 ui_name 节点直接显示卡牌的名字
-	if ui_name:
-		ui_name.text = card_name
-		
+
 	# 2. 初始化缩放中心点
 	pivot_offset = size / 2.0
 	
-	# 3. 初始化 Label 状态
-	if lab:
-		lab.visible = false
-		
+	super.populate_detail_page($"卡牌具体页")
 	# 💡 核心修改 2：初始化时确保“选中特效”是关闭的
 	
 # 快捷获取当前卡牌类型文本
@@ -89,9 +76,7 @@ func _mouse_entered() -> void:
 	if stuff_id <= 0:
 		return
 	
-	if lab:
-		lab.text = " %s/ %d" % [get_type_string(), value]
-		lab.visible = true
+
 	
 	hovered.emit({
 		"name": card_name,
@@ -105,9 +90,7 @@ func _mouse_entered() -> void:
 func _mouse_exited() -> void:
 	_play_scale_tween(NORMAL_SCALE)
 	
-	if lab:
-		lab.visible = false
-		lab.text = ""
+
 	
 	unhovered.emit()
 
@@ -128,19 +111,16 @@ func _gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed:
 		match event.button_index:
 			MOUSE_BUTTON_LEFT:
-				accept_event() 
-				SignalBus.left_clicked.emit(stuff_id, 0)
+				accept_event()
+				# 左键：切换勾选/取消出售
+				is_chosen = !is_chosen
+				var state = 1 if is_chosen else 0
+				if is_chosen:
+					$"勾".visible = true
+				else:
+					$"勾".visible = false
+				SignalBus.right_clicked.emit(stuff_id, state)
 			
 			MOUSE_BUTTON_RIGHT:
 				accept_event()
-				# print("接受")
-				# 💡 核心修改 4：切换选中状态并计算 state
-				is_chosen = !is_chosen # 取反：true 变 false，false 变 true
-				var state = 1 if is_chosen else 0
-				
-				if state == 1 :
-					$"勾".visible = true;
-				else:
-					$"勾".visible = false;
-				# 发送带有最新状态的信号
-				SignalBus.right_clicked.emit(stuff_id, state)
+				# 右键空出，暂不处理

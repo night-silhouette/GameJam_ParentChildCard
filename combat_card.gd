@@ -45,6 +45,7 @@ func _ready() -> void:
 	
 	# 监听动画状态机信号
 	SignalBus.ani_hp_change_enter.connect(_on_hp_change_enter)
+	
 	SignalBus.ani_action_card_notify_enter.connect(_on_action_anim_enter)
 	SignalBus.ani_deploy_card_notify_enter.connect(_on_deploy_anim_enter)
 	SignalBus.ani_card_pos_change_enter.connect(_on_pos_change_enter)

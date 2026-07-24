@@ -12,17 +12,16 @@ anchors_preset = 0
 script = ExtResource("1_uqdmw")
 zone = 6
 card = NodePath("Control")
-area = NodePath("Control/Area2D")
+area = NodePath("Area2D")
 
 [node name="Control" parent="." instance=ExtResource("1_ltpsv")]
 layout_mode = 0
 offset_right = 329.0
 offset_bottom = 570.0
 
-[node name="Area2D" type="Area2D" parent="Control"]
-scale = Vector2(5.702754, 5.702754)
+[node name="Area2D" type="Area2D" parent="."]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Control/Area2D"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
 position = Vector2(29.4207, 49.530083)
 rotation = -3.1415925
 scale = Vector2(1.1634407, 1.3759302)
