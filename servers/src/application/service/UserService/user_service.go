@@ -3,6 +3,7 @@ package UserService
 import (
 	"context"
 	"fmt"
+	"math"
 	"pcc_card/Util"
 	"pcc_card/application/entity/BattleData"
 	"pcc_card/application/entity/User_entity"
@@ -49,6 +50,9 @@ type User_service interface {
 	IsInBattle(ctx context.Context, userId int) global.ResponseStatusCode
 
 	GetLoot(userId int, ctx context.Context) (global.ResponseStatusCode, []BattleData.LootDto)
+	CreateStuffByLootCardId(OutsideDto *BattleData.LootDto, UserId int, ctx context.Context) global.ResponseStatusCode
+	GetGoods(UserId int, ctx context.Context) (global.ResponseStatusCode, []BattleData.GoodsDto)
+	CreateGoods(UserId int, ctx context.Context) global.ResponseStatusCode
 }
 
 type User_service_impl struct {
@@ -352,4 +356,107 @@ func (u *User_service_impl) IsInBattle(ctx context.Context, userId int) global.R
 func (u *User_service_impl) GetLoot(userId int, ctx context.Context) (global.ResponseStatusCode, []BattleData.LootDto) {
 	err, lootDto := u.repo.GetLoot(ctx, u.repo.Get_db(), userId)
 	return err, lootDto
+}
+
+// 传入单条loot数据记录
+func (u *User_service_impl) CreateStuffByLootCardId(OutsideDto *BattleData.LootDto, UserId int, ctx context.Context) global.ResponseStatusCode {
+	err, InsideDtoList := u.repo.GetLoot(ctx, u.repo.Get_db(), UserId)
+	if err != global.ResponseSuccess {
+		fmt.Println("CreateStuffByLootCardId:", err)
+		return err
+	}
+	//检查传过来的数据cardid是不是在loot表里面
+	for _, d1 := range InsideDtoList {
+		if d1.LootID == OutsideDto.LootID {
+			if !Util.VerifyIncludes(d1.Data, OutsideDto.Data) { //如果不包含,那么数据非法
+				return global.BattleCardNotFound
+			}
+			//要从这开事务
+			tx, errDb := u.repo.Get_db().BeginTx(ctx, nil)
+			if errDb != nil {
+				fmt.Println("事务开启失败")
+				return global.ResponseInternalServersError
+
+			}
+			defer tx.Rollback()
+
+			ok := u.repo.DeleteLoot(ctx, tx, OutsideDto.LootID) //删掉loot
+			if ok != global.ResponseSuccess {
+				return ok
+			}
+			for _, cardId := range OutsideDto.Data {
+				ok2 := u.repo.AddCardInBags(ctx, tx, cardId, UserId)
+				if ok2 != global.ResponseSuccess {
+					fmt.Println("CreateStuffByLootCardId,AddCardInBags:", ok2)
+					return ok2
+				}
+			}
+			tx.Commit()
+			return global.ResponseSuccess
+		}
+
+	}
+	return global.BattleCardNotFound
+
+}
+func (u *User_service_impl) GetGoods(UserId int, ctx context.Context) (global.ResponseStatusCode, []BattleData.GoodsDto) {
+	err, res := u.repo.GetGoodsByUserId(ctx, u.repo.Get_db(), UserId)
+	return err, res
+}
+
+// 删掉原来的商店goods,然后创建新的
+func (u *User_service_impl) CreateGoods(UserId int, ctx context.Context) global.ResponseStatusCode {
+	tx, errTx := u.repo.Get_db().BeginTx(ctx, nil)
+	if errTx != nil {
+		return global.ResponseInternalServersError
+	}
+	defer tx.Rollback()
+
+	err1 := u.repo.DeleteGoodsByUserId(ctx, tx, UserId)
+	if err1 != global.ResponseSuccess && err1 != global.ResponseDataNotFound {
+		return err1
+	}
+	err2 := u.repo.CreateGoods(ctx, tx, UserId, u.CreateShipCard(ctx))
+	if err2 != global.ResponseSuccess {
+		return err2
+	}
+	tx.Commit()
+	return global.ResponseSuccess
+}
+
+// 生成Gooddto的算法,创建shop卡牌(折扣也随机算法在这了)
+func (u *User_service_impl) CreateShipCard(ctx context.Context) []*BattleData.GoodsDto {
+	offsetList := make([]int, 0, 50)
+
+	//-----随机cardid池子的比例-----
+	for i := range global.Lev1Category1Num {
+		offsetList = append(offsetList, i)
+	}
+	for i := range global.Lev1Category2Num {
+		offsetList = append(offsetList, i+1000)
+	}
+	for i := range global.Lev1Category3Num {
+		offsetList = append(offsetList, i+2000)
+	}
+	for i := range global.Lev1Category4Num {
+		offsetList = append(offsetList, i+3000)
+	}
+	//-----随机cardid池子的比例-----
+	//随机取6个
+	CardIdList := Util.GetRandomElements[int](offsetList, 6)
+
+	//构造gooddto
+	res := make([]*BattleData.GoodsDto, 0, len(CardIdList))
+	for cardId := range CardIdList {
+		Dis := 1.0
+		_, Price := u.repo.GetCardPrice(ctx, u.repo.Get_db(), cardId)
+		temp := Util.RandomRange(1, 1000)
+		if temp <= 166 { //1/6的概率有打折
+			Dis = Util.GetRandomNormalInRange(0.35, 1.15, 0.17)
+			Dis = math.Round(Dis*100) / 100
+			Price = int(float64(Price) * Dis)
+		}
+		res = append(res, BattleData.NewGoodsDto(Price, cardId, -1, Dis))
+	}
+	return res
 }

@@ -23,6 +23,7 @@ import (
 )
 
 func main() {
+
 	if global.Isdebug == "debug" {
 		fmt.Println("Start Debug")
 	} else {

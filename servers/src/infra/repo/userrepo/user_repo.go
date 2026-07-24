@@ -56,6 +56,11 @@ type User_repo interface {
 	DeleteBattle(ctx context.Context, db repo.SQLQueryer, BtId int) global.ResponseStatusCode
 	CreateLoot(ctx context.Context, db repo.SQLQueryer, loot []int, UserId int) global.ResponseStatusCode
 	GetLoot(ctx context.Context, db repo.SQLQueryer, UserId int) (global.ResponseStatusCode, []BattleData.LootDto)
+	DeleteLoot(ctx context.Context, db repo.SQLQueryer, LootId int) global.ResponseStatusCode
+	GetGoodsByUserId(ctx context.Context, db repo.SQLQueryer, UserId int) (global.ResponseStatusCode, []BattleData.GoodsDto)
+	CreateGoods(ctx context.Context, db repo.SQLQueryer, UserId int, GoodsList []*BattleData.GoodsDto) global.ResponseStatusCode
+	DeleteGoodsByUserId(ctx context.Context, db repo.SQLQueryer, UserId int) global.ResponseStatusCode
+	GetCardPrice(ctx context.Context, db repo.SQLQueryer, cardID int) (global.ResponseStatusCode, int)
 }
 
 type User_repo_impl struct {
@@ -516,14 +521,14 @@ func (r *User_repo_impl) FindFriendships(ctx context.Context, db repo.SQLQueryer
 	return global.ResponseSuccess, res
 }
 
-func (r *User_repo_impl) AddCardInBags(ctx context.Context, db repo.SQLQueryer, cardID int, userID int) global.ResponseStatusCode {
-	// 1. 获取基准价格
+// 10% 随机浮动
+func (r *User_repo_impl) GetCardPrice(ctx context.Context, db repo.SQLQueryer, cardID int) (global.ResponseStatusCode, int) {
 	var basePrice int
 	queryPrice := `select price from newcards where id = $1`
 	err := db.QueryRowContext(ctx, queryPrice, cardID).Scan(&basePrice)
 	if err != nil {
 		log.Println("获取原始价格失败:", err)
-		return global.ResponseDataNotFound
+		return global.ResponseDataNotFound, 0
 	}
 	// 2. 计算 10% 随机浮动 (整数)
 	floatRange := int(float64(basePrice) * 0.1)
@@ -533,10 +538,18 @@ func (r *User_repo_impl) AddCardInBags(ctx context.Context, db repo.SQLQueryer, 
 		offset := Util.RandomRange(-floatRange, floatRange)
 		finalPrice = basePrice + offset
 	}
+	return global.ResponseSuccess, finalPrice
+}
 
+func (r *User_repo_impl) AddCardInBags(ctx context.Context, db repo.SQLQueryer, cardID int, userID int) global.ResponseStatusCode {
+	// 价格
+	err, price := r.GetCardPrice(ctx, db, cardID)
+	if err != global.ResponseSuccess {
+		return err
+	}
 	query := `insert into bags (user_id, card_id, price) values ($1, $2, $3)`
-	_, err = db.ExecContext(ctx, query, userID, cardID, finalPrice)
-	if err != nil {
+	_, err2 := db.ExecContext(ctx, query, userID, cardID, price)
+	if err2 != nil {
 		return global.ResponseBagsUnknownError
 	}
 	return global.ResponseSuccess
@@ -887,4 +900,83 @@ func (r *User_repo_impl) GetLoot(ctx context.Context, db repo.SQLQueryer, UserId
 		return global.ResponseInternalServersError, nil
 	}
 	return global.ResponseSuccess, loots
+}
+
+func (r *User_repo_impl) DeleteLoot(ctx context.Context, db repo.SQLQueryer, LootId int) global.ResponseStatusCode {
+	query := `delete from loot where lootId = $1`
+	result, err := db.ExecContext(ctx, query, LootId)
+	if err != nil {
+		log.Printf("failed to delete loot for user %d: %v", LootId, err)
+		return global.ResponseInternalServersError
+	}
+	rows, err := result.RowsAffected()
+	if err != nil {
+		fmt.Println(err)
+		return global.ResponseInternalServersError
+	}
+	if rows == 0 {
+		return global.ResponseDataNotFound
+	}
+	return global.ResponseSuccess
+}
+func (r *User_repo_impl) GetGoodsByUserId(ctx context.Context, db repo.SQLQueryer, UserId int) (global.ResponseStatusCode, []BattleData.GoodsDto) {
+	query := `select goods_id, card_id, price, discount from goods where user_id = $1`
+
+	rows, err := db.QueryContext(ctx, query, UserId)
+	if err != nil {
+		log.Printf("failed to get goods for user %d: %v", UserId, err)
+		return global.ResponseInternalServersError, nil
+	}
+	defer rows.Close()
+
+	goodsList := make([]BattleData.GoodsDto, 0)
+	for rows.Next() {
+		var item BattleData.GoodsDto
+		if err := rows.Scan(&item.GoodsId, &item.CardId, &item.Price, &item.Discount); err != nil {
+			log.Printf("failed to scan goods data for user %d: %v", UserId, err)
+			return global.ResponseInternalServersError, nil
+		}
+		goodsList = append(goodsList, item)
+	}
+
+	if err := rows.Err(); err != nil {
+		log.Printf("rows error getting goods for user %d: %v", UserId, err)
+		return global.ResponseInternalServersError, nil
+	}
+	return global.ResponseSuccess, goodsList
+}
+
+func (r *User_repo_impl) DeleteGoodsByUserId(ctx context.Context, db repo.SQLQueryer, UserId int) global.ResponseStatusCode {
+	query := `delete from goods where user_id = $1`
+	result, err := db.ExecContext(ctx, query, UserId)
+	if err != nil {
+		log.Printf("failed to delete goods for user %d: %v", UserId, err)
+		return global.ResponseInternalServersError
+	}
+	num, err2 := result.RowsAffected()
+	if err2 != nil {
+		fmt.Println(err)
+		return global.ResponseInternalServersError
+	}
+	if num == 0 {
+		return global.ResponseDataNotFound
+	}
+	return global.ResponseSuccess
+}
+
+func (r *User_repo_impl) CreateGoods(ctx context.Context, db repo.SQLQueryer, UserId int, GoodsList []*BattleData.GoodsDto) global.ResponseStatusCode {
+	if len(GoodsList) == 0 {
+		return global.ResponseSuccess
+	}
+
+	query := `insert into goods (user_id, card_id, price, discount) values ($1, $2, $3, $4)`
+
+	for _, goods := range GoodsList {
+		_, err := db.ExecContext(ctx, query, UserId, goods.CardId, goods.Price, goods.Discount)
+		if err != nil {
+			log.Printf("failed to create goods for user %d: %v", UserId, err)
+			return global.ResponseInternalServersError
+		}
+	}
+	return global.ResponseSuccess
 }

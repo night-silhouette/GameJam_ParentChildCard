@@ -70,6 +70,11 @@ func Register_user_routes(h userhandler.User_handler) {
 	R.GET("v1/user/battle/", h.GetUserBattle())
 	R.GET("v1/user/loot/", h.GetLoot())
 	R.POST("v1/user/loot/", h.PostLoot())
+
+	R.GET("v1/shop/goods/", h.GoodsGet())   //返回[]GoodsDto
+	R.POST("v1/shop/goods/", h.GoodsPost()) //传goodid
+	R.POST("v1/shop/refresh/", h.Refresh()) //刷新
+
 }
 
 func Register_token_routes(h tokenhandler.Token_handler) {

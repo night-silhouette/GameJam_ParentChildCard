@@ -30,3 +30,21 @@ func GetRandomElements[T any](collection []T, n int) []T {
 
 	return temp[:n]
 }
+func GetRandomNormalInRange(n1, n2 float64, stdDevRatio float64) float64 {
+	if n1 > n2 {
+		n1, n2 = n2, n1
+	}
+
+	mean := (n1 + n2) / 2.0           // 均值取区间正中间
+	stdDev := (n2 - n1) * stdDevRatio // 标准差与区间大小成正比
+
+	// 使用 v2 的新 PCG 生成器（也可以直接用全局的 rand.NormFloat64()）
+	rng := rand.New(rand.NewPCG(rand.Uint64(), rand.Uint64()))
+
+	for {
+		val := rng.NormFloat64()*stdDev + mean
+		if val >= n1 && val <= n2 {
+			return val
+		}
+	}
+}
