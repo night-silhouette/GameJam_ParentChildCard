@@ -334,7 +334,6 @@ func _magic_card_finish( ):
 		pass;
 		
 func _judge_finish(data):
-	if current_state == GameState.JUDGEMENT:
-		Global.fake_death(judge)
-		jugde_bt.judge_data = [int(data.self), int(data.opponent)]
-		Global.revive(jugde_bt)
+	Global.fake_death(judge)
+	jugde_bt.judge_data = [int(data.self), int(data.opponent)]
+	Global.revive(jugde_bt)

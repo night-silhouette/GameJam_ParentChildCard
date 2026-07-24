@@ -118,3 +118,8 @@ func _handle_raw_api_data(api_name: String, method: int, code: int, data: Varian
 			if method == HTTPClient.METHOD_GET:
 				SignalBus.ifbattle.emit(bool(data))
 				#print("battle: ", data)
+		"/v1/user/loot/":
+			if method == HTTPClient.METHOD_GET:#lootdato的数组，我需要区循坏对像
+				print(data)
+				#var card_list = data.get("data")
+				#var lootid = data.get()

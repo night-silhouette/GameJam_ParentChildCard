@@ -30,10 +30,9 @@ signal request_card_random
 signal request_get_self_gold
 signal request_debug_addcard
 signal request_sell_card(card_list:Array)
-
 signal request_battle
 signal request_loot
-
+signal request_loot_post
 # 邮件
 signal request_send_mail(id: int, txt: String)
 signal request_get_mail_numberN()

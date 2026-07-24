@@ -2,7 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://dje375wa2ans7" path="res://素材/使用素材/卡牌/基础卡牌重置素材/卡牌.png" id="1_facoa"]
 [ext_resource type="Texture2D" uid="uid://dx1ewstebv33h" path="res://素材/使用素材/万能组件.png" id="1_i8rll"]
-[ext_resource type="Texture2D" uid="uid://cgkqhy0l54unc" path="res://素材/新素材/卡牌/组件/卡牌.png" id="1_kwojn"]
+[ext_resource type="Script" uid="uid://bix4vrvt40xl7" path="res://game_ui/卡牌具体页.gd" id="1_kwojn"]
 [ext_resource type="Texture2D" uid="uid://crhqqvbq3l1qw" path="res://素材/新素材/战斗内内容/信息标-太阳.png" id="1_wxb7b"]
 [ext_resource type="Texture2D" uid="uid://cc6q2i5yuw14c" path="res://素材/新素材/战斗内内容/信息标-月亮.png" id="2_cccau"]
 [ext_resource type="Texture2D" uid="uid://vu08rfi43s8k" path="res://素材/使用素材/战斗内/桌面/信息标-血量.png" id="4_6px4b"]
@@ -28,15 +28,10 @@ font_color = Color(0, 0, 0, 1)
 [node name="卡牌具体页" type="Control"]
 layout_mode = 3
 anchors_preset = 0
-offset_bottom = 205.32642
+offset_right = 498.26416
+offset_bottom = 849.4031
 scale = Vector2(0.50976974, 0.50976974)
-
-[node name="卡牌" type="Sprite2D" parent="."]
-visible = false
-position = Vector2(249.13208, 431.56738)
-scale = Vector2(0.811542, 0.811542)
-texture = ExtResource("1_kwojn")
-metadata/_edit_lock_ = true
+script = ExtResource("1_kwojn")
 
 [node name="背景" type="TextureRect" parent="."]
 layout_mode = 1
@@ -80,32 +75,42 @@ offset_bottom = 1120.3901
 scale = Vector2(0.39265555, 0.39265555)
 texture = ExtResource("1_facoa")
 
-[node name="信息标血量" type="Sprite2D" parent="."]
-position = Vector2(306.0205, 258.94046)
+[node name="信息标血量" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = 294.2505
+offset_top = 231.47705
+offset_right = 635.2505
+offset_bottom = 553.47705
 scale = Vector2(0.15337034, 0.15337034)
 texture = ExtResource("4_6px4b")
 
 [node name="hp" type="Label" parent="信息标血量"]
-offset_left = 456.41168
-offset_top = -202.12514
-offset_right = 508.0147
-offset_bottom = -135.12514
+layout_mode = 0
+offset_left = 460.45496
+offset_top = -38.3714
+offset_right = 512.058
+offset_bottom = 28.628601
 scale = Vector2(8.751397, 6.107535)
 text = "9"
 label_settings = SubResource("LabelSettings_y2q4p")
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="信息标攻击" type="Sprite2D" parent="."]
-position = Vector2(311.90552, 394.29565)
+[node name="信息标攻击" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = 292.28882
+offset_top = 339.36893
+offset_right = 675.2888
+offset_bottom = 674.3689
 scale = Vector2(0.15902978, 0.15902978)
 texture = ExtResource("6_i8rll")
 
 [node name="attack" type="Label" parent="信息标攻击"]
-offset_left = 446.45728
-offset_top = -157.20325
-offset_right = 498.0603
-offset_bottom = -90.20325
+layout_mode = 0
+offset_left = 468.73883
+offset_top = -24.67059
+offset_right = 520.34186
+offset_bottom = 42.32941
 scale = Vector2(8.751397, 6.107535)
 text = "9"
 label_settings = SubResource("LabelSettings_y2q4p")
@@ -123,12 +128,22 @@ label_settings = SubResource("LabelSettings_ecism")
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="信息标技能" type="Sprite2D" parent="."]
-position = Vector2(68.65846, 517.8809)
+[node name="信息标技能" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = 35.31006
+offset_top = 517.88086
+offset_right = 263.31006
+offset_bottom = 857.88086
 scale = Vector2(0.23455925, 0.23455925)
 texture = ExtResource("8_kwojn")
 
 [node name="技能效果" type="Label" parent="信息标技能"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.44016927
+anchor_top = 0.22138003
+anchor_right = 0.44016948
+anchor_bottom = 0.3197702
 offset_left = 183.99077
 offset_top = -50.179504
 offset_right = 1580.648
@@ -137,10 +152,13 @@ text = "技能效果："
 label_settings = SubResource("LabelSettings_nhyyg")
 metadata/_edit_use_anchors_ = true
 
-[node name="召唤效果" type="Label" parent="信息标技能"]
+[node name="召唤条件" type="Label" parent="信息标技能"]
+layout_mode = 1
 anchors_preset = -1
-anchor_top = 0.24597743
-anchor_right = -1.0270627
+anchor_left = 1.834039
+anchor_top = 0.19678272
+anchor_right = 1.834039
+anchor_bottom = 0.19678272
 offset_left = -158.90114
 offset_top = 351.25482
 offset_right = 1229.3931
@@ -149,11 +167,12 @@ text = "召唤条件:"
 label_settings = SubResource("LabelSettings_nhyyg")
 metadata/_edit_use_anchors_ = true
 
-[node name="内容3" type="Label" parent="信息标技能"]
+[node name="召唤效果" type="Label" parent="信息标技能"]
+layout_mode = 1
 anchors_preset = -1
-anchor_top = 0.1475866
-anchor_right = -0.5502113
-anchor_bottom = -0.122988716
+anchor_left = 0.6969348
+anchor_top = 0.17218502
+anchor_right = 0.69693476
 offset_left = -150.53792
 offset_top = 744.32605
 offset_right = 1137.3975
@@ -162,16 +181,21 @@ text = "召唤效果:"
 label_settings = SubResource("LabelSettings_nhyyg")
 metadata/_edit_use_anchors_ = true
 
-[node name="点ui" type="Sprite2D" parent="."]
-position = Vector2(400.18063, 765.0512)
+[node name="点ui" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = 339.36887
+offset_top = 755.24286
+offset_right = 564.3689
+offset_bottom = 983.24286
 scale = Vector2(0.18228701, 0.18228701)
 texture = ExtResource("9_ecism")
 
 [node name="数值" type="Label" parent="点ui"]
-offset_left = 213.94815
-offset_top = -115.20294
-offset_right = 246.86333
-offset_bottom = -68.20294
+layout_mode = 0
+offset_left = 462.74167
+offset_top = -0.0002670288
+offset_right = 508.10626
+offset_bottom = 46.999733
 scale = Vector2(5.2470884, 5.2470884)
 text = "9"
 label_settings = ExtResource("5_putje")

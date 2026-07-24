@@ -177,14 +177,12 @@ func change_state(new_state: CardState):
 
 # --- 鼠标悬停事件（✅ 只有 zone 符合才允许 hover）---
 func _on_mouse_entered():
-	print("enter")
 	if current_state == CardState.DEAD:
 		return
 	if current_state == CardState.IDLE and  zone in HOVER_ALLOWED_ZONES:
 		change_state(CardState.HOVERED)
 
 func _on_mouse_exited():
-	print("exited")
 	if current_state == CardState.DEAD:
 		return
 	if current_state == CardState.HOVERED:

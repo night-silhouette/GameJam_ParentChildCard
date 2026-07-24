@@ -32,6 +32,7 @@ func _ready():
 	SignalBus.request_sell_card.connect(_request_sell_card)
 	SignalBus.request_battle.connect(_request_battle)
 	SignalBus.request_loot.connect(_request_loot)
+	SignalBus.request_loot_post.connect(_request_loot_post)
 # =========================
 # Token
 # =========================
@@ -190,3 +191,10 @@ func _request_battle():
 func _request_loot():
 	var url = "/v1/user/loot/"
 	NetworkClient.call_api(url,HTTPClient.METHOD_GET)
+func _request_loot_post(card_list,loot_id):
+	var url = "/v1/user/loot/"
+	var body = {
+		"data" = card_list,
+		"lootid" = loot_id
+	}	
+	NetworkClient.call_api(url,HTTPClient.METHOD_POST,body)#最多5个

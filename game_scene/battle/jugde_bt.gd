@@ -19,6 +19,9 @@ func _on_anim_finished():
 	_pending_anim_count -= 1
 	if _pending_anim_count <= 0:
 		_pending_anim_count = 0
+		# 动画播完后短暂停留让玩家看清结果，再隐藏并通知后端
+		await get_tree().create_timer(0.6).timeout
+		_hide_both()
 		SignalBus.request_end_animation.emit()
 
 var judge_data : Array = []:
@@ -35,8 +38,7 @@ func _refresh_ui_by_data() -> void:
 		await ready
 
 	if judge_data.size() < 2:
-		_hide_node_instantly(texture_rect_1)
-		_hide_node_instantly(texture_rect_2)
+		_hide_both()
 		return
 
 	var val_1 : int = judge_data[0]
@@ -44,10 +46,17 @@ func _refresh_ui_by_data() -> void:
 
 	_pending_anim_count = 0
 
+	# 先强制隐藏，确保每次都从头播放动画
+	_hide_node_instantly(texture_rect_1)
+	_hide_node_instantly(texture_rect_2)
+
 	_update_node_state(texture_rect_1, val_1, 1)
 	_update_node_state(texture_rect_2, val_2, 2)
 
 	if _pending_anim_count == 0:
+		# 无动画时也延迟隐藏后通知后端
+		await get_tree().create_timer(0.6).timeout
+		_hide_both()
 		SignalBus.request_end_animation.emit()
 
 
@@ -65,7 +74,6 @@ func _update_node_state(target_rect: TextureRect, value: int, index: int) -> voi
 		return
 
 	if value == -1:
-		_hide_node_instantly(target_rect)
 		return
 
 	if index == 1 and tween_1: tween_1.kill()
@@ -76,35 +84,32 @@ func _update_node_state(target_rect: TextureRect, value: int, index: int) -> voi
 		1: target_rect.texture = texture_state_1
 		2: target_rect.texture = texture_state_2
 		_:
-			_hide_node_instantly(target_rect)
 			return
+
 	if index == 2:
 		target_rect.rotation = PI
 
-	if not target_rect.visible or target_rect.modulate.a < 0.1:
-		target_rect.pivot_offset = target_rect.size / 2
+	target_rect.pivot_offset = target_rect.size / 2
+	target_rect.modulate.a = 0.0
+	target_rect.scale = Vector2(0.8, 0.8)
+	target_rect.visible = true
 
-		target_rect.modulate.a = 0.0
-		target_rect.scale = Vector2(0.8, 0.8)
-		target_rect.visible = true
+	var new_tween = create_tween().set_parallel(true)
+	new_tween.tween_property(target_rect, "modulate:a", 1.0, anim_fade_duration)\
+		.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	new_tween.tween_property(target_rect, "scale", Vector2.ONE, anim_scale_duration)\
+		.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 
-		var new_tween = create_tween().set_parallel(true)
+	if index == 1: tween_1 = new_tween
+	if index == 2: tween_2 = new_tween
 
-		new_tween.tween_property(target_rect, "modulate:a", 1.0, anim_fade_duration)\
-			.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	_pending_anim_count += 1
+	new_tween.finished.connect(_on_anim_finished)
 
-		new_tween.tween_property(target_rect, "scale", Vector2.ONE, anim_scale_duration)\
-			.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 
-		if index == 1: tween_1 = new_tween
-		if index == 2: tween_2 = new_tween
-
-		_pending_anim_count += 1
-		new_tween.finished.connect(_on_anim_finished)
-	else:
-		target_rect.visible = true
-		target_rect.modulate.a = 1.0
-		target_rect.scale = Vector2.ONE
+func _hide_both() -> void:
+	_hide_node_instantly(texture_rect_1)
+	_hide_node_instantly(texture_rect_2)
 
 
 func _hide_node_instantly(target_rect: TextureRect) -> void:
