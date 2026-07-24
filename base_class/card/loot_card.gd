@@ -1,7 +1,7 @@
 extends card
 
 # 定义传递给上级的信号
-signal hovered(card_data: Dictionary)
+
 signal unhovered()
 
 var stuff_id: int = 0
@@ -11,7 +11,7 @@ var zone: int = 0
 # 💡 新增：用于记录当前卡牌是否被选中 (true 为选中，false 为未选中)
 var is_chosen: bool = false 
 
-@onready var ui_name: Label = $name
+
 @onready var card: Control = $"卡牌具体页"
 
 
@@ -61,52 +61,31 @@ func setup(data: Dictionary) -> void:
 		
 	# 2. 初始化缩放中心点
 	pivot_offset = size / 2.0
-	ui_name.visible = false
 	# 3. 初始化 Label 状态
 	# 💡 核心修改 2：初始化时确保"选中特效"是关闭的
 	super.populate_detail_page(card)
-# 快捷获取当前卡牌类型文本
-func get_type_string() -> String:
-	var combat_type = "战斗牌" if is_combat_card else "法术牌"
-	var sub_type = "子牌" if is_sub_card else "母牌"
-	return sub_type + "/" + combat_type
-
 
 # 3. 监听鼠标悬停与离开事件
-func _mouse_entered() -> void:
-	_play_scale_tween(HOVER_SCALE)
-	
-	if stuff_id <= 0:
-		return
-	
 
-	
-	hovered.emit({
-		"name": card_name,
-		"type": get_type_string(),
-		"value": value,
-		"price": price,
-		"description": skill_description
-	})
+const HOVER_OFFSET := Vector2(0, -200)
+const HOVER_DURATION := 0.15
+
+var _original_position: Vector2
+var _hover_tween: Tween
 
 
-func _mouse_exited() -> void:
-	_play_scale_tween(NORMAL_SCALE)
-	
+func _mouse_entered():
+	if _hover_tween and _hover_tween.is_valid():
+		_hover_tween.kill()
+	_original_position = position
+	_hover_tween = create_tween()
+	_hover_tween.tween_property(self, "position", _original_position + HOVER_OFFSET, HOVER_DURATION)
 
-	
-	unhovered.emit()
-
-
-# Tween 动画处理函数
-func _play_scale_tween(target_scale: Vector2) -> void:
-	if scale_tween and scale_tween.is_valid():
-		scale_tween.kill()
-	
-	scale_tween = create_tween()
-	scale_tween.tween_property(self, "scale", target_scale, TWEEN_DURATION)\
-		.set_trans(Tween.TRANS_QUAD)\
-		.set_ease(Tween.EASE_OUT)
+func _mouse_exited():
+	if _hover_tween and _hover_tween.is_valid():
+		_hover_tween.kill()
+	_hover_tween = create_tween()
+	_hover_tween.tween_property(self, "position", _original_position, HOVER_DURATION)
 
 
 # 4. 监听鼠标点击事件
@@ -115,29 +94,7 @@ func _gui_input(event: InputEvent) -> void:
 		match event.button_index:
 			MOUSE_BUTTON_LEFT:
 				accept_event()
-				if zone == Global.ZONE_CARD.BAG_ZONE:
-					SignalBus.left_clicked.emit(stuff_id, 0)
-			
-			MOUSE_BUTTON_RIGHT:
-				accept_event()
-				if zone == Global.ZONE_CARD.MATCH_ZONE:
-					SignalBus.right_clicked.emit(stuff_id, 0)
-			
-					
-func clear_data() -> void:
-	# 1. 数据重置
-	card_name = "未上牌"
-	stuff_id = -1
-	price = -1
-	zone = -1
-	is_chosen = false
-	ui_name.visible = true
-	# 2. UI 文本与纹理回归默认
-	if ui_name:
-		ui_name.text = "未上牌"
-	
-		
-
-		
-	# 还原缩放，防止卡在悬停放大的状态
-	scale = NORMAL_SCALE
+				if zone == Global.ZONE_CARD.GIFT_ZONE:
+					InventoryManager.move_to_loot_zone(stuff_id)
+				elif zone == Global.ZONE_CARD.LOOT_ZONE:
+					InventoryManager.move_to_gift_zone(stuff_id)

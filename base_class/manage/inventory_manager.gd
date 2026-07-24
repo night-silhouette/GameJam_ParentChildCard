@@ -4,6 +4,7 @@ extends Node
 # 当数据发生变化时，通知全家老小（比如 UI 刷新）
 signal bag_updated 
 signal gold_updated(value:int)
+signal loot_updated
 
 
 var notice_msg: String = "":
@@ -19,6 +20,9 @@ var card_list: Array = []:
 		card_list.sort_custom(func(a, b): return a["price"] > b["price"])
 		# 发射信号，告诉 UI 层："数据更新了，你们该干嘛干嘛"
 		bag_updated.emit()
+
+var loot_card_list:Array = [];
+var loot_id: int ;
 
 var _gold : int = 0
 var chip : int = 0
@@ -179,3 +183,33 @@ func get_sell_zone_stuff_ids() -> Array[int]:
 			result.append(int(card["stuff_id"]))
 			
 	return result
+func move_to_loot_zone(stuff_id: int):
+	for item in loot_card_list:
+		if item["stuff_id"] == stuff_id and item["zone"] != Global.ZONE_CARD.LOOT_ZONE:
+			item["zone"] = Global.ZONE_CARD.LOOT_ZONE
+			loot_updated.emit()
+			return
+
+func move_to_gift_zone(stuff_id: int):
+	for item in loot_card_list:
+		if item["stuff_id"] == stuff_id and item["zone"] != Global.ZONE_CARD.GIFT_ZONE:
+			item["zone"] = Global.ZONE_CARD.GIFT_ZONE
+			loot_updated.emit()
+			return
+
+## 导入 loot 卡牌列表
+## incoming_list: Array[{"card_id": int, "room": int}, ...]
+func import_loot_card_list(incoming_list: Array) -> void:
+	var temp_list: Array = []
+	for item in incoming_list:
+		var card_res = _find_card_resource_by_id(int(item["card_id"]))
+		var data = {
+			"stuff_id": int(item["stuff_id"]),
+			"card_id": int(item["card_id"]),
+			"room": int(item.get("room", 0)),
+			"zone": Global.ZONE_CARD.GIFT_ZONE,
+			"resource": card_res
+		}
+		temp_list.append(data)
+	loot_card_list = temp_list
+	loot_updated.emit()

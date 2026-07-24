@@ -9,7 +9,7 @@ func _ready() -> void:
 	$"标识".txt = "Click"
 	$"游戏开始".txt = "匹配！"
 	$"牌库".txt = "仓库！！"
-	
+	SignalBus.request_loot.emit()
 	
 func _match_success(t):
 	Global.match_mode = 0;

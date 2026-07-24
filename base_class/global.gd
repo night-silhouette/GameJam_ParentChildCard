@@ -32,6 +32,7 @@ const ZONE_CARD = {
 	SELL_ZONE  = 11,  #卖出区域
 	MATCH_ZONE = 12	, #出战区域
 	
+
 	
 	# 子牌状态 zone（由 child_state 翻译而来，UI 统一按 zone 读取）
 	CHILD_ACTIVE = 13,       # 子牌已激活
@@ -40,6 +41,9 @@ const ZONE_CARD = {
 	CHILD_HAS_CATCH = 16,    # 子牌已被捕获
 	
 	ENEMY_HAND_ZONE = 17,    # 敌方手牌区
+	
+	GIFT_ZONE = 18,
+	LOOT_ZONE = 19
 }
 ## 天气枚举
 enum Weather {

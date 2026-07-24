@@ -1,0 +1,45 @@
+[gd_scene load_steps=5 format=3 uid="uid://cmlct61vy5c53"]
+
+[ext_resource type="Script" uid="uid://bfebccmk6gdw2" path="res://game_ui/menu/获取战利品.gd" id="1_gu4xq"]
+[ext_resource type="PackedScene" uid="uid://ghdb3fyl2y4m" path="res://game_ui/battle/牌库/牌库.tscn" id="1_ljnnm"]
+[ext_resource type="PackedScene" uid="uid://cf218n73yp1t0" path="res://game_scene/battle/万能按钮.tscn" id="2_fbu6v"]
+[ext_resource type="PackedScene" uid="uid://dq462slde3tt5" path="res://base_class/card/loot_card.tscn" id="2_jowo4"]
+
+[node name="获取战利品" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_gu4xq")
+loot_card_scene = ExtResource("2_jowo4")
+
+[node name="万能按钮" parent="." instance=ExtResource("2_fbu6v")]
+layout_mode = 0
+offset_left = 1517.0001
+offset_top = 1540.0
+offset_right = 2666.0
+offset_bottom = 2617.0
+scale = Vector2(0.27025262, 0.27025262)
+
+[node name="容器" type="ScrollContainer" parent="."]
+layout_mode = 0
+offset_left = 5.0
+offset_top = 7.0
+offset_right = 1713.0
+offset_bottom = 935.0
+
+[node name="GridContainer" type="GridContainer" parent="容器"]
+layout_mode = 2
+theme_override_constants/h_separation = -49
+theme_override_constants/v_separation = -226
+columns = 5
+
+[node name="牌库" parent="." instance=ExtResource("1_ljnnm")]
+layout_mode = 0
+offset_left = 179.0
+offset_top = 1136.0
+offset_right = 179.0
+offset_bottom = 1136.0
+scale = Vector2(0.31015104, 0.31015104)

@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3 uid="uid://dq462slde3tt5"]
+
+[ext_resource type="PackedScene" uid="uid://bvongwrpqp0vv" path="res://game_ui/卡牌具体页.tscn" id="1_5ts01"]
+[ext_resource type="Script" uid="uid://usiinex4x0id" path="res://base_class/card/loot_card.gd" id="1_60tyu"]
+
+[node name="loot_card" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_60tyu")
+
+[node name="卡牌具体页" parent="." instance=ExtResource("1_5ts01")]
+layout_mode = 0
