@@ -63,6 +63,7 @@ signal get_card_bag(card_list)
 signal get_self_gold(gold)
 signal sell_card_success()
 signal ifbattle(index:bool)
+signal loot(data)
 
 # 邮件
 signal send_mail_success()

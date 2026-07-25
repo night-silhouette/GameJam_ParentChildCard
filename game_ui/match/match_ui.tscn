@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=3 uid="uid://cuvi8jmlquxkr"]
+[gd_scene load_steps=27 format=3 uid="uid://cuvi8jmlquxkr"]
 
 [ext_resource type="Texture2D" uid="uid://dgyqirah3ilvl" path="res://素材/使用素材/战斗内/桌面/卡库栏底版 .png" id="1_c20ep"]
 [ext_resource type="Script" uid="uid://dsjhgmpb1haaw" path="res://game_ui/match/match_ui.gd" id="1_oqlle"]
@@ -15,6 +15,7 @@
 [ext_resource type="Texture2D" uid="uid://v6mxhb2ytswh" path="res://素材/使用素材/战斗外/游戏模式选择与匹配/匹配到后的信息显示动画/匹配信息框/信息框.png" id="12_6u7u6"]
 [ext_resource type="PackedScene" uid="uid://s14mr1ndy4u6" path="res://game_ui/告示牌.tscn" id="12_ea11v"]
 [ext_resource type="PackedScene" uid="uid://cf218n73yp1t0" path="res://game_scene/battle/万能按钮.tscn" id="15_vafcw"]
+[ext_resource type="PackedScene" uid="uid://cmlct61vy5c53" path="res://game_ui/menu/获取战利品.tscn" id="16_ps5te"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_6u7u6"]
 font_size = 36
@@ -281,6 +282,15 @@ offset_top = 461.82114
 offset_right = -236.4635
 offset_bottom = 1538.8212
 scale = Vector2(0.4527417, 0.4527417)
+
+[node name="获取战利品" parent="." instance=ExtResource("16_ps5te")]
+visible = false
+layout_mode = 1
+offset_left = 330.0
+offset_top = 64.0
+offset_right = 330.0
+offset_bottom = 64.0
+scale = Vector2(0.30136028, 0.30136028)
 
 [connection signal="button_down" from="返回" to="." method="_on_返回_button_down"]
 [connection signal="button_down" from="wait/万能按钮" to="." method="_on_万能按钮_button_down"]

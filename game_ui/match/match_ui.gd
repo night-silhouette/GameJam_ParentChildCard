@@ -1,17 +1,20 @@
 extends Control
 
+var send := 0
 
-# Called when the node enters the scene tree for the first time.
+
 func _ready() -> void:
 	SignalBus.request_bag_card.emit()
 	SignalBus.ws_connected.connect(_ws_connected)
 	$"街机按钮".button_down.connect(_on_街机按钮_button_down)
+	SignalBus.loot.connect(_on_loot_response)
 	
-var send = 0;
-# Called every frame. 'delta' is the elapsed time since the previous frame.
+	# 获取战利品一开始假死，数据到后才复活
+	Global.fake_death($"获取战利品")
+	_start_loot_loop()
+
 
 func _on_街机按钮_button_down() -> void:
-	# 1. 从全局数据层提取需要的原始卡牌数据，过滤掉不需要传给后端的 "zone" 和 "resource"
 	var raw_card_list = []
 	for card in InventoryManager.get_cards_in_zone(Global.ZONE_CARD.MATCH_ZONE):
 		raw_card_list.append({
@@ -20,43 +23,31 @@ func _on_街机按钮_button_down() -> void:
 			"price": int(card["price"])
 		})
 	if raw_card_list.size() != 5:
-		return;
-	var input_text = $"使用/num".text # 获取文本
-	var input_amount: int;
-	# 1. 判空检查（防止什么都没填就提交）
+		return
+	var input_text = $"使用/num".text
+	var input_amount: int
 	if input_text.is_empty():
-		# print("请输入数字！")
-		input_amount = 0;
+		input_amount = 0
 	else:
-	# 2. 安全转换为 int
-		input_amount  = input_text.to_int()
-	
-	# 3. 验证是否大于 0（防止输入 0 或负数，因为 to_int 转换失败或输入负数会变成≤0）
+		input_amount = input_text.to_int()
 	if input_amount < 0:
-		# print("请输入大于 0 的有效数字！")
 		return
-		
-	# 4. 核心：对比全局数据层中的 gold 总数
-	var current_gold = InventoryManager.gold 
-	
+	var current_gold = InventoryManager.gold
 	if input_amount > current_gold:
-		# print("大兄弟，金币不足！你当前只有 %d 金币。" % current_gold)
 		return
-	
-	# 5. 严格按照后端格式组合成 btData
 	var body = {
 		"btData": {
 			"card_list": raw_card_list,
 			"gold": input_amount
 		}
 	}
-	if send == 0:	
-	# 6. 发送信号并播放等待动画
+	if send == 0:
 		SignalBus.to_connect_ws.emit(body)
-		send = 1;
-		$wait.visible = true;
+		send = 1
+		$wait.visible = true
 		$wait.play("wait")
 		$ColorRect2.visible = true
+
 
 func _on_返回_button_down() -> void:
 	SignalBus.change_ui.emit("tomenu")
@@ -64,9 +55,52 @@ func _on_返回_button_down() -> void:
 func _ws_connected():
 	pass
 
-
 func _on_万能按钮_button_down() -> void:
-	SignalBus.request_cancel_match.emit();
-	send = 0;
-	$wait.visible = false;
+	SignalBus.request_cancel_match.emit()
+	send = 0
+	$wait.visible = false
 	$ColorRect2.visible = false
+
+
+func _on_loot_response(_data) -> void:
+	pass
+
+
+func _start_loot_loop() -> void:
+	while true:
+		# 1. GET
+		SignalBus.request_loot.emit()
+		var data = await SignalBus.loot
+		if data == null or (data is Array and data.is_empty()):
+			print("loot 完成")
+			break
+		
+		# 2. 取第一个元素，导入
+		var item: Dictionary = data[0] if data is Array else data
+		var loot_id = item.get("loot_id", 0)
+		if loot_id == 0:
+			print("loot 完成")
+			break
+		
+		var card_list = item.get("card_list", [])
+		InventoryManager.import_loot_card_list(card_list)
+		InventoryManager.loot_id = loot_id
+		
+		# 数据导入后复活获取战利品
+		Global.revive($"获取战利品")
+		
+		# 3. 收集 LOOT_ZONE → POST
+		var submit_list: Array = []
+		for d in InventoryManager.loot_card_list:
+			if d["zone"] == Global.ZONE_CARD.LOOT_ZONE:
+				submit_list.append({
+					"card_id": d["card_id"],
+					"stuff_id": d["stuff_id"]
+				})
+		SignalBus.request_loot_post.emit(submit_list, loot_id)
+		
+		# 4. 等待 POST 响应
+		await SignalBus.loot
+	
+	# 循环结束，再次假死
+	Global.fake_death($"获取战利品")
