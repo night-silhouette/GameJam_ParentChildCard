@@ -228,15 +228,6 @@ offset_right = 714.0
 offset_bottom = 817.0
 scale = Vector2(0.3976495, 0.40073693)
 
-[node name="标识" parent="." instance=ExtResource("9_hgah4")]
-layout_mode = 0
-offset_left = 271.0
-offset_top = 536.0
-offset_right = 415.0
-offset_bottom = 843.0
-rotation = -2.8565483
-scale = Vector2(0.21863914, 0.21863914)
-
 [node name="返回" type="TextureButton" parent="."]
 layout_mode = 0
 offset_left = 1110.0001
@@ -283,6 +274,14 @@ offset_right = -236.4635
 offset_bottom = 1538.8212
 scale = Vector2(0.4527417, 0.4527417)
 
+[node name="ColorRect3" type="ColorRect" parent="."]
+visible = false
+layout_mode = 1
+offset_right = 40.0
+offset_bottom = 40.0
+scale = Vector2(29.056538, 16.544558)
+color = Color(0.12955832, 0.12955853, 0.12955844, 0.49019608)
+
 [node name="获取战利品" parent="." instance=ExtResource("16_ps5te")]
 visible = false
 layout_mode = 1
@@ -291,6 +290,15 @@ offset_top = 64.0
 offset_right = 330.0
 offset_bottom = 64.0
 scale = Vector2(0.30136028, 0.30136028)
+
+[node name="标识" parent="." instance=ExtResource("9_hgah4")]
+layout_mode = 0
+offset_left = 271.0
+offset_top = 536.0
+offset_right = 415.0
+offset_bottom = 843.0
+rotation = -2.8565483
+scale = Vector2(0.21863914, 0.21863914)
 
 [connection signal="button_down" from="返回" to="." method="_on_返回_button_down"]
 [connection signal="button_down" from="wait/万能按钮" to="." method="_on_万能按钮_button_down"]

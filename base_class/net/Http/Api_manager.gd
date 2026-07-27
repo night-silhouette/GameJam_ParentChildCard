@@ -195,6 +195,7 @@ func _request_loot_post(card_list,loot_id):
 	var url = "/v1/user/loot/"
 	var body = {
 		"data" = card_list,
-		"lootid" = loot_id
+		"loot_id" = loot_id
 	}	
+	print("body: ",body)
 	NetworkClient.call_api(url,HTTPClient.METHOD_POST,body)#最多5个

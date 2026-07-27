@@ -5,6 +5,7 @@ extends card
 signal unhovered()
 
 var stuff_id: int = 0
+var card_id: int = 0
 var price: int = 0
 var zone: int = 0
 
@@ -30,6 +31,7 @@ func _ready() -> void:
 	
 func setup(data: Dictionary) -> void:
 	stuff_id = int(data.get("stuff_id", 0))
+	card_id = int(data.get("card_id", 0))
 	price = int(data.get("price", 0))
 	zone = int(data.get("zone", 0))
 
@@ -70,22 +72,33 @@ func setup(data: Dictionary) -> void:
 const HOVER_OFFSET := Vector2(0, -200)
 const HOVER_DURATION := 0.15
 
-var _original_position: Vector2
+var _rest_position: Vector2
+var _position_captured := false
 var _hover_tween: Tween
 
 
+func _capture_rest_position() -> void:
+	if not _position_captured:
+		_rest_position = position
+		_position_captured = true
+
+
 func _mouse_entered():
+	if zone != Global.ZONE_CARD.GIFT_ZONE:
+		return
+	_capture_rest_position()
 	if _hover_tween and _hover_tween.is_valid():
 		_hover_tween.kill()
-	_original_position = position
 	_hover_tween = create_tween()
-	_hover_tween.tween_property(self, "position", _original_position + HOVER_OFFSET, HOVER_DURATION)
+	_hover_tween.tween_property(self, "position", _rest_position + HOVER_OFFSET, HOVER_DURATION)
 
 func _mouse_exited():
+	if zone != Global.ZONE_CARD.GIFT_ZONE:
+		return
 	if _hover_tween and _hover_tween.is_valid():
 		_hover_tween.kill()
 	_hover_tween = create_tween()
-	_hover_tween.tween_property(self, "position", _original_position, HOVER_DURATION)
+	_hover_tween.tween_property(self, "position", _rest_position, HOVER_DURATION)
 
 
 # 4. 监听鼠标点击事件
@@ -93,6 +106,7 @@ func _gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed:
 		match event.button_index:
 			MOUSE_BUTTON_LEFT:
+				print("chick")
 				accept_event()
 				if zone == Global.ZONE_CARD.GIFT_ZONE:
 					InventoryManager.move_to_loot_zone(stuff_id)

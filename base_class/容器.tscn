@@ -1,0 +1,85 @@
+[gd_scene load_steps=2 format=3 uid="uid://cknkai1bmooc"]
+
+[ext_resource type="PackedScene" uid="uid://dq462slde3tt5" path="res://base_class/card/loot_card.tscn" id="1_mrmql"]
+
+[node name="容器" type="ScrollContainer"]
+offset_left = 226.00002
+offset_top = 14.0
+offset_right = 1934.0
+offset_bottom = 659.87714
+scale = Vector2(0.33442894, 0.33442894)
+follow_focus = true
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 3
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 2
+
+[node name="GridContainer" type="GridContainer" parent="."]
+layout_mode = 2
+theme_override_constants/h_separation = 289
+theme_override_constants/v_separation = 314
+columns = 5
+
+[node name="loot_card" parent="GridContainer" instance=ExtResource("1_mrmql")]
+layout_mode = 2
+
+[node name="loot_card2" parent="GridContainer" instance=ExtResource("1_mrmql")]
+layout_mode = 2
+
+[node name="loot_card3" parent="GridContainer" instance=ExtResource("1_mrmql")]
+layout_mode = 2
+
+[node name="loot_card4" parent="GridContainer" instance=ExtResource("1_mrmql")]
+layout_mode = 2
+
+[node name="loot_card5" parent="GridContainer" instance=ExtResource("1_mrmql")]
+layout_mode = 2
+
+[node name="loot_card6" parent="GridContainer" instance=ExtResource("1_mrmql")]
+layout_mode = 2
+
+[node name="loot_card7" parent="GridContainer" instance=ExtResource("1_mrmql")]
+layout_mode = 2
+
+[node name="loot_card8" parent="GridContainer" instance=ExtResource("1_mrmql")]
+layout_mode = 2
+
+[node name="loot_card9" parent="GridContainer" instance=ExtResource("1_mrmql")]
+layout_mode = 2
+
+[node name="loot_card10" parent="GridContainer" instance=ExtResource("1_mrmql")]
+layout_mode = 2
+
+[node name="loot_card11" parent="GridContainer" instance=ExtResource("1_mrmql")]
+layout_mode = 2
+
+[node name="loot_card12" parent="GridContainer" instance=ExtResource("1_mrmql")]
+layout_mode = 2
+
+[node name="loot_card13" parent="GridContainer" instance=ExtResource("1_mrmql")]
+layout_mode = 2
+
+[node name="loot_card14" parent="GridContainer" instance=ExtResource("1_mrmql")]
+layout_mode = 2
+
+[node name="loot_card15" parent="GridContainer" instance=ExtResource("1_mrmql")]
+layout_mode = 2
+
+[node name="loot_card16" parent="GridContainer" instance=ExtResource("1_mrmql")]
+layout_mode = 2
+
+[node name="loot_card17" parent="GridContainer" instance=ExtResource("1_mrmql")]
+layout_mode = 2
+
+[node name="loot_card18" parent="GridContainer" instance=ExtResource("1_mrmql")]
+layout_mode = 2
+
+[node name="loot_card19" parent="GridContainer" instance=ExtResource("1_mrmql")]
+layout_mode = 2
+
+[node name="loot_card20" parent="GridContainer" instance=ExtResource("1_mrmql")]
+layout_mode = 2
+
+[node name="loot_card21" parent="GridContainer" instance=ExtResource("1_mrmql")]
+layout_mode = 2

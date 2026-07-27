@@ -1,4 +1,4 @@
-[gd_scene load_steps=70 format=3 uid="uid://c85a1ra55sbk0"]
+[gd_scene load_steps=69 format=3 uid="uid://c85a1ra55sbk0"]
 
 [ext_resource type="Script" uid="uid://dw1q80ff6ue4v" path="res://game_scene/battle/battle_scence.gd" id="1_51ed8"]
 [ext_resource type="Texture2D" uid="uid://dng874p0igvq" path="res://素材/使用素材/转换.png" id="1_chjg7"]
@@ -30,7 +30,6 @@
 [ext_resource type="PackedScene" uid="uid://c6euaia4cenn0" path="res://game_scene/battle/转换.tscn" id="24_b7tvc"]
 [ext_resource type="Texture2D" uid="uid://dwjvmlpr00j2m" path="res://素材/使用素材/战斗内/暂停/图.png" id="29_yht3b"]
 [ext_resource type="Texture2D" uid="uid://du2purmrxflu0" path="res://素材/使用素材/战斗外/设置/进度框.png" id="30_qrii7"]
-[ext_resource type="PackedScene" uid="uid://berfm8ug5kccq" path="res://base_class/card/choose_card.tscn" id="31_tpn7x"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_qxhen"]
 font_size = 48
@@ -646,48 +645,6 @@ offset_top = 430.0
 offset_right = 1208.0
 offset_bottom = 1507.0
 scale = Vector2(0.094462015, 0.094462015)
-
-[node name="容器" type="ScrollContainer" parent="."]
-offset_left = -30.0
-offset_top = 412.0
-offset_right = 2076.0
-offset_bottom = 1755.0
-
-[node name="GridContainer" type="GridContainer" parent="容器"]
-layout_mode = 2
-theme_override_constants/h_separation = -99
-theme_override_constants/v_separation = -206
-columns = 5
-
-[node name="choose_card" parent="容器/GridContainer" instance=ExtResource("31_tpn7x")]
-layout_mode = 2
-
-[node name="choose_card2" parent="容器/GridContainer" instance=ExtResource("31_tpn7x")]
-layout_mode = 2
-
-[node name="choose_card3" parent="容器/GridContainer" instance=ExtResource("31_tpn7x")]
-layout_mode = 2
-
-[node name="choose_card4" parent="容器/GridContainer" instance=ExtResource("31_tpn7x")]
-layout_mode = 2
-
-[node name="choose_card5" parent="容器/GridContainer" instance=ExtResource("31_tpn7x")]
-layout_mode = 2
-
-[node name="choose_card6" parent="容器/GridContainer" instance=ExtResource("31_tpn7x")]
-layout_mode = 2
-
-[node name="choose_card7" parent="容器/GridContainer" instance=ExtResource("31_tpn7x")]
-layout_mode = 2
-
-[node name="choose_card8" parent="容器/GridContainer" instance=ExtResource("31_tpn7x")]
-layout_mode = 2
-
-[node name="choose_card9" parent="容器/GridContainer" instance=ExtResource("31_tpn7x")]
-layout_mode = 2
-
-[node name="choose_card10" parent="容器/GridContainer" instance=ExtResource("31_tpn7x")]
-layout_mode = 2
 
 [connection signal="button_down" from="debug/debug_action" to="debug/debug_action2" method="_on_debug_action_button_down"]
 [connection signal="button_down" from="万能按钮" to="数据层/State_machine" method="_on_万能按钮_button_down"]

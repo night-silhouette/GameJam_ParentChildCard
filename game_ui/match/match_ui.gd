@@ -74,33 +74,18 @@ func _start_loot_loop() -> void:
 		if data == null or (data is Array and data.is_empty()):
 			print("loot 完成")
 			break
-		
-		# 2. 取第一个元素，导入
 		var item: Dictionary = data[0] if data is Array else data
 		var loot_id = item.get("loot_id", 0)
-		if loot_id == 0:
-			print("loot 完成")
-			break
-		
-		var card_list = item.get("card_list", [])
+		var card_list = item.get("data", [])
+		print("card_list: ",card_list)
 		InventoryManager.import_loot_card_list(card_list)
 		InventoryManager.loot_id = loot_id
-		
+		Global.revive($ColorRect3)
 		# 数据导入后复活获取战利品
 		Global.revive($"获取战利品")
-		
-		# 3. 收集 LOOT_ZONE → POST
-		var submit_list: Array = []
-		for d in InventoryManager.loot_card_list:
-			if d["zone"] == Global.ZONE_CARD.LOOT_ZONE:
-				submit_list.append({
-					"card_id": d["card_id"],
-					"stuff_id": d["stuff_id"]
-				})
-		SignalBus.request_loot_post.emit(submit_list, loot_id)
-		
 		# 4. 等待 POST 响应
-		await SignalBus.loot
+		await SignalBus.login_success
 	
 	# 循环结束，再次假死
 	Global.fake_death($"获取战利品")
+	Global.fake_death($ColorRect3)

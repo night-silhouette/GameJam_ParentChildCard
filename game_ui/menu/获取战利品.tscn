@@ -23,6 +23,71 @@ offset_right = 2631.0
 offset_bottom = 2463.0
 scale = Vector2(0.19457413, 0.19457413)
 
+[node name="容器" type="ScrollContainer" parent="."]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 46.0
+offset_right = 1718.0
+offset_bottom = 949.7479
+scale = Vector2(0.88188314, 0.88188314)
+follow_focus = true
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 3
+
+[node name="GridContainer" type="GridContainer" parent="容器"]
+layout_mode = 2
+theme_override_constants/h_separation = 289
+theme_override_constants/v_separation = 314
+columns = 5
+
+[node name="loot_card" parent="容器/GridContainer" instance=ExtResource("2_jowo4")]
+layout_mode = 2
+
+[node name="loot_card2" parent="容器/GridContainer" instance=ExtResource("2_jowo4")]
+layout_mode = 2
+
+[node name="loot_card3" parent="容器/GridContainer" instance=ExtResource("2_jowo4")]
+layout_mode = 2
+
+[node name="loot_card4" parent="容器/GridContainer" instance=ExtResource("2_jowo4")]
+layout_mode = 2
+
+[node name="loot_card5" parent="容器/GridContainer" instance=ExtResource("2_jowo4")]
+layout_mode = 2
+
+[node name="loot_card6" parent="容器/GridContainer" instance=ExtResource("2_jowo4")]
+layout_mode = 2
+
+[node name="loot_card7" parent="容器/GridContainer" instance=ExtResource("2_jowo4")]
+layout_mode = 2
+
+[node name="loot_card8" parent="容器/GridContainer" instance=ExtResource("2_jowo4")]
+layout_mode = 2
+
+[node name="loot_card9" parent="容器/GridContainer" instance=ExtResource("2_jowo4")]
+layout_mode = 2
+
+[node name="loot_card10" parent="容器/GridContainer" instance=ExtResource("2_jowo4")]
+layout_mode = 2
+
+[node name="loot_card11" parent="容器/GridContainer" instance=ExtResource("2_jowo4")]
+layout_mode = 2
+
+[node name="loot_card12" parent="容器/GridContainer" instance=ExtResource("2_jowo4")]
+layout_mode = 2
+
+[node name="loot_card13" parent="容器/GridContainer" instance=ExtResource("2_jowo4")]
+layout_mode = 2
+
+[node name="loot_card14" parent="容器/GridContainer" instance=ExtResource("2_jowo4")]
+layout_mode = 2
+
+[node name="loot_card15" parent="容器/GridContainer" instance=ExtResource("2_jowo4")]
+layout_mode = 2
+
+[node name="loot_card16" parent="容器/GridContainer" instance=ExtResource("2_jowo4")]
+layout_mode = 2
+
 [node name="牌库" type="TextureRect" parent="."]
 layout_mode = 0
 offset_left = 29.0
@@ -36,7 +101,7 @@ texture = ExtResource("4_fbu6v")
 layout_mode = 0
 offset_left = 151.99997
 offset_top = 83.000046
-offset_right = 1508.0
+offset_right = 1688.0
 offset_bottom = 123.000046
 scale = Vector2(1.7529293, 1.7355977)
 theme_override_constants/h_separation = 384
@@ -57,47 +122,4 @@ layout_mode = 2
 [node name="loot_card5" parent="牌库/GridContainer" instance=ExtResource("2_jowo4")]
 layout_mode = 2
 
-[node name="容器" type="ScrollContainer" parent="牌库"]
-layout_mode = 0
-offset_left = -73.39034
-offset_top = -3712.3281
-offset_right = 1634.6096
-offset_bottom = -2784.3281
-scale = Vector2(3.024087, 3.024087)
-scroll_deadzone = 314
-metadata/_edit_lock_ = true
-
-[node name="GridContainer" type="GridContainer" parent="牌库/容器"]
-layout_mode = 2
-theme_override_constants/h_separation = 229
-theme_override_constants/v_separation = 314
-columns = 5
-
-[node name="loot_card" parent="牌库/容器/GridContainer" instance=ExtResource("2_jowo4")]
-layout_mode = 2
-
-[node name="loot_card2" parent="牌库/容器/GridContainer" instance=ExtResource("2_jowo4")]
-layout_mode = 2
-
-[node name="loot_card3" parent="牌库/容器/GridContainer" instance=ExtResource("2_jowo4")]
-layout_mode = 2
-
-[node name="loot_card4" parent="牌库/容器/GridContainer" instance=ExtResource("2_jowo4")]
-layout_mode = 2
-
-[node name="loot_card5" parent="牌库/容器/GridContainer" instance=ExtResource("2_jowo4")]
-layout_mode = 2
-
-[node name="loot_card6" parent="牌库/容器/GridContainer" instance=ExtResource("2_jowo4")]
-layout_mode = 2
-
-[node name="loot_card7" parent="牌库/容器/GridContainer" instance=ExtResource("2_jowo4")]
-layout_mode = 2
-
-[node name="loot_card8" parent="牌库/容器/GridContainer" instance=ExtResource("2_jowo4")]
-layout_mode = 2
-
-[node name="loot_card9" parent="牌库/容器/GridContainer" instance=ExtResource("2_jowo4")]
-layout_mode = 2
-
-[connection signal="button_down" from="万能按钮" to="." method="_on_万能按钮_button_down"]
+[connection signal="button_down" from="万能按钮" to="." method="_on_submit"]

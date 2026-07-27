@@ -23,6 +23,7 @@ var card_list: Array = []:
 
 var loot_card_list:Array = [];
 var loot_id: int ;
+var _loot_stuff_counter := 12345678
 
 var _gold : int = 0
 var chip : int = 0
@@ -184,6 +185,15 @@ func get_sell_zone_stuff_ids() -> Array[int]:
 			
 	return result
 func move_to_loot_zone(stuff_id: int):
+	# 限制最多5张
+	var loot_count := 0
+	for item in loot_card_list:
+		if item["zone"] == Global.ZONE_CARD.LOOT_ZONE:
+			loot_count += 1
+	if loot_count >= 5:
+		notice_msg = "拿太多了，最多5张"
+		return
+	
 	for item in loot_card_list:
 		if item["stuff_id"] == stuff_id and item["zone"] != Global.ZONE_CARD.LOOT_ZONE:
 			item["zone"] = Global.ZONE_CARD.LOOT_ZONE
@@ -198,18 +208,17 @@ func move_to_gift_zone(stuff_id: int):
 			return
 
 ## 导入 loot 卡牌列表
-## incoming_list: Array[{"card_id": int, "room": int}, ...]
 func import_loot_card_list(incoming_list: Array) -> void:
 	var temp_list: Array = []
 	for item in incoming_list:
-		var card_res = _find_card_resource_by_id(int(item["card_id"]))
+		var card_res = _find_card_resource_by_id(int(item))
 		var data = {
-			"stuff_id": int(item["stuff_id"]),
-			"card_id": int(item["card_id"]),
-			"room": int(item.get("room", 0)),
+			"stuff_id": _loot_stuff_counter,
+			"card_id": int(item),
 			"zone": Global.ZONE_CARD.GIFT_ZONE,
 			"resource": card_res
 		}
+		_loot_stuff_counter += 1
 		temp_list.append(data)
 	loot_card_list = temp_list
 	loot_updated.emit()
