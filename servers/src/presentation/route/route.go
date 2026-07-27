@@ -71,9 +71,10 @@ func Register_user_routes(h userhandler.User_handler) {
 	R.GET("v1/user/loot/", h.GetLoot())
 	R.POST("v1/user/loot/", h.PostLoot())
 
-	R.GET("v1/shop/goods/", h.GoodsGet())   //返回[]GoodsDto
-	R.POST("v1/shop/goods/", h.GoodsPost()) //传goodid
-	R.POST("v1/shop/refresh/", h.Refresh()) //刷新
+	R.GET("v1/shop/goods/", h.GoodsGet())       //返回[]GoodsDto
+	R.POST("v1/shop/goods/", h.GoodsPost())     //传goodid来购买
+	R.POST("v1/shop/refresh/", h.PostRefresh()) //执行刷新
+	R.GET("v1/shop/refresh", h.GetRefresh())    //返回刷新要的钱
 
 }
 

@@ -61,6 +61,12 @@ type User_repo interface {
 	CreateGoods(ctx context.Context, db repo.SQLQueryer, UserId int, GoodsList []*BattleData.GoodsDto) global.ResponseStatusCode
 	DeleteGoodsByUserId(ctx context.Context, db repo.SQLQueryer, UserId int) global.ResponseStatusCode
 	GetCardPrice(ctx context.Context, db repo.SQLQueryer, cardID int) (global.ResponseStatusCode, int)
+	AddShopRefreshCount(ctx context.Context, db repo.SQLQueryer, UserId int) global.ResponseStatusCode
+	SetShopRefreshCountZero(ctx context.Context, db repo.SQLQueryer, UserId int) global.ResponseStatusCode
+	GetShopRefreshCount(ctx context.Context, db repo.SQLQueryer, UserId int) (global.ResponseStatusCode, int)
+	DeleteGoodsByGoodId(ctx context.Context, db repo.SQLQueryer, GoodId int) global.ResponseStatusCode
+	GetGoodsPrice(ctx context.Context, db repo.SQLQueryer, GoodsId int) (global.ResponseStatusCode, int)
+	GetGoodsCardId(ctx context.Context, db repo.SQLQueryer, GoodsId int) (global.ResponseStatusCode, int)
 }
 
 type User_repo_impl struct {
@@ -979,4 +985,87 @@ func (r *User_repo_impl) CreateGoods(ctx context.Context, db repo.SQLQueryer, Us
 		}
 	}
 	return global.ResponseSuccess
+}
+
+func (r *User_repo_impl) AddShopRefreshCount(ctx context.Context, db repo.SQLQueryer, UserId int) global.ResponseStatusCode {
+	query := `insert into user_activity_states (user_id, shop_refresh_count) values ($1, 1) on conflict (user_id) do update set shop_refresh_count = user_activity_states.shop_refresh_count + 1`
+	_, err := db.ExecContext(ctx, query, UserId)
+	if err != nil {
+		log.Printf("failed to add shop refresh count for user %d: %v", UserId, err)
+		return global.ResponseInternalServersError
+	}
+	return global.ResponseSuccess
+}
+func (r *User_repo_impl) SetShopRefreshCountZero(ctx context.Context, db repo.SQLQueryer, UserId int) global.ResponseStatusCode {
+	query := `insert into user_activity_states (user_id, shop_refresh_count) values ($1, 0) on conflict (user_id) do update set shop_refresh_count = 0`
+	_, err := db.ExecContext(ctx, query, UserId)
+	if err != nil {
+		log.Printf("failed to set shop refresh count zero for user %d: %v", UserId, err)
+		return global.ResponseInternalServersError
+	}
+	return global.ResponseSuccess
+}
+func (r *User_repo_impl) GetShopRefreshCount(ctx context.Context, db repo.SQLQueryer, UserId int) (global.ResponseStatusCode, int) {
+	query := `select shop_refresh_count from user_activity_states where user_id = $1`
+
+	var count int
+	err := db.QueryRowContext(ctx, query, UserId).Scan(&count)
+	if err != nil {
+		// 如果查不到数据，说明用户还没有任何记录，按默认值 0 处理并返回成功
+		if err == sql.ErrNoRows {
+			return global.ResponseSuccess, 0
+		}
+		log.Printf("failed to get shop refresh count for user %d: %v", UserId, err)
+		return global.ResponseInternalServersError, 0
+	}
+
+	return global.ResponseSuccess, count
+}
+func (r *User_repo_impl) DeleteGoodsByGoodId(ctx context.Context, db repo.SQLQueryer, GoodId int) global.ResponseStatusCode {
+	query := `delete from goods where goods_id = $1`
+	result, err := db.ExecContext(ctx, query, GoodId)
+	if err != nil {
+		log.Printf("failed to delete goods for user %d: %v", GoodId, err)
+		return global.ResponseInternalServersError
+	}
+	num, err2 := result.RowsAffected()
+	if err2 != nil {
+		fmt.Println(err)
+		return global.ResponseInternalServersError
+	}
+	if num == 0 {
+		return global.ResponseDataNotFound
+	}
+	return global.ResponseSuccess
+}
+
+func (r *User_repo_impl) GetGoodsPrice(ctx context.Context, db repo.SQLQueryer, GoodsId int) (global.ResponseStatusCode, int) {
+	query := `select price from goods where goods_id = $1`
+
+	var price int
+	err := db.QueryRowContext(ctx, query, GoodsId).Scan(&price)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return global.ResponseDataNotFound, 0
+		}
+		log.Printf("failed to get goods price for goods %d: %v", GoodsId, err)
+		return global.ResponseInternalServersError, 0
+	}
+
+	return global.ResponseSuccess, price
+}
+func (r *User_repo_impl) GetGoodsCardId(ctx context.Context, db repo.SQLQueryer, GoodsId int) (global.ResponseStatusCode, int) {
+	query := `select card_id from goods where goods_id = $1`
+
+	var card_id int
+	err := db.QueryRowContext(ctx, query, GoodsId).Scan(&card_id)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return global.ResponseDataNotFound, 0
+		}
+		log.Printf("failed to get goods price for goods %d: %v", GoodsId, err)
+		return global.ResponseInternalServersError, 0
+	}
+
+	return global.ResponseSuccess, card_id
 }

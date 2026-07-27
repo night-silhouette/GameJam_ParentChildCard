@@ -45,7 +45,8 @@ type User_handler interface {
 	PostLoot() gin.HandlerFunc
 	GoodsGet() gin.HandlerFunc
 	GoodsPost() gin.HandlerFunc
-	Refresh() gin.HandlerFunc
+	PostRefresh() gin.HandlerFunc
+	GetRefresh() gin.HandlerFunc
 }
 
 type CardSellDto struct {
@@ -394,17 +395,49 @@ func (u *User_handler_impl) GoodsGet() gin.HandlerFunc {
 		}
 	}
 }
-func (u *User_handler_impl) GoodsPost() gin.HandlerFunc {
-	return func(c *gin.Context) {}
+
+type GoodsReq struct {
+	GoodsId int `json:"goods_id"`
 }
-func (u *User_handler_impl) Refresh() gin.HandlerFunc {
+
+func (u *User_handler_impl) GoodsPost() gin.HandlerFunc {
+	return func(c *gin.Context) {
+
+		var req GoodsReq
+		UserId := c.GetInt("id")
+		if err := c.ShouldBindJSON(&req); err != nil {
+			response.Fail(c, global.ResponseInvalidReqParams)
+			fmt.Println(err)
+			return
+		}
+		err := u.s.BuyGoods(UserId, req.GoodsId, c.Request.Context())
+		if err != global.ResponseSuccess {
+			response.Fail(c, err)
+			return
+		}
+		response.Success(c, "ok")
+
+	}
+}
+func (u *User_handler_impl) PostRefresh() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		UserId := c.GetInt("id")
-		err2 := u.s.CreateGoods(UserId, c.Request.Context())
+		err2 := u.s.Refresh(UserId, c.Request.Context())
 		if err2 != global.ResponseSuccess {
 			response.Fail(c, err2)
 			return
 		}
 		response.Success(c, "ok")
+	}
+}
+func (u *User_handler_impl) GetRefresh() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		UserId := c.GetInt("id")
+		err, gold := u.s.GetRefreshGold(c.Request.Context(), UserId)
+		if err != global.ResponseSuccess {
+			response.Fail(c, err)
+			return
+		}
+		response.Success(c, gold)
 	}
 }

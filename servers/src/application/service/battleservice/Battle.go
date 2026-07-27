@@ -38,6 +38,10 @@ func CloneCardListByid(cardIdList []int, NumCalc *atomic.Int32, GoCtx context.Co
 }
 
 func (bc *BattleContainer) NewBattle(UserA int, UserB int, CardList map[int][]int, GoldMoreUserId int, cList []int) *Battle {
+	//开始战斗,商店的刷行次数归0
+	bc.User_repo.SetShopRefreshCountZero(context.Background(), bc.User_repo.Get_db(), UserA)
+	bc.User_repo.SetShopRefreshCountZero(context.Background(), bc.User_repo.Get_db(), UserB)
+
 	rootContext := context.Background()
 	BattleContext, cancel := context.WithCancel(rootContext)
 	BtId, _ := bc.User_repo.CreateBattle(BattleContext, bc.User_repo.Get_db(), UserA, UserB)
