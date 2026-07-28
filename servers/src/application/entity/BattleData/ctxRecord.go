@@ -3,6 +3,7 @@ package BattleData
 type HurtRecord struct {
 	CardCalcValueDto
 	TempId int
+	Nil    bool
 }
 
 func NewHurtRecord(dto CardCalcValueDto, TempId int) *HurtRecord {
@@ -18,5 +19,6 @@ type CtxRecord struct {
 
 func NewCtxRecord() *CtxRecord {
 	res := CtxRecord{}
+	res.LastHurt = &HurtRecord{Nil: true}
 	return &res
 }

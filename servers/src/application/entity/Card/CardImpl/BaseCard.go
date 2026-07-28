@@ -255,7 +255,6 @@ func (c *BaseCard) ReMoveBuffByTempId(BuffTempId int) {
 		// 没匹配上的正常保留
 		newList = append(newList, buff)
 	}
-
 	// 3.  将过滤后的全新切片指针重新赋给卡牌
 	c.BuffList = newList
 }

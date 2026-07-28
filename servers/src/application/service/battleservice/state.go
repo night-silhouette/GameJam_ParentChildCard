@@ -131,7 +131,6 @@ func (s *StateMachine) SharedProcess(id int, action BattleDto.Action, ResponseCh
 	if action.ActionCode == BattleDto.GetWeather && action.Predicates == BattleDto.Query {
 		res := protocol.Weather(s.c.Weather.Load())
 		ResponseChan <- BattleDto.NewAction(BattleDto.GetWeather, BattleDto.Result, res)
-		fmt.Println("前端获取天气为:", res)
 		return true
 	}
 	if action.ActionCode == BattleDto.GetEnergy && action.Predicates == BattleDto.Query {
@@ -144,11 +143,6 @@ func (s *StateMachine) SharedProcess(id int, action BattleDto.Action, ResponseCh
 	if action.ActionCode == BattleDto.GetChildCardList && action.Predicates == BattleDto.Query {
 		res := s.c.GetChildCardDto()
 		ResponseChan <- BattleDto.NewAction(BattleDto.GetChildCardList, BattleDto.Result, res)
-
-		for _, t := range res {
-			fmt.Println("childState", t)
-		}
-
 		return true
 	}
 	if action.ActionCode == BattleDto.GetSelfCardInHard && action.Predicates == BattleDto.Query { //获取自己手牌
@@ -1060,12 +1054,15 @@ func (s *SelectSkillCard) process(GoCtx context.Context) {
 
 type Judge struct {
 	StateTemplate
-	Mutex             sync.Mutex
-	TaskMap           map[int]int
-	ChanStop          chan struct{} //这东西是不用初始化的
-	ChanCrash         chan struct{}
-	IsTie             atomic.Bool
-	WaitAnimationPlay atomic.Bool
+	Mutex                  sync.Mutex
+	TaskMap                map[int]int
+	ChanStop               chan struct{} //这东西是不用初始化的
+	ChanCrash              chan struct{}
+	IsTie                  atomic.Bool
+	WaitAnimationPlay      atomic.Bool
+	ChanStopWaitAnimation  chan struct{}
+	ChanCrashWaitAnimation chan struct{}
+	TimeMutex              sync.Mutex
 }
 
 type JudgeData struct {
@@ -1117,7 +1114,16 @@ func (J *Judge) EndJudge() {
 	}
 
 	J.WaitAnimationPlay.Store(true)
-
+	J.TimeMutex.Lock()
+	J.ChanStopWaitAnimation, J.ChanCrashWaitAnimation = Util.CreateTimer(global.WaitAnimationRecall*time.Second, func() {
+		J.WaitAnimationPlay.Store(false)
+		if !J.IsTie.Load() {
+			go J.SM.finish("Combat")
+		} else {
+			go J.SM.finish("Judge")
+		}
+	})
+	J.TimeMutex.Unlock()
 }
 
 func (J *Judge) enter() {
@@ -1162,12 +1168,9 @@ func (J *Judge) process(GoCtx context.Context) {
 	handleAction := func(id int, action BattleDto.Action, ResponseChan chan<- BattleDto.Action) bool {
 
 		if J.WaitAnimationPlay.Load() && action.ActionCode == BattleDto.AnimationPlayEnd && action.Predicates == BattleDto.Notify {
-			J.WaitAnimationPlay.Store(false)
-			if !J.IsTie.Load() {
-				go J.SM.finish("Combat")
-			} else {
-				go J.SM.finish("Judge")
-			}
+			J.TimeMutex.Lock()
+			J.ChanStopWaitAnimation <- struct{}{}
+			J.TimeMutex.Unlock()
 			return true
 		}
 
@@ -1311,7 +1314,10 @@ func (c *Combat) process(GoCtx context.Context) {
 
 type CardCalc struct {
 	StateTemplate
-	HaveDone atomic.Bool
+	HaveDone  atomic.Bool
+	StopChan  chan struct{}
+	CrashChan chan struct{}
+	TimeMutex sync.Mutex
 }
 
 func (s *CardCalc) SpecialInit() {
@@ -1322,6 +1328,11 @@ func (s *CardCalc) enter() {
 	s.SM.SendActionById(s.SM.Id2, BattleDto.NewAction(BattleDto.CardCalc, BattleDto.Notify, ""))
 	s.SM.SendActionById(s.SM.Id1, BattleDto.NewAction(BattleDto.CardCalc, BattleDto.Notify, ""))
 	s.QueryTime.Store(0)
+	s.TimeMutex.Lock()
+	s.StopChan, s.CrashChan = Util.CreateTimer(global.WaitAnimationRecall*time.Second, func() {
+		go s.SM.finish("SelectSkillCard")
+	})
+	s.TimeMutex.Unlock()
 }
 
 func (s *CardCalc) CalcBtCry() { //光环的效果
@@ -1603,7 +1614,9 @@ func (s *CardCalc) process(GoCtx context.Context) {
 	fmt.Println("进入cardcal的process了")
 	handleAction := func(id int, action BattleDto.Action, ResponseChan chan<- BattleDto.Action) bool {
 		if action.ActionCode == BattleDto.AnimationPlayEnd && action.Predicates == BattleDto.Notify && s.HaveDone.Load() {
-			go s.SM.finish("SelectSkillCard")
+			s.TimeMutex.Lock()
+			s.StopChan <- struct{}{}
+			s.TimeMutex.Unlock()
 			return true
 		}
 		return false

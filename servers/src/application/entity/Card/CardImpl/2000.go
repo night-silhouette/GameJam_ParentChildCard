@@ -28,6 +28,9 @@ func (c *Card2000) Clone() CardAbstract.Card {
 
 func (c *Card2000) Check(pc protocol.ProtocolCardWithCtx) CardAbstract.ChildCheckFunc {
 	return CardAbstract.ChildCheckFunc(func(pc protocol.ProtocolCardWithCtx) (bool, int) {
+		if c.CtxRecord.LastHurt.Nil {
+			return false, 0
+		}
 		if c.HurtId != c.CtxRecord.LastHurt.TempId && c.CtxRecord.LastHurt.Value >= 6 {
 			UserId := pc.CardUserIdByTempId(c.CtxRecord.LastHurt.TempId)
 			c.HurtId = c.CtxRecord.LastHurt.TempId

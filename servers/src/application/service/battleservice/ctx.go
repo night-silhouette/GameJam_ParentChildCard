@@ -929,13 +929,13 @@ func (c *Ctx) GetCharacterCardinCardInHand(UserId int) []int {
 // GetWhereByTempId 根据tempId 返回where，找不到返回-1
 func (c *Ctx) GetWhereByTempId(UserId int, tempId int) BattleData.Where {
 	player := c.PlayerDataMap[UserId]
-	if player.ParentCardBT.GetTempId() == tempId {
+	if player.ParentCardBT != nil && player.ParentCardBT.GetTempId() == tempId {
 		return BattleData.ParentCard
 	}
-	if player.ChildCardBT.GetTempId() == tempId {
+	if player.ChildCardBT != nil && player.ChildCardBT.GetTempId() == tempId {
 		return BattleData.ChildCard
 	}
-	if player.SkillCardBT.GetTempId() == tempId {
+	if player.SkillCardBT != nil && player.SkillCardBT.GetTempId() == tempId {
 		return BattleData.SkillCard
 	}
 	return -1

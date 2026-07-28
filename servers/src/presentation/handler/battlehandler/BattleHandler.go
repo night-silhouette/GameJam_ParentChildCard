@@ -165,7 +165,7 @@ func (u *BattleHandlerImpl) BattleWs() gin.HandlerFunc {
 		case <-HandlerCtx.Done():
 			return
 		case playerChan := <-transformAddMatchWithThis:
-			go u.ListenResponse(conn, playerChan.ResponseChan, HandlerCtx)
+			go u.ListenResponse(id, conn, playerChan.ResponseChan, HandlerCtx)
 		}
 
 		select { //阻塞，不让handler直接结束
@@ -228,7 +228,7 @@ func (u *BattleHandlerImpl) ListenRequestConn(p []byte, conn *websocket.Conn, ca
 		conn.Close()
 		return false
 	}
-
+	u.Log(UserId, "[客->服]", action)
 	select {
 	case playerC <- action:
 	case <-goctx.Done():
@@ -244,7 +244,7 @@ func (u *BattleHandlerImpl) ListenRequestConn(p []byte, conn *websocket.Conn, ca
 	return true
 }
 
-func (u *BattleHandlerImpl) ListenResponse(conn *websocket.Conn, playerC chan BattleDto.Action, goctx context.Context) {
+func (u *BattleHandlerImpl) ListenResponse(UserId int, conn *websocket.Conn, playerC chan BattleDto.Action, goctx context.Context) {
 	for {
 		select {
 		case Res, _ := <-playerC:
@@ -257,6 +257,7 @@ func (u *BattleHandlerImpl) ListenResponse(conn *websocket.Conn, playerC chan Ba
 				continue
 			} //监听内部错误
 			u.writeMu.Lock()
+			u.Log(UserId, "[服->客]", Res)
 			response.WsSuccess(conn, Res) //直接返回action
 			u.writeMu.Unlock()
 		case <-goctx.Done():
@@ -329,7 +330,7 @@ func (u *BattleHandlerImpl) WsReconnect() gin.HandlerFunc {
 		Nt := Bt.GetPlayerChanByUserID(UserId)
 
 		//接受
-		go u.ListenResponse(conn, Nt.ResponseChan, HandlerCtx)
+		go u.ListenResponse(UserId, conn, Nt.ResponseChan, HandlerCtx)
 		go func() {
 			for {
 				_, p, err := conn.ReadMessage()
@@ -354,4 +355,10 @@ func (u *BattleHandlerImpl) WsReconnect() gin.HandlerFunc {
 		}
 
 	}
+}
+
+func (u *BattleHandlerImpl) Log(UserId int, Ori string, data any) {
+	now := time.Now()
+	formatted := now.Format("[2006-01-02 15:04:05]")
+	fmt.Println(formatted+" "+Ori+" "+"UserId:"+fmt.Sprintf("%d", UserId)+" Action:", data)
 }

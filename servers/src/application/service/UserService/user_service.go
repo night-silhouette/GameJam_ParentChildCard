@@ -520,36 +520,45 @@ func (u *User_service_impl) BuyGoods(UserId int, GoodsId int, ctx context.Contex
 
 	}
 	defer tx.Rollback()
+	fmt.Println(GoodsId)
 
 	//判定是不是买的起这个
 	err1, price := u.repo.GetGoodsPrice(ctx, u.repo.Get_db(), GoodsId)
 	if err1 != global.ResponseSuccess {
+		fmt.Println("GoodsBuy err1")
 		return err1
 	}
+
 	err4, UserGold := u.repo.GetAssetGold(ctx, tx, UserId)
 	if err4 != global.ResponseSuccess {
+		fmt.Println("GoodsBuy err2")
 		return err4
 	}
 	if UserGold < price {
+		fmt.Println("GoodsBuy err3")
 		return global.ResponseGoldNotEnough
 	}
 
 	//放到包里,删掉good,
 	err3, cardId := u.repo.GetGoodsCardId(ctx, tx, GoodsId)
 	if err3 != global.ResponseSuccess {
+		fmt.Println("GoodsBuy err4")
 		return err3
 	}
 	err5 := u.repo.AddCardInBags(ctx, tx, cardId, UserId)
 	if err5 != global.ResponseSuccess {
+		fmt.Println("GoodsBuy err5")
 		return err5
 	}
 	err := u.repo.DeleteGoodsByGoodId(ctx, tx, GoodsId)
 	if err != global.ResponseSuccess {
+		fmt.Println("GoodsBuy err6")
 		return err
 	}
 	//扣掉钱
 	err6 := u.repo.UpdateAssetGold(ctx, u.repo.Get_db(), UserId, -price)
 	if err6 != global.ResponseSuccess {
+		fmt.Println("GoodsBuy err7")
 		return err6
 	}
 

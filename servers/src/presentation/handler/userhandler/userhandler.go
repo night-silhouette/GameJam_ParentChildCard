@@ -410,6 +410,8 @@ func (u *User_handler_impl) GoodsPost() gin.HandlerFunc {
 			fmt.Println(err)
 			return
 		}
+		fmt.Println("goodid:", req)
+		
 		err := u.s.BuyGoods(UserId, req.GoodsId, c.Request.Context())
 		if err != global.ResponseSuccess {
 			response.Fail(c, err)
