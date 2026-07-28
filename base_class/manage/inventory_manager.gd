@@ -33,6 +33,7 @@ var gold : int:
 		return _gold
 	set(value):
 		_gold = value
+		print("[InventoryManager] gold setter 触发, value=", value)
 		gold_updated.emit(_gold)
 		
 
@@ -137,7 +138,10 @@ func _find_card_resource_by_id(target_id: int) -> CardResource:
 	return null
 	
 func _get_self_gold(data:int):
+	print("[InventoryManager] _get_self_gold 收到 data=", data)
 	gold = data
+	gold_updated.emit(gold)
+	
 ## 读取卡牌文件夹，通过文件名解析并返回所有 card_id 的数组
 func get_all_card_ids_by_filename() -> Array[int]:
 	var id_list: Array[int] = []

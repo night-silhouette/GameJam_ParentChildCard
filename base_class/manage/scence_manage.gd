@@ -30,6 +30,8 @@ func fchange_scence(state):
 		"bag":
 			next_path = "res://game_scene/bag/bag.tscn"
 			Global.game_sence = 4
+		"toshop":
+			next_path = "res://game_scene/shop/shop.tscn"
 	await goto_scene(next_path)
 
 

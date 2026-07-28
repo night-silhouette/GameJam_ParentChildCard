@@ -1,0 +1,60 @@
+[gd_scene load_steps=7 format=3 uid="uid://cyv76yrm51l1q"]
+
+[ext_resource type="Script" uid="uid://ccnftux5iogda" path="res://game_scene/shop/shop_card.gd" id="1_jum2m"]
+[ext_resource type="PackedScene" uid="uid://cfsmqjjmevec7" path="res://game_scene/menu/coin.tscn" id="2_jum2m"]
+[ext_resource type="PackedScene" uid="uid://boegco3l75f2v" path="res://base_class/card/shopcard.tscn" id="2_xt0wf"]
+[ext_resource type="Texture2D" uid="uid://bu4fyrvundkww" path="res://素材/使用素材/战斗内/暂停/零件/旗帜/4.png" id="3_xt0wf"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_urxwv"]
+font_size = 106
+font_color = Color(0.9098039, 0.78039217, 0.10980392, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_86t3k"]
+font_size = 201
+font_color = Color(0.8980392, 0.09411765, 0.11372549, 1)
+
+[node name="shop_card" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+scale = Vector2(0.99501944, 1)
+script = ExtResource("1_jum2m")
+
+[node name="shopcard" parent="." instance=ExtResource("2_xt0wf")]
+layout_mode = 1
+scale = Vector2(0.17816363, 0.17816363)
+
+[node name="coin" parent="." instance=ExtResource("2_jum2m")]
+position = Vector2(10.29756, 117.93851)
+scale = Vector2(0.116173916, 0.116173916)
+autoplay = "coin"
+
+[node name="num" type="Label" parent="coin"]
+offset_left = 100.73209
+offset_top = -51.11737
+offset_right = 375.18512
+offset_bottom = 55.88263
+scale = Vector2(1.4140079, 1.4140079)
+text = "100"
+label_settings = SubResource("LabelSettings_urxwv")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="折扣" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = 40.0
+offset_top = 4.0
+offset_right = 606.0
+offset_bottom = 305.0
+rotation = -0.6429262
+scale = Vector2(0.07751666, 0.07751666)
+texture = ExtResource("3_xt0wf")
+
+[node name="打折" type="Label" parent="折扣"]
+layout_mode = 0
+offset_left = 113.80945
+offset_top = 43.77288
+offset_right = 555.80945
+offset_bottom = 245.77289
+scale = Vector2(0.77313083, 0.77313083)
+text = "+ 10%"
+label_settings = SubResource("LabelSettings_86t3k")

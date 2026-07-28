@@ -103,14 +103,15 @@ func send_action(action_code: int, action_data = null, predicates: int = 2): # 1
 
 func reconnect():
 	var retry_delay := 4.0
-	while(1):
+	while true:
 		ws.close()
 		_reconnect_ws()
 		print("重连中...")
+		Global.start_delay_timer(retry_delay)
+		await SignalBus.time_end
+		
 		if is_connected:
 			SignalBus.request_reconnect_query.emit()
 			print("重连成功")
 			return
-		Global.start_delay_timer(retry_delay)
-		await SignalBus.time_end
-		print("重连中...")
+		print("重连超时，重试...")

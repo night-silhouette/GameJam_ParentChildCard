@@ -1,7 +1,9 @@
-[gd_scene load_steps=3 format=3 uid="uid://0rph0i5b2lei"]
+[gd_scene load_steps=5 format=3 uid="uid://0rph0i5b2lei"]
 
 [ext_resource type="PackedScene" uid="uid://6drvwctgyu2f" path="res://game_scene/menu/secnce_ui.tscn" id="1_5l4vc"]
 [ext_resource type="Script" uid="uid://dxdqgjkv8cf5x" path="res://game_scene/menu/menu_secence.gd" id="1_id1wv"]
+[ext_resource type="PackedScene" uid="uid://cf218n73yp1t0" path="res://game_scene/battle/万能按钮.tscn" id="3_2vt4c"]
+[ext_resource type="PackedScene" uid="uid://iijoebau858w" path="res://game_scene/街机按钮.tscn" id="3_f7q6n"]
 
 [node name="menu_secence" type="Control"]
 layout_mode = 3
@@ -22,3 +24,22 @@ grow_vertical = 2
 
 [node name="sence_ui" parent="." instance=ExtResource("1_5l4vc")]
 layout_mode = 1
+
+[node name="街机按钮" parent="." instance=ExtResource("3_f7q6n")]
+layout_mode = 0
+offset_left = 146.0
+offset_top = 502.0
+offset_right = 577.0
+offset_bottom = 829.0
+scale = Vector2(0.23600923, 0.23600923)
+
+[node name="万能按钮" parent="." instance=ExtResource("3_2vt4c")]
+layout_mode = 0
+offset_left = 913.99994
+offset_top = 330.0
+offset_right = 2063.0
+offset_bottom = 1407.0
+scale = Vector2(0.08523828, 0.08523828)
+
+[connection signal="button_down" from="街机按钮" to="." method="_on_街机按钮_button_down"]
+[connection signal="button_down" from="万能按钮" to="." method="_on_万能按钮_button_down"]

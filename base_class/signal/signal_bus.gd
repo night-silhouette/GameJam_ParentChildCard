@@ -29,7 +29,7 @@ signal request_bag_card
 signal request_card_random
 signal request_get_self_gold
 signal request_debug_addcard
-signal request_sell_card(card_list:Array)
+signal request_sell_card()
 signal request_battle
 signal request_loot
 signal request_loot_post
@@ -40,7 +40,10 @@ signal request_get_mail(page: int)
 signal request_delete_mail(data: Array[int])
 signal request_post_friend_mail()
 
-
+signal request_shop_get()
+signal request_shop_post()
+signal request_refresh_glod_get()
+signal request_refresh()
 # 时间
 signal request_get_time(time: int)
 
@@ -66,6 +69,10 @@ signal ifbattle(index:bool)
 signal loot(data)
 signal loot_post_success
 
+signal shop_get()
+signal shop_post()
+signal refresh_glod_get()
+signal refresh_shop()
 # 邮件
 signal send_mail_success()
 signal get_mail_numberN_success()
@@ -231,3 +238,4 @@ signal left_clicked(stuff_id: int,state: int)
 signal right_clicked(stuff_id: int,state: int)	
 signal notice_updated(msg:String)
 signal notic_end()
+signal buy_card(goods_id: int)

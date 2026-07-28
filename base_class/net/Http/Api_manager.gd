@@ -33,6 +33,10 @@ func _ready():
 	SignalBus.request_battle.connect(_request_battle)
 	SignalBus.request_loot.connect(_request_loot)
 	SignalBus.request_loot_post.connect(_request_loot_post)
+	SignalBus.request_shop_get.connect(_request_shop_get)
+	SignalBus.request_shop_post.connect(_request_shop_post)
+	SignalBus.request_refresh.connect(_request_refresh)
+	SignalBus.request_refresh_glod_get.connect(_request_refresh_glod_get)
 # =========================
 # Token
 # =========================
@@ -179,7 +183,7 @@ func _request_sell_card():
 	var body = {
 		"stuff_id_list" = card_list
 	}
-	# print(body)
+	print("sell_card: ",body)
 	NetworkClient.call_api(url,HTTPClient.METHOD_POST, body)
 
 
@@ -199,3 +203,20 @@ func _request_loot_post(card_list,loot_id):
 	}	
 	print("body: ",body)
 	NetworkClient.call_api(url,HTTPClient.METHOD_POST,body)#最多5个
+func _request_shop_get():
+	var url = "/v1/shop/goods/"
+	NetworkClient.call_api(url,HTTPClient.METHOD_GET)
+func _request_shop_post(goods_id):
+	var url = "/v1/shop/goods/"
+	var body = {
+		"goods_id" = goods_id
+	}
+	NetworkClient.call_api(url,HTTPClient.METHOD_POST,body) 
+
+func _request_refresh():
+	var url = "/v1/shop/refresh/"
+	NetworkClient.call_api(url,HTTPClient.METHOD_POST)
+	
+func _request_refresh_glod_get():
+	var url = "/v1/shop/refresh/"
+	NetworkClient.call_api(url,HTTPClient.METHOD_GET)

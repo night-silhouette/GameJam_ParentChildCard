@@ -23,7 +23,6 @@ func _make_placeholder() -> Control:
 	var p = loot_card_scene.instantiate()
 	p.modulate.a = 0.0
 	p.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	p.process_mode = Node.PROCESS_MODE_DISABLED
 	return p
 
 
@@ -51,7 +50,8 @@ func _populate(grid: GridContainer, zone: int) -> void:
 	# 底部填充：补满当前行 + 额外一整排（底部hover空间）
 	var total := CARD_COLUMNS + real_cards.size()
 	var fill := (CARD_COLUMNS - total % CARD_COLUMNS) % CARD_COLUMNS
-	fill += CARD_COLUMNS
+	fill += CARD_COLUMNS * 2
+	print("zone=%d, real=%d, top=5, bottom=%d, total_children=%d" % [zone, real_cards.size(), fill, CARD_COLUMNS + real_cards.size() + fill])
 	for _i in range(fill):
 		grid.add_child(_make_placeholder())
 

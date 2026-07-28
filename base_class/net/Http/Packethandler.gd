@@ -111,7 +111,7 @@ func _handle_raw_api_data(api_name: String, method: int, code: int, data: Varian
 				pass
 				print("add_success")
 		"/v1/bags/sell/":
-			if method ==  HTTPClient.METHOD_GET:
+			if method ==  HTTPClient.METHOD_POST:
 				SignalBus.sell_card_success.emit()
 				
 		"/v1/user/battle/":
@@ -121,6 +121,21 @@ func _handle_raw_api_data(api_name: String, method: int, code: int, data: Varian
 		"/v1/user/loot/":
 			if method == HTTPClient.METHOD_GET:#lootdato的数组，我需要区循坏对像
 				SignalBus.loot.emit(data)
-				print("loot: ",data)
+				#print("loot: ",data)
 			elif method == HTTPClient.METHOD_POST:
 				SignalBus.login_success.emit()
+
+		"/v1/shop/goods/":
+			if method == HTTPClient.METHOD_GET:
+				SignalBus.shop_get.emit(data)#good_dto数组
+				print("data: ",data)
+			if method == HTTPClient.METHOD_POST:
+				SignalBus.shop_post.emit()#购买成功
+				print("购买成功")
+		"/v1/shop/refresh/":
+			if method == HTTPClient.METHOD_GET:
+				SignalBus.refresh_glod_get.emit(data)
+				print("gold: ",data)#int金币数
+			if method == HTTPClient.METHOD_POST:
+				SignalBus.refresh_shop.emit()#刷新商店，检验一下金钱是否足够
+				print("刷新成功")

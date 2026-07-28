@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://dyf2d4fk0iwnw"]
+[gd_scene load_steps=18 format=3 uid="uid://dyf2d4fk0iwnw"]
 
 [ext_resource type="Script" uid="uid://dfwirrt2v83mb" path="res://game_scene/bag/bag.gd" id="1_356oh"]
 [ext_resource type="Script" uid="uid://dt0fvtr10talu" path="res://game_ui/battle/牌库/切换.gd" id="1_kfbbc"]
@@ -14,6 +14,10 @@
 [ext_resource type="Texture2D" uid="uid://ci7ym6d16j3bs" path="res://素材/使用素材/战斗外/游戏初始界面/UI手（左手）.png" id="12_ir6ui"]
 [ext_resource type="PackedScene" uid="uid://iijoebau858w" path="res://game_scene/街机按钮.tscn" id="13_e8h8r"]
 [ext_resource type="FontFile" uid="uid://bj1pdtvpfop4a" path="res://素材/使用素材/YaoSuiXinShouXieTi-2.ttf" id="14_1ycey"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_1ycey"]
+font_size = 56
+font_color = Color(0.9019608, 0.81960785, 0.11764706, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_dxttr"]
 font = ExtResource("14_1ycey")
@@ -103,6 +107,15 @@ offset_left = 890.0
 offset_top = 5.0
 offset_right = 1151.0
 offset_bottom = 257.0
+
+[node name="num" type="Label" parent="金币显示"]
+layout_mode = 0
+offset_left = 380.35825
+offset_top = 81.24157
+offset_right = 420.35825
+offset_bottom = 106.24157
+scale = Vector2(2.649487, 2.726132)
+label_settings = SubResource("LabelSettings_1ycey")
 
 [node name="返回" type="TextureButton" parent="."]
 layout_mode = 0
