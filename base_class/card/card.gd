@@ -40,7 +40,7 @@ func populate_detail_page(detail_page: Control) -> void:
 	var child_icon = detail_page.get_node_or_null("子牌") as TextureRect
 	var hp_label = detail_page.get_node_or_null("信息标血量/hp") as Label
 	var attack_label = detail_page.get_node_or_null("信息标攻击/attack") as Label
-	var cost_label = detail_page.get_node_or_null("点ui/数值") as Label
+	var cost_label = detail_page.get_node_or_null("点ui/energy") as Label
 	var skill_effect_label = detail_page.get_node_or_null("信息标技能/技能效果") as Label
 	var summon_condition_label = detail_page.get_node_or_null("信息标技能/召唤条件") as Label
 	var summon_effect_label = detail_page.get_node_or_null("信息标技能/召唤效果") as Label
@@ -56,7 +56,7 @@ func populate_detail_page(detail_page: Control) -> void:
 	# HP / Attack / 能量消耗
 	if hp_label: hp_label.text = str(max_health)
 	if attack_label: attack_label.text = str(card_damage)
-	if cost_label: cost_label.text = str(value)
+	if cost_label: cost_label.text = str(skill_charge)
 	# 技能效果/召唤条件/召唤效果
 	if skill_effect_label:
 		skill_effect_label.text = "技能效果：" + skill_description

@@ -2,6 +2,7 @@ extends Node
 
 var ws := WebSocketPeer.new()
 var is_connected := false
+var _reconnecting := false
 func _ready() -> void:
 	SignalBus.to_connect_ws.connect(_connect_ws);
 	SignalBus.to_reconnect_to.connect(_reconnect_ws)
@@ -60,7 +61,7 @@ func _process(delta):
 			_on_message(msg)
 	
 	elif ws.get_ready_state() == WebSocketPeer.STATE_CLOSED:
-		if is_connected:
+		if is_connected and not _reconnecting:
 			is_connected = false
 			print("WS断开")
 			reconnect()
@@ -102,6 +103,7 @@ func send_action(action_code: int, action_data = null, predicates: int = 2): # 1
 	# print("向后端发送: ", json)
 
 func reconnect():
+	_reconnecting = true
 	var retry_delay := 4.0
 	while true:
 		ws.close()
@@ -113,5 +115,7 @@ func reconnect():
 		if is_connected:
 			SignalBus.request_reconnect_query.emit()
 			print("重连成功")
+			_reconnecting = false
 			return
 		print("重连超时，重试...")
+	_reconnecting = false

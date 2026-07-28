@@ -9,7 +9,7 @@ extends Control
 @onready var skill_effect_label: Label = $"信息标技能/技能效果"
 @onready var summon_condition_label: Label = $"信息标技能/召唤条件"
 @onready var summon_effect_label: Label = $"信息标技能/召唤效果"
-@onready var cost_label: Label = $"点ui/数值"
+@onready var cost_label: Label = $"点ui/energy"
 
 
 ## 导入卡牌数据到详情页（总函数）

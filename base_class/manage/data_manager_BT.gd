@@ -176,47 +176,7 @@ func _ready() -> void:
 
 #region ==================== Zone 优先级系统 ====================
 
-## Zone 优先级定义：数值越大优先级越高
-## combat zone > hand zone > state zone
-const ZONE_PRIORITY = {
-	# combat zones (最高优先级)
-	Global.ZONE_CARD.PARENT_BATTLE_ZONE: 300,
-	Global.ZONE_CARD.CHILD_BATTLE_ZONE: 300,
-	Global.ZONE_CARD.SPELL_ZONE: 300,
-	Global.ZONE_CARD.ENEMY_PARENT_ZONE: 300,
-	Global.ZONE_CARD.ENEMY_CHILD_ZONE: 300,
-	Global.ZONE_CARD.ENEMY_SPELL_ZONE: 300,
-	
-	# hand zones (中等优先级)
-	Global.ZONE_CARD.DECK_ZONE: 200,
-	Global.ZONE_CARD.ENEMY_HAND_ZONE: 200,
-	
-	# state zones (最低优先级 - 由 child_state 决定)
-	Global.ZONE_CARD.CHILD_ACTIVE: 100,
-	Global.ZONE_CARD.CHILD_NOT_ACTIVE: 100,
-	Global.ZONE_CARD.CHILD_DIED: 100,
-	Global.ZONE_CARD.CHILD_HAS_CATCH: 100,
-	
-	# 其他
-	Global.ZONE_CARD.DISCARD_ZONE: 50,
-	Global.ZONE_CARD.FREE_ZONE: 10,
-}
 
-## 获取 zone 的优先级，未定义的返回 0
-func _get_zone_priority(zone: int) -> int:
-	return ZONE_PRIORITY.get(zone, 0)
-
-## 判断新 zone 是否应该覆盖旧 zone
-## 规则：新 zone 优先级 >= 旧 zone 优先级时才覆盖
-## 例外：FREE_ZONE 总是可以被覆盖
-func _should_override_zone(old_zone: int, new_zone: int) -> bool:
-	if old_zone == Global.ZONE_CARD.FREE_ZONE:
-		return true
-	var old_priority = _get_zone_priority(old_zone)
-	var new_priority = _get_zone_priority(new_zone)
-	return new_priority >= old_priority
-
-#endregion
 
 
 #region ==================== 卡牌数据导入（原有逻辑） ====================
@@ -281,13 +241,7 @@ func _sync_card_data(new_data: Dictionary, zone):
 
 	if not existing_cards.is_empty():
 		for existing_card in existing_cards:
-			# 优先级判断：新 zone 优先级 >= 旧 zone 才更新
-			var old_zone = int(existing_card.get("zone", 0))
-			if not _should_override_zone(old_zone, zone):
-				# 不更新 zone，但更新其他数据（hp, damage, buff 等）
-				_update_card_stats(existing_card, new_data)
-				continue
-			
+
 			# 更新 zone 和数据
 			existing_card["zone"] = zone
 			_update_card_stats(existing_card, new_data)

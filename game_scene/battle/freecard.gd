@@ -1,9 +1,10 @@
 extends Node
 @export var card_manager: Node
-@export var zone : int
+@export var zone : int = Global.ZONE_CARD.FREE_ZONE
 @export var card : Control
 @export var area : Area2D
-var cards: Array   # 你的全部牌
+var temp_id : int
+var cards: Array   #
 var is_drag : bool = false;
 	
 
@@ -26,7 +27,8 @@ func refresh_ui():
 
 func _update_view():
 	if !cards.is_empty():
-		card.update_card_data(cards[0])
+		card.import_card_data(cards[0].get("resouce"))
+		temp_id = cards[0].get("temp_id")
 		is_drag = true;
 		_activate();
 	else:
@@ -52,12 +54,7 @@ func _activate():
 	card.visible = true
 
 	# 恢复 process
-	card.process_mode = Node.PROCESS_MODE_INHERIT
 
-	# 恢复输入
-	card.mouse_filter = Control.MOUSE_FILTER_STOP
-	area.monitoring = true
-	area.monitorable = true
 
 func _input(event: InputEvent) -> void:
 	# 如果当前根本没有在拖拽，或者卡牌实例不存在，直接无视全局输入
@@ -69,11 +66,11 @@ func _input(event: InputEvent) -> void:
 		if not event.pressed: # 鼠标松开了
 			
 			# 在清空状态前，先把需要发送的数据存下来，防止下一步失效
-			var temp_id_to_send = card.temp_id
+			var temp_id_to_send = temp_id
 			
 			# 1. 立即重置拖拽状态，防止信号延迟导致二次触发
 			is_drag = false 
-			
+			print(temp_id_to_send)
 			# 2. 发送信号给后端/网络层
 			SignalBus.exit_freecard.emit(temp_id_to_send)
 			

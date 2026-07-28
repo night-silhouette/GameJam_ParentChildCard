@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://d2ji4k252p7g6"]
 
-[ext_resource type="PackedScene" uid="uid://diwsy4ebydgfx" path="res://base_class/card/battle_card.tscn" id="1_ltpsv"]
 [ext_resource type="Script" uid="uid://cilc21j3xhiem" path="res://game_scene/battle/freecard.gd" id="1_uqdmw"]
+[ext_resource type="PackedScene" uid="uid://bvongwrpqp0vv" path="res://game_ui/卡牌具体页.tscn" id="2_uqdmw"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_uqdmw"]
 size = Vector2(50.847984, 73.36117)
@@ -10,14 +10,12 @@ size = Vector2(50.847984, 73.36117)
 layout_mode = 3
 anchors_preset = 0
 script = ExtResource("1_uqdmw")
-zone = 6
-card = NodePath("Control")
+card = NodePath("卡牌具体页")
 area = NodePath("Area2D")
 
-[node name="Control" parent="." instance=ExtResource("1_ltpsv")]
+[node name="卡牌具体页" parent="." instance=ExtResource("2_uqdmw")]
 layout_mode = 0
-offset_right = 329.0
-offset_bottom = 570.0
+scale = Vector2(0.11826721, 0.11826721)
 
 [node name="Area2D" type="Area2D" parent="."]
 

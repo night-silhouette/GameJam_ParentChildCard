@@ -500,10 +500,10 @@ offset_bottom = 1206.0
 scale = Vector2(0.1821678, 0.18543674)
 
 [node name="freecard" parent="." node_paths=PackedStringArray("card_manager") instance=ExtResource("12_ro313")]
-offset_left = 348.0
-offset_top = 729.0
-offset_right = 348.0
-offset_bottom = 729.0
+offset_left = 741.0
+offset_top = 527.0
+offset_right = 741.0
+offset_bottom = 527.0
 card_manager = NodePath("../数据层/card_manager")
 
 [node name="信息显示" type="Control" parent="."]
