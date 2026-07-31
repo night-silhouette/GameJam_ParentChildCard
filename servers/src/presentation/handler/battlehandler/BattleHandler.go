@@ -228,7 +228,7 @@ func (u *BattleHandlerImpl) ListenRequestConn(p []byte, conn *websocket.Conn, ca
 		conn.Close()
 		return false
 	}
-	u.Log(UserId, "[客->服]", action)
+
 	select {
 	case playerC <- action:
 	case <-goctx.Done():
@@ -237,6 +237,7 @@ func (u *BattleHandlerImpl) ListenRequestConn(p []byte, conn *websocket.Conn, ca
 
 		if playerC == nil {
 			u.writeMu.Lock()
+			u.Log(UserId, "[客->服]", action)
 			response.WsFailWithMsg(conn, global.BattleInvalidTiming, "正在匹配中")
 			u.writeMu.Unlock()
 		}
@@ -360,5 +361,5 @@ func (u *BattleHandlerImpl) WsReconnect() gin.HandlerFunc {
 func (u *BattleHandlerImpl) Log(UserId int, Ori string, data any) {
 	now := time.Now()
 	formatted := now.Format("[2006-01-02 15:04:05]")
-	fmt.Println(formatted+" "+Ori+" "+"UserId:"+fmt.Sprintf("%d", UserId)+" Action:", data)
+	fmt.Println("[WS-debug] "+formatted+" "+Ori+" "+"[UserId:"+fmt.Sprintf("%d]", UserId)+" Action:", data)
 }
