@@ -97,7 +97,7 @@ scale = Vector2(0.39265555, 0.39265555)
 texture = ExtResource("1_facoa")
 
 [node name="信息标血量" type="TextureRect" parent="."]
-modulate = Color(0.9249212, 0.73039585, 0.7039984, 1)
+modulate = Color(0.90588236, 0.105882354, 0.10980392, 1)
 layout_mode = 0
 offset_left = 319.3665
 offset_top = 214.90079
@@ -119,7 +119,7 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="信息标攻击" type="TextureRect" parent="."]
-modulate = Color(0.6154497, 0.44987375, 0.74694973, 1)
+modulate = Color(0.8980392, 0.12941177, 0.14901961, 1)
 layout_mode = 0
 offset_left = 311.90466
 offset_top = 334.29016
@@ -179,7 +179,7 @@ autowrap_mode = 1
 metadata/_edit_use_anchors_ = true
 
 [node name="点ui" type="TextureRect" parent="."]
-modulate = Color(0.5931336, 0.59313357, 0.59313357, 1)
+modulate = Color(0.8175213, 0.8175213, 0.81752115, 1)
 layout_mode = 0
 offset_left = 349.2138
 offset_top = 780.5078
