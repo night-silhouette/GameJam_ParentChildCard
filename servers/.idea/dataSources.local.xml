@@ -1,30 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="dataSourceStorageLocal" created-in="GO-253.31033.129">
-    <data-source name="pccard@120.26.145.68" uuid="626966bd-e130-4f5a-83d5-704f5f250146">
-      <database-info product="PostgreSQL" version="16.11 (Ubuntu 16.11-1.pgdg24.04+1)" jdbc-version="4.2" driver-name="PostgreSQL JDBC Driver" driver-version="42.7.3" dbms="POSTGRES" exact-version="16.11" exact-driver-version="42.7">
-        <identifier-quote-string>&quot;</identifier-quote-string>
-      </database-info>
-      <case-sensitivity plain-identifiers="lower" quoted-identifiers="exact" />
-      <secret-storage>master_key</secret-storage>
-      <user-name>night</user-name>
-      <schema-mapping>
-        <introspection-scope>
-          <node negative="1">
-            <node kind="database" qname="@">
-              <node kind="schema" qname="@" />
-            </node>
-            <node kind="database" qname="pccard">
-              <node kind="schema">
-                <name qname="@" />
-                <name qname="information_schema" />
-                <name qname="pg_catalog" />
-                <name qname="public" />
-              </node>
-            </node>
-          </node>
-        </introspection-scope>
-      </schema-mapping>
+    <data-source name="postgres@120.26.145.68" uuid="066f7691-9478-48a9-8a76-02b7331a7756">
+      <database-info product="" version="" jdbc-version="" driver-name="" driver-version="" dbms="POSTGRES" />
+      <schema-mapping />
     </data-source>
   </component>
 </project>

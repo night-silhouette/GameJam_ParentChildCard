@@ -45,7 +45,7 @@ texture = ExtResource("1_i8rll")
 metadata/_edit_lock_ = true
 
 [node name="母牌" type="TextureRect" parent="."]
-modulate = Color(0.6117647, 0.6117647, 0.6117647, 0.23529412)
+modulate = Color(0.6117647, 0.6117647, 0.6117647, 0.16470589)
 self_modulate = Color(0, 0, 0, 1)
 layout_mode = 0
 offset_left = 19.616695
@@ -70,17 +70,18 @@ texture = ExtResource("2_cccau")
 layout_mode = 0
 offset_left = 29.425053
 offset_top = 82.39015
-offset_right = 632.42505
-offset_bottom = 1120.3901
+offset_right = 783.0394
+offset_bottom = 1379.6567
 scale = Vector2(0.39265555, 0.39265555)
 texture = ExtResource("1_facoa")
 
 [node name="信息标血量" type="TextureRect" parent="."]
+modulate = Color(1, 0, 0, 1)
 layout_mode = 0
-offset_left = 294.2505
-offset_top = 231.47705
-offset_right = 635.2505
-offset_bottom = 553.47705
+offset_left = 319.3665
+offset_top = 283.54968
+offset_right = 660.36646
+offset_bottom = 605.5497
 scale = Vector2(0.15337034, 0.15337034)
 texture = ExtResource("4_6px4b")
 
@@ -96,11 +97,12 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="信息标攻击" type="TextureRect" parent="."]
+modulate = Color(1, 0, 0, 1)
 layout_mode = 0
-offset_left = 292.28882
-offset_top = 339.36893
-offset_right = 675.2888
-offset_bottom = 674.3689
+offset_left = 311.90466
+offset_top = 376.07642
+offset_right = 694.90466
+offset_bottom = 711.0764
 scale = Vector2(0.15902978, 0.15902978)
 texture = ExtResource("6_i8rll")
 
@@ -117,10 +119,10 @@ vertical_alignment = 1
 
 [node name="name" type="Label" parent="."]
 layout_mode = 0
-offset_left = 270.11838
-offset_top = 116.4046
-offset_right = 465.6184
-offset_bottom = 204.45424
+offset_left = 298.47333
+offset_top = 164.16032
+offset_right = 480.7191
+offset_bottom = 246.2405
 text = "明阳"
 label_settings = SubResource("LabelSettings_ecism")
 horizontal_alignment = 1
@@ -128,67 +130,38 @@ vertical_alignment = 1
 
 [node name="信息标技能" type="TextureRect" parent="."]
 layout_mode = 0
-offset_left = 38.801533
-offset_top = 483.52686
-offset_right = 266.80154
-offset_bottom = 823.52686
+offset_left = 26.8626
+offset_top = 583.5154
+offset_right = 338.62164
+offset_bottom = 1047.9731
 scale = Vector2(0.23455925, 0.23455925)
 texture = ExtResource("8_kwojn")
 
 [node name="技能效果" type="Label" parent="信息标技能"]
+clip_contents = true
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.36504957
-anchor_top = 0.16629915
-anchor_right = 0.36504963
-anchor_bottom = 0.785826
+anchor_left = 0.4506465
+anchor_top = 0.28612104
+anchor_right = 0.37888432
+anchor_bottom = 0.8218291
 offset_left = 183.99077
 offset_top = -50.179504
 offset_right = 1580.648
 offset_bottom = 292.7126
-text = "技能效果："
+grow_horizontal = 2
+grow_vertical = 2
 label_settings = SubResource("LabelSettings_nhyyg")
-autowrap_mode = 1
-metadata/_edit_use_anchors_ = true
-
-[node name="召唤条件" type="Label" parent="信息标技能"]
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.52950245
-anchor_top = 0.65106934
-anchor_right = 0.52950245
-anchor_bottom = 0.65106934
-offset_left = -158.90114
-offset_top = 351.25482
-offset_right = 1229.3931
-offset_bottom = 735.96277
-text = "召唤条件:"
-label_settings = SubResource("LabelSettings_nhyyg")
-autowrap_mode = 1
-metadata/_edit_use_anchors_ = true
-
-[node name="召唤效果" type="Label" parent="信息标技能"]
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.54863244
-anchor_top = 0.6364723
-anchor_right = 0.5486327
-anchor_bottom = 0.63647246
-offset_left = -150.53792
-offset_top = 744.32605
-offset_right = 1137.3975
-offset_bottom = 1179.2134
-text = "召唤效果:"
-label_settings = SubResource("LabelSettings_nhyyg")
+vertical_alignment = 1
 autowrap_mode = 1
 metadata/_edit_use_anchors_ = true
 
 [node name="点ui" type="TextureRect" parent="."]
 layout_mode = 0
-offset_left = 339.36887
-offset_top = 755.24286
-offset_right = 564.3689
-offset_bottom = 983.24286
+offset_left = 349.2138
+offset_top = 755.1376
+offset_right = 574.2138
+offset_bottom = 983.1376
 scale = Vector2(0.18228701, 0.18228701)
 texture = ExtResource("9_ecism")
 
