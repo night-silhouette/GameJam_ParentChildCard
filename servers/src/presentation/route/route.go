@@ -66,6 +66,16 @@ func Register_user_routes(h userhandler.User_handler) {
 	R.POST("v1/debug/Card/", h.DebugGiveCardByCardId())
 	R.GET("v1/bags/", h.BagGet())
 	R.POST("v1/bags/sell/", h.CardSell())
+
+	R.GET("v1/user/battle/", h.GetUserBattle())
+	R.GET("v1/user/loot/", h.GetLoot())
+	R.POST("v1/user/loot/", h.PostLoot())
+
+	R.GET("v1/shop/goods/", h.GoodsGet())       //返回[]GoodsDto
+	R.POST("v1/shop/goods/", h.GoodsPost())     //传goodid来购买
+	R.POST("v1/shop/refresh/", h.PostRefresh()) //执行刷新
+	R.GET("v1/shop/refresh/", h.GetRefresh())   //返回刷新要的钱
+
 }
 
 func Register_token_routes(h tokenhandler.Token_handler) {
@@ -80,6 +90,7 @@ func Register_token_routes(h tokenhandler.Token_handler) {
 
 func RegisterBattleWS(h battlehandler.BattleHandler) {
 	R.GET("/v1/ws/", h.BattleWs())
+	R.GET("/v1/ws/reconnect/", h.WsReconnect())
 	R.GET("/v1/debug/match_pool/", h.DebugGetMachData())
 	R.GET("/v1/debug/battle_container", h.DebugBattleContainer())
 }

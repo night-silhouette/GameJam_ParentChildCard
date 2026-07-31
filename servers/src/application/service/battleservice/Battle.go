@@ -3,13 +3,13 @@ package battleservice
 import (
 	"context"
 	"fmt"
+	"pcc_card/application/entity/BattleData"
 	"pcc_card/application/entity/Card/CardAbstract"
+	"pcc_card/application/entity/protocol"
 	"pcc_card/infra/repo/userrepo"
 	"sync"
 	"sync/atomic"
 )
-
-var battleIDCounter int64
 
 type Battle struct {
 	mu sync.RWMutex //房间锁
@@ -25,31 +25,67 @@ type Battle struct {
 	TempId atomic.Int32
 }
 
-func NewBattle(UserA int, UserB int, CardList map[int][]int, GoldMoreUserId int, cList []CardAbstract.Card) *Battle {
-	var TempId atomic.Int32
-	TempId.Store(int32(0))
+// 传来的卡的id。出来的是充血对象(填充tempid了的),tempid是自增了的
+func CloneCardListByid(cardIdList []int, NumCalc *atomic.Int32, GoCtx context.Context, ctx protocol.ProtocolCardWithCtx, CtxRecord *BattleData.CtxRecord) []CardAbstract.Card {
+	ChildCardList := make([]CardAbstract.Card, 0)
+
+	for _, CardId := range cardIdList {
+		e := CardListImpl.GetCardImpl(CardId, GoCtx, ctx, CtxRecord)
+		e.SetTempId(int(NumCalc.Add(1)))
+		ChildCardList = append(ChildCardList, e)
+	}
+	return ChildCardList
+}
+
+func (bc *BattleContainer) NewBattle(UserA int, UserB int, CardList map[int][]int, GoldMoreUserId int, cList []int) *Battle {
+	//开始战斗,商店的刷行次数归0
+	bc.User_repo.SetShopRefreshCountZero(context.Background(), bc.User_repo.Get_db(), UserA)
+	bc.User_repo.SetShopRefreshCountZero(context.Background(), bc.User_repo.Get_db(), UserB)
+
 	rootContext := context.Background()
 	BattleContext, cancel := context.WithCancel(rootContext)
-	id := int(atomic.AddInt64(&battleIDCounter, 1))
+	BtId, _ := bc.User_repo.CreateBattle(BattleContext, bc.User_repo.Get_db(), UserA, UserB)
 
+	var TempId atomic.Int32 //这是局内的tempid计数器的初始化
+	TempId.Store(int32(0))
+
+	CtxRecord := BattleData.NewCtxRecord()
+	c := Ctx{}
 	//clone手牌,给userid到ownerId
-	CardInHand := CloneByCardListImpl(CardList, &TempId)
-	for UserId, CardMap := range CardInHand {
+	//这个函数递增了tempid的计数,
+
+	CardInHand := make(map[int]map[int]CardAbstract.Card)
+	for UserId, Value := range CardList {
+		CardInHand[UserId] = make(map[int]CardAbstract.Card)
+		List := CloneCardListByid(Value, &TempId, BattleContext, &c, CtxRecord)
+		for _, Card := range List {
+			CardInHand[UserId][Card.GetTempId()] = Card
+		}
+	}
+	//这里就设置了手牌的主人,子牌的主人为没有,获取的时候设置
+	for UserId, CardMap := range CardInHand { //卡的主人这种信息属于局内信息,让ctx和battle自己管,而注入ctx,goctx和各种底层初始化,要解偶开
 		for _, Card := range CardMap {
 			Card.SetOwnerId(UserId)
 		}
 	}
+	//全都聚合在这里的,匹配只是传过来id,他只指挥生成什么牌,不具体生成牌,因为ctx和GoCtx都在这里
+	//子牌堆初始化
+	ChildCardList := make([]CardAbstract.Card, 0)
+	ChildCardList = CloneCardListByid(cList, &TempId, BattleContext, &c, CtxRecord)
 
-	ctx := NewCtx(UserA, UserB, BattleContext, CardInHand, &TempId, cList)
-	Nt := NewNotifyManager(UserA, UserB, 32) //初始化bufferSize
-	SM := NewStateMachine(ctx, UserA, UserB, Nt, BattleContext, GoldMoreUserId)
-	go func() {
+	InitCtx(&c, UserA, UserB, BattleContext, CardInHand, &TempId, ChildCardList, CtxRecord)
+	Nt := NewNotifyManager(UserA, UserB, 256) //初始化bufferSize
+	SM := NewStateMachine(&c, UserA, UserB, Nt, BattleContext, GoldMoreUserId, cancel)
+	go func() { //当这个ctx被释放的时候删除battle本身,让gc把他free.这样cancel就是结束总开关
 		select {
 		case <-BattleContext.Done():
-			BC.RemoveBattle(id)
+
+			fmt.Println("BattleContext.Done()")
+			BC.User_repo.DeleteBattle(context.Background(), BC.User_repo.Get_db(), BtId) //删除数据库里的battle
+			BC.RemoveBattle(BtId)
 		}
 	}()
-	return &Battle{BattleID: id, SM: SM, Ctx: ctx, Nt: Nt, Context: BattleContext, Cancel: cancel}
+	return &Battle{BattleID: BtId, SM: SM, Ctx: &c, Nt: Nt, Context: BattleContext, Cancel: cancel}
 }
 
 func (b *Battle) GetPlayerChanByUserID(id int) PlayerChannel {
@@ -81,34 +117,15 @@ func InitBattleContainer(repo userrepo.User_repo) {
 	BC.User_repo = repo
 	BC.Data = make(map[int]*Battle)
 	BC.UserToBTID = make(map[int]int)
-	battleIDCounter = 1
 
-}
-
-// CloneByCardListImpl 传来的卡的id。出来的是充血对象(填充tempid了的)
-func CloneByCardListImpl(cardIdList map[int][]int, NumCalc *atomic.Int32) map[int]map[int]CardAbstract.Card {
-	res := make(map[int]map[int]CardAbstract.Card)
-	for key, value := range cardIdList {
-		res[key] = make(map[int]CardAbstract.Card)
-		for _, CardId := range value {
-			card := CardListImpl.GetCardImpl(CardId)
-
-			tempId := (*NumCalc).Add(1)
-			card.SetTempId(int(tempId))
-			res[key][card.GetTempId()] = card
-		}
-
-	}
-	return res
 }
 
 // AddBattle 传来的卡的id。
-func (bc *BattleContainer) AddBattle(id1 int, id2 int, cardIdList map[int][]int, GoldMoreUserId int, cList []CardAbstract.Card) int { //启动接口
+func (bc *BattleContainer) AddBattle(id1 int, id2 int, cardIdList map[int][]int, GoldMoreUserId int, cList []int) int { //启动接口
 
-	Bt := NewBattle(id1, id2, cardIdList, GoldMoreUserId, cList)
+	Bt := bc.NewBattle(id1, id2, cardIdList, GoldMoreUserId, cList)
 	bc.mu.Lock()
 	defer bc.mu.Unlock()
-
 	bc.Data[Bt.BattleID] = Bt
 	bc.UserToBTID[id1] = Bt.BattleID
 	bc.UserToBTID[id2] = Bt.BattleID
@@ -120,9 +137,6 @@ func (bc *BattleContainer) GetBattleByUserID(id int) *Battle {
 	bc.mu.RLock()
 	defer bc.mu.RUnlock()
 	BTID := bc.UserToBTID[id]
-	if BTID == 0 {
-		return nil
-	}
 	BT := bc.Data[BTID]
 	return BT
 }
@@ -131,4 +145,11 @@ func (bc *BattleContainer) RemoveBattle(BattleId int) {
 	defer bc.mu.Unlock()
 	delete(bc.Data, BattleId)
 	delete(bc.UserToBTID, BattleId)
+}
+
+// loot存储
+func (bc *BattleContainer) SaveLoot(UserId int, CardIdList []int) {
+	bc.mu.Lock()
+	defer bc.mu.Unlock()
+	bc.User_repo.CreateLoot(context.Background(), bc.User_repo.Get_db(), CardIdList, UserId)
 }

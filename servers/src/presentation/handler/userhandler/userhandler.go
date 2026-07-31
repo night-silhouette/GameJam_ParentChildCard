@@ -2,6 +2,7 @@ package userhandler
 
 import (
 	"fmt"
+	"pcc_card/application/entity/BattleData"
 	"pcc_card/application/entity/User_entity"
 	"pcc_card/application/service"
 	"pcc_card/application/service/UserService"
@@ -39,6 +40,13 @@ type User_handler interface {
 	StarterPack() gin.HandlerFunc
 	BagGet() gin.HandlerFunc
 	CardSell() gin.HandlerFunc
+	GetUserBattle() gin.HandlerFunc
+	GetLoot() gin.HandlerFunc
+	PostLoot() gin.HandlerFunc
+	GoodsGet() gin.HandlerFunc
+	GoodsPost() gin.HandlerFunc
+	PostRefresh() gin.HandlerFunc
+	GetRefresh() gin.HandlerFunc
 }
 
 type CardSellDto struct {
@@ -313,5 +321,125 @@ func (u *User_handler_impl) DebugGiveCardByCardId() gin.HandlerFunc {
 			return
 		}
 		response.Success(c, "增加成功")
+	}
+}
+func (u *User_handler_impl) GetUserBattle() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		UserId := c.GetInt("id")
+		err := u.s.IsInBattle(c.Request.Context(), UserId)
+		if err == global.ResponseSuccess {
+			response.Success(c, true)
+			return
+		} else {
+			fmt.Println("查看是否在战斗不在err:", err)
+			response.Success(c, false)
+			return
+		}
+	}
+}
+
+func (u *User_handler_impl) GetLoot() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		UserId := c.GetInt("id")
+		err, LootDto := u.s.GetLoot(UserId, c.Request.Context())
+		if err != global.ResponseSuccess {
+			response.Fail(c, err)
+			return
+		}
+		response.Success(c, LootDto)
+	}
+}
+
+func (u *User_handler_impl) PostLoot() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var req BattleData.LootDto
+		UserId := c.GetInt("id")
+		if err := c.ShouldBindJSON(&req); err != nil {
+			response.Fail(c, global.ResponseInvalidReqParams)
+			fmt.Println(err)
+			return
+		}
+		if len(req.Data) > 5 {
+			response.Fail(c, global.BattleCardNumErr)
+			return
+		}
+
+		err1 := u.s.CreateStuffByLootCardId(&req, UserId, c.Request.Context())
+		if err1 != global.ResponseSuccess {
+			response.Fail(c, err1)
+			return
+		}
+		response.Success(c, "ok")
+		return
+	}
+}
+
+func (u *User_handler_impl) GoodsGet() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		UserId := c.GetInt("id")
+		err, List := u.s.GetGoods(UserId, c.Request.Context())
+		if err != global.ResponseSuccess {
+			response.Fail(c, err)
+			return
+		}
+		if len(List) == 0 {
+			err2 := u.s.CreateGoods(UserId, c.Request.Context())
+			if err2 != global.ResponseSuccess {
+				response.Fail(c, err2)
+				return
+			}
+			_, List2 := u.s.GetGoods(UserId, c.Request.Context())
+			response.Success(c, List2)
+		} else {
+			response.Success(c, List)
+		}
+	}
+}
+
+type GoodsReq struct {
+	GoodsId int `json:"goods_id"`
+}
+
+func (u *User_handler_impl) GoodsPost() gin.HandlerFunc {
+	return func(c *gin.Context) {
+
+		var req GoodsReq
+		UserId := c.GetInt("id")
+		if err := c.ShouldBindJSON(&req); err != nil {
+			response.Fail(c, global.ResponseInvalidReqParams)
+			fmt.Println(err)
+			return
+		}
+		fmt.Println("goodid:", req)
+		
+		err := u.s.BuyGoods(UserId, req.GoodsId, c.Request.Context())
+		if err != global.ResponseSuccess {
+			response.Fail(c, err)
+			return
+		}
+		response.Success(c, "ok")
+
+	}
+}
+func (u *User_handler_impl) PostRefresh() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		UserId := c.GetInt("id")
+		err2 := u.s.Refresh(UserId, c.Request.Context())
+		if err2 != global.ResponseSuccess {
+			response.Fail(c, err2)
+			return
+		}
+		response.Success(c, "ok")
+	}
+}
+func (u *User_handler_impl) GetRefresh() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		UserId := c.GetInt("id")
+		err, gold := u.s.GetRefreshGold(c.Request.Context(), UserId)
+		if err != global.ResponseSuccess {
+			response.Fail(c, err)
+			return
+		}
+		response.Success(c, gold)
 	}
 }

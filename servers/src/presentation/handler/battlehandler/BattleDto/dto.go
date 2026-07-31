@@ -17,9 +17,9 @@ const (
 	GetSelfCardInHard
 	GetOpponentCardInHard
 	GetBtCardInfo
-	OverBattle
+	OverBattle //主动传的话,是投降的意思
 	StartBattle
-	DeployCard
+	DeployCard //-------------------------------------
 	Judge
 	MatchSuccess
 	AnimationPlayEnd
@@ -34,15 +34,25 @@ const (
 	GetChildCardList
 	ActiveChildCard
 	GetWeather
-	CatchChild //-----------------------------------
+	ChildBelongChange //-----------------------------------
 	GetUserId
-	CardMove        //-----------------------------------
+	PositionChange  //-----------------------------------
 	AnimationNotify //-----------------------------------
-	ValueNotify     //-----------------------------------
+	HpChange        //-----------------------------------
 	Ping
-	ReConnect
-	WeatherNotify //-------------------------
-	BuffCalcNotify
+	ReConnect      //放生这个
+	WeatherNotify  //-------------------------
+	BuffCalcNotify //-------------------------
+	GetRoundNum
+	BuffChange
+	FormChange
+	RoundChange
+	EnergyChange
+	WeatherChange
+	OpOffline
+	OpOnline
+	SoftReConnect
+	WaitState
 )
 
 var ActionName = map[ActionCode]string{
@@ -67,16 +77,26 @@ var ActionName = map[ActionCode]string{
 	GetChildCardList:      "查看子牌堆",
 	ActiveChildCard:       "子牌激活选择",
 	GetWeather:            "获取天气",
-	CatchChild:            "捕获子牌",
-	CardMove:              "结算卡牌移动通知",
+	ChildBelongChange:     "捕获子牌",
+	PositionChange:        "结算卡牌移动通知",
 	AnimationNotify:       "行为动画通知",
-	ValueNotify:           "数值变化通知",
+	HpChange:              "hp变化通知",
 	Ping:                  "ping",
 	ReConnect:             "断线重连",
 	WeatherNotify:         "天气结算通知",
 	SkillCardNotify:       "法术牌结算通知",
 	BuffCalcNotify:        "buff结算通知",
 	GetUserId:             "获取双方id",
+	GetRoundNum:           "获取回合数",
+	BuffChange:            "buff发生改变",
+	FormChange:            "形态变化",
+	RoundChange:           "回合变化",
+	EnergyChange:          "能量变化",
+	WeatherChange:         "天气变化",
+	OpOffline:             "对手离线了",
+	OpOnline:              "对手重新上线了",
+	SoftReConnect:         "软重连",
+	WaitState:             "WaitState",
 }
 
 type Predicates int

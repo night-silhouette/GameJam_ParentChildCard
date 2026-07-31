@@ -6,6 +6,7 @@ import (
 	"pcc_card/Util"
 	"pcc_card/application/entity/BattleData"
 	"pcc_card/application/entity/Card/CardAbstract"
+	"pcc_card/application/entity/CardMeta"
 	"pcc_card/application/entity/protocol"
 	"pcc_card/global"
 	"pcc_card/presentation/handler/battlehandler/BattleDto"
@@ -32,22 +33,18 @@ type Ctx struct {
 	NeedInterrupt       atomic.Bool
 	InterruptChan       chan struct{}
 	InterruptListenFunc atomic.Value //func(id int, action BattleDto.Action, ResponseChan chan<- BattleDto.Action) bool
+	CtxRecord           *BattleData.CtxRecord
 }
 
-func NewCtx(idA int, idB int, ParentContext context.Context, CardList map[int]map[int]CardAbstract.Card, TempIdCalc *atomic.Int32, cList []CardAbstract.Card) *Ctx {
-	c := &Ctx{}
+// cList是子牌堆,CardList是手牌堆
+func InitCtx(c *Ctx, idA int, idB int, ParentContext context.Context, CardList map[int]map[int]CardAbstract.Card, TempIdCalc *atomic.Int32, cList []CardAbstract.Card, CtxRecord *BattleData.CtxRecord) *Ctx {
 	c.EffectsStack = NewEffectStack()
 	c.entityCounter = 1
 	c.ParentContext = ParentContext
-
+	c.CtxRecord = CtxRecord
 	c.PlayerDataMap = make(map[int]*PlayerData, 2)
 	c.PlayerDataMap[idA] = NewPlayerData(idA, CardList[idA])
-	for _, card := range CardList[idA] {
-		card.SetBtCtx(c)
-	}
-	for _, card := range CardList[idB] {
-		card.SetBtCtx(c)
-	}
+
 	c.PlayerDataMap[idB] = NewPlayerData(idB, CardList[idB])
 	c.CtxStateNotify = NewCtxStateNotify()
 	//c.CardObserver = NewCardObserver(ParentContext, c)//弃用哨兵模式
@@ -79,12 +76,14 @@ func (c *Ctx) GetNeedCheckChildCard() []CardAbstract.ChildCard {
 
 	})
 	for _, playerData := range c.PlayerDataMap {
+		playerData.dataMutex.Lock()
 		for _, Card := range playerData.CardInHand {
 			if Card.GetInfo()["is_parent"] == false {
 				childCard := Card.(CardAbstract.ChildCard)
 				res = append(res, childCard)
 			}
 		}
+		playerData.dataMutex.Unlock()
 	}
 	return res
 }
@@ -100,12 +99,18 @@ func (c *Ctx) ChildCatch(card CardAbstract.ChildCard, UserId int) {
 	defer OpPlayerData.dataMutex.Unlock()
 
 	Notify := func(Origin int) {
-		Dto := BattleData.ChildCardCatchDto{ //通知
-			Origin: Origin,
-			Object: UserId,
+		DtoSelf := BattleData.ChildCardCatchDto{ //通知
+			Origin:  Origin,
+			Object:  UserId,
+			DataAll: c.GetDataAll(UserId),
 		}
-		c.StateMachine.SendActionById(UserId, BattleDto.NewAction(BattleDto.CatchChild, BattleDto.Result, Dto))
-		c.StateMachine.SendActionById(OpponentId, BattleDto.NewAction(BattleDto.CatchChild, BattleDto.Result, Dto))
+		DtoOp := BattleData.ChildCardCatchDto{ //通知
+			Origin:  Origin,
+			Object:  UserId,
+			DataAll: c.GetDataAll(OpponentId),
+		}
+		c.StateMachine.SendActionById(UserId, BattleDto.NewAction(BattleDto.ChildBelongChange, BattleDto.Result, DtoSelf))
+		c.StateMachine.SendActionById(OpponentId, BattleDto.NewAction(BattleDto.ChildBelongChange, BattleDto.Result, DtoOp))
 	}
 	if card.GetInfo()["ChildState"] == BattleData.Active {
 		playerData.CardInHand[card.GetTempId()] = card     //底层数据改牌
@@ -252,6 +257,10 @@ func (p *PlayerData) GetEnergy() int {
 	defer p.dataMutex.RUnlock()
 	return p.Energy
 }
+func (c *Ctx) CheckIs2Bt(userId int) bool {
+	playerData := c.PlayerDataMap[userId]
+	return playerData.CheckIs2Bt()
+}
 
 // 是不是有两张出战卡,返回bool
 func (p *PlayerData) CheckIs2Bt() bool {
@@ -311,16 +320,34 @@ func (p *PlayerData) GetBt(where BattleData.Where) CardAbstract.Card {
 }
 
 // SwitchCard 没有做skillCard的鉴定//鉴定了原来的那个牌是不是空的,空的才会把他换下来//还有,纯下牌的情况也写进去了
-func (p *PlayerData) SwitchCard(where BattleData.Where, card CardAbstract.Card) {
+func (p *PlayerData) SwitchCard(where BattleData.Where, card CardAbstract.Card, c *Ctx) {
 	p.dataMutex.Lock()
 	defer p.dataMutex.Unlock()
 	var SwitchedCard CardAbstract.Card
+
+	//检查是否有禁锢,做了nil鉴定
+	check := func(cd CardAbstract.Card) bool {
+		if card == nil {
+			return false
+		}
+		flag, _ := c.CheckBuff(cd.GetTempId(), protocol.Confine) //如果有捆缚,不可上牌
+		return flag
+	}
+	if check(card) {
+		return
+	}
 	if where == BattleData.ChildCard {
 		SwitchedCard = p.ChildCardBT
+		if check(SwitchedCard) {
+			return
+		}
 		p.ChildCardBT = card
 	}
 	if where == BattleData.ParentCard {
 		SwitchedCard = p.ParentCardBT
+		if check(SwitchedCard) {
+			return
+		}
 		p.ParentCardBT = card
 	}
 	if where == BattleData.InHand { //下牌
@@ -411,7 +438,7 @@ func (c *Ctx) ProtoColSetCardBt(UserId int, TempId int) {
 	c.SetCardBt(UserId, card) //这个接口已经上锁了
 }
 
-// Notify 传-1，表全部
+// Notify 传-1，表全部,这是动画dto的通知
 func (c *Ctx) Notify(AnimationDto BattleData.AnimationDto, UserId int) {
 	if UserId == -1 {
 		c.StateMachine.SendActionById(c.StateMachine.Id2, BattleDto.NewAction(BattleDto.AnimationNotify, BattleDto.Notify, AnimationDto))
@@ -424,16 +451,13 @@ func (c *Ctx) Notify(AnimationDto BattleData.AnimationDto, UserId int) {
 
 }
 
-// 不走卡牌hurt虚函数的攻击,也可以叫做无主攻击
+// 不走卡牌hurt虚函数的攻击(走NoSourceHurt),也可以叫做无主攻击
 func (c *Ctx) ProtoColAttackNoHurt(CardTempId int, Value int, Category BattleData.ValueChange) {
 	Card := c.FindCard(CardTempId)
-	var FinalAtkValue int
-	if Category == BattleData.Damage { //判断是否是真伤,是的话,就不走装饰器
-		FinalAtkValue = Card.GetDec().CalcHurt(float64(Value))
-	} else if Category == BattleData.TrueDamage {
-		FinalAtkValue = Value
-	}
-	c.ProtoColReduceCardBtHp(-1, CardTempId, float64(FinalAtkValue))
+	Card.(CardAbstract.Character).NoSourceHurt(float64(Value), Category)
+}
+func (c *Ctx) GetWeather() protocol.Weather {
+	return protocol.Weather(c.Weather.Load())
 }
 
 func (c *Ctx) ProtoColInterrupt(UserId int, InterruptDto *BattleData.InterruptDto, res chan []int, InterruptWaitTime time.Duration) {
@@ -503,6 +527,25 @@ func (c *Ctx) ProtoColCancelInterrupt() {
 	c.InterruptChan <- struct{}{}
 }
 
+func (c *Ctx) GetTempIdByWhere(where BattleData.Where, userId int) int {
+	playerdata := c.PlayerDataMap[userId]
+	var res int
+	switch where {
+	case BattleData.ParentCard:
+		if playerdata.ParentCardBT != nil {
+			res = playerdata.ParentCardBT.GetTempId()
+		}
+	case BattleData.ChildCard:
+		if playerdata.ChildCardBT != nil {
+			res = playerdata.ChildCardBT.GetTempId()
+		}
+	case BattleData.SkillCard:
+		if playerdata.SkillCardBT != nil {
+			res = playerdata.SkillCardBT.GetTempId()
+		}
+	}
+	return res
+}
 func (c *Ctx) ProtoColSetMaxHp(TargetTempId int, MaxHp float64) {
 	Card := c.FindCard(TargetTempId)
 	Card.GetInfo()["maxHp"] = MaxHp
@@ -526,6 +569,46 @@ func (c *Ctx) ProtoColReduceCardBtHp(SendTempId int, TargetTempId int, ReduceHp 
 	card.SetHpNow(NowHp - ReduceHp)
 
 }
+func (c *Ctx) CardUserIdByTempId(TempId int) int {
+	card := c.FindCard(TempId)
+	return card.GetOwnerId()
+}
+
+func (c *Ctx) ProtoCol1002(A int, B int) {
+	Acard := c.FindCard(A)
+	Bcard := c.FindCard(B)
+
+	aAtk := int(Acard.GetAtkNow())
+	aHpNow := int(Acard.GetHpNow())
+	maxHpAny := Acard.GetInfo()["maxHp"]
+	var aMaxHp int
+	if val, ok := maxHpAny.(float64); ok {
+		aMaxHp = int(val)
+	} else {
+		fmt.Println("ProtoCol1002 err")
+		return
+	}
+	offAttack := aAtk / 2
+	offHpNow := aHpNow / 2
+	offHpMax := aMaxHp / 2
+
+	// 3. 执行更新 (保证守恒)
+	// 更新 Acard
+	Acard.SetHpNow(float64(aHpNow - offHpNow))
+	Acard.SetAtkNow(float64(aAtk - offAttack))
+	Acard.GetInfo()["maxHp"] = float64(aMaxHp - offHpMax)
+
+	// 更新 Bcard (使用上面算好的 off 值，而不是再次读取 Acard)
+	Bcard.SetHpNow(float64(int(Bcard.GetHpNow()) + offHpNow))
+	Bcard.SetAtkNow(float64(int(Bcard.GetAtkNow()) + offAttack))
+
+	bMaxHp := 0
+	if val, ok := Bcard.GetInfo()["maxHp"].(float64); ok {
+		bMaxHp = int(val)
+	}
+	Bcard.GetInfo()["maxHp"] = float64(bMaxHp + offHpMax)
+}
+
 func (c *Ctx) ProtoColHealCardBt(TargetTempId int, HealHp float64) {
 	var card CardAbstract.Character
 	var ok bool
@@ -545,6 +628,12 @@ func (c *Ctx) ProtoColHealCardBt(TargetTempId int, HealHp float64) {
 	}
 	card.SetHpNow(NowHp + HealHp)
 }
+func (c *Ctx) Broad(v *CardMeta.BroadInfo) {
+	AllCardList := c.GetAllCard()
+	for _, card := range AllCardList {
+		card.PutBroadInfo(v)
+	}
+}
 
 func (c *Ctx) ProtoColGetCharacterCard(UserId int) []int {
 	return c.GetCharacterCardinCardInHand(UserId)
@@ -555,7 +644,11 @@ func (c *Ctx) ProtoColCanUpdateEnergy(UserId int, offset int) bool {
 	return playData.isCanUpdateEnergy(offset)
 }
 
-func (c *Ctx) ProtoColSetDamageCardBt(UserId int, TargetTempId int, NewDamage float64) {
+func (c *Ctx) ProtoSendAction(UserId int, action BattleDto.Action) {
+	c.StateMachine.SendActionById(UserId, action)
+}
+
+func (c *Ctx) ProtoColSetDamageCardBt(TargetTempId int, NewDamage float64) {
 	var card CardAbstract.Character
 	var ok bool
 	if card, ok = c.FindCard(TargetTempId).(CardAbstract.Character); !ok {
@@ -567,29 +660,46 @@ func (c *Ctx) ProtoColSetDamageCardBt(UserId int, TargetTempId int, NewDamage fl
 	}
 	card.SetAtkNow(NewDamage)
 }
+func (c *Ctx) GetCharacterId() []int {
+	list := c.GetCharacter()
+	result := make([]int, len(list))
+	for _, e := range list {
+		result = append(result, e.GetTempId())
+	}
+	return result
+}
+func (c *Ctx) ChangeWeather(w protocol.Weather) {
+	ChangeWeather(w, c.StateMachine)
+}
 
-func (c *Ctx) ProtoNotifyValue(Category BattleData.ValueChange, Value float64, TempId int) {
-	c.StateMachine.SendActionById(c.StateMachine.Id1, BattleDto.NewAction(BattleDto.ValueNotify, BattleDto.Result, BattleData.CardCalcValueDto{
+func (c *Ctx) GetCtxRD() *BattleData.CtxRecord {
+	return c.CtxRecord
+}
+
+func (c *Ctx) ProtoNotifyValue(Category BattleData.ValueChange, Value float64, TempId int, IsMiss bool) {
+	c.StateMachine.SendActionById(c.StateMachine.Id1, BattleDto.NewAction(BattleDto.HpChange, BattleDto.Result, BattleData.CardCalcValueDto{
 		TempId:   TempId,
 		Category: Category,
+		IsMiss:   IsMiss,
 		Value:    Value,
 		DataAll:  c.GetDataAll(c.StateMachine.Id1),
 	}))
-	c.StateMachine.SendActionById(c.StateMachine.Id2, BattleDto.NewAction(BattleDto.ValueNotify, BattleDto.Result, BattleData.CardCalcValueDto{
+	c.StateMachine.SendActionById(c.StateMachine.Id2, BattleDto.NewAction(BattleDto.HpChange, BattleDto.Result, BattleData.CardCalcValueDto{
 		TempId:   TempId,
 		Category: Category,
+		IsMiss:   IsMiss,
 		Value:    Value,
 		DataAll:  c.GetDataAll(c.StateMachine.Id2),
 	}))
 }
 
 func (c *Ctx) ProtoNotifyCardMove(Object BattleData.Where, TempId int) {
-	c.StateMachine.SendActionById(c.StateMachine.Id1, BattleDto.NewAction(BattleDto.CardMove, BattleDto.Result, BattleData.CardCalcCardMoveDto{
+	c.StateMachine.SendActionById(c.StateMachine.Id1, BattleDto.NewAction(BattleDto.PositionChange, BattleDto.Result, BattleData.CardCalcCardMoveDto{
 		Object:  Object,
 		TempId:  TempId,
 		DataAll: c.GetDataAll(c.StateMachine.Id1),
 	}))
-	c.StateMachine.SendActionById(c.StateMachine.Id2, BattleDto.NewAction(BattleDto.CardMove, BattleDto.Result, BattleData.CardCalcCardMoveDto{
+	c.StateMachine.SendActionById(c.StateMachine.Id2, BattleDto.NewAction(BattleDto.PositionChange, BattleDto.Result, BattleData.CardCalcCardMoveDto{
 		Object:  Object,
 		TempId:  TempId,
 		DataAll: c.GetDataAll(c.StateMachine.Id2),
@@ -606,7 +716,17 @@ func (c *Ctx) GiveBuff(TempId int, buff *protocol.Buff) {
 	card.AddBuff(buff, c)
 }
 
-// FindCard 这是一个总和方法,他会在两个人的手牌和出战斗牌里根据tempId找牌
+func (c *Ctx) CheckBuff(tempId int, buffId protocol.BuffId) (bool, *protocol.Buff) {
+	card := c.FindCard(tempId)
+	for _, b := range *card.GetBuffList() {
+		if b.BuffId == buffId {
+			return true, b
+		}
+	}
+	return false, nil
+}
+
+// FindCard 这是一个总和方法,他会在两个人的手牌和出战斗牌和弃牌堆里根据tempId找牌
 func (c *Ctx) FindCard(tempId int) CardAbstract.Card {
 	var card CardAbstract.Card
 	res := c.GetCardInCardBtByCardTempId(c.StateMachine.Id1, tempId)
@@ -625,6 +745,15 @@ func (c *Ctx) FindCard(tempId int) CardAbstract.Card {
 	if res != nil {
 		card = res
 	}
+	c.DisCardPool.Do(func(data *[]CardAbstract.Card) {
+		for _, el := range *data {
+			if el.GetTempId() == tempId {
+				card = el
+				break
+			}
+		}
+	})
+
 	return card
 }
 
@@ -741,6 +870,10 @@ func (c *Ctx) SetCardBt(id int, card CardAbstract.Card) {
 		delete(playerData.CardInHand, card.GetTempId())
 		return
 	}
+	flag, _ := c.CheckBuff(card.GetTempId(), protocol.Confine) //如果有捆缚,不可上牌
+	if flag {
+		return
+	}
 	if card.GetInfo()["is_parent"].(bool) && !c.CheckCardByWhere(id, BattleData.ParentCard) {
 		c.SetParentCardBT(id, card)
 		delete(playerData.CardInHand, card.GetTempId())
@@ -796,13 +929,13 @@ func (c *Ctx) GetCharacterCardinCardInHand(UserId int) []int {
 // GetWhereByTempId 根据tempId 返回where，找不到返回-1
 func (c *Ctx) GetWhereByTempId(UserId int, tempId int) BattleData.Where {
 	player := c.PlayerDataMap[UserId]
-	if player.ParentCardBT.GetTempId() == tempId {
+	if player.ParentCardBT != nil && player.ParentCardBT.GetTempId() == tempId {
 		return BattleData.ParentCard
 	}
-	if player.ChildCardBT.GetTempId() == tempId {
+	if player.ChildCardBT != nil && player.ChildCardBT.GetTempId() == tempId {
 		return BattleData.ChildCard
 	}
-	if player.SkillCardBT.GetTempId() == tempId {
+	if player.SkillCardBT != nil && player.SkillCardBT.GetTempId() == tempId {
 		return BattleData.SkillCard
 	}
 	return -1
@@ -887,6 +1020,37 @@ func (c *Ctx) GetDataAll(UseId int) *BattleData.DataAll {
 	return res
 }
 
+// 获取全部的卡(手牌,出站牌)
+func (c *Ctx) GetAllCard() []CardAbstract.Card {
+	res := make([]CardAbstract.Card, 0)
+	appendPlayer := func(p *PlayerData) {
+		if p == nil {
+			return
+		}
+		if p.ParentCardBT != nil {
+			res = append(res, p.ParentCardBT)
+		}
+		if p.ChildCardBT != nil {
+			res = append(res, p.ChildCardBT)
+		}
+		if p.SkillCardBT != nil {
+			res = append(res, p.SkillCardBT)
+		}
+	}
+	appendCardInHand := func(UserId int) {
+		player := c.PlayerDataMap[UserId]
+		for _, card := range player.CardInHand {
+			res = append(res, card)
+		}
+	}
+	appendCardInHand(c.StateMachine.Id1)
+	appendCardInHand(c.StateMachine.Id2)
+	appendPlayer(c.PlayerDataMap[c.StateMachine.Id1])
+	appendPlayer(c.PlayerDataMap[c.StateMachine.Id2])
+	return res
+}
+
+// 获取全部的角色卡
 func (c *Ctx) GetCharacter() []CardAbstract.Card {
 
 	res := make([]CardAbstract.Card, 0)
@@ -918,7 +1082,17 @@ func (c *Ctx) GetCharacter() []CardAbstract.Card {
 	return res
 }
 
-// GetBtAll 获取场上所有的出战卡,如果输入-1,就是所有双方的,如果是有id,就是单人的
+// 获取场上所有的出战卡的id,如果输入-1,就是所有双方的,如果是有id,就是单人的
+func (c *Ctx) ProtoGetBtAll(UserId int) []int {
+	List := c.GetBtAll(UserId)
+	res := make([]int, 0, len(List))
+	for _, Value := range List {
+		res = append(res, Value.GetTempId())
+	}
+	return res
+}
+
+// GetBtAll 获取场上所有的出战卡(不包含法术卡),如果输入-1,就是所有双方的,如果是有id,就是单人的
 func (c *Ctx) GetBtAll(UserId int) []CardAbstract.Card {
 	res := make([]CardAbstract.Card, 0)
 	DiffUserId := func(id int) {
@@ -944,6 +1118,36 @@ func (c *Ctx) GetIds() []int {
 	res := make([]int, 0)
 	res = append(res, c.StateMachine.Id1)
 	res = append(res, c.StateMachine.Id2)
+	return res
+}
+
+func (c *Ctx) GetWinnerIsAction() bool {
+	return c.StateMachine.WinnerIsAction.Load()
+}
+func (c *Ctx) GetWinnerId() int {
+	return c.StateMachine.Winner
+}
+
+func (c *Ctx) GetLoot() []int {
+	res := make([]int, 0, 20)
+	for _, card := range c.GetAllCard() {
+		res = append(res, card.GetID())
+	}
+	//和未激活字牌中的随机一个
+	c.DisCardPool.Do(func(data *[]CardAbstract.Card) {
+		for _, card := range *data {
+			res = append(res, card.GetID())
+		}
+	})
+
+	c.ChildList.Do(func(data *[]CardAbstract.Card) {
+		for _, card := range *data {
+			if card.GetInfo()["ChildState"] == BattleData.Active || card.GetInfo()["ChildState"] == BattleData.NotActive {
+				res = append(res, card.GetID())
+			}
+		}
+	})
+
 	return res
 }
 

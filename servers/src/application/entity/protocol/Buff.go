@@ -15,23 +15,35 @@ func InitBuff() {
 type BuffId int
 
 const (
+	//附伤
 	BonusDamage BuffId = iota
 	Powerful
+	//虚弱
 	Weakness
-
+	//免伤
 	DamageImmunity
-	Vulnerability //免伤
+	//易伤
+	Vulnerability
 	Block
 
 	HealingBoost
+	//治疗衰减
 	HealingDecay
 
 	Wither
+	//捆缚(不可行动)
 	Binding
+	//反击
 	Retaliate
+	//禁锢
 	Confine
 	Giant
 	Disarm
+	XuFeng
+	//守护
+	Guard
+	Untouchable
+	DamageTransform
 )
 
 var BuffRoundEndFuncMap map[BuffId]func(pc ProtocolCardWithCtx, value float64, card BuffNeed)
@@ -58,6 +70,10 @@ func InitBuffRoundEndFuncMap() {
 	BuffRoundEndFuncMap[Confine] = func(pc ProtocolCardWithCtx, value float64, card BuffNeed) {}
 	BuffRoundEndFuncMap[Giant] = func(pc ProtocolCardWithCtx, value float64, card BuffNeed) {}
 	BuffRoundEndFuncMap[Disarm] = func(pc ProtocolCardWithCtx, value float64, card BuffNeed) {}
+	BuffRoundEndFuncMap[XuFeng] = func(pc ProtocolCardWithCtx, value float64, card BuffNeed) {}
+	BuffRoundEndFuncMap[Guard] = func(pc ProtocolCardWithCtx, value float64, card BuffNeed) {}
+	BuffRoundEndFuncMap[Untouchable] = func(pc ProtocolCardWithCtx, value float64, card BuffNeed) {}
+	BuffRoundEndFuncMap[DamageTransform] = func(pc ProtocolCardWithCtx, value float64, card BuffNeed) {}
 }
 
 //------------------回合结束---------------------
@@ -83,6 +99,10 @@ func InitBuffOnApplyFuncMap() {
 	BuffOnApplyFuncMap[Confine] = func(pc ProtocolCardWithCtx, value float64, card BuffNeed) {}
 	BuffOnApplyFuncMap[Giant] = func(pc ProtocolCardWithCtx, value float64, card BuffNeed) {}
 	BuffOnApplyFuncMap[Disarm] = func(pc ProtocolCardWithCtx, value float64, card BuffNeed) {}
+	BuffOnApplyFuncMap[XuFeng] = func(pc ProtocolCardWithCtx, value float64, card BuffNeed) {}
+	BuffOnApplyFuncMap[Guard] = func(pc ProtocolCardWithCtx, value float64, card BuffNeed) {}
+	BuffOnApplyFuncMap[Untouchable] = func(pc ProtocolCardWithCtx, value float64, card BuffNeed) {}
+	BuffOnApplyFuncMap[DamageTransform] = func(pc ProtocolCardWithCtx, value float64, card BuffNeed) {}
 }
 
 //------------------buff上去的时候---------------------
@@ -107,12 +127,16 @@ func InitBuffOnRemoveFuncMap() {
 	BuffOnRemoveFuncMap[Confine] = func(pc ProtocolCardWithCtx, value float64, card BuffNeed) {}
 	BuffOnRemoveFuncMap[Giant] = func(pc ProtocolCardWithCtx, value float64, card BuffNeed) {}
 	BuffOnRemoveFuncMap[Disarm] = func(pc ProtocolCardWithCtx, value float64, card BuffNeed) {}
+	BuffOnRemoveFuncMap[XuFeng] = func(pc ProtocolCardWithCtx, value float64, card BuffNeed) {}
+	BuffOnRemoveFuncMap[Guard] = func(pc ProtocolCardWithCtx, value float64, card BuffNeed) {}
+	BuffOnRemoveFuncMap[Untouchable] = func(pc ProtocolCardWithCtx, value float64, card BuffNeed) {}
+	BuffOnRemoveFuncMap[DamageTransform] = func(pc ProtocolCardWithCtx, value float64, card BuffNeed) {}
 }
 
 //------------------buff清除的时候---------------------
 
 type BuffNeed interface {
-	SetDec(Dec *CardMeta.Decorator)
 	GetDec() *CardMeta.Decorator
 	GetTempId() int
+	GetOwnerId() int
 }

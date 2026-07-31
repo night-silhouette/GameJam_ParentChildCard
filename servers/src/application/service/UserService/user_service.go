@@ -3,6 +3,7 @@ package UserService
 import (
 	"context"
 	"fmt"
+	"math"
 	"pcc_card/Util"
 	"pcc_card/application/entity/BattleData"
 	"pcc_card/application/entity/User_entity"
@@ -46,6 +47,15 @@ type User_service interface {
 	GetUserGold(ctx context.Context, userId int) (int, global.ResponseStatusCode)
 	SellCard(ctx context.Context, userId int, stuffIdList []int) global.ResponseStatusCode
 	CheckBtDataIsValid(ctx context.Context, userId int, data []BattleData.BagStuffDto, gold int) global.ResponseStatusCode
+	IsInBattle(ctx context.Context, userId int) global.ResponseStatusCode
+
+	GetLoot(userId int, ctx context.Context) (global.ResponseStatusCode, []BattleData.LootDto)
+	CreateStuffByLootCardId(OutsideDto *BattleData.LootDto, UserId int, ctx context.Context) global.ResponseStatusCode
+	GetGoods(UserId int, ctx context.Context) (global.ResponseStatusCode, []BattleData.GoodsDto)
+	CreateGoods(UserId int, ctx context.Context) global.ResponseStatusCode
+	Refresh(UserId int, ctx context.Context) global.ResponseStatusCode
+	GetRefreshGold(ctx context.Context, UserId int) (global.ResponseStatusCode, int)
+	BuyGoods(UserId int, GoodsId int, ctx context.Context) global.ResponseStatusCode
 }
 
 type User_service_impl struct {
@@ -339,5 +349,219 @@ func (u *User_service_impl) CheckBtDataIsValid(ctx context.Context, userId int, 
 		return global.ResponseGoldNotEnough
 	}
 
+	return global.ResponseSuccess
+}
+func (u *User_service_impl) IsInBattle(ctx context.Context, userId int) global.ResponseStatusCode {
+	_, err := u.repo.CheckUserIdIsBattle(ctx, u.repo.Get_db(), userId)
+	return err
+}
+
+func (u *User_service_impl) GetLoot(userId int, ctx context.Context) (global.ResponseStatusCode, []BattleData.LootDto) {
+	err, lootDto := u.repo.GetLoot(ctx, u.repo.Get_db(), userId)
+	return err, lootDto
+}
+
+// 传入单条loot数据记录
+func (u *User_service_impl) CreateStuffByLootCardId(OutsideDto *BattleData.LootDto, UserId int, ctx context.Context) global.ResponseStatusCode {
+	err, InsideDtoList := u.repo.GetLoot(ctx, u.repo.Get_db(), UserId)
+	if err != global.ResponseSuccess {
+		fmt.Println("CreateStuffByLootCardId:", err)
+		return err
+	}
+	fmt.Println(OutsideDto)
+	//检查传过来的数据cardid是不是在loot表里面
+	for _, d1 := range InsideDtoList {
+		if d1.LootID == OutsideDto.LootID {
+			if !Util.VerifyIncludes(d1.Data, OutsideDto.Data) { //如果不包含,那么数据非法
+				return global.BattleCardNotFound
+			}
+			//要从这开事务
+			tx, errDb := u.repo.Get_db().BeginTx(ctx, nil)
+			if errDb != nil {
+				fmt.Println("事务开启失败")
+				return global.ResponseInternalServersError
+
+			}
+			defer tx.Rollback()
+
+			ok := u.repo.DeleteLoot(ctx, tx, OutsideDto.LootID) //删掉loot
+			if ok != global.ResponseSuccess {
+				return ok
+			}
+			for _, cardId := range OutsideDto.Data {
+				ok2 := u.repo.AddCardInBags(ctx, tx, cardId, UserId)
+				if ok2 != global.ResponseSuccess {
+					fmt.Println("CreateStuffByLootCardId,AddCardInBags:", ok2)
+					return ok2
+				}
+			}
+			tx.Commit()
+			return global.ResponseSuccess
+		}
+
+	}
+	return global.BattleCardNotFound
+
+}
+func (u *User_service_impl) GetGoods(UserId int, ctx context.Context) (global.ResponseStatusCode, []BattleData.GoodsDto) {
+	err, res := u.repo.GetGoodsByUserId(ctx, u.repo.Get_db(), UserId)
+	return err, res
+}
+
+// 删掉原来的商店goods,然后创建新的
+func (u *User_service_impl) CreateGoods(UserId int, ctx context.Context) global.ResponseStatusCode {
+	tx, errTx := u.repo.Get_db().BeginTx(ctx, nil)
+	if errTx != nil {
+		return global.ResponseInternalServersError
+	}
+	defer tx.Rollback()
+
+	err1 := u.repo.DeleteGoodsByUserId(ctx, tx, UserId)
+	if err1 != global.ResponseSuccess && err1 != global.ResponseDataNotFound {
+		return err1
+	}
+	err2 := u.repo.CreateGoods(ctx, tx, UserId, u.CreateShipCard(ctx))
+	if err2 != global.ResponseSuccess {
+		return err2
+	}
+	tx.Commit()
+	return global.ResponseSuccess
+}
+
+// 生成Gooddto的算法,创建shop卡牌(折扣也随机算法在这了)
+func (u *User_service_impl) CreateShipCard(ctx context.Context) []*BattleData.GoodsDto {
+	offsetList := make([]int, 0, 50)
+
+	//-----随机cardid池子的比例-----
+	for i := range global.Lev1Category1Num {
+		offsetList = append(offsetList, i)
+	}
+	for i := range global.Lev1Category2Num {
+		offsetList = append(offsetList, i+1000)
+	}
+	//-----随机cardid池子的比例-----
+	fmt.Println(offsetList)
+	//随机取6个
+	CardIdList := Util.GetRandomElements[int](offsetList, 6)
+	fmt.Println(CardIdList)
+	//构造gooddto
+	res := make([]*BattleData.GoodsDto, 0, len(CardIdList))
+	for _, cardId := range CardIdList {
+		Dis := 1.0
+		_, Price := u.repo.GetCardPrice(ctx, u.repo.Get_db(), cardId)
+		Price *= 6
+		temp := Util.RandomRange(1, 1000)
+		if temp <= 166 { //1/6的概率有打折
+			Dis = Util.GetRandomNormalInRange(0.35, 1.15, 0.17)
+			Dis = math.Round(Dis*100) / 100
+			Price = int(float64(Price) * Dis)
+		}
+		res = append(res, BattleData.NewGoodsDto(Price, cardId, -1, Dis))
+	}
+	return res
+}
+func (u *User_service_impl) Refresh(UserId int, ctx context.Context) global.ResponseStatusCode {
+	//检测钱够不够
+	err3, gold := u.GetRefreshGold(ctx, UserId)
+	if err3 != global.ResponseSuccess {
+		return err3
+	}
+	UserGold, err4 := u.GetUserGold(ctx, UserId)
+	if err4 != global.ResponseSuccess {
+		return err4
+	}
+	if UserGold < gold {
+		return global.ResponseGoldNotEnough
+	}
+	//刷新
+	err := u.CreateGoods(UserId, ctx)
+	if err != global.ResponseSuccess {
+		return err
+	}
+	//扣钱
+	err5 := u.repo.UpdateAssetGold(ctx, u.repo.Get_db(), UserId, -gold)
+	if err5 != global.ResponseSuccess {
+		return err5
+	}
+	//增加刷新次数
+	err6 := u.repo.AddShopRefreshCount(ctx, u.repo.Get_db(), UserId)
+	if err6 != global.ResponseSuccess {
+		return err6
+	}
+
+	return global.ResponseSuccess
+}
+
+// 计算这次刷新要多少钱
+func (u *User_service_impl) GetRefreshGold(ctx context.Context, UserId int) (global.ResponseStatusCode, int) {
+	err, Count := u.repo.GetShopRefreshCount(ctx, u.repo.Get_db(), UserId)
+	if err != global.ResponseSuccess {
+		return err, 0
+	}
+	if Count == 0 {
+		return global.ResponseSuccess, 0
+	}
+	if Count == 1 {
+		return global.ResponseSuccess, 20
+	}
+	if Count == 2 {
+		return global.ResponseSuccess, 100
+	}
+	if Count == 3 {
+		return global.ResponseSuccess, 150
+	}
+	return global.ResponseSuccess, 200
+}
+
+func (u *User_service_impl) BuyGoods(UserId int, GoodsId int, ctx context.Context) global.ResponseStatusCode {
+	tx, errDb := u.repo.Get_db().BeginTx(ctx, nil)
+	if errDb != nil {
+		return global.ResponseInternalServersError
+
+	}
+	defer tx.Rollback()
+	fmt.Println(GoodsId)
+
+	//判定是不是买的起这个
+	err1, price := u.repo.GetGoodsPrice(ctx, u.repo.Get_db(), GoodsId)
+	if err1 != global.ResponseSuccess {
+		fmt.Println("GoodsBuy err1")
+		return err1
+	}
+
+	err4, UserGold := u.repo.GetAssetGold(ctx, tx, UserId)
+	if err4 != global.ResponseSuccess {
+		fmt.Println("GoodsBuy err2")
+		return err4
+	}
+	if UserGold < price {
+		fmt.Println("GoodsBuy err3")
+		return global.ResponseGoldNotEnough
+	}
+
+	//放到包里,删掉good,
+	err3, cardId := u.repo.GetGoodsCardId(ctx, tx, GoodsId)
+	if err3 != global.ResponseSuccess {
+		fmt.Println("GoodsBuy err4")
+		return err3
+	}
+	err5 := u.repo.AddCardInBags(ctx, tx, cardId, UserId)
+	if err5 != global.ResponseSuccess {
+		fmt.Println("GoodsBuy err5")
+		return err5
+	}
+	err := u.repo.DeleteGoodsByGoodId(ctx, tx, GoodsId)
+	if err != global.ResponseSuccess {
+		fmt.Println("GoodsBuy err6")
+		return err
+	}
+	//扣掉钱
+	err6 := u.repo.UpdateAssetGold(ctx, u.repo.Get_db(), UserId, -price)
+	if err6 != global.ResponseSuccess {
+		fmt.Println("GoodsBuy err7")
+		return err6
+	}
+
+	tx.Commit()
 	return global.ResponseSuccess
 }

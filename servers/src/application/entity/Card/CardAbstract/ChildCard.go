@@ -8,6 +8,7 @@ type ChildCard interface {
 	Trigger(pc protocol.ProtocolCardWithCtx, UserId int)
 }
 
+// 返回值:是否触发,userid
 type ChildCheckFunc func(pc protocol.ProtocolCardWithCtx) (bool, int)
 
 func (cFunc ChildCheckFunc) Exec(pc protocol.ProtocolCardWithCtx) (bool, int) {

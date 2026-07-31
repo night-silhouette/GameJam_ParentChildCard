@@ -21,6 +21,7 @@ func (b *Buff) GetBuffDto() BattleData.BuffDto {
 	return res
 }
 
+// tempId 是buff自己的id,用ctx.createTempid传递
 func NewBuffBase(buffId BuffId, buffStacks int, Value float64, TempId int) *Buff {
 	return &Buff{
 		BuffId: buffId,

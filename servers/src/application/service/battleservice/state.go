@@ -27,6 +27,7 @@ type State interface {
 	SetName(name string)
 	GetName() string
 	SpecialInit()
+	GetTemplate() *StateTemplate
 }
 
 func (s *StateMachine) RegisterState() {
@@ -43,20 +44,83 @@ func (s *StateMachine) RegisterState() {
 		element.SetName(key)
 	}
 }
+
+// 减少现在的天气的持续时间,如果刚好减到0,那么就改为宁静,
+func (s *StateMachine) ReduceWeatherLasting() {
+	res := s.WeatherLasting - 1
+	if res == 0 {
+		ChangeWeather(protocol.Ningjing, s)
+	}
+	if res < 0 {
+		res = 0
+	}
+
+	s.WeatherLasting = res
+}
+
+var StateQueryMap = map[string]func(s *StateTemplate, id int){
+	//"WaitState":
+	"ShuffleDeal": func(s *StateTemplate, id int) {
+		s.SM.SendActionById(id, BattleDto.NewAction(BattleDto.MatchSuccess, BattleDto.Notify, StateWaitTime{StateWaitTime: s.QueryTime.Load()}))
+	},
+	"SelectSkillCard": func(s *StateTemplate, id int) {
+		s.SM.SendActionById(id, BattleDto.NewAction(BattleDto.DeployCard, BattleDto.Query, map[string]any{"state_wait_time": s.QueryTime.Load(), "where": BattleData.SkillCard}))
+	},
+	"Judge": func(s *StateTemplate, id int) {
+		s.SM.SendActionById(id, BattleDto.NewAction(BattleDto.Judge, BattleDto.Query, StateWaitTime{StateWaitTime: s.QueryTime.Load()}))
+	},
+	"Combat": func(s *StateTemplate, id int) {
+		if id == s.SM.Winner {
+			s.SM.SendActionById(id, BattleDto.NewAction(BattleDto.Combat, BattleDto.Query, StateWaitTime{StateWaitTime: s.QueryTime.Load()}))
+		}
+		if id == s.SM.Loser {
+			s.SM.SendActionById(id, BattleDto.NewAction(BattleDto.Combat, BattleDto.Notify, StateWaitTime{StateWaitTime: s.QueryTime.Load()}))
+		}
+	},
+	"CardCalc": func(s *StateTemplate, id int) {
+		s.SM.SendActionById(id, BattleDto.NewAction(BattleDto.CardCalc, BattleDto.Notify, ""))
+	},
+	"SelectWeather": func(s *StateTemplate, id int) {
+		if id == s.SM.GoldMoreUserId {
+
+			s.SM.SendActionById(id, BattleDto.NewAction(BattleDto.SelectWeather, BattleDto.Query, map[string]any{"state_wait_time": s.QueryTime.Load(), "weather_list": s.QueryMap}))
+
+		}
+	},
+	"ActiveChildCard": func(s *StateTemplate, id int) {
+		queryMap := map[string]any{
+			"state_wait_time": Util.SendTime(global.ActiveChildCardTime * time.Second),
+			"child_list":      s.SM.c.GetChildCardDto(),
+		}
+		s.SM.SendActionById(id, BattleDto.NewAction(BattleDto.ActiveChildCard, BattleDto.Query, queryMap))
+	},
+}
+
 func (s *StateMachine) SharedProcess(id int, action BattleDto.Action, ResponseChan chan<- BattleDto.Action) bool {
 	if action.ActionCode == BattleDto.GetUserId && action.Predicates == BattleDto.Query {
 		res := make(map[string]int)
 		res["self"] = id
 		res["opponent"] = s.c.GetOpponentId(id)
 		ResponseChan <- BattleDto.NewAction(BattleDto.GetWeather, BattleDto.Result, res)
+		return true
 	}
-	if action.ActionCode == BattleDto.ReConnect && action.Predicates == BattleDto.Query {
-		//CurStateName := s.CurrentState.GetName()
-		//这个是软重连,如果请求这个,就先给他一个dto,一个字段是CurStateName,还有一个是,告诉他用户有不有响应过,(直接在statemachine里面,搞两个原子bool就好了,idaflag)
-		//然后,再把对应state的query给他
-
-		//还有硬重连的问题
-
+	if action.ActionCode == BattleDto.GetRoundNum && action.Predicates == BattleDto.Query {
+		ResponseChan <- BattleDto.NewAction(BattleDto.GetRoundNum, BattleDto.Result, s.RoundNum.Load())
+		return true
+	}
+	//软重连//todo
+	if action.ActionCode == BattleDto.SoftReConnect && action.Predicates == BattleDto.Query {
+		if s.Id1 == id && s.IsAwaitA.Load() {
+			s.SendActionById(id, BattleDto.NewAction(BattleDto.WaitState, BattleDto.Query, ""))
+			return true
+		}
+		if s.Id2 == id && s.IsAwaitB.Load() {
+			s.SendActionById(id, BattleDto.NewAction(BattleDto.WaitState, BattleDto.Query, ""))
+			return true
+		}
+		CurStateName := s.CurrentState.GetName()
+		StateQueryMap[CurStateName](s.CurrentState.GetTemplate(), id)
+		return true
 	}
 
 	if action.ActionCode == BattleDto.Ping && action.Predicates == BattleDto.Query {
@@ -67,7 +131,6 @@ func (s *StateMachine) SharedProcess(id int, action BattleDto.Action, ResponseCh
 	if action.ActionCode == BattleDto.GetWeather && action.Predicates == BattleDto.Query {
 		res := protocol.Weather(s.c.Weather.Load())
 		ResponseChan <- BattleDto.NewAction(BattleDto.GetWeather, BattleDto.Result, res)
-		fmt.Println("前端获取天气为:", res)
 		return true
 	}
 	if action.ActionCode == BattleDto.GetEnergy && action.Predicates == BattleDto.Query {
@@ -80,11 +143,6 @@ func (s *StateMachine) SharedProcess(id int, action BattleDto.Action, ResponseCh
 	if action.ActionCode == BattleDto.GetChildCardList && action.Predicates == BattleDto.Query {
 		res := s.c.GetChildCardDto()
 		ResponseChan <- BattleDto.NewAction(BattleDto.GetChildCardList, BattleDto.Result, res)
-
-		for _, t := range res {
-			fmt.Println("childState", t)
-		}
-
 		return true
 	}
 	if action.ActionCode == BattleDto.GetSelfCardInHard && action.Predicates == BattleDto.Query { //获取自己手牌
@@ -102,7 +160,10 @@ func (s *StateMachine) SharedProcess(id int, action BattleDto.Action, ResponseCh
 		return true
 	}
 	if action.ActionCode == BattleDto.OverBattle && action.Predicates == BattleDto.Notify { //结束战斗
-		ResponseChan <- BattleDto.NewAction(BattleDto.OverBattle, BattleDto.Notify, "ok")
+		BC.SaveLoot(s.c.GetOpponentId(id), s.c.GetLoot())
+		s.SendActionById(id, BattleDto.NewAction(BattleDto.OverBattle, BattleDto.Result, "loser"))
+		s.SendActionById(s.c.GetOpponentId(id), BattleDto.NewAction(BattleDto.OverBattle, BattleDto.Result, "winner"))
+		s.ParentCancel()
 		return true
 	}
 	if action.ActionCode == BattleDto.GetBtCardInfo && action.Predicates == BattleDto.Query { //获取战斗卡信息
@@ -135,16 +196,17 @@ type StateMachine struct {
 	Mutex          sync.RWMutex
 	ParentNodeCtx  context.Context
 
-	Id1          int
-	Id2          int
-	StateList    map[string]State
-	CurrentState State
-	StateStack   []State
-	c            *Ctx
-	Nt           *NotifyManager
-	CardListCopy *[]CardAbstract.Card
-	cancelFunc   context.CancelFunc
-
+	Id1            int
+	Id2            int
+	StateList      map[string]State
+	CurrentState   State
+	StateStack     []State
+	c              *Ctx
+	Nt             *NotifyManager
+	CardListCopy   *[]CardAbstract.Card
+	cancelFunc     context.CancelFunc
+	RoundNum       atomic.Int32
+	ParentCancel   context.CancelFunc
 	GoldMoreUserId int
 
 	//stateData
@@ -153,9 +215,15 @@ type StateMachine struct {
 	CombatDataChan chan map[string][]BattleData.CombatDto
 
 	LoseMarkMap map[int]int //UserId:num
+
+	WeatherLasting int         //天气持续时间
+	WinnerIsAction atomic.Bool //赢的人是否行动
+
+	IsAwaitA atomic.Bool
+	IsAwaitB atomic.Bool
 }
 
-func NewStateMachine(c *Ctx, id1 int, id2 int, Nt *NotifyManager, ParentNodeCtx context.Context, GoldMoreUserId int) *StateMachine {
+func NewStateMachine(c *Ctx, id1 int, id2 int, Nt *NotifyManager, ParentNodeCtx context.Context, GoldMoreUserId int, ParentCancel context.CancelFunc) *StateMachine {
 
 	StateMachineImpl := &StateMachine{}
 	c.StateMachine = StateMachineImpl
@@ -164,7 +232,7 @@ func NewStateMachine(c *Ctx, id1 int, id2 int, Nt *NotifyManager, ParentNodeCtx 
 	StateMachineImpl.Id1 = id1
 	StateMachineImpl.Id2 = id2
 	StateMachineImpl.Nt = Nt //Nt的注入
-
+	StateMachineImpl.ParentCancel = ParentCancel
 	StateMachineImpl.StateStack = make([]State, 0)
 	StateMachineImpl.CombatDataChan = make(chan map[string][]BattleData.CombatDto, 1)
 	StateMachineImpl.LoseMarkMap = make(map[int]int)
@@ -173,18 +241,15 @@ func NewStateMachine(c *Ctx, id1 int, id2 int, Nt *NotifyManager, ParentNodeCtx 
 	StateMachineImpl.LoseMarkMap[StateMachineImpl.Id2] = 0
 
 	StateMachineImpl.GoldMoreUserId = GoldMoreUserId
-
+	StateMachineImpl.RoundNum.Store(int32(0))
 	StateMachineImpl.RegisterState()
+	StateMachineImpl.WeatherLasting = 0
+	StateMachineImpl.WinnerIsAction.Store(false)
+	StateMachineImpl.IsAwaitA.Store(false)
+	StateMachineImpl.IsAwaitB.Store(false)
 	for _, element := range StateMachineImpl.StateList {
 		element.Init(id1, id2, c, Nt, StateMachineImpl, element)
 	}
-	go func() { //游戏结束，发通知
-		select {
-		case <-ParentNodeCtx.Done():
-			StateMachineImpl.SendActionById(StateMachineImpl.Id1, BattleDto.NewAction(BattleDto.OverBattle, BattleDto.Notify, ""))
-			StateMachineImpl.SendActionById(StateMachineImpl.Id2, BattleDto.NewAction(BattleDto.OverBattle, BattleDto.Notify, ""))
-		}
-	}()
 
 	StateMachineImpl.finish("ShuffleDeal")
 	return StateMachineImpl
@@ -319,12 +384,22 @@ func (s *StateMachine) finish(NextState string) {
 //#region StateTemplate
 
 type StateTemplate struct {
-	name string
-	Id1  int
-	Id2  int
-	c    *Ctx
-	Nt   *NotifyManager
-	SM   *StateMachine
+	name      string
+	Id1       int
+	Id2       int
+	c         *Ctx
+	Nt        *NotifyManager
+	SM        *StateMachine
+	QueryTime atomic.Int64
+	QueryMap  any //用来记录query的信息
+}
+
+func (s *StateTemplate) enter() {
+
+}
+
+func (s *StateTemplate) GetTemplate() *StateTemplate {
+	return s
 }
 
 func (s *StateTemplate) main() {
@@ -369,7 +444,7 @@ type ShuffleDeal struct {
 func (s *ShuffleDeal) enter() {
 	s.SM.SendActionById(s.Id1, BattleDto.NewAction(BattleDto.MatchSuccess, BattleDto.Notify, NewStateWaitTime(global.BattleWaitTime*time.Second))) //通知匹配成功
 	s.SM.SendActionById(s.Id2, BattleDto.NewAction(BattleDto.MatchSuccess, BattleDto.Notify, NewStateWaitTime(global.BattleWaitTime*time.Second)))
-
+	s.QueryTime.Store(Util.SendTime(global.BattleWaitTime * time.Second))
 	Util.CreateTimer(global.BattleWaitTime*time.Second, func() { //准备时间过后，正式开始战斗
 		s.SM.Mutex.Lock()
 		if !s.c.CheckCard(s.Id1) {
@@ -430,59 +505,59 @@ func (s *ShuffleDeal) process(GoCtx context.Context) {
 	s.SM.AcceptAction(GoCtx, handleAction)
 }
 
-func (s *ShuffleDeal) RandomCard() bool {
-	cList := s.SM.CardListCopy
-	for _, card := range *cList {
-		card.SetBtCtx(s.c)
-		card.SetTempId(s.c.entityCounter)
-		s.c.entityCounter++
-	}
-
-	rand.Shuffle(len(*cList), func(i, j int) {
-		(*cList)[i], (*cList)[j] = (*cList)[j], (*cList)[i]
-	})
-
-	numA := global.InitCardNum
-	numB := global.InitCardNum
-	i := 0
-	CardInHandA := make(map[int]CardAbstract.Card)
-	s.c.PlayerDataMap[s.SM.Id1].CardInHand = CardInHandA
-	CardInHandB := make(map[int]CardAbstract.Card)
-	s.c.PlayerDataMap[s.SM.Id2].CardInHand = CardInHandB
-	CharacterNumA := 0
-	CharacterNumB := 0
-
-	for ; i < len(*cList); i++ {
-		if (*cList)[i].GetInfo()["is_parent"] == true { //id1
-			(*cList)[i].SetOwnerId(s.Id1)
-			CardInHandA[(*cList)[i].GetTempId()] = (*cList)[i]
-			if _, ok := (*cList)[i].(CardAbstract.Character); ok {
-				CharacterNumA++
-			}
-			numA -= 1
-			if numA == 0 {
-				break
-			}
-		}
-	}
-	for ; i < len(*cList); i++ {
-		if (*cList)[i].GetInfo()["is_parent"] == true {
-			(*cList)[i].SetOwnerId(s.Id2)
-			CardInHandB[(*cList)[i].GetTempId()] = (*cList)[i]
-			if _, ok := (*cList)[i].(CardAbstract.Character); ok {
-				CharacterNumB++
-			}
-			numB -= 1
-			if numB == 0 {
-				break
-			}
-		}
-	}
-	//if CharacterNumA <= 1 || CharacterNumB <= 1 {
-	//	return false
-	//}
-	return true
-}
+//func (s *ShuffleDeal) RandomCard() bool {
+//	cList := s.SM.CardListCopy
+//	for _, card := range *cList {
+//		card.SetBtCtx(s.c)
+//		card.SetTempId(s.c.entityCounter)
+//		s.c.entityCounter++
+//	}
+//
+//	rand.Shuffle(len(*cList), func(i, j int) {
+//		(*cList)[i], (*cList)[j] = (*cList)[j], (*cList)[i]
+//	})
+//
+//	numA := global.InitCardNum
+//	numB := global.InitCardNum
+//	i := 0
+//	CardInHandA := make(map[int]CardAbstract.Card)
+//	s.c.PlayerDataMap[s.SM.Id1].CardInHand = CardInHandA
+//	CardInHandB := make(map[int]CardAbstract.Card)
+//	s.c.PlayerDataMap[s.SM.Id2].CardInHand = CardInHandB
+//	CharacterNumA := 0
+//	CharacterNumB := 0
+//
+//	for ; i < len(*cList); i++ {
+//		if (*cList)[i].GetInfo()["is_parent"] == true { //id1
+//			(*cList)[i].SetOwnerId(s.Id1)
+//			CardInHandA[(*cList)[i].GetTempId()] = (*cList)[i]
+//			if _, ok := (*cList)[i].(CardAbstract.Character); ok {
+//				CharacterNumA++
+//			}
+//			numA -= 1
+//			if numA == 0 {
+//				break
+//			}
+//		}
+//	}
+//	for ; i < len(*cList); i++ {
+//		if (*cList)[i].GetInfo()["is_parent"] == true {
+//			(*cList)[i].SetOwnerId(s.Id2)
+//			CardInHandB[(*cList)[i].GetTempId()] = (*cList)[i]
+//			if _, ok := (*cList)[i].(CardAbstract.Character); ok {
+//				CharacterNumB++
+//			}
+//			numB -= 1
+//			if numB == 0 {
+//				break
+//			}
+//		}
+//	}
+//	//if CharacterNumA <= 1 || CharacterNumB <= 1 {
+//	//	return false
+//	//}
+//	return true
+//}
 
 func (s *ShuffleDeal) exit() {
 	s.StateTemplate.exit()
@@ -520,6 +595,7 @@ func (a *ActiveChildCard) enter() {
 	}
 	a.SM.SendActionById(a.Id1, BattleDto.NewAction(BattleDto.ActiveChildCard, BattleDto.Query, queryMap))
 	a.SM.SendActionById(a.Id2, BattleDto.NewAction(BattleDto.ActiveChildCard, BattleDto.Query, queryMap))
+	a.QueryTime.Store(Util.SendTime(global.ActiveChildCardTime * time.Second))
 	a.ChanStop, a.ChanCrash = Util.CreateTimer(global.ActiveChildCardTime*time.Second, a.SelectEnd)
 }
 
@@ -720,12 +796,26 @@ type SelectWeatherDto struct {
 	Weather protocol.Weather `json:"weather" mapstructure:"weather"`
 }
 
-// Change !!天气变化主函数
-func (s *SelectWeather) Change(w protocol.Weather) {
+// ChangeWeather !!天气变化主函数
+func ChangeWeather(w protocol.Weather, SM *StateMachine) {
+	SM.WeatherLasting = 6
+	SM.c.Weather.Store(int64(w))
 
-	fmt.Println("天气被改动")
-	s.c.Weather.Store(int64(w))
+	//执行天气部署函数
+	cardBts := SM.c.GetBtAll(-1)
+	buffNeeds := make([]protocol.BuffNeed, len(cardBts)) //转化数组类型,数组没法隐式转化的
+	for i, card := range cardBts {
+		buffNeeds[i] = card
+	}
+	protocol.WeatherOnaApplyMap[protocol.Weather(SM.c.Weather.Load())](SM.c, buffNeeds) //执行天气部署函数
 
+	//通知天气改变
+	SM.SendActionById(SM.Id1, BattleDto.NewAction(BattleDto.WeatherChange, BattleDto.Result, map[string]any{
+		"data_all": SM.c.GetDataAll(SM.Id1),
+	}))
+	SM.SendActionById(SM.Id2, BattleDto.NewAction(BattleDto.WeatherChange, BattleDto.Result, map[string]any{
+		"data_all": SM.c.GetDataAll(SM.Id2),
+	}))
 }
 
 // ToSelect 随机出3个天气,加上宁静
@@ -773,7 +863,7 @@ func (s *SelectWeather) process(GoCtx context.Context) {
 			s.SM.SendActionById(id, BattleDto.NewAction(BattleDto.SelectWeather, BattleDto.Succeed, data))
 			s.SM.SendActionById(s.c.GetOpponentId(id), BattleDto.NewAction(BattleDto.SelectWeather, BattleDto.Succeed, data))
 			s.CrashChan <- struct{}{}
-			s.Change(protocol.Weather(res)) //改res
+			ChangeWeather(protocol.Weather(res), s.SM) //改res
 
 			go s.SM.finish("SelectSkillCard")
 		}
@@ -789,7 +879,7 @@ func (s *SelectWeather) timeEnding() {
 	res := Util.GetRandomElements[int](s.WeatherList, 1)[0]
 	s.WeatherListMutex.Unlock()
 
-	s.Change(protocol.Weather(res))
+	ChangeWeather(protocol.Weather(res), s.SM)
 	s.SM.SendActionById(s.SM.Id1, BattleDto.NewAction(BattleDto.SelectWeather, BattleDto.Succeed, SelectWeatherDto{Weather: protocol.Weather(res)}))
 	s.SM.SendActionById(s.SM.Id2, BattleDto.NewAction(BattleDto.SelectWeather, BattleDto.Succeed, SelectWeatherDto{Weather: protocol.Weather(res)}))
 	go s.SM.finish("SelectSkillCard")
@@ -821,6 +911,8 @@ func (s *SelectWeather) enter() {
 	s.WeatherListMutex.Unlock()
 
 	s.SM.SendActionById(s.SM.GoldMoreUserId, BattleDto.NewAction(BattleDto.SelectWeather, BattleDto.Query, queryMap))
+	s.QueryMap = s.WeatherList
+	s.QueryTime.Store(Util.SendTime(global.SelectWeatherTime * time.Second))
 	//-----让钱多的人选天气-----
 
 	//设置定时
@@ -830,7 +922,18 @@ func (s *SelectWeather) enter() {
 }
 
 func (s *SelectWeather) exit() {
+	RoundChange(s.SM)
+}
 
+// 回合结束,回合计数加一,并通知
+func RoundChange(SM *StateMachine) {
+	SM.RoundNum.Store(SM.RoundNum.Add(1))
+	SM.SendActionById(SM.Id2, BattleDto.NewAction(BattleDto.RoundChange, BattleDto.Result, map[string]interface{}{
+		"data_all": SM.c.GetDataAll(SM.Id2),
+	}))
+	SM.SendActionById(SM.Id1, BattleDto.NewAction(BattleDto.RoundChange, BattleDto.Result, map[string]interface{}{
+		"data_all": SM.c.GetDataAll(SM.Id1),
+	}))
 }
 
 //#endregion
@@ -866,7 +969,7 @@ func (s *SelectSkillCard) enter() {
 
 	s.SM.SendActionById(s.Id1, BattleDto.NewAction(BattleDto.DeployCard, BattleDto.Query, map[string]any{"state_wait_time": Util.SendTime(time.Second * global.SelectSkillCardTime), "where": BattleData.SkillCard}))
 	s.SM.SendActionById(s.Id2, BattleDto.NewAction(BattleDto.DeployCard, BattleDto.Query, map[string]any{"state_wait_time": Util.SendTime(time.Second * global.SelectSkillCardTime), "where": BattleData.SkillCard}))
-
+	s.QueryTime.Store(Util.SendTime(time.Second * global.SelectSkillCardTime))
 }
 func (s *SelectSkillCard) exit() {
 	s.SM.Mutex.Lock()
@@ -951,12 +1054,15 @@ func (s *SelectSkillCard) process(GoCtx context.Context) {
 
 type Judge struct {
 	StateTemplate
-	Mutex             sync.Mutex
-	TaskMap           map[int]int
-	ChanStop          chan struct{} //这东西是不用初始化的
-	ChanCrash         chan struct{}
-	IsTie             atomic.Bool
-	WaitAnimationPlay atomic.Bool
+	Mutex                  sync.Mutex
+	TaskMap                map[int]int
+	ChanStop               chan struct{} //这东西是不用初始化的
+	ChanCrash              chan struct{}
+	IsTie                  atomic.Bool
+	WaitAnimationPlay      atomic.Bool
+	ChanStopWaitAnimation  chan struct{}
+	ChanCrashWaitAnimation chan struct{}
+	TimeMutex              sync.Mutex
 }
 
 type JudgeData struct {
@@ -1008,7 +1114,16 @@ func (J *Judge) EndJudge() {
 	}
 
 	J.WaitAnimationPlay.Store(true)
-
+	J.TimeMutex.Lock()
+	J.ChanStopWaitAnimation, J.ChanCrashWaitAnimation = Util.CreateTimer(global.WaitAnimationRecall*time.Second, func() {
+		J.WaitAnimationPlay.Store(false)
+		if !J.IsTie.Load() {
+			go J.SM.finish("Combat")
+		} else {
+			go J.SM.finish("Judge")
+		}
+	})
+	J.TimeMutex.Unlock()
 }
 
 func (J *Judge) enter() {
@@ -1021,8 +1136,9 @@ func (J *Judge) enter() {
 	J.ChanCrash = chanCrash
 	J.ChanStop = chanStop
 
-	J.SM.SendActionById(J.Id1, BattleDto.NewAction(BattleDto.Judge, BattleDto.Query, NewStateWaitTime(global.JudgeWaitTime)))
-	J.SM.SendActionById(J.Id2, BattleDto.NewAction(BattleDto.Judge, BattleDto.Query, NewStateWaitTime(global.JudgeWaitTime)))
+	J.SM.SendActionById(J.Id1, BattleDto.NewAction(BattleDto.Judge, BattleDto.Query, NewStateWaitTime(time.Second*global.JudgeWaitTime)))
+	J.SM.SendActionById(J.Id2, BattleDto.NewAction(BattleDto.Judge, BattleDto.Query, NewStateWaitTime(time.Second*global.JudgeWaitTime)))
+	J.QueryTime.Store(Util.SendTime(time.Second * global.JudgeWaitTime))
 }
 func (J *Judge) exit() {
 	J.Mutex.Lock()
@@ -1052,12 +1168,9 @@ func (J *Judge) process(GoCtx context.Context) {
 	handleAction := func(id int, action BattleDto.Action, ResponseChan chan<- BattleDto.Action) bool {
 
 		if J.WaitAnimationPlay.Load() && action.ActionCode == BattleDto.AnimationPlayEnd && action.Predicates == BattleDto.Notify {
-			J.WaitAnimationPlay.Store(false)
-			if !J.IsTie.Load() {
-				go J.SM.finish("Combat")
-			} else {
-				go J.SM.finish("Judge")
-			}
+			J.TimeMutex.Lock()
+			J.ChanStopWaitAnimation <- struct{}{}
+			J.TimeMutex.Unlock()
 			return true
 		}
 
@@ -1128,6 +1241,7 @@ func (c *Combat) enter() {
 
 	c.SM.SendActionById(c.SM.Winner, BattleDto.NewAction(BattleDto.Combat, BattleDto.Query, NewStateWaitTime(WaitTime)))
 	c.SM.SendActionById(c.SM.Loser, BattleDto.NewAction(BattleDto.Combat, BattleDto.Notify, NewStateWaitTime(WaitTime)))
+	c.QueryTime.Store(Util.SendTime(WaitTime))
 	c.ChanStop, c.ChanCrash = Util.CreateTimer(WaitTime, c.CombatEnd)
 }
 func (c *Combat) CombatEnd() {
@@ -1200,7 +1314,10 @@ func (c *Combat) process(GoCtx context.Context) {
 
 type CardCalc struct {
 	StateTemplate
-	HaveDone atomic.Bool
+	HaveDone  atomic.Bool
+	StopChan  chan struct{}
+	CrashChan chan struct{}
+	TimeMutex sync.Mutex
 }
 
 func (s *CardCalc) SpecialInit() {
@@ -1210,6 +1327,12 @@ func (s *CardCalc) SpecialInit() {
 func (s *CardCalc) enter() {
 	s.SM.SendActionById(s.SM.Id2, BattleDto.NewAction(BattleDto.CardCalc, BattleDto.Notify, ""))
 	s.SM.SendActionById(s.SM.Id1, BattleDto.NewAction(BattleDto.CardCalc, BattleDto.Notify, ""))
+	s.QueryTime.Store(0)
+	s.TimeMutex.Lock()
+	s.StopChan, s.CrashChan = Util.CreateTimer(global.WaitAnimationRecall*time.Second, func() {
+		go s.SM.finish("SelectSkillCard")
+	})
+	s.TimeMutex.Unlock()
 }
 
 func (s *CardCalc) CalcBtCry() { //光环的效果
@@ -1249,10 +1372,17 @@ func (s *CardCalc) Switch(_data BattleData.CombatDto, UserId int) bool {
 					return false
 				}
 				playerData.UpdateEnergy(-1)
+				//能量变化通知双方
+				s.SM.SendActionById(s.SM.Id1, BattleDto.NewAction(BattleDto.EnergyChange, BattleDto.Result, map[string]interface{}{
+					"data_all": s.c.GetDataAll(s.SM.Id1),
+				}))
+				s.SM.SendActionById(s.SM.Id2, BattleDto.NewAction(BattleDto.EnergyChange, BattleDto.Result, map[string]interface{}{
+					"data_all": s.c.GetDataAll(s.SM.Id2),
+				}))
 
 				//-----------------------换牌正文-----------------------
 
-				playerData.SwitchCard(data.Where, card)
+				playerData.SwitchCard(data.Where, card, s.c)
 				return true
 				//-----------------------换牌正文-----------------------
 
@@ -1268,18 +1398,26 @@ func (s *CardCalc) Switch(_data BattleData.CombatDto, UserId int) bool {
 	return false
 }
 
-func (s *CardCalc) CalcNotSwitch(data BattleData.CombatDto, UserId int) {
-	opponentCardId := s.c.GetCardBt(UserId, data.OpponentWhere).GetTempId()
+// 返回值是,是否使用技能或者攻击
+func (s *CardCalc) CalcNotSwitch(data BattleData.CombatDto, UserId int) bool {
+	var ObjectCardId int
+	if data.OpponentWhere != BattleData.Self {
+		ObjectCardId = s.c.GetCardBt(s.c.GetOpponentId(UserId), data.OpponentWhere).GetTempId()
+	} else {
+		ObjectCardId = s.c.GetCardBt(UserId, data.SelfWhere).GetTempId()
+	}
+	res := false
 	if data.Behavior == BattleData.Attack { //执行前端传过来的行为
-		s.c.GetCardBt(UserId, data.SelfWhere).(CardAbstract.Character).Attack(opponentCardId)
+		res = s.c.GetCardBt(UserId, data.SelfWhere).(CardAbstract.Character).Attack(ObjectCardId)
 	} else if data.Behavior == BattleData.Skill {
-		s.c.GetCardBt(UserId, data.SelfWhere).(CardAbstract.Character).Skill(opponentCardId)
+		res = s.c.GetCardBt(UserId, data.SelfWhere).(CardAbstract.Character).Skill(ObjectCardId)
 	}
 
 	s.c.StackSettle() //执行效果堆栈
+	return res
 }
 
-// SkillCalc 双方的法术牌结算都在这了
+// SkillCalc 双方的法术牌结算都在这了//有执行
 func (s *CardCalc) SkillCalc() {
 	if s.c.PlayerDataMap[s.SM.Winner].SkillCardBT != nil {
 		s.c.PlayerDataMap[s.SM.Winner].SkillCardBT.(CardAbstract.SkillCard).PlayMagic() //触发法术，然后，在法术这个函数里面，用和ctx的协议，把通知前端的action传出来
@@ -1307,11 +1445,20 @@ CalcLoop:
 			if s.SM.LoseMarkMap[s.SM.Loser] >= 2 { //输两次了,有免伤
 				for _, card := range LoserBtCardList {
 					for range s.SM.LoseMarkMap[s.SM.Loser] - 1 {
-						card.AddBuff(protocol.NewBuffBase(protocol.DamageImmunity, 1, 0.28, s.c.CreateTempId()), s.c)
+						TempId := card.GetTempId()
+						s.c.ProtoColPush(protocol.NewGiveBuff(&TempId, *protocol.NewBuffBase(protocol.DamageImmunity, 1, 0.28, s.c.CreateTempId()), false, &protocol.InterruptConfig{}))
 					}
 				}
 			}
+			s.c.StackSettle()
 			//-------------给连续输的人增加免伤-------------
+
+			//回合开始结算天气//通知在里面了
+			if protocol.WeatherExecPositionMap[protocol.Weather(s.c.Weather.Load())] == protocol.RoundStart {
+				s.ExecWeather()
+				s.c.StackSettle()
+				s.c.ChildCardCheck()
+			}
 
 			//--------结算换牌start--------
 
@@ -1343,44 +1490,96 @@ CalcLoop:
 			s.SM.SendActionById(s.SM.Id2, BattleDto.NewAction(BattleDto.DeployCard, BattleDto.Notify, transformToSelfAndOpponent[BattleData.SelectCard, []BattleData.SelectCard](SwitchCardMap, s.SM.Id2)))
 			s.SM.SendActionById(s.SM.Id1, BattleDto.NewAction(BattleDto.DeployCard, BattleDto.Notify, transformToSelfAndOpponent[BattleData.SelectCard, []BattleData.SelectCard](SwitchCardMap, s.SM.Id1)))
 
-			//结算攻击或者技能
-			Calc := func(User string, UserId int) {
+			//-----------结算攻击或者技能-----------------
+
+			//输出值是是否使用过攻击和技能
+			Calc := func(User string, UserId int) bool {
 				DtoList := data[User]
+				res := false
 				for _, Dto := range DtoList {
 					if Dto.Behavior == BattleData.SwitchCard {
 						s.SM.SendActionById(UserId, BattleDto.NewErrAction(global.BattleCantSwitch))
 						continue
 					}
-					s.CalcNotSwitch(Dto, UserId)
+					if s.CalcNotSwitch(Dto, UserId) {
+						res = true
+					}
 				}
+				return res
 			}
-			Calc("Winner", s.SM.Winner)
+			WinnerIsAction := Calc("Winner", s.SM.Winner) //获取赢的人是否使用过攻击和技能
+			s.SM.WinnerIsAction.Store(WinnerIsAction)
 			s.c.ChildCardCheck()
 			Calc("Loser", s.SM.Loser)
 			s.c.ChildCardCheck()
+			//-----------结算攻击或者技能-----------------
 
 			//结算法术(s.c.ChildCardCheck()在里面了)
-			s.SkillCalc()
 			s.SM.SendActionById(s.SM.Id2, BattleDto.NewAction(BattleDto.SkillCardNotify, BattleDto.Notify, ""))
 			s.SM.SendActionById(s.SM.Id1, BattleDto.NewAction(BattleDto.SkillCardNotify, BattleDto.Notify, ""))
+			s.SkillCalc()
 
-			//结算天气
-			cardBts := s.c.GetBtAll(-1)
-			buffNeeds := make([]protocol.BuffNeed, len(cardBts)) //转化数组类型,数组没法隐式转化的
-			for i, card := range cardBts {
-				buffNeeds[i] = card
+			//回合结束结算天气//通知在里面了
+			if protocol.WeatherExecPositionMap[protocol.Weather(s.c.Weather.Load())] == protocol.RoundEnd {
+				s.ExecWeather()
+				s.c.StackSettle()
+				s.c.ChildCardCheck()
 			}
-			protocol.WeatherFuncMap[protocol.Weather(s.c.Weather.Load())](s.c, buffNeeds) //从天气执行函数map储存种取出来执行
-			s.SM.SendActionById(s.SM.Id2, BattleDto.NewAction(BattleDto.WeatherNotify, BattleDto.Notify, ""))
-			s.SM.SendActionById(s.SM.Id1, BattleDto.NewAction(BattleDto.WeatherNotify, BattleDto.Notify, ""))
 
 			//结算buff
-			CharacterCardList := s.c.GetCharacter()
-			for _, Card := range CharacterCardList {
-				Card.BuffRoundEnd(s.c)
-			}
 			s.SM.SendActionById(s.SM.Id2, BattleDto.NewAction(BattleDto.BuffCalcNotify, BattleDto.Notify, ""))
 			s.SM.SendActionById(s.SM.Id1, BattleDto.NewAction(BattleDto.BuffCalcNotify, BattleDto.Notify, ""))
+
+			CharacterCardList := s.c.GetCharacter()
+			for _, Card := range CharacterCardList {
+				flag, buff := s.c.CheckBuff(Card.GetTempId(), protocol.DamageTransform)
+				if flag {
+					trans_hurt := int(buff.Value * Card.GetCR().HurtedThisTurn)
+					OpBtList := s.c.ProtoGetBtAll(s.c.GetOpponentId(Card.GetOwnerId()))
+					Obj := Util.GetRandomElements[int](OpBtList, 1)
+					s.c.ProtoColPush(protocol.NewAttack(Card.GetOwnerId(), Card.GetTempId(), Obj[0], float64(trans_hurt), Card.GetDec(), BattleData.Damage, false, &protocol.InterruptConfig{}))
+					s.c.StackSettle()
+				}
+			} //结算伤害转移这个buff,他特殊化提出来,是因为必须先结算
+			for _, Card := range CharacterCardList {
+				Card.BuffRoundEnd(s.c)
+				s.c.StackSettle()
+			}
+			s.c.ChildCardCheck()
+
+			//回合结束,所有卡的roundend执行
+			AllCard := s.c.GetAllCard()
+			for _, Card := range AllCard {
+				Card.RoundEnd()
+			}
+			s.c.StackSettle()
+			s.c.ChildCardCheck()
+
+			//回合结束,回合计数加一,并通知
+			RoundChange(s.SM)
+
+			//------执行下回合回合开始的card的效果(nextRound)------
+			AllCharacter := s.c.GetCharacter()
+			for _, Card := range AllCharacter {
+				Card.NextRound() //所有战斗卡
+			}
+			s.c.StackSettle()
+			s.c.ChildCardCheck()
+			if s.c.PlayerDataMap[s.SM.Winner].SkillCardBT != nil { //和上场的法术牌
+				s.c.PlayerDataMap[s.SM.Winner].SkillCardBT.(CardAbstract.SkillCard).NextRound()
+				s.c.StackSettle()
+				s.c.ChildCardCheck()
+				s.c.ProtoColMoveDisCardPool(s.SM.Winner, s.c.PlayerDataMap[s.SM.Winner].SkillCardBT.GetTempId()) //丢弃掉法术牌
+			}
+
+			if s.c.PlayerDataMap[s.SM.Loser].SkillCardBT != nil {
+				s.c.PlayerDataMap[s.SM.Loser].SkillCardBT.(CardAbstract.SkillCard).NextRound()
+				s.c.StackSettle() //执行效果堆栈
+				s.c.ChildCardCheck()
+				s.c.ProtoColMoveDisCardPool(s.SM.Loser, s.c.PlayerDataMap[s.SM.Loser].SkillCardBT.GetTempId())
+			}
+
+			//------执行下回合回合开始的card的效果(nextRound)------
 
 			//全部结算完成,发个通知
 			s.SM.SendActionById(s.SM.Id2, BattleDto.NewAction(BattleDto.CardCalc, BattleDto.Finish, ""))
@@ -1392,15 +1591,32 @@ CalcLoop:
 	}
 }
 
+// 结算天气//通知也在这个函数里面了的
+func (s *CardCalc) ExecWeather() {
+	s.SM.SendActionById(s.SM.Id2, BattleDto.NewAction(BattleDto.WeatherNotify, BattleDto.Notify, ""))
+	s.SM.SendActionById(s.SM.Id1, BattleDto.NewAction(BattleDto.WeatherNotify, BattleDto.Notify, ""))
+	cardBts := s.c.GetBtAll(-1)
+	buffNeeds := make([]protocol.BuffNeed, len(cardBts)) //转化数组类型,数组没法隐式转化的
+	for i, card := range cardBts {
+		buffNeeds[i] = card
+	}
+	protocol.WeatherFuncMap[protocol.Weather(s.c.Weather.Load())](s.c, buffNeeds) //从天气执行函数map储存种取出来执行
+
+}
+
 func (s *CardCalc) exit() {
 	s.HaveDone.Store(false)
+	s.SM.ReduceWeatherLasting()
+	s.SM.WinnerIsAction.Store(false)
 }
 
 func (s *CardCalc) process(GoCtx context.Context) {
 	fmt.Println("进入cardcal的process了")
 	handleAction := func(id int, action BattleDto.Action, ResponseChan chan<- BattleDto.Action) bool {
 		if action.ActionCode == BattleDto.AnimationPlayEnd && action.Predicates == BattleDto.Notify && s.HaveDone.Load() {
-			go s.SM.finish("SelectSkillCard")
+			s.TimeMutex.Lock()
+			s.StopChan <- struct{}{}
+			s.TimeMutex.Unlock()
 			return true
 		}
 		return false

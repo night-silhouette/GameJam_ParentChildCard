@@ -7,6 +7,7 @@ const (
 	AnHurt
 	AnDeath
 	AnSkill
+	AnRetaliate
 )
 
 type AnimationDto struct {

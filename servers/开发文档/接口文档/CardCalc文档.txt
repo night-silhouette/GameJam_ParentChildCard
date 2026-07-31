@@ -1,0 +1,94 @@
+反正还是用actioncode去划分
+cardcalc涉及到的actioncode为
+CardCalc//
+Interrupt//
+SkillCardNotify//
+CatchChild//
+CardMove//
+AnimationNotify//
+ValueNotify//
+WeatherNotify//
+BuffCalcNotify//
+DeployCard//
+
+
+关于谓词,除了最后CardCalc是finish 和 CardMove,ValueNotify,CatchChild这三个数值变化是result 其他都是notify
+
+1.Interrupt
+具体看之前的
+
+2.DeployCard,通知换牌结果
+
+传:
+map{
+"self":[]selectCard,
+"opponent":[]selectCard
+}
+
+
+type SelectCard struct {
+	Where      Where `json:"where" mapstructure:"where"`
+	CardId     int   `json:"card_id" mapstructure:"card_id"`
+	CardTempId int   `json:"card_temp_id" mapstructure:"card_temp_id"`
+}
+
+3.SkillCardNotify
+就告诉你法术牌开始结算了
+
+4.WeatherNotify
+就告诉你天气开始结算了
+
+5.BuffCalcNotify
+就告诉你buff开始结算了
+
+6.CatchChild
+传:
+type ChildCardCatchDto struct {
+	Origin  int     `json:"origin" mapstructure:"origin"`
+	Object  int     `json:"object" mapstructure:"object"`
+	DataAll *DataAll `json:"data_all" mapstructure:"data_all"`
+}
+
+7.CardMove
+传:
+type CardCalcCardMoveDto struct {
+	Object  Where    `json:"object" mapstructure:"object"`
+	TempId  int      `json:"temp_id" mapstructure:"temp_id"`
+	DataAll *DataAll `json:"data_all" mapstructure:"data_all"`
+}
+
+8.HpChange
+type CardCalcValueDto struct {
+	TempId   int         `json:"temp_id" mapstructure:"temp_id"`
+	Category ValueChange `json:"category" mapstructure:"category"`
+	Value    float64     `json:"value" mapstructure:"value"` //有正有负
+	DataAll  *DataAll    `json:"data_all" mapstructure:"data_all"`
+	IsMiss   bool        `json:"is_miss" mapstructure:"is_miss"`
+}
+
+type ValueChange int
+
+const (
+	Damage ValueChange = iota
+	Heal
+	TrueDamage//真伤
+)
+
+
+9.AnimationNotify
+
+
+type AnimationDto struct {
+	Caller            int               `json:"caller" mapstructure:"caller"`//发起者(cardtempid)
+	Acceptor          int               `json:"acceptor" mapstructure:"acceptor"`
+	AnimationBehavior AnimationBehavior `json:"animation_behavior" mapstructure:"animation_behavior"`
+}
+
+const (
+	AnAttack AnimationBehavior = iota
+	AnHurt
+	AnDeath
+	AnSkill
+)
+
+10.	BuffChange
