@@ -1,33 +1,24 @@
-[gd_scene load_steps=18 format=3 uid="uid://bvongwrpqp0vv"]
+[gd_scene load_steps=16 format=3 uid="uid://b4noewppg5tcd"]
 
-[ext_resource type="Texture2D" uid="uid://dje375wa2ans7" path="res://素材/使用素材/卡牌/基础卡牌重置素材/卡牌.png" id="1_facoa"]
-[ext_resource type="Texture2D" uid="uid://dx1ewstebv33h" path="res://素材/使用素材/万能组件.png" id="1_i8rll"]
-[ext_resource type="Script" uid="uid://bix4vrvt40xl7" path="res://game_ui/卡牌具体页.gd" id="1_kwojn"]
-[ext_resource type="Texture2D" uid="uid://crhqqvbq3l1qw" path="res://素材/新素材/战斗内内容/信息标-太阳.png" id="1_wxb7b"]
-[ext_resource type="Texture2D" uid="uid://cc6q2i5yuw14c" path="res://素材/新素材/战斗内内容/信息标-月亮.png" id="2_cccau"]
-[ext_resource type="Shader" uid="uid://d3xihjryek5pq" path="res://base_class/card/card_border_shader.gdshader" id="3_ecism"]
-[ext_resource type="Texture2D" uid="uid://c5arxeyquohd3" path="res://素材/新素材/战斗内内容/卡牌库/牌库.png" id="3_kwojn"]
-[ext_resource type="Texture2D" uid="uid://vu08rfi43s8k" path="res://素材/使用素材/战斗内/桌面/信息标-血量.png" id="4_6px4b"]
-[ext_resource type="LabelSettings" uid="uid://ik6wcfsli47v" path="res://game_ui/数值.tres" id="5_putje"]
-[ext_resource type="Texture2D" uid="uid://cxy28sj3on23e" path="res://素材/使用素材/战斗内/桌面/信息标-攻击.png" id="6_i8rll"]
-[ext_resource type="FontFile" uid="uid://bj1pdtvpfop4a" path="res://素材/使用素材/YaoSuiXinShouXieTi-2.ttf" id="7_kwojn"]
-[ext_resource type="Texture2D" uid="uid://c1e48of6tks8m" path="res://素材/新素材/战斗内内容/信息标-技能.png" id="8_kwojn"]
-[ext_resource type="Texture2D" uid="uid://damm001coeieh" path="res://素材/使用素材/战斗外/登录界面/点UI .png" id="9_ecism"]
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_i2b6i"]
-shader = ExtResource("3_ecism")
-shader_parameter/border_strength = 0.7490000355775
-shader_parameter/desaturate = 2.7450001303875
-shader_parameter/fade_amount = 3.0
-shader_parameter/brightness = 1.1130000291175
-shader_parameter/border_width = 0.1290000061275
+[ext_resource type="Texture2D" uid="uid://dx1ewstebv33h" path="res://素材/使用素材/万能组件.png" id="1_bktes"]
+[ext_resource type="Script" uid="uid://bix4vrvt40xl7" path="res://game_ui/卡牌具体页.gd" id="1_co8io"]
+[ext_resource type="Texture2D" uid="uid://crhqqvbq3l1qw" path="res://素材/新素材/战斗内内容/信息标-太阳.png" id="2_hew5g"]
+[ext_resource type="Texture2D" uid="uid://cc6q2i5yuw14c" path="res://素材/新素材/战斗内内容/信息标-月亮.png" id="3_co8io"]
+[ext_resource type="Texture2D" uid="uid://c5arxeyquohd3" path="res://素材/新素材/战斗内内容/卡牌库/牌库.png" id="3_ea3l8"]
+[ext_resource type="Texture2D" uid="uid://dje375wa2ans7" path="res://素材/使用素材/卡牌/基础卡牌重置素材/卡牌.png" id="4_ea3l8"]
+[ext_resource type="Texture2D" uid="uid://vu08rfi43s8k" path="res://素材/使用素材/战斗内/桌面/信息标-血量.png" id="5_1vk7x"]
+[ext_resource type="Texture2D" uid="uid://cxy28sj3on23e" path="res://素材/使用素材/战斗内/桌面/信息标-攻击.png" id="6_c45vu"]
+[ext_resource type="FontFile" uid="uid://bj1pdtvpfop4a" path="res://素材/使用素材/YaoSuiXinShouXieTi-2.ttf" id="7_o8hc6"]
+[ext_resource type="Texture2D" uid="uid://c1e48of6tks8m" path="res://素材/新素材/战斗内内容/信息标-技能.png" id="8_5p13y"]
+[ext_resource type="Texture2D" uid="uid://damm001coeieh" path="res://素材/使用素材/战斗外/登录界面/点UI .png" id="9_jglxx"]
+[ext_resource type="LabelSettings" uid="uid://ik6wcfsli47v" path="res://game_ui/数值.tres" id="10_26smu"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_y2q4p"]
 font_size = 66
 font_color = Color(0.6039216, 0.3372549, 0.36078432, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_ecism"]
-font = ExtResource("7_kwojn")
+font = ExtResource("7_o8hc6")
 font_size = 71
 font_color = Color(0, 0, 0, 1)
 
@@ -42,7 +33,7 @@ offset_right = 498.26416
 offset_bottom = 849.4031
 scale = Vector2(0.6700766, 0.6700766)
 mouse_filter = 1
-script = ExtResource("1_kwojn")
+script = ExtResource("1_co8io")
 
 [node name="背景" type="TextureRect" parent="."]
 visible = false
@@ -52,28 +43,26 @@ offset_top = 5.8850155
 offset_right = 1111.9617
 offset_bottom = 829.9073
 scale = Vector2(0.44948378, 1.049846)
-texture = ExtResource("1_i8rll")
+texture = ExtResource("1_bktes")
 metadata/_edit_lock_ = true
 
 [node name="牌库" type="TextureRect" parent="."]
-material = SubResource("ShaderMaterial_i2b6i")
-layout_mode = 0
+layout_mode = 1
 offset_right = 676.0116
 offset_bottom = 1168.2136
 scale = Vector2(0.73071706, 0.73071706)
-texture = ExtResource("3_kwojn")
+texture = ExtResource("3_ea3l8")
 expand_mode = 1
 
 [node name="母牌" type="TextureRect" parent="."]
-modulate = Color(0.2784314, 0.27058825, 0.27450982, 0.29803923)
+modulate = Color(0.6117647, 0.6117647, 0.6117647, 0.16470589)
 self_modulate = Color(0, 0, 0, 1)
 layout_mode = 0
-offset_left = 22.3855
-offset_top = 304.4428
-offset_right = 485.3855
-offset_bottom = 754.4428
-scale = Vector2(1.0216559, 1.0216559)
-texture = ExtResource("1_wxb7b")
+offset_left = 19.616695
+offset_top = 251.09377
+offset_right = 482.6167
+offset_bottom = 701.09375
+texture = ExtResource("2_hew5g")
 
 [node name="子牌" type="TextureRect" parent="."]
 visible = false
@@ -85,29 +74,28 @@ offset_top = 245.20876
 offset_right = 612.0869
 offset_bottom = 695.20874
 scale = Vector2(0.65186656, 1.0456746)
-texture = ExtResource("2_cccau")
+texture = ExtResource("3_co8io")
 
 [node name="卡牌纹理" type="TextureRect" parent="."]
 layout_mode = 0
-offset_left = 19.400768
-offset_top = 40.293896
-offset_right = 773.01514
-offset_bottom = 1337.5605
+offset_left = 29.425053
+offset_top = 82.39015
+offset_right = 783.0394
+offset_bottom = 1379.6567
 scale = Vector2(0.39265555, 0.39265555)
-texture = ExtResource("1_facoa")
+texture = ExtResource("4_ea3l8")
 
 [node name="信息标血量" type="TextureRect" parent="."]
-modulate = Color(0.9249212, 0.73039585, 0.7039984, 1)
+modulate = Color(1, 0, 0, 1)
 layout_mode = 0
 offset_left = 319.3665
-offset_top = 214.90079
+offset_top = 283.54968
 offset_right = 660.36646
-offset_bottom = 536.90076
+offset_bottom = 605.5497
 scale = Vector2(0.15337034, 0.15337034)
-texture = ExtResource("4_6px4b")
+texture = ExtResource("5_1vk7x")
 
 [node name="hp" type="Label" parent="信息标血量"]
-modulate = Color(0.24333657, 0.18710434, 0.18465945, 1)
 layout_mode = 0
 offset_left = 460.45496
 offset_top = -38.3714
@@ -119,14 +107,14 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="信息标攻击" type="TextureRect" parent="."]
-modulate = Color(0.6154497, 0.44987375, 0.74694973, 1)
+modulate = Color(1, 0, 0, 1)
 layout_mode = 0
 offset_left = 311.90466
-offset_top = 334.29016
+offset_top = 376.07642
 offset_right = 694.90466
-offset_bottom = 669.29016
+offset_bottom = 711.0764
 scale = Vector2(0.15902978, 0.15902978)
-texture = ExtResource("6_i8rll")
+texture = ExtResource("6_c45vu")
 
 [node name="attack" type="Label" parent="信息标攻击"]
 layout_mode = 0
@@ -142,9 +130,9 @@ vertical_alignment = 1
 [node name="name" type="Label" parent="."]
 layout_mode = 0
 offset_left = 298.47333
-offset_top = 77.603065
+offset_top = 164.16032
 offset_right = 480.7191
-offset_bottom = 159.68323
+offset_bottom = 246.2405
 text = "明阳"
 label_settings = SubResource("LabelSettings_ecism")
 horizontal_alignment = 1
@@ -153,20 +141,20 @@ vertical_alignment = 1
 [node name="信息标技能" type="TextureRect" parent="."]
 layout_mode = 0
 offset_left = 26.8626
-offset_top = 552.17566
+offset_top = 583.5154
 offset_right = 338.62164
-offset_bottom = 1016.6334
+offset_bottom = 1047.9731
 scale = Vector2(0.23455925, 0.23455925)
-texture = ExtResource("8_kwojn")
+texture = ExtResource("8_5p13y")
 
 [node name="技能效果" type="Label" parent="信息标技能"]
 clip_contents = true
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.37888435
+anchor_left = 0.37888432
 anchor_top = 0.28612104
-anchor_right = 0.72582334
-anchor_bottom = 1.4382675
+anchor_right = 0.37888432
+anchor_bottom = 0.8218291
 offset_left = 183.99077
 offset_top = -50.179504
 offset_right = 1580.648
@@ -179,14 +167,13 @@ autowrap_mode = 1
 metadata/_edit_use_anchors_ = true
 
 [node name="点ui" type="TextureRect" parent="."]
-modulate = Color(0.5931336, 0.59313357, 0.59313357, 1)
 layout_mode = 0
 offset_left = 349.2138
-offset_top = 780.5078
+offset_top = 755.1376
 offset_right = 574.2138
-offset_bottom = 1008.5078
+offset_bottom = 983.1376
 scale = Vector2(0.18228701, 0.18228701)
-texture = ExtResource("9_ecism")
+texture = ExtResource("9_jglxx")
 
 [node name="energy" type="Label" parent="点ui"]
 layout_mode = 0
@@ -196,4 +183,4 @@ offset_right = 508.10626
 offset_bottom = 46.999733
 scale = Vector2(5.2470884, 5.2470884)
 text = "9"
-label_settings = ExtResource("5_putje")
+label_settings = ExtResource("10_26smu")
