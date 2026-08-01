@@ -1,11 +1,10 @@
-[gd_scene load_steps=32 format=3 uid="uid://drj8312i1aoi6"]
+[gd_scene load_steps=31 format=3 uid="uid://drj8312i1aoi6"]
 
 [ext_resource type="Texture2D" uid="uid://bxbpcw7rdnhhj" path="res://素材/使用素材/战斗内/桌面/说明/桌面.png" id="1_m77db"]
 [ext_resource type="Script" uid="uid://cdupj53tbybnx" path="res://game_scene/battle/桌面.gd" id="2_kwvrx"]
 [ext_resource type="PackedScene" uid="uid://k0qlnd2phxbe" path="res://game_scene/battle/检验区.tscn" id="2_yp7nw"]
 [ext_resource type="PackedScene" uid="uid://ck88jwk2wt3ap" path="res://base_class/card/combat_card.tscn" id="4_combat"]
-[ext_resource type="PackedScene" uid="uid://dx67q76jhqn1l" path="res://game_ui/battle/子卡详细.tscn" id="4_vq28s"]
-[ext_resource type="PackedScene" uid="uid://dngn8v87puqiy" path="res://game_ui/battle/母卡详细.tscn" id="5_nqrhk"]
+[ext_resource type="PackedScene" uid="uid://tqycxs6dsui" path="res://game_scene/battle/buff显示页.tscn" id="4_hxbbd"]
 [ext_resource type="PackedScene" uid="uid://bvywilaq1ou8w" path="res://game_scene/menu/笑脸按钮.tscn" id="7_nqrhk"]
 [ext_resource type="Texture2D" uid="uid://bxd3bccdhucok" path="res://素材/使用素材/战斗内/功能区/战斗卡行为选择/技能.png" id="10_snraw"]
 [ext_resource type="Texture2D" uid="uid://1hm12m5elh2x" path="res://素材/使用素材/战斗内/桌面/指向/10.png" id="12_y8gow"]
@@ -154,7 +153,7 @@ animations = [{
 "speed": 5.0
 }]
 
-[node name="桌面" type="TextureRect" node_paths=PackedStringArray("cards_ui", "data_UI")]
+[node name="桌面" type="TextureRect" node_paths=PackedStringArray("cards_ui")]
 offset_right = 2171.0
 offset_bottom = 1279.0
 scale = Vector2(0.2659713, 0.2584372)
@@ -162,7 +161,6 @@ texture = ExtResource("1_m77db")
 script = ExtResource("2_kwvrx")
 cards_ui = [NodePath("parent_card"), NodePath("child_card"), NodePath("op_parent"), NodePath("op_child")]
 zones = Array[int]([3, 4, 7, 8])
-data_UI = [NodePath("parent_card2"), NodePath("child_card1"), NodePath("op_parent2"), NodePath("op_child1")]
 metadata/_edit_lock_ = true
 
 [node name="母牌_检验区" parent="." instance=ExtResource("2_yp7nw")]
@@ -175,42 +173,44 @@ position = Vector2(1500.1619, 812.57654)
 scale = Vector2(-8.537157, 8.990021)
 zone = 4
 
-[node name="child_card1" parent="." instance=ExtResource("4_vq28s")]
-layout_mode = 0
-offset_left = 1150.5001
-offset_top = 839.6625
-offset_right = 1150.5001
-offset_bottom = 839.6625
-scale = Vector2(1.3282063, 1.3282063)
-
-[node name="op_child1" parent="." instance=ExtResource("4_vq28s")]
-layout_mode = 0
-offset_left = 1176.8186
-offset_top = 19.34706
-offset_right = 1176.8186
-offset_bottom = 19.34706
-scale = Vector2(1.1850284, 1.1850284)
-mouse_filter = 2
-mouse_behavior_recursive = 2
-
-[node name="parent_card2" parent="." instance=ExtResource("5_nqrhk")]
+[node name="buff_parent" parent="." node_paths=PackedStringArray("card_node") instance=ExtResource("4_hxbbd")]
 layout_mode = 1
-offset_left = 342.14215
-offset_top = 839.66235
-offset_right = 342.1421
-offset_bottom = 839.6626
-scale = Vector2(1.3169863, 1.3169863)
+offset_left = 349.66174
+offset_top = 835.793
+offset_right = -802.33813
+offset_bottom = 187.79321
+scale = Vector2(1.2942053, 1.2942053)
+card_node = NodePath("../parent_card")
 
-[node name="op_parent2" parent="." instance=ExtResource("5_nqrhk")]
+[node name="buff_child" parent="." node_paths=PackedStringArray("card_node") instance=ExtResource("4_hxbbd")]
 layout_mode = 1
-offset_left = 375.98044
-offset_top = 7.738825
-offset_right = 375.98044
-offset_bottom = 7.738886
-scale = Vector2(1.2202342, 1.2202342)
-mouse_filter = 2
+offset_left = 1139.2205
+offset_top = 835.793
+offset_right = -12.779541
+offset_bottom = 187.79321
+scale = Vector2(1.3017515, 1.3017515)
+card_node = NodePath("../child_card")
+
+[node name="buff_op_parent" parent="." node_paths=PackedStringArray("card_node") instance=ExtResource("4_hxbbd")]
+layout_mode = 1
+offset_left = 349.66174
+offset_top = -11.608234
+offset_right = -802.33813
+offset_bottom = -659.60803
+scale = Vector2(1.2942053, 1.2942053)
+card_node = NodePath("../op_parent")
+
+[node name="buff_op_child" parent="." node_paths=PackedStringArray("card_node") instance=ExtResource("4_hxbbd")]
+layout_mode = 1
+offset_left = 1169.2991
+offset_top = 7.7388916
+offset_right = 17.299316
+offset_bottom = -640.2609
+scale = Vector2(1.2942053, 1.2942053)
+card_node = NodePath("../op_child")
 
 [node name="parent_card" parent="." instance=ExtResource("4_combat")]
+visible = true
 layout_mode = 0
 offset_left = 383.50003
 offset_top = 866.7483
@@ -219,6 +219,7 @@ offset_bottom = 1436.7483
 scale = Vector2(0.6111597, 0.6111597)
 
 [node name="child_card" parent="." instance=ExtResource("4_combat")]
+visible = true
 layout_mode = 0
 offset_left = 1176.8188
 offset_top = 862.8789
@@ -227,6 +228,7 @@ offset_bottom = 1432.8789
 scale = Vector2(0.6111597, 0.6111597)
 
 [node name="op_parent" parent="." instance=ExtResource("4_combat")]
+visible = true
 layout_mode = 0
 offset_left = 594.0491
 offset_top = 355.98593
@@ -237,6 +239,7 @@ scale = Vector2(0.6111597, 0.6111597)
 mouse_filter = 2
 
 [node name="op_child" parent="." instance=ExtResource("4_combat")]
+visible = true
 layout_mode = 0
 offset_left = 1402.407
 offset_top = 371.46356

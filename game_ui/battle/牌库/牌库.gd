@@ -41,7 +41,7 @@ func _update_view():
 			child.show()
 			# 如果该卡有 FREE_ZONE 副本，显示半透明占位
 			if card_manager.has_free_zone_duplicate(card_data.get("temp_id")):
-				child.modulate.a = 0.3
+				child.modulate.a = 0.1
 			else:
 				child.modulate.a = 1.0
 			# 根据 card_data 的 need_operate 标记切换状态

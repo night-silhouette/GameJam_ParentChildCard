@@ -1,16 +1,10 @@
-[gd_scene load_steps=92 format=3 uid="uid://ck88jwk2wt3ap"]
+[gd_scene load_steps=90 format=3 uid="uid://ck88jwk2wt3ap"]
 
 [ext_resource type="Script" uid="uid://bcgtwjrhxgie8" path="res://combat_card.gd" id="1_johr8"]
 [ext_resource type="PackedScene" uid="uid://bvongwrpqp0vv" path="res://game_ui/卡牌具体页.tscn" id="2_dtu3g"]
-[ext_resource type="FontFile" uid="uid://bj1pdtvpfop4a" path="res://素材/使用素材/YaoSuiXinShouXieTi-2.ttf" id="3_csoqi"]
 [ext_resource type="Texture2D" uid="uid://c8mgf7a1815ru" path="res://素材/使用素材/战斗内/功能区/战斗卡行动动画/战斗卡攻击/射击/图.png" id="4_dtu3g"]
 [ext_resource type="Texture2D" uid="uid://cibetc2y8si5x" path="res://素材/使用素材/战斗内/功能区/战斗卡行动动画/战斗卡技能/图.png" id="5_vv1bw"]
 [ext_resource type="Texture2D" uid="uid://7tgdcost1uex" path="res://素材/使用素材/战斗内/桌面/卡牌死亡/图.png" id="6_5yayi"]
-
-[sub_resource type="LabelSettings" id="LabelSettings_qbhd0"]
-font = ExtResource("3_csoqi")
-font_size = 30
-font_color = Color(0, 0, 0, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_johr8"]
 font_size = 128
@@ -625,17 +619,6 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 color = Color(1, 0.8, 0, 0.4)
-
-[node name="buff" type="Label" parent="."]
-layout_mode = 0
-offset_left = -5.702753
-offset_top = 570.2754
-offset_right = 258.2724
-offset_bottom = 640.2754
-scale = Vector2(1.4425231, 1.4425231)
-label_settings = SubResource("LabelSettings_qbhd0")
-horizontal_alignment = 1
-vertical_alignment = 1
 
 [node name="Value_change" type="Label" parent="."]
 visible = false

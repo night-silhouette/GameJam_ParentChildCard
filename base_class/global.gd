@@ -1,5 +1,5 @@
 extends Node
-var BASE_URL = "http://120.26.145.68:10086" 
+var BASE_URL = "http://120.26.145.68:5300" 
 var token_save :bool = false;	
 var init_battle_time :int = 0;
 var max_delay_time = 0.46;
@@ -97,22 +97,26 @@ const WHERE={
 }
 
 enum  BUFF  {
-	BonusDamage = 1,
-	Powerful = 2,
-	Weakness = 3,
-	DamageImmunity = 4,
-	Vulnerability = 5,
-	Block = 6,
-	HealingBoost = 8,
-	HealingDecay = 9,
-	Wither = 10,
-	Binding = 11,
-	Retaliate = 12,
-	Confine = 13,
-	Giant = 14,
-	Disarm = 15,
-	XuFeng = 16,
+	BonusDamage = 0,
+	Powerful = 1,
+	Weakness = 2,
+	DamageImmunity = 3,
+	Vulnerability = 4,
+	Block = 5,
+	HealingBoost = 6,
+	HealingDecay = 7,
+	Wither = 8,
+	Binding = 9,
+	Retaliate = 10,
+	Confine = 11,
+	Giant = 12,
+	Disarm = 13,
+	XuFeng = 14,
+	Guard = 15,
+	Untouchable = 16,
+	DamageTransform = 17,
 }
+
 const BUFF_NAME = {
 	BUFF.BonusDamage : "额外伤害",
 	BUFF.Powerful : "强盛",
@@ -123,12 +127,15 @@ const BUFF_NAME = {
 	BUFF.HealingBoost : "治疗增强",
 	BUFF.HealingDecay : "治疗衰减",
 	BUFF.Wither : "凋零",
-	BUFF.Binding : "束缚",
+	BUFF.Binding : "捆缚",
 	BUFF.Retaliate : "反击",
 	BUFF.Confine : "禁锢",
 	BUFF.Giant : "巨人化",
 	BUFF.Disarm : "缴械",
 	BUFF.XuFeng : "续风",
+	BUFF.Guard : "守护",
+	BUFF.Untouchable : "不可触碰",
+	BUFF.DamageTransform : "伤害转化",
 }
 
 enum ANI_BEHAVIOR {
