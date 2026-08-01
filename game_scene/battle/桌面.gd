@@ -5,7 +5,6 @@ extends TextureRect
 
 @export var cards_ui: Array[Control] = []
 @export var zones: Array[int] = []
-@export var data_UI: Array[Control] = []
 @export var hand: Sprite2D
 
 var all_cards_data: Array = []
@@ -62,14 +61,13 @@ func _connect_combat_signals() -> void:
 
 
 func refresh_ui():
-	var loop_count = min(cards_ui.size(), data_UI.size(), zones.size())
+	var loop_count = min(cards_ui.size(), zones.size())
 
 	for i in range(loop_count):
 		var current_card_ui = cards_ui[i]
-		var current_data_ui = data_UI[i]
 		var current_zone = zones[i]
 
-		if not current_card_ui or not current_data_ui:
+		if not current_card_ui:
 			continue
 
 		var zone_cards = card_manager.get_cards_by_zone(current_zone)
@@ -77,7 +75,6 @@ func refresh_ui():
 		if not zone_cards.is_empty():
 			var icard = zone_cards[0]
 			current_card_ui.update_card_data(icard)
-			current_data_ui.update_card_data(icard)
 			if current_card_ui.has_method("enter_need_operate"):
 				if icard.get("need_operate", false):
 					current_card_ui.enter_need_operate()
@@ -86,11 +83,8 @@ func refresh_ui():
 
 			if not current_card_ui.visible or current_card_ui.modulate.a < 1.0:
 				_fade_in(current_card_ui, in_duration)
-			if not current_data_ui.visible or current_data_ui.modulate.a < 1.0:
-				_fade_in(current_data_ui, in_duration)
 		else:
 			current_card_ui.visible = false
-			current_data_ui.visible = false
 
 
 func _fade_in(target_card: Control, duration: float = 0.5) -> void:

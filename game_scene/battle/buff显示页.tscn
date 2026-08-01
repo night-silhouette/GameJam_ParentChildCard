@@ -1,0 +1,33 @@
+[gd_scene load_steps=4 format=3 uid="uid://tqycxs6dsui"]
+
+[ext_resource type="Script" uid="uid://6nfyvthl5x64" path="res://game_scene/battle/buff显示页.gd" id="1_kufov"]
+[ext_resource type="Texture2D" uid="uid://d2jleiky7vp0h" path="res://素材/使用素材/战斗内/桌面/信息框 .png" id="1_qcmwl"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_c1h6j"]
+font_size = 31
+font_color = Color(0, 0, 0, 1)
+
+[node name="buff显示页" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -1152.0
+offset_bottom = -648.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_kufov")
+
+[node name="TextureRect" type="TextureRect" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+texture = ExtResource("1_qcmwl")
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 0
+offset_left = 216.0
+offset_top = 87.0
+offset_right = 376.0
+offset_bottom = 274.0
+label_settings = SubResource("LabelSettings_c1h6j")

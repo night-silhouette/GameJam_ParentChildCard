@@ -135,7 +135,7 @@ func _enter_state(new_state: CalcState) -> void:
 			SignalBus.ani_buff_change_enter.emit()
 
 		CalcState.REFRESH_ALL:
-			card_manager.load_load_all_data(cardcalc_data)
+			card_manager.load_all_data(cardcalc_data)
 			print("进入全量刷新")
 			SignalBus.ani_end.emit.call_deferred()
 

@@ -365,8 +365,9 @@ desk_ui = NodePath("../../卡牌显示/桌面")
 state_name = NodePath("../../信息显示/状态栏")
 calc_state_machine = NodePath("../calc_state_machine")
 
-[node name="calc_state_machine" type="Node" parent="数据层"]
+[node name="calc_state_machine" type="Node" parent="数据层" node_paths=PackedStringArray("card_manager")]
 script = ExtResource("7_uxigx")
+card_manager = NodePath("../card_manager")
 
 [node name="debug" type="Control" parent="."]
 visible = false

@@ -7,7 +7,7 @@ extends Control
 @onready var hp_label: Label = $"信息标血量/hp"
 @onready var attack_label: Label = $"信息标攻击/attack"
 
-@onready var skill_effect_label: Label = $信息标技能/CenterContainer/技能效果
+@onready var skill_effect_label: Label = $"信息标技能/技能效果"
 
 
 @onready var cost_label: Label = $"点ui/energy"

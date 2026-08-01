@@ -1,5 +1,6 @@
 extends "res://base_class/card/battle_card.gd"
 
+
 #region 战斗状态枚举
 enum CombatState {
 	IDLE,       # 默认状态
@@ -28,6 +29,7 @@ var is_own: bool = false
 signal combat_selected(temp_id: int, self_where: int)
 signal combat_target_changed(opponent_where: int)
 signal switch_card_requested(temp_id: int, self_where: int)
+signal buff_change
 #endregion
 
 #region 视觉节点
@@ -63,7 +65,8 @@ func update_card_data(base_res: Dictionary) -> void:
 	else:
 		is_own = false
 		self_where = -1
-
+		
+	buff_change.emit()
 
 ## [核心] 重置为未行动状态（每回合开始调用）
 func reset_combat() -> void:
