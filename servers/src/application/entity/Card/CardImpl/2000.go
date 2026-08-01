@@ -1,6 +1,7 @@
 package CardImpl
 
 import (
+	"fmt"
 	"pcc_card/application/entity/Card/CardAbstract"
 	"pcc_card/application/entity/protocol"
 )
@@ -33,6 +34,11 @@ func (c *Card2000) Check(pc protocol.ProtocolCardWithCtx) CardAbstract.ChildChec
 		}
 		if c.HurtId != c.CtxRecord.LastHurt.TempId && c.CtxRecord.LastHurt.Value >= 6 {
 			UserId := pc.CardUserIdByTempId(c.CtxRecord.LastHurt.TempId)
+
+			if UserId == -1 {
+				fmt.Println(UserId)
+				return false, 0
+			}
 			c.HurtId = c.CtxRecord.LastHurt.TempId
 			return true, UserId
 		}

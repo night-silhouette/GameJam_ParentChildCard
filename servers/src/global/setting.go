@@ -21,11 +21,11 @@ const (
 
 	WaitAnimationRecall = 30 //等待动画结束
 
-	SelectWeatherTime   = 10   //s
-	BattleWaitTime      = 10   //s
-	ActiveChildCardTime = 10   //s
-	Interrupt           = 10   //s 中断
-	SelectSkillCardTime = 10   //s
-	JudgeWaitTime       = 1000 //s
-	CombatWaitTime      = 100  //s
+	SelectWeatherTime   = 4   //s
+	BattleWaitTime      = 15  //s
+	ActiveChildCardTime = 4   //s
+	Interrupt           = 10  //s 中断
+	SelectSkillCardTime = 4   //s
+	JudgeWaitTime       = 1   //s
+	CombatWaitTime      = 100 //s
 )

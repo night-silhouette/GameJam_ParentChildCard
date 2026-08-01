@@ -571,6 +571,9 @@ func (c *Ctx) ProtoColReduceCardBtHp(SendTempId int, TargetTempId int, ReduceHp 
 }
 func (c *Ctx) CardUserIdByTempId(TempId int) int {
 	card := c.FindCard(TempId)
+	if card == nil {
+		return -1
+	}
 	return card.GetOwnerId()
 }
 
