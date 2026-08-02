@@ -2,6 +2,7 @@ extends Area2D
 @export var zone : int
 
 func _on_area_entered(area: Area2D) -> void:
+	print("进入区域")
 	SignalBus.detected_area.emit(zone)
 
 
