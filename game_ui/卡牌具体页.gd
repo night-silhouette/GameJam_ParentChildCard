@@ -30,16 +30,14 @@ func import_card_data(card_data: CardResource) -> void:
 	var is_parent = not card_data.is_sub_card
 	parent_icon.visible = is_parent
 	child_icon.visible = not is_parent
-	
-	# HP
-	hp_label.text = str(card_data.max_health)
-	
-	# Attack
-	attack_label.text = str(card_data.damage)
-	
-	# 能量消耗
-	cost_label.text = str(card_data.value)
-	
+	if card_data.is_combat_card :
+		# HP
+		hp_label.text = str(card_data.max_health)
+		# Attack
+		attack_label.text = str(card_data.damage)
+		# 能量消耗
+		cost_label.text = str(card_data.value)
+		
 	# 技能效果 / 召唤条件 / 召唤效果（仅母牌显示）
 	if is_parent:
 		skill_effect_label.text = "技能效果：" + card_data.skill_description

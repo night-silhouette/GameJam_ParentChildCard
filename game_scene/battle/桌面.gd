@@ -77,16 +77,11 @@ func refresh_ui():
 		if not zone_cards.is_empty():
 			var icard = zone_cards[0]
 			current_card_ui.update_card_data(icard)
-			if current_card_ui.has_method("enter_need_operate"):
-				if icard.get("need_operate", false):
-					current_card_ui.enter_need_operate()
-				else:
-					current_card_ui.exit_need_operate()
-
 			if not current_card_ui.visible or current_card_ui.modulate.a < 1.0:
 				_fade_in(current_card_ui, in_duration)
 		else:
 			current_card_ui.visible = false
+			
 
 
 func _fade_in(target_card: Control, duration: float = 0.5) -> void:

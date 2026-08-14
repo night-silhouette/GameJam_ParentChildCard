@@ -30,6 +30,7 @@ signal combat_selected(temp_id: int, self_where: int)
 signal combat_target_changed(opponent_where: int)
 signal switch_card_requested(temp_id: int, self_where: int)
 signal buff_change
+signal dead
 #endregion
 
 #region 视觉节点
@@ -67,6 +68,9 @@ func update_card_data(base_res: Dictionary) -> void:
 		self_where = -1
 		
 	buff_change.emit()
+func card_dead():
+	visible = false
+	dead.emit()
 
 ## [核心] 重置为未行动状态（每回合开始调用）
 func reset_combat() -> void:

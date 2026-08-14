@@ -4,10 +4,12 @@ var lab_string:String
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	card_node.buff_change.connect(_buff_change)
+	card_node.dead.connect(_dead)
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _buff_change(delta: float) -> void:
+	visible = true
 	lab_string = ""
 	if card_node.buff_list.is_empty():
 		return
@@ -16,3 +18,6 @@ func _buff_change(delta: float) -> void:
 		string = string + "\n"
 		lab_string = lab_string + string
 	$Label.text = lab_string
+	
+func _dead():
+	visible = false

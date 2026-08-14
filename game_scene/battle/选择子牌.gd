@@ -10,7 +10,6 @@ func _ready() -> void:
 	
 	if card_manager:
 		card_manager.child_cards_ready.connect(_on_child_cards_ready)
-		card_manager.interrupt_cards_ready.connect(_on_interrupt_cards_ready)
 
 
 ## 子牌堆数据就绪 → 填充 10 张 choose_card（match_code=3）
@@ -35,26 +34,6 @@ func _on_child_cards_ready() -> void:
 				if card_id != -1:
 					data["resouce"] = card_manager.querry_resoure_by_id(card_id)
 			card_node.match_code = 3
-			card_node.setup(data)
-			card_node.visible = true
-			slot_index += 1
-		else:
-			card_node.visible = false
-
-
-## 中断选牌数据就绪 → 填充对应 choose_card（match_code=99）
-func _on_interrupt_cards_ready(card_list: Array, _select_num: int) -> void:
-	var children = get_children()
-	if children.is_empty():
-		return
-	
-	var slot_index = 0
-	for card_node in children:
-		if not card_node.has_method("setup"):
-			continue
-		if slot_index < card_list.size():
-			var data = card_list[slot_index]
-			card_node.match_code = 99
 			card_node.setup(data)
 			card_node.visible = true
 			slot_index += 1

@@ -58,6 +58,7 @@ func _ready():
 	SignalBus.card_use_dead_enter.connect(enter_dead)
 	SignalBus.card_use_dead_exit.connect(exit_dead)
 	SignalBus.set_change_lock.connect(set_change_lock)
+	SignalBus.interrupt_cards_ready.connect(_interrupt_cards_ready)
 func update_card_data(base_res: Dictionary) -> void:
 	# base_res 是 data_manager_BT 中的 card 字典，格式如下：
 	# {
@@ -282,7 +283,14 @@ func _hover_float_down() -> void:
 	_hover_tween.tween_property(self, "position", _original_position, HOVER_FLOAT_DURATION)
 	_hover_tween.tween_property(self, "scale", _hover_base_scale, HOVER_FLOAT_DURATION)
 
-
+func _interrupt_cards_ready(matched_cards):
+	for icard in matched_cards:
+		if icard == temp_id:
+			change_state(CardState.NEED_OPERATE)
+			return
+	change_state(CardState.DEAD)
+	change_lock = true
+	
 ## 设置 change_lock：锁定/解锁状态切换
 func set_change_lock(locked: bool) -> void:
 	change_lock = locked
@@ -295,4 +303,5 @@ func enter_dead() -> void:
 
 ## 退出死亡状态
 func exit_dead() -> void:
+	change_lock = false
 	change_state(CardState.IDLE)

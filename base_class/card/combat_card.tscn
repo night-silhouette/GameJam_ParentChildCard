@@ -2,8 +2,8 @@
 
 [ext_resource type="Script" uid="uid://bcgtwjrhxgie8" path="res://combat_card.gd" id="1_johr8"]
 [ext_resource type="PackedScene" uid="uid://bvongwrpqp0vv" path="res://game_ui/卡牌具体页.tscn" id="2_dtu3g"]
-[ext_resource type="Texture2D" uid="uid://c8mgf7a1815ru" path="res://素材/使用素材/战斗内/功能区/战斗卡行动动画/战斗卡攻击/射击/图.png" id="4_dtu3g"]
-[ext_resource type="Texture2D" uid="uid://cibetc2y8si5x" path="res://素材/使用素材/战斗内/功能区/战斗卡行动动画/战斗卡技能/图.png" id="5_vv1bw"]
+[ext_resource type="Texture2D" uid="uid://c8mgf7a1815ru" path="res://素材/使用素材/战斗内/状态栏/战斗卡行动动画/战斗卡攻击/射击/图.png" id="4_dtu3g"]
+[ext_resource type="Texture2D" uid="uid://cibetc2y8si5x" path="res://素材/使用素材/战斗内/状态栏/战斗卡行动动画/战斗卡技能/图.png" id="5_vv1bw"]
 [ext_resource type="Texture2D" uid="uid://7tgdcost1uex" path="res://素材/使用素材/战斗内/桌面/卡牌死亡/图.png" id="6_5yayi"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_johr8"]
@@ -594,7 +594,6 @@ animations = [{
 }]
 
 [node name="combat_card" type="Control"]
-visible = false
 custom_minimum_size = Vector2(329, 570)
 layout_mode = 3
 anchors_preset = 0
@@ -638,6 +637,8 @@ position = Vector2(222.40744, -262.3267)
 scale = Vector2(1.9291469, 1.9291469)
 sprite_frames = SubResource("SpriteFrames_qu5ua")
 animation = &"attack"
+frame = 50
+frame_progress = 1.0
 
 [node name="card_spell_an" type="AnimatedSprite2D" parent="."]
 visible = false
@@ -645,6 +646,8 @@ position = Vector2(193.89365, 119.757835)
 scale = Vector2(1.9160454, 1.9160454)
 sprite_frames = SubResource("SpriteFrames_30m6l")
 animation = &"spell"
+frame = 18
+frame_progress = 1.0
 
 [node name="card_dead_an" type="AnimatedSprite2D" parent="."]
 visible = false

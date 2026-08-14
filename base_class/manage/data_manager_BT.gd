@@ -89,37 +89,18 @@ func clear_interrupt_selection() -> void:
 
 
 ## 中断数据到达后：从 hand 匹配 temp_id，发 signal 让 UI 填充
-func _on_interrupt_data_received() -> void:
+func on_interrupt_data_received() -> void:
 	if interrupt_data.is_empty():
 		return
 	var temp_id_list = interrupt_data.get("temp_id_list", [])
 	if not temp_id_list is Array:
 		temp_id_list = []
-	var select_num = int(interrupt_data.get("select_num", 0))
 
-	# 从 card_list 中匹配 temp_id，组装可选的卡牌数据（跳过 FREE_ZONE 副本）
-	var matched_cards: Array = []
-	for temp_id in temp_id_list:
-		for card in card_list:
-			if card.get("temp_id") == temp_id and card.get("zone") != Global.ZONE_CARD.FREE_ZONE:
-				matched_cards.append(card.duplicate())
-				break
-	
-	interrupt_cards_ready.emit(matched_cards, select_num)
-
-
-## [state_machine 调用] 标记指定 temp_id 的卡牌进入 NEED_OPERATE 状态
-func mark_cards_need_operate(temp_id_list: Array) -> void:
-	for card in card_list:
-		var tid = card.get("temp_id", -1)
-		card["need_operate"] = tid in temp_id_list
+	SignalBus.interrupt_cards_ready.emit(temp_id_list)
 
 
 ## [state_machine 调用] 清除所有卡牌的 NEED_OPERATE 标记
-func clear_cards_need_operate() -> void:
-	interrupt_selected.clear()
-	for card in card_list:
-		card.erase("need_operate")
+
 var combat_list: Array = []; 
 #endregion
 
@@ -552,6 +533,7 @@ const COST_ATTACK_OR_SKILL: int = 2
 func set_combat_dto(self_where: int, behavior: int, opponent_where: int, temp_id: int, select_card: Dictionary = {}) -> bool:
 	var cost = COST_SWITCH if behavior == 2 else COST_ATTACK_OR_SKILL
 	if self_energy < cost:
+		SignalBus.notice_updated.emit("缺少行动点！")
 		return false
 	
 	self_energy -= cost

@@ -126,7 +126,6 @@ func _exit_state(old_state: GameState) -> void:
 		GameState.INTERRUPT:
 			SignalBus.set_change_lock.emit(false);
 			SignalBus.card_use_dead_exit.emit();
-			card_manager.clear_cards_need_operate()
 			
 			
 		GameState.CARDCALC:
@@ -176,14 +175,9 @@ func _enter_state(new_state: GameState) -> void:
 		
 		GameState.INTERRUPT:
 			_refresh_all_battle_data()
-			Global.revive(choose_child_card)
 			_interrupt_selected.clear()
 			# 匹配可选中卡牌，标记 NEED_OPERATE
-			card_manager._on_interrupt_data_received()
-			SignalBus.card_use_dead_enter.emit();
-			var temp_id_list = card_manager.interrupt_data.get("temp_id_list", [])
-			card_manager.mark_cards_need_operate(temp_id_list)
-			SignalBus.set_change_lock.emit(true)
+			card_manager.on_interrupt_data_received()
 			calc_state_machine.change_state(calc_state_machine.CalcState.READ)
 		GameState.CARDCALC:
 			_refresh_all_battle_data()
@@ -266,6 +260,7 @@ func _on_interrupt_start(interrupt_data,is_need) -> void:##去控制最后传数
 	card_manager.interrupt_data = interrupt_data
 	_interrupt_selected.clear()
 	var t = interrupt_data.get("state_wait_time", 60)
+	print("中断时间： ",t)
 	time.start_countdown(TimeOffset.get_remaining_seconds(t))
 	change_state(GameState.INTERRUPT)
 

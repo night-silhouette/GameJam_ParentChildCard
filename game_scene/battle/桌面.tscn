@@ -161,12 +161,10 @@ texture = ExtResource("1_m77db")
 script = ExtResource("2_kwvrx")
 cards_ui = [NodePath("parent_card"), NodePath("child_card"), NodePath("op_parent"), NodePath("op_child")]
 zones = Array[int]([3, 4, 7, 8])
-metadata/_edit_lock_ = true
 
 [node name="buff_parent" parent="." node_paths=PackedStringArray("card_node") instance=ExtResource("4_hxbbd")]
-visible = false
 layout_mode = 1
-offset_left = 349.66174
+offset_left = 349.66177
 offset_top = 835.793
 offset_right = -802.33813
 offset_bottom = 187.79321
@@ -174,7 +172,6 @@ scale = Vector2(1.2942053, 1.2942053)
 card_node = NodePath("../parent_card")
 
 [node name="buff_child" parent="." node_paths=PackedStringArray("card_node") instance=ExtResource("4_hxbbd")]
-visible = false
 layout_mode = 1
 offset_left = 1139.2205
 offset_top = 835.793
@@ -184,7 +181,6 @@ scale = Vector2(1.3017515, 1.3017515)
 card_node = NodePath("../child_card")
 
 [node name="buff_op_parent" parent="." node_paths=PackedStringArray("card_node") instance=ExtResource("4_hxbbd")]
-visible = false
 layout_mode = 1
 offset_left = 349.66174
 offset_top = -11.608234
@@ -194,7 +190,6 @@ scale = Vector2(1.2942053, 1.2942053)
 card_node = NodePath("../op_parent")
 
 [node name="buff_op_child" parent="." node_paths=PackedStringArray("card_node") instance=ExtResource("4_hxbbd")]
-visible = false
 layout_mode = 1
 offset_left = 1169.2991
 offset_top = 7.7388916
@@ -221,21 +216,19 @@ scale = Vector2(0.6111597, 0.6111597)
 
 [node name="op_parent" parent="." instance=ExtResource("4_combat")]
 layout_mode = 0
-offset_left = 594.0491
-offset_top = 355.98593
-offset_right = 923.0491
-offset_bottom = 925.98596
-rotation = 3.1415927
+offset_left = 398.5393
+offset_top = 23.216522
+offset_right = 727.5393
+offset_bottom = 593.21655
 scale = Vector2(0.6111597, 0.6111597)
 mouse_filter = 2
 
 [node name="op_child" parent="." instance=ExtResource("4_combat")]
 layout_mode = 0
-offset_left = 1402.407
-offset_top = 371.46356
-offset_right = 1731.407
-offset_bottom = 941.46356
-rotation = 3.1415927
+offset_left = 1195.6178
+offset_top = 19.347046
+offset_right = 1524.6178
+offset_bottom = 589.34705
 scale = Vector2(0.6111597, 0.6111597)
 mouse_filter = 2
 

@@ -2,9 +2,9 @@
 
 [ext_resource type="Animation" uid="uid://8oodkiswg7fj" path="res://game_animation/card_attack.res" id="2_omy48"]
 [ext_resource type="Texture2D" uid="uid://7tgdcost1uex" path="res://素材/使用素材/战斗内/桌面/卡牌死亡/图.png" id="2_r0wbg"]
-[ext_resource type="Texture2D" uid="uid://c8mgf7a1815ru" path="res://素材/使用素材/战斗内/功能区/战斗卡行动动画/战斗卡攻击/射击/图.png" id="2_yrx8j"]
+[ext_resource type="Texture2D" uid="uid://c8mgf7a1815ru" path="res://素材/使用素材/战斗内/状态栏/战斗卡行动动画/战斗卡攻击/射击/图.png" id="2_yrx8j"]
 [ext_resource type="Animation" uid="uid://0i5thq560pm" path="res://game_animation/card_spell.res" id="3_g03c1"]
-[ext_resource type="Texture2D" uid="uid://cibetc2y8si5x" path="res://素材/使用素材/战斗内/功能区/战斗卡行动动画/战斗卡技能/图.png" id="3_omy48"]
+[ext_resource type="Texture2D" uid="uid://cibetc2y8si5x" path="res://素材/使用素材/战斗内/状态栏/战斗卡行动动画/战斗卡技能/图.png" id="3_omy48"]
 [ext_resource type="Script" uid="uid://cu4a6jt776328" path="res://base_class/anim_test.gd" id="4_test"]
 [ext_resource type="Texture2D" uid="uid://dx1ewstebv33h" path="res://素材/使用素材/万能组件.png" id="7_gxd4q"]
 

@@ -27,6 +27,7 @@ func _dispatch(action_code: int, action_data: Variant, predicate: int):
 				if action_data is Array:
 					SignalBus.self_inhand_updated.emit(action_data)
 					
+					
 				else:
 					push_error("GET_SELF_CARDS 返回格式错误，期望 Array")
 		NetDef.Action.GET_OPPONENT_CARDS:
@@ -40,8 +41,7 @@ func _dispatch(action_code: int, action_data: Variant, predicate: int):
 				var opp_data = action_data.get("opponent");
 				SignalBus.bt_selfinfo_updated.emit(self_data);
 				SignalBus.bt_oppinfo_updated.emit(opp_data);
-				
-				
+
 
 		NetDef.Action.START_BATTLE:
 			if predicate == NetDef.Predicate.NOTIFY:
