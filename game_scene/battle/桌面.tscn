@@ -163,16 +163,6 @@ cards_ui = [NodePath("parent_card"), NodePath("child_card"), NodePath("op_parent
 zones = Array[int]([3, 4, 7, 8])
 metadata/_edit_lock_ = true
 
-[node name="母牌_检验区" parent="." instance=ExtResource("2_yp7nw")]
-position = Vector2(503.81366, 828.05426)
-scale = Vector2(10.461277, 8.695675)
-zone = 3
-
-[node name="子牌_检验区" parent="." instance=ExtResource("2_yp7nw")]
-position = Vector2(1500.1619, 812.57654)
-scale = Vector2(-8.537157, 8.990021)
-zone = 4
-
 [node name="buff_parent" parent="." node_paths=PackedStringArray("card_node") instance=ExtResource("4_hxbbd")]
 visible = false
 layout_mode = 1
@@ -306,3 +296,13 @@ offset_top = 971.22235
 offset_right = 1197.8776
 offset_bottom = 2048.2224
 scale = Vector2(0.23148932, 0.23148932)
+
+[node name="母牌检验区" parent="." instance=ExtResource("2_yp7nw")]
+position = Vector2(631.6471, 905.4425)
+scale = Vector2(7.742943, 6.422863)
+zone = 3
+
+[node name="字牌检验区" parent="." instance=ExtResource("2_yp7nw")]
+position = Vector2(1477.603, 909.3119)
+scale = Vector2(7.742943, 6.422863)
+zone = 4

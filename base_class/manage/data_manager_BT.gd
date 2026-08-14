@@ -596,6 +596,7 @@ func _enter_freecard(temp_id, zone):
 
 func _exit_freecard(temp_id):
 	# 删除 FREE_ZONE 副本
+	print("松手时栈=", _area_stack)
 	for i in range(card_list.size() - 1, -1, -1):
 		var card = card_list[i]
 		if card.get("temp_id") == temp_id and card.get("zone") == Global.ZONE_CARD.FREE_ZONE:
@@ -738,7 +739,7 @@ func _deploy_card_to_zone(temp_id: int, target_zone: int):
 			
 func _detected_area(zone):
 	_area_stack.append(zone)
-
+	print("入栈 zone=", zone, " 栈内容=", _area_stack)
 func _exit_area(zone):
 	var idx = _area_stack.find(zone)
 	if idx >= 0:

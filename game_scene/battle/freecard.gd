@@ -6,6 +6,7 @@ extends Node
 var temp_id : int
 var cards: Array   #
 var is_drag : bool = false;
+var active = true
 	
 
 func _ready() -> void:
@@ -20,6 +21,8 @@ func _process(delta: float) -> void:
 		var target_pos = card.get_global_mouse_position() - (card.size * card.scale / 2.0)
 		# 2. 丝滑跟随 (20.0 是速度，值越大越粘手)
 		card.global_position = card.global_position.lerp(target_pos, 20.0 * delta)
+		area.global_position = card.global_position
+		
 		
 func refresh_ui():
 	cards = card_manager.get_cards_by_zone(zone)
@@ -44,19 +47,19 @@ func _deactivate():
 
 	# 禁止输入
 	card.mouse_filter = Control.MOUSE_FILTER_IGNORE
-
-
 	area.monitoring = false
 	area.monitorable = false
-
+	active = false
+	
 func _activate():
 	# 显示
 	card.visible = true
-
+	active  = true
 	# 恢复 process
 	area.monitoring = true
 	area.monitorable = true
-
+	#print("激活时 monitoring=", area.monitoring, " monitorable=", area.monitorable)
+	
 func _input(event: InputEvent) -> void:
 	
 	# 如果当前根本没有在拖拽，或者卡牌实例不存在，直接无视全局输入

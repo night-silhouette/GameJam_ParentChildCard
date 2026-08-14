@@ -4,28 +4,23 @@
 [ext_resource type="PackedScene" uid="uid://bvongwrpqp0vv" path="res://game_ui/卡牌具体页.tscn" id="2_uqdmw"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_uqdmw"]
-size = Vector2(50.847984, 73.36117)
+size = Vector2(59, 101)
 
 [node name="freecard" type="Control" node_paths=PackedStringArray("card", "area")]
 layout_mode = 3
-anchor_right = 0.051000003
-anchor_bottom = 0.15400001
-offset_right = -58.752003
-offset_bottom = -99.79201
+anchors_preset = 0
 script = ExtResource("1_uqdmw")
 card = NodePath("卡牌具体页")
-area = NodePath("卡牌具体页/Area2D")
+area = NodePath("Area2D")
 
 [node name="卡牌具体页" parent="." instance=ExtResource("2_uqdmw")]
 layout_mode = 0
 scale = Vector2(0.11826721, 0.11826721)
 mouse_filter = 2
 
-[node name="Area2D" type="Area2D" parent="卡牌具体页"]
-scale = Vector2(8.45543, 8.45543)
+[node name="Area2D" type="Area2D" parent="."]
+scale = Vector2(1.0000002, 1.0000002)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="卡牌具体页/Area2D"]
-position = Vector2(29.4207, 49.530083)
-rotation = -3.1415925
-scale = Vector2(1.1634407, 1.3759302)
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+position = Vector2(29.5, 50.5)
 shape = SubResource("RectangleShape2D_uqdmw")
