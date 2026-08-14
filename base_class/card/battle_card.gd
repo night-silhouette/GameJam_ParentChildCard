@@ -145,7 +145,8 @@ func change_state(new_state: CardState):
 		CardState.NEED_OPERATE:
 			is_chosen = false
 			_hover_float_down()
-
+			$"勾".visible = false
+			$"叉".visible = false
 	# 进入新状态
 	current_state = new_state
 	match current_state:
@@ -169,6 +170,7 @@ func change_state(new_state: CardState):
 			change_state(CardState.IDLE)
 		CardState.NEED_OPERATE:
 			_hover_float_up()
+			$"叉".visible = true
 		CardState.DEAD:
 			pass
 
@@ -220,15 +222,15 @@ func _on_need_operate_click() -> void:
 	
 	if is_chosen:
 		# 已选中 → 取消选中
-		card_manager.remove_interrupt_selection(temp_id)
+		SignalBus.remove_interrupt_selection.emit(temp_id)
 		is_chosen = false
+		$"勾".visible = false
+		$"叉".visible = true
 	else:
-		# 未选中 → 尝试选中，由 card_manager 校验上限
-		if card_manager.can_add_interrupt_selection(temp_id):
-			card_manager.add_interrupt_selection(temp_id)
-			is_chosen = true
-	
-
+		SignalBus.add_interrupt_selection.emit(temp_id)
+		is_chosen = true
+		$"勾".visible = true	
+		$"叉".visible = false
 
 ## 外部信号：进入中断选牌模式
 func enter_need_operate(skip_anim: bool = false) -> void:
@@ -279,14 +281,6 @@ func _hover_float_down() -> void:
 	_hover_tween.set_parallel(true)
 	_hover_tween.tween_property(self, "position", _original_position, HOVER_FLOAT_DURATION)
 	_hover_tween.tween_property(self, "scale", _hover_base_scale, HOVER_FLOAT_DURATION)
-
-
-## 占位符视觉：zone 为 FREE_ZONE 时半透明，恢复时全透明
-func _update_placeholder_visual() -> void:
-	if zone == Global.ZONE_CARD.FREE_ZONE:
-		modulate = Color(1, 1, 1, 0.3)
-	else:
-		modulate = Color.WHITE
 
 
 ## 设置 change_lock：锁定/解锁状态切换

@@ -1,7 +1,9 @@
-[gd_scene load_steps=3 format=3 uid="uid://diwsy4ebydgfx"]
+[gd_scene load_steps=5 format=3 uid="uid://diwsy4ebydgfx"]
 
 [ext_resource type="Script" uid="uid://ddj8qfcb6lpsk" path="res://base_class/card/battle_card.gd" id="1_xdlnp"]
+[ext_resource type="Texture2D" uid="uid://bhngjavywsdho" path="res://素材/使用素材/选择/确认/零件/勾.png" id="3_0o2o1"]
 [ext_resource type="PackedScene" uid="uid://bvongwrpqp0vv" path="res://game_ui/卡牌具体页.tscn" id="3_6xbm0"]
+[ext_resource type="Texture2D" uid="uid://dum0mhbnb8o1y" path="res://素材/使用素材/选择/取消/零件/斜杠.png" id="4_6xbm0"]
 
 [node name="Control" type="Control"]
 custom_minimum_size = Vector2(329, 570)
@@ -14,3 +16,38 @@ script = ExtResource("1_xdlnp")
 
 [node name="卡牌具体页" parent="." instance=ExtResource("3_6xbm0")]
 layout_mode = 0
+
+[node name="勾" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = -5.702755
+offset_top = 125.460594
+offset_right = 610.29724
+offset_bottom = 669.4606
+scale = Vector2(0.56039685, 0.56039685)
+mouse_filter = 2
+texture = ExtResource("3_0o2o1")
+
+[node name="叉" type="Control" parent="."]
+visible = false
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="斜杠" type="TextureRect" parent="叉"]
+layout_mode = 0
+offset_left = 11.405518
+offset_top = 136.86609
+offset_right = 462.40552
+offset_bottom = 593.8661
+scale = Vector2(0.6902821, 0.6902821)
+texture = ExtResource("4_6xbm0")
+
+[node name="斜杠2" type="TextureRect" parent="叉"]
+layout_mode = 0
+offset_left = 11.405518
+offset_top = 136.86609
+offset_right = 462.40552
+offset_bottom = 593.8661
+scale = Vector2(0.67955726, 0.6966385)
+texture = ExtResource("4_6xbm0")
+flip_h = true

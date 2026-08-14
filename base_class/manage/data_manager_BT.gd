@@ -69,13 +69,15 @@ func can_add_interrupt_selection(temp_id: int) -> bool:
 
 
 ## 中断选牌：添加 temp_id（调用前需先通过 can_add 校验）
-func add_interrupt_selection(temp_id: int) -> void:
+func _add_interrupt_selection(temp_id: int) -> void:
+	if can_add_interrupt_selection(temp_id):
+		return
 	if not interrupt_selected.has(temp_id):
 		interrupt_selected.append(temp_id)
 
 
 ## 中断选牌：移除 temp_id
-func remove_interrupt_selection(temp_id: int) -> void:
+func _remove_interrupt_selection(temp_id: int) -> void:
 	var idx = interrupt_selected.find(temp_id)
 	if idx >= 0:
 		interrupt_selected.remove_at(idx)
@@ -172,7 +174,8 @@ func _ready() -> void:
 	SignalBus.exit_area.connect(_exit_area)
 	SignalBus.enter_hover.connect(_enter_hover)
 	SignalBus.exit_hover.connect(_exit_hover)
-
+	SignalBus.add_interrupt_selection.connect(_add_interrupt_selection)
+	SignalBus.remove_interrupt_selection.connect(_remove_interrupt_selection)
 
 #region ==================== Zone 优先级系统 ====================
 

@@ -91,7 +91,7 @@ func _enter_state(new_state: CalcState) -> void:
 			else:
 				change_state(CalcState.IDLE)
 		CalcState.SKILL_CARD_NOTIFY:
-			print("进入法术实施")
+			print("进入法术实施")	
 			SignalBus.ani_skill_card_notify_enter.emit()
 
 		CalcState.WEATHER_NOTIFY:

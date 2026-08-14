@@ -253,6 +253,7 @@ func _on_select_weather_start(t, weather_list) -> void:
 	
 #自由阶段:提前结束的阶段
 func _enter_free():
+	
 	change_state(GameState.FREE);
 # [新增] 子卡选择阶段结束
 

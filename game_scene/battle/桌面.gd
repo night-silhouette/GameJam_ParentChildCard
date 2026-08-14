@@ -34,6 +34,7 @@ func _ready() -> void:
 	card_manager.UI_date_update.connect(refresh_ui)
 	card_manager.combat_dto_changed.connect(_on_dto_changed)
 	
+	
 	for card in cards_ui:
 		if card:
 			card.visible = false
@@ -48,6 +49,7 @@ func _ready() -> void:
 	
 	# 初始隐藏确认按钮
 	_hide_confirm_buttons()
+	SignalBus.enter_free.emit(hide_free)
 
 
 func _connect_combat_signals() -> void:
@@ -219,3 +221,6 @@ func reset_all_combat_cards() -> void:
 			card.reset_combat()
 	_reset_selection()
 #endregion
+
+func hide_free() :
+	_hide_confirm_buttons()
