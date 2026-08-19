@@ -1,11 +1,254 @@
-[gd_scene load_steps=9 format=3 uid="uid://dgyo8ao58cobl"]
+[gd_scene load_steps=47 format=3 uid="uid://dgyo8ao58cobl"]
 
 [ext_resource type="Script" uid="uid://cehdyefyl6t1s" path="res://game_scene/shop/shop.gd" id="1_m2be2"]
 [ext_resource type="PackedScene" uid="uid://cyv76yrm51l1q" path="res://game_scene/shop/shop_card.tscn" id="1_mw6yb"]
 [ext_resource type="PackedScene" uid="uid://c6euaia4cenn0" path="res://game_scene/battle/转换.tscn" id="2_6srfl"]
+[ext_resource type="Texture2D" uid="uid://b6ik44dyt2oqr" path="res://素材/新素材/战斗外内容/登录界面内容/背景纹理.png" id="2_g6btr"]
+[ext_resource type="Texture2D" uid="uid://d4crfxmwkosr1" path="res://素材/新素材/战斗外内容/商店内容/框.png" id="2_gw57e"]
 [ext_resource type="PackedScene" uid="uid://cfsmqjjmevec7" path="res://game_scene/menu/coin.tscn" id="3_m2be2"]
+[ext_resource type="Texture2D" uid="uid://bbog0oshm0m3q" path="res://素材/使用素材/战斗内/效果/18/图.png" id="4_72stq"]
+[ext_resource type="Texture2D" uid="uid://dli02y6mvfyas" path="res://素材/使用素材/战斗内/桌面/子牌商店与子牌状态显示/商人/吐舌头/图.png" id="5_2pq5i"]
 [ext_resource type="PackedScene" uid="uid://bhfgqoa1s3286" path="res://game_scene/bag/金币显示.tscn" id="5_yxgcs"]
+[ext_resource type="Texture2D" uid="uid://dx18ujuh5q0xw" path="res://素材/使用素材/战斗内/桌面/子牌商店与子牌状态显示/商人/等待/图.png" id="6_p4tv5"]
 [ext_resource type="Texture2D" uid="uid://ci7ym6d16j3bs" path="res://素材/使用素材/战斗外/游戏初始界面/UI手（左手）.png" id="6_wkkoe"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0vck8"]
+atlas = ExtResource("4_72stq")
+region = Rect2(0, 0, 450, 451)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_harlc"]
+atlas = ExtResource("4_72stq")
+region = Rect2(450, 0, 450, 451)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_uamqx"]
+atlas = ExtResource("4_72stq")
+region = Rect2(900, 0, 450, 451)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_yanvc"]
+atlas = ExtResource("4_72stq")
+region = Rect2(1350, 0, 450, 451)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rmjv5"]
+atlas = ExtResource("4_72stq")
+region = Rect2(1800, 0, 450, 451)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_1avan"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0vck8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_harlc")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_uamqx")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_yanvc")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rmjv5")
+}],
+"loop": true,
+"name": &"new_animation",
+"speed": 5.0
+}]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1gs8p"]
+atlas = ExtResource("5_2pq5i")
+region = Rect2(0, 0, 1500, 1500)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4deh3"]
+atlas = ExtResource("5_2pq5i")
+region = Rect2(1500, 0, 1500, 1500)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_psc5x"]
+atlas = ExtResource("5_2pq5i")
+region = Rect2(3000, 0, 1500, 1500)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fennx"]
+atlas = ExtResource("5_2pq5i")
+region = Rect2(4500, 0, 1500, 1500)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_p8htv"]
+atlas = ExtResource("5_2pq5i")
+region = Rect2(6000, 0, 1500, 1500)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5bab7"]
+atlas = ExtResource("5_2pq5i")
+region = Rect2(0, 1500, 1500, 1500)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_t0xv2"]
+atlas = ExtResource("5_2pq5i")
+region = Rect2(1500, 1500, 1500, 1500)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vxptj"]
+atlas = ExtResource("5_2pq5i")
+region = Rect2(3000, 1500, 1500, 1500)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fxhs5"]
+atlas = ExtResource("5_2pq5i")
+region = Rect2(4500, 1500, 1500, 1500)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7muiv"]
+atlas = ExtResource("5_2pq5i")
+region = Rect2(6000, 1500, 1500, 1500)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_63k1o"]
+atlas = ExtResource("5_2pq5i")
+region = Rect2(0, 3000, 1500, 1500)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ul6l7"]
+atlas = ExtResource("5_2pq5i")
+region = Rect2(1500, 3000, 1500, 1500)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ykeat"]
+atlas = ExtResource("5_2pq5i")
+region = Rect2(3000, 3000, 1500, 1500)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2p8n7"]
+atlas = ExtResource("5_2pq5i")
+region = Rect2(4500, 3000, 1500, 1500)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rte07"]
+atlas = ExtResource("5_2pq5i")
+region = Rect2(6000, 3000, 1500, 1500)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_h7j3u"]
+atlas = ExtResource("5_2pq5i")
+region = Rect2(0, 4500, 1500, 1500)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_m7b8r"]
+atlas = ExtResource("5_2pq5i")
+region = Rect2(1500, 4500, 1500, 1500)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bq6ib"]
+atlas = ExtResource("5_2pq5i")
+region = Rect2(3000, 4500, 1500, 1500)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_i1cn2"]
+atlas = ExtResource("5_2pq5i")
+region = Rect2(4500, 4500, 1500, 1500)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tmsvv"]
+atlas = ExtResource("6_p4tv5")
+region = Rect2(0, 0, 1500, 1500)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dnji6"]
+atlas = ExtResource("6_p4tv5")
+region = Rect2(1500, 0, 1500, 1500)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_b066r"]
+atlas = ExtResource("6_p4tv5")
+region = Rect2(3000, 0, 1500, 1500)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_k4rxt"]
+atlas = ExtResource("6_p4tv5")
+region = Rect2(4500, 0, 1500, 1500)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2g668"]
+atlas = ExtResource("6_p4tv5")
+region = Rect2(6000, 0, 1500, 1500)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_np0ro"]
+atlas = ExtResource("6_p4tv5")
+region = Rect2(0, 1500, 1500, 1500)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3o8vp"]
+atlas = ExtResource("6_p4tv5")
+region = Rect2(1500, 1500, 1500, 1500)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_n33js"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1gs8p")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4deh3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_psc5x")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fennx")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_p8htv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5bab7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_t0xv2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vxptj")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fxhs5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7muiv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_63k1o")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ul6l7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ykeat")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2p8n7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rte07")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_h7j3u")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_m7b8r")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_bq6ib")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_i1cn2")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_tmsvv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dnji6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_b066r")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_k4rxt")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2g668")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_np0ro")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3o8vp")
+}],
+"loop": true,
+"name": &"new_animation",
+"speed": 8.0
+}]
 
 [sub_resource type="LabelSettings" id="LabelSettings_yxgcs"]
 font_size = 106
@@ -24,23 +267,46 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_m2be2")
 
-[node name="back" type="ColorRect" parent="."]
+[node name="back" type="TextureRect" parent="."]
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+offset_right = 2880.0
+offset_bottom = 1920.0
+scale = Vector2(0.39999792, 0.33751616)
+texture = ExtResource("2_g6btr")
+
+[node name="框" type="TextureRect" parent="."]
+self_modulate = Color(0.8980392, 0.8980392, 0.8980392, 0.85490197)
+layout_mode = 1
+offset_left = -47.0
+offset_top = -57.0
+offset_right = 1935.0
+offset_bottom = 1495.0
+scale = Vector2(0.64176273, 0.47981554)
+texture = ExtResource("2_gw57e")
+
+[node name="猫" type="AnimatedSprite2D" parent="."]
+position = Vector2(144, 543)
+scale = Vector2(0.49758646, 0.49758646)
+sprite_frames = SubResource("SpriteFrames_1avan")
+animation = &"new_animation"
+
+[node name="商人" type="AnimatedSprite2D" parent="."]
+visible = false
+position = Vector2(950.00006, 514)
+scale = Vector2(0.084026225, 0.084026225)
+sprite_frames = SubResource("SpriteFrames_n33js")
+frame = 8
+frame_progress = 0.99869674
+flip_h = true
 
 [node name="GridContainer" type="GridContainer" parent="."]
-visible = false
 layout_mode = 0
-offset_left = 135.00002
-offset_top = 130.00002
-offset_right = 705.0
-offset_bottom = 170.00002
-scale = Vector2(1.7426696, 1.7426696)
-theme_override_constants/h_separation = 89
+offset_left = 154.0
+offset_top = 174.00002
+offset_right = 724.0
+offset_bottom = 214.00002
+scale = Vector2(2.1251054, 2.1251054)
+theme_override_constants/h_separation = 74
 columns = 6
 
 [node name="shop_card" parent="GridContainer" instance=ExtResource("1_mw6yb")]
@@ -63,14 +329,14 @@ layout_mode = 2
 
 [node name="转换" parent="." instance=ExtResource("2_6srfl")]
 layout_mode = 0
-offset_left = 1022.0
-offset_top = 458.0
-offset_right = 1457.0
-offset_bottom = 860.0
-scale = Vector2(0.14864677, 0.14864677)
+offset_left = 788.0
+offset_top = 500.0
+offset_right = 1223.0
+offset_bottom = 902.0
+scale = Vector2(0.24396372, 0.24396372)
 
 [node name="coin" parent="转换" instance=ExtResource("3_m2be2")]
-position = Vector2(141.2745, 558.3706)
+position = Vector2(578.55273, 60.54619)
 scale = Vector2(0.79256415, 0.79256415)
 autoplay = "coin"
 
@@ -87,26 +353,27 @@ vertical_alignment = 1
 
 [node name="金币显示" parent="." instance=ExtResource("5_yxgcs")]
 layout_mode = 0
-offset_left = 16.0
-offset_top = 10.0
-offset_right = 277.0
-offset_bottom = 262.0
+offset_left = 899.0
+offset_top = 60.0
+offset_right = 1160.0
+offset_bottom = 312.0
 
 [node name="num" type="Label" parent="金币显示"]
 layout_mode = 0
-offset_left = 380.35825
-offset_top = 81.24157
-offset_right = 420.35825
-offset_bottom = 106.24157
+offset_left = 324.96628
+offset_top = 59.084778
+offset_right = 452.96628
+offset_bottom = 116.084785
 scale = Vector2(2.649487, 2.726132)
+text = "1000"
 label_settings = SubResource("LabelSettings_wkkoe")
 
 [node name="返回" type="TextureButton" parent="."]
 layout_mode = 0
-offset_left = 127.99999
-offset_top = 521.0
-offset_right = 769.0
-offset_bottom = 1223.0
+offset_left = 204.0
+offset_top = 50.99994
+offset_right = 845.0
+offset_bottom = 752.99994
 rotation = 1.5707964
 scale = Vector2(0.16706024, 0.16706024)
 texture_normal = ExtResource("6_wkkoe")

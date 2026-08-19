@@ -1,13 +1,19 @@
-[gd_scene load_steps=10 format=3 uid="uid://fgsyyjjbkfvm"]
+[gd_scene load_steps=16 format=3 uid="uid://fgsyyjjbkfvm"]
 
+[ext_resource type="Texture2D" uid="uid://b6ik44dyt2oqr" path="res://素材/新素材/战斗外内容/登录界面内容/背景纹理.png" id="1_5pr7x"]
 [ext_resource type="Texture2D" uid="uid://8tl4lolrrkqd" path="res://素材/使用素材/战斗外/登录界面/框UI .png" id="1_ykqqb"]
+[ext_resource type="Texture2D" uid="uid://b32lvmdvoo8ht" path="res://素材/新素材/战斗外内容/登录界面内容/小太阳.png" id="2_oqvmt"]
 [ext_resource type="Script" uid="uid://c4fqyhy3evame" path="res://game_ui/login/边框.gd" id="2_vbx44"]
+[ext_resource type="Texture2D" uid="uid://b4pm04w4f3wb1" path="res://素材/新素材/战斗外内容/登录界面内容/花雕.png" id="3_cpwex"]
 [ext_resource type="Texture2D" uid="uid://dosona3iwp418" path="res://素材/使用素材/战斗外/登录界面/账号UI .png" id="3_i6r6h"]
 [ext_resource type="Texture2D" uid="uid://cdmmmn8wc03lv" path="res://素材/使用素材/战斗外/登录界面/密码UI .png" id="4_emvpi"]
 [ext_resource type="PackedScene" uid="uid://0c577rnp585t" path="res://game_ui/login/登录.tscn" id="4_kyjnp"]
 [ext_resource type="PackedScene" uid="uid://ctblgd8opayyp" path="res://game_ui/login/注册.tscn" id="5_vbx44"]
 [ext_resource type="Script" uid="uid://dl05si0l430e1" path="res://game_ui/login/login_button.gd" id="6_0i0dv"]
 [ext_resource type="Script" uid="uid://bop5kkut6uywi" path="res://game_ui/login/注册按钮.gd" id="8_ykqqb"]
+[ext_resource type="Texture2D" uid="uid://v4sp5iachs2k" path="res://素材/新素材/战斗外内容/登录界面内容/雕花.png" id="12_3v8bm"]
+[ext_resource type="Texture2D" uid="uid://ryb1y0r646qn" path="res://素材/新素材/战斗外内容/登录界面内容/指示.png" id="13_sdse6"]
+[ext_resource type="Texture2D" uid="uid://b28hukl4ph33b" path="res://素材/新素材/战斗外内容/登录界面内容/多云.png" id="14_xc7t1"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ykqqb"]
 
@@ -20,16 +26,36 @@ grow_horizontal = 2
 grow_vertical = 2
 metadata/_edit_lock_ = true
 
+[node name="TextureRect" type="TextureRect" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+scale = Vector2(0.3993695, 0.33654988)
+texture = ExtResource("1_5pr7x")
+
+[node name="小太阳" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = 474.0
+offset_top = -12.999998
+offset_right = 1542.0
+offset_bottom = 1088.0
+scale = Vector2(0.18109147, 0.18109147)
+texture = ExtResource("2_oqvmt")
+
+[node name="花雕" type="Sprite2D" parent="."]
+position = Vector2(892.99994, 184.99998)
+scale = Vector2(0.254952, 0.254952)
+texture = ExtResource("3_cpwex")
+
 [node name="页面" type="TextureRect" parent="."]
 layout_mode = 1
-offset_left = 328.0
-offset_top = 144.0
-offset_right = 1943.0
-offset_bottom = 1303.0
-scale = Vector2(0.31794798, 0.31794798)
+offset_left = 263.0
+offset_top = 71.00001
+offset_right = 1878.0
+offset_bottom = 1230.0
+scale = Vector2(0.37674132, 0.37674132)
 texture = ExtResource("1_ykqqb")
 script = ExtResource("2_vbx44")
-metadata/_edit_lock_ = true
 
 [node name="账号" type="TextureRect" parent="页面"]
 layout_mode = 1
@@ -68,10 +94,10 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 301.93628
-offset_top = 226.45212
-offset_right = -29.83496
-offset_bottom = -731.2571
+offset_left = 327.09753
+offset_top = 229.59729
+offset_right = -4.673706
+offset_bottom = -728.11194
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
@@ -85,9 +111,9 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 301.9362
+offset_left = 320.8072
 offset_top = 427.74292
-offset_right = -29.835083
+offset_right = -10.964111
 offset_bottom = -529.9663
 grow_horizontal = 2
 grow_vertical = 2
@@ -134,6 +160,55 @@ script = ExtResource("8_ykqqb")
 username = NodePath("../username")
 password = NodePath("../password")
 metadata/_edit_lock_ = true
+
+[node name="雕花" type="TextureRect" parent="."]
+self_modulate = Color(0.91363, 0.91363, 0.91362995, 0.675)
+layout_mode = 0
+offset_left = 691.0
+offset_top = 433.0
+offset_right = 1431.0
+offset_bottom = 1041.0
+rotation = -0.20900978
+scale = Vector2(0.5893468, 0.48315942)
+texture = ExtResource("12_3v8bm")
+
+[node name="指示" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = 227.0
+offset_top = 414.0
+offset_right = 698.0
+offset_bottom = 777.0
+rotation = -0.9292098
+scale = Vector2(0.15793782, 0.1891489)
+texture = ExtResource("13_sdse6")
+flip_h = true
+
+[node name="多云" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = 117.0
+offset_top = 195.0
+offset_right = 1102.0
+offset_bottom = 583.0
+scale = Vector2(0.13600539, 0.13600539)
+texture = ExtResource("14_xc7t1")
+
+[node name="多云2" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = 44.0
+offset_top = 89.0
+offset_right = 1029.0
+offset_bottom = 477.0
+scale = Vector2(0.15874231, 0.15874231)
+texture = ExtResource("14_xc7t1")
+
+[node name="多云3" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = 858.00006
+offset_top = 58.0
+offset_right = 1843.0
+offset_bottom = 446.0
+scale = Vector2(0.18800145, 0.18800145)
+texture = ExtResource("14_xc7t1")
 
 [connection signal="button_down" from="页面/登录" to="页面/登录" method="_on_button_down"]
 [connection signal="button_down" from="页面/注册" to="页面/注册" method="_on_button_down"]
