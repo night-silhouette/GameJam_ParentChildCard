@@ -216,10 +216,10 @@ scale = Vector2(0.6111597, 0.6111597)
 
 [node name="op_parent" parent="." instance=ExtResource("4_combat")]
 layout_mode = 0
-offset_left = 398.5393
-offset_top = 23.216522
-offset_right = 727.5393
-offset_bottom = 593.21655
+offset_left = 383.50006
+offset_top = 3.8694096
+offset_right = 712.50006
+offset_bottom = 573.8694
 scale = Vector2(0.6111597, 0.6111597)
 mouse_filter = 2
 
